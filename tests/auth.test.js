@@ -231,7 +231,7 @@ test('character data is reduced and checked before it is stored', () => {
   }
   assert.equal(pickCharacter([]), null);
   assert.equal(pickCharacter({}), null);
-  assert.deepEqual(pickCharacter([null, { lodestone_id: 'abc', name: 'x' }, { lodestone_id: 42, name: '  A‮B  ', home_world: 'W'.repeat(40), portrait_url: 'https://evil.example/p.jpg' }]),
+  assert.deepEqual(pickCharacter([null, { lodestone_id: 'abc', name: 'x' }, { lodestone_id: 42, name: '  A\u202eB  ', home_world: 'W'.repeat(40), portrait_url: 'https://evil.example/p.jpg' }]),
     { lodestone_id: '42', name: 'AB', world: 'W'.repeat(32), portrait_url: '' });
   assert.equal(pickCharacter([{ lodestone_id: '1', name: 'n'.repeat(65) }]), null);
 });
