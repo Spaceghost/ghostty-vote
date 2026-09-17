@@ -56,7 +56,9 @@ touched. There are no Durable Objects, KV namespaces or other bindings: sessions
   (same approach as above: cookies renamed without `__Secure-`/`Secure`, provider authorize pages
   faked, provider APIs scripted): signed out with disabled controls and the prompt, the old-ballot
   hint, GitHub sign-in with the claim, voting and reload, linking and forgetting a character, the
-  admin list, sign-out, the admin page signed out, and an error fragment. That run is not in the repo.
+  admin list, sign-out, the admin page signed out, and an error fragment. That run is not in the repo,
+  and predates the change that made FFXIV sign-in ask for `user` only and offered the link to FFXIV
+  sessions; that change is covered by `node --test` only.
 - Not verified against the real providers: nothing has signed in with the real GitHub App or
   XIVAuth client. The XIVAuth request and response shapes come from its source (XIVAuth/XIVAuth at
   4bc2440, Doorkeeper 5.9.6), not live calls; the GitHub ones from GitHub's docs. In particular:
@@ -119,8 +121,8 @@ Worker:
 | GET | `/api/tallies` | `{idea_id: {want, maybe, skip}}` for every open idea. `Cache-Control: public, max-age=60`, also stored in the Cache API under one key (query strings are ignored). Sent without credentials |
 | GET | `/api/mine` | The signed-in voter's own ballot: `{signed_in, votes: {idea_id: {vote: string\|null, note, updated_at}}, suggestions: [{id, title, detail, created_at}]}` (the newest 50 suggestions). `Cache-Control: private, no-store`, `Vary: Cookie`, never put in the Cache API. Without a valid session it returns `{signed_in: false, votes: {}, suggestions: []}` without querying D1; with one, it is one D1 batch. A cross-site request gets a 403 |
 | GET | `/api/auth/github/start`, `/api/auth/xivauth/start` | Navigations. `?return=` may name the vote page (keeping a numeric `?since=`) or `/admin/`; anything else returns to the vote page. Sets the state cookie and redirects (303) to the provider. A cross-site start is refused |
-| GET | `/api/auth/xivauth/link` | Like start, for a signed-in GitHub voter: asks XIVAuth for the `character` scope only and attaches that character to the GitHub account |
-| GET | `/api/auth/github/callback`, `/api/auth/xivauth/callback` | The registered callback URLs. Checks the state, exchanges the code (with the PKCE verifier), reads the account id (and character), claims an old anonymous ballot, sets the session and redirects to the page with `#signed-in`, `#character-linked` or `#auth-error=<code>` |
+| GET | `/api/auth/xivauth/link` | Like start, for any signed-in voter (GitHub or FFXIV): asks XIVAuth for the `character` scope only and attaches that character to the signed-in account |
+| GET | `/api/auth/github/callback`, `/api/auth/xivauth/callback` | The registered callback URLs. Checks the state, exchanges the code (with the PKCE verifier), reads the account id (or, for a link, the character), claims an old anonymous ballot, sets the session and redirects to the page with `#signed-in`, `#character-linked` or `#auth-error=<code>` |
 | GET | `/api/auth/me` | `{signed_in: false, legacy_ballot}` without D1, or `{signed_in: true, provider, character: {name, world, portrait_url}\|null, admin}` (one query). Renews a session with under 15 days left |
 | POST | `/api/auth/logout` | Same-origin only. Clears the session cookie; no D1 |
 | POST | `/api/auth/character/forget` | Same-origin, needs a session. Deletes the voter's character row; votes stay |
@@ -161,7 +163,8 @@ not retried; a refused vote goes back to what the server has, and typed note tex
 
 Voting, notes and suggestions need a sign-in with **GitHub** (the GitHub App
 `ghostty-for-ffxiv-vote`, user-to-server OAuth, no repository permissions) or **FFXIV** through
-[XIVAuth](https://xivauth.net) (a confidential client with the `user` and `character` scopes). The
+[XIVAuth](https://xivauth.net) (a confidential client; sign-in asks for the `user` scope, linking a
+character for `character`). The
 tallies stay public and cached without any sign-in.
 
 **One ballot per account.** A signed-in voter's key is `sha256hex('provider:' + provider_user_id)`,
@@ -176,11 +179,17 @@ SameSite=Lax`) and redirects to the provider. The callback checks the signature,
 state (constant time), exchanges the code with the client secret and verifier, and reads:
 
 - GitHub: `GET https://api.github.com/user` (with `User-Agent`), keeping only `id`.
-- XIVAuth: `GET https://xivauth.net/api/v1/user`, keeping only `id`, and
-  `GET https://xivauth.net/api/v1/characters`, keeping the first character's name, home world,
-  Lodestone id and portrait URL. With the plain `character` scope XIVAuth returns at most the one
-  character the voter picked on its consent screen. If none is picked (or the list fails), sign-in
-  still works and nothing is stored or changed.
+- XIVAuth sign-in (scope `user`): `GET https://xivauth.net/api/v1/user`, keeping only `id`. No
+  character is asked for, on purpose: with `character` in the scope, XIVAuth's
+  `OAuth::PreflightCheck` (source at 4bc2440, not observed live) refuses a user with no verified
+  character on its own error page ("You have no verified characters") before consent, and never
+  redirects back, so that visitor could not sign in with FFXIV at all.
+- XIVAuth link (scope `character`): `GET https://xivauth.net/api/v1/characters`, keeping the first
+  character's name, home world, Lodestone id and portrait URL. With the plain `character` scope
+  XIVAuth returns at most the one character the voter picked on its consent screen. If the list is
+  empty, nothing is stored and the page gets `#auth-error=no-character`. A voter with no verified
+  character still hits XIVAuth's preflight page here, and stays on xivauth.net; the page says next
+  to the link button that linking needs a verified character.
 
 The access token is used only inside that callback and then dropped: it is never stored, put in a
 cookie or logged, and no refresh token is asked for. Errors log the provider, stage and HTTP status
@@ -199,15 +208,18 @@ clears the cookie in that browser only.
 the current value as `SESSION_SECRET_PREVIOUS`, set a new `SESSION_SECRET`, and delete
 `SESSION_SECRET_PREVIOUS` after 30 days. To sign everyone out at once, change `SESSION_SECRET` alone.
 
-**Characters.** Signing in with FFXIV records the chosen character in `characters`, keyed by the
-voter key: `lodestone_id`, `name`, `world`, `portrait_url` (kept only if it is `https` on
+**Characters.** Any signed-in voter, GitHub or FFXIV, can add one with **Link an FFXIV
+character**: an XIVAuth authorization that asks only for `character` and attaches it to the
+signed-in account (the state cookie names that account, and the callback refuses if a different
+one is signed in by then). An FFXIV sign-in stores no character by itself, so an FFXIV voter who
+wants one shown links it as a second step. The character goes in `characters`, keyed by the voter
+key: `lodestone_id`, `name`, `world`, `portrait_url` (kept only if it is `https` on
 `*.finalfantasyxiv.com`, else `''`), `first_seen` and `last_seen` (epoch ms; `first_seen` starts
-over when the character changes, `last_seen` moves on each FFXIV sign-in or link). A GitHub voter
-can add one with **Link an FFXIV character**, a second XIVAuth authorization that asks only for
-`character` and attaches it to the GitHub account (the state cookie names that account, and the
-callback refuses if a different one is signed in by then). **Forget my character** deletes the
-row; the ballot stays. The page says next to the buttons: "Signing in with FFXIV shares the
-character you choose (name and world) with the site owner."
+over when the character changes, `last_seen` moves on each link). **Forget my character** deletes
+the row; the ballot stays. Next to the sign-in buttons the page says: "Signing in with FFXIV needs
+an XIVAuth account and shares no character. After signing in you can link one, which needs a
+character verified on XIVAuth." Next to the link button: "Linking needs a character verified on
+XIVAuth, and shares the character you choose (name and world) with the site owner."
 
 **Claiming an old ballot.** Ballots from before sign-in are keyed by the anonymous cookie
 `__Secure-ghostty_voter`, which is no longer handed out. When a browser that still has it signs in,
@@ -229,7 +241,7 @@ each voter's portrait and `name @ world` linking to the Lodestone, their want/ma
 notes and suggestions. Voters without a character appear by the start of their voter key.
 
 **Privacy.** Stored per account: the voter key, the ballot (votes, notes, suggestions, write times
-for the rate limit) and, for FFXIV sign-ins or links, the character above. Not stored: GitHub login
+for the rate limit) and, for voters who link one, the character above. Not stored: GitHub login
 names, emails, XIVAuth user ids, provider tokens, IP addresses or user agents. Character data is
 seen only by the owner. Portraits load from the Lodestone's image host in the owner's (and the
 signed-in voter's own) browser.
@@ -305,7 +317,7 @@ npx wrangler d1 execute ghostty-vote --remote --command \
 # Only if it went wrong: npx wrangler d1 time-travel restore ghostty-vote --bookmark=<bookmark from info>
 
 # Sign-in: add the characters table. Apply it BEFORE deploying the sign-in Worker, which reads
-# and writes that table on FFXIV sign-in, api/auth/me and the admin list. It is additive
+# and writes that table on a character link, api/auth/me and the admin list. It is additive
 # (CREATE TABLE IF NOT EXISTS), leaves every existing table alone and is safe to run again.
 npx wrangler d1 execute ghostty-vote --remote --file migrations/0004_sign_in.sql
 npx wrangler d1 execute ghostty-vote --remote --command \

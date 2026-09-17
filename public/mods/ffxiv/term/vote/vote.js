@@ -519,7 +519,7 @@
     state: 'That sign-in could not be verified. Please try again.',
     provider: 'GitHub or XIVAuth did not answer as expected. Please try again in a moment.',
     'not-configured': 'Sign-in is not set up yet.',
-    'sign-in-first': 'Sign in with GitHub first, then link a character.',
+    'sign-in-first': 'Sign in first, then link a character.',
     'no-character': 'No character was shared, so nothing was linked. Pick a verified character on XIVAuth to link it.',
     refused: 'Start sign-in from the buttons on this page.',
     'bad-request': 'Sign-in failed. Please try again.',
@@ -560,8 +560,9 @@
     const img = $('#who-portrait');
     img.hidden = !(c && c.portrait_url);
     if (c && c.portrait_url) img.src = c.portrait_url; else img.removeAttribute('src');
-    $('#link-character').hidden = me.provider !== 'github' || !!c;
-    $('#link-disclosure').hidden = me.provider !== 'github' || !!c;
+    // Any signed-in voter can link one (an FFXIV sign-in asks XIVAuth for no character).
+    $('#link-character').hidden = !!c;
+    $('#link-disclosure').hidden = !!c;
     $('#forget-character').hidden = !c;
     $('#admin-link').hidden = !me.admin;
   }

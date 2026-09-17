@@ -103,7 +103,10 @@ test('page has no inline script, style or handlers, and renders data only throug
   assert.ok(html.includes('Johnneylee Jack Rollins') && html.includes('https://github.com/Spaceghost'));
   // Sign-in: both buttons, the disclosure next to them, and the character controls.
   for (const id of ['signin-github', 'signin-xivauth', 'logout', 'link-character', 'forget-character']) assert.ok(html.includes(`id="${id}"`), id);
-  assert.ok(html.includes('Signing in with FFXIV shares the character you choose (name and world) with the site owner.'));
+  assert.ok(html.includes('Signing in with FFXIV needs an XIVAuth account and shares no character. After signing in you can link one, which needs a character verified on XIVAuth.'));
+  assert.ok(html.includes('Linking needs a character verified on XIVAuth, and shares the character you choose (name and world) with the site owner.'));
+  // The link button is offered to any signed-in voter without a character, not only GitHub ones.
+  assert.ok(js.includes("$('#link-character').hidden = !!c;") && !/me\.provider !== 'github'/.test(js));
   assert.ok(html.includes('href="/mods/ffxiv/term/vote/api/auth/github/start"') && html.includes('href="/mods/ffxiv/term/vote/api/auth/xivauth/start"'));
   assert.ok(!/No accounts/.test(html), 'the privacy note no longer says there are no accounts');
   for (const endpoint of ["'api/auth/me'", "'auth/logout'", "'auth/character/forget'"]) assert.ok(js.includes(endpoint), endpoint);

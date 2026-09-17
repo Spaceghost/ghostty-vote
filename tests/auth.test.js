@@ -29,7 +29,7 @@ function providers({ githubId = 251370, githubToken = { access_token: 'ghu_testt
     switch (url) {
       case PROVIDER.github.token: return jsonResponse(githubToken);
       case PROVIDER.github.user: return jsonResponse({ login: 'Spaceghost', id: githubId, name: 'Jack', avatar_url: 'x' });
-      case PROVIDER.xivauth.token: return jsonResponse({ access_token: 'xiv-token', token_type: 'Bearer', expires_in: 7200, scope: 'user character', created_at: 1 });
+      case PROVIDER.xivauth.token: return jsonResponse({ access_token: 'xiv-token', token_type: 'Bearer', expires_in: 7200, scope: 'user', created_at: 1 });
       case PROVIDER.xivauth.user: return jsonResponse(xivUser);
       case PROVIDER.xivauth.characters: return jsonResponse(characters);
       default: throw new Error('unexpected fetch ' + url);
@@ -181,81 +181,43 @@ test('callback: provider failures sign nobody in', async () => {
   }
 });
 
-test('XIVAuth: sign-in stores the chosen character and signs in as xivauth:<user id>', async () => {
+test('XIVAuth: sign-in asks for `user` only, reads no character and signs in as xivauth:<user id>', async () => {
   const t = setup();
-  const p = providers();
+  // The character list would fail if it were asked for: sign-in must not depend on it.
+  const p = providers({ characters: [], fail: { [PROVIDER.xivauth.characters]: () => jsonResponse({ error: 'forbidden' }, 403) } });
   t.useFetch(p.fetcher);
   const { location, callback, set } = await signIn(t, 'xivauth');
   const q = Object.fromEntries(location.searchParams);
   assert.equal(location.origin + location.pathname, 'https://xivauth.net/oauth/authorize');
   assert.equal(q.response_type, 'code');
-  assert.equal(q.scope, 'user character');
+  // With `character` in the scope, XIVAuth's preflight stops voters without a verified
+  // character on its own page and never comes back here.
+  assert.equal(q.scope, 'user');
   assert.equal(q.client_id, '3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU');
   assert.equal(q.redirect_uri, ORIGIN + BASE + '/api/auth/xivauth/callback');
   assert.equal(q.code_challenge_method, 'S256');
 
-  const tokenCall = p.calls.find((c) => c.url === PROVIDER.xivauth.token);
+  assert.deepEqual(p.calls.map((c) => c.url), [PROVIDER.xivauth.token, PROVIDER.xivauth.user], 'no character lookup on sign-in');
+  const [tokenCall, userCall] = p.calls;
   const form = Object.fromEntries(new URLSearchParams(tokenCall.body));
   assert.equal(form.grant_type, 'authorization_code');
   assert.equal(form.client_id, q.client_id);
   assert.equal(form.client_secret, SECRETS.XIVAUTH_CLIENT_SECRET);
   assert.equal(form.redirect_uri, q.redirect_uri);
   assert.equal(sha256b64url(form.code_verifier), q.code_challenge);
-  for (const url of [PROVIDER.xivauth.user, PROVIDER.xivauth.characters]) {
-    const c = p.calls.find((x) => x.url === url);
-    assert.equal(c.headers.get('authorization'), 'Bearer xiv-token');
-    assert.equal(c.headers.get('accept'), 'application/json');
-  }
+  assert.equal(userCall.headers.get('authorization'), 'Bearer xiv-token');
+  assert.equal(userCall.headers.get('accept'), 'application/json');
 
   assert.equal(fragment(callback), '#signed-in');
   const cookie = `${SESSION_COOKIE}=${set[SESSION_COOKIE].value}`;
-  const key = sha256hex('xivauth:' + XIV_USER);
-  assert.equal(keyOfCookie(cookie), key);
-  const row = { ...t.env.DB.raw.prepare('SELECT * FROM characters').get() };
-  assert.ok(row.first_seen > 0 && row.first_seen === row.last_seen);
-  assert.deepEqual({ ...row, first_seen: 0, last_seen: 0 }, {
-    voter: key, lodestone_id: '12345678', name: 'Wyn Ghostty', world: 'Gilgamesh', portrait_url: PORTRAIT, first_seen: 0, last_seen: 0,
-  });
-  const dump = JSON.stringify(t.env.DB.raw.prepare("SELECT * FROM characters").all()) + JSON.stringify(t.env.DB.raw.prepare("SELECT * FROM votes").all());
-  assert.ok(!dump.includes(XIV_USER) && !dump.includes('xiv-token'), 'neither the XIVAuth user id nor the token is stored');
+  assert.equal(keyOfCookie(cookie), sha256hex('xivauth:' + XIV_USER));
+  assert.equal(t.env.DB.stats.calls, 0, 'an XIVAuth sign-in without an old ballot never touches D1');
+  assert.equal(t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM characters').get().n, 0);
+  assert.ok(!Buffer.from(set[SESSION_COOKIE].value.split('.')[1], 'base64url').toString().includes(XIV_USER), 'no user id in the cookie');
 
-  // me shows the signed-in voter's own character, and it costs one query.
-  const calls = t.env.DB.stats.calls;
   const me = await t.call(API + 'auth/me', { cookie });
-  assert.equal(t.env.DB.stats.calls - calls, 1);
-  assert.equal(me.headers.get('cache-control'), 'private, no-store');
-  assert.deepEqual(await me.json(), {
-    signed_in: true, provider: 'xivauth', character: { name: 'Wyn Ghostty', world: 'Gilgamesh', portrait_url: PORTRAIT }, admin: false,
-  });
-
-  // Signing in again: the same character keeps first_seen; another one starts over.
-  t.env.DB.raw.exec('UPDATE characters SET first_seen = 5, last_seen = 5');
-  await signIn(t, 'xivauth');
-  let again = t.env.DB.raw.prepare('SELECT first_seen, last_seen FROM characters').get();
-  assert.equal(again.first_seen, 5);
-  assert.ok(again.last_seen > 5);
-  t.useFetch(providers({ characters: [{ ...CHARACTER, lodestone_id: '87654321', name: 'Other Alt', home_world: 'Ravana' }] }).fetcher);
-  await signIn(t, 'xivauth');
-  again = t.env.DB.raw.prepare('SELECT lodestone_id, name, world, first_seen FROM characters').get();
-  assert.deepEqual({ ...again, first_seen: again.first_seen > 5 }, { lodestone_id: '87654321', name: 'Other Alt', world: 'Ravana', first_seen: true });
-  assert.equal(t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM characters').get().n, 1, 'one character per voter');
-});
-
-test('XIVAuth: no character shared, or the character list failing, still signs in', async () => {
-  for (const opts of [{ characters: [] }, { fail: { [PROVIDER.xivauth.characters]: () => jsonResponse({ error: 'forbidden' }, 403) } }]) {
-    const t = setup();
-    t.useFetch(providers(opts).fetcher);
-    const original = console.error;
-    console.error = () => {};
-    try {
-      const { callback, set } = await signIn(t, 'xivauth');
-      assert.equal(fragment(callback), '#signed-in');
-      assert.ok(set[SESSION_COOKIE].value);
-    } finally {
-      console.error = original;
-    }
-    assert.equal(t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM characters').get().n, 0);
-  }
+  assert.deepEqual(await me.json(), { signed_in: true, provider: 'xivauth', character: null, admin: false });
+  assert.equal((await t.vote({ idea_id: 'ops-weather', vote: 'want' }, { cookie })).status, 200);
 });
 
 test('character data is reduced and checked before it is stored', () => {
@@ -283,32 +245,91 @@ test('link: a GitHub voter attaches a character with a character-only XIVAuth au
   assert.equal(fragment(callback), '#character-linked');
   assert.ok(!(SESSION_COOKIE in set), 'the GitHub session is unchanged');
   assert.deepEqual(p.calls.map((c) => c.url), [PROVIDER.xivauth.token, PROVIDER.xivauth.characters], 'no user lookup for a link');
-  const row = t.env.DB.raw.prepare('SELECT voter, name FROM characters').get();
-  assert.deepEqual({ ...row }, { voter: sha256hex('github:777'), name: 'Wyn Ghostty' });
+  assert.equal(p.calls[1].headers.get('authorization'), 'Bearer xiv-token');
+  assert.equal(p.calls[1].headers.get('accept'), 'application/json');
+  const row = { ...t.env.DB.raw.prepare('SELECT * FROM characters').get() };
+  assert.ok(row.first_seen > 0 && row.first_seen === row.last_seen);
+  assert.deepEqual({ ...row, first_seen: 0, last_seen: 0 }, {
+    voter: sha256hex('github:777'), lodestone_id: '12345678', name: 'Wyn Ghostty', world: 'Gilgamesh', portrait_url: PORTRAIT, first_seen: 0, last_seen: 0,
+  });
   const me = await (await t.call(API + 'auth/me', { cookie: github })).json();
   assert.equal(me.provider, 'github');
   assert.equal(me.character.name, 'Wyn Ghostty');
 
   // The state is bound to the account: another account's session cannot finish it.
   const again = await signIn(t, 'xivauth', { mode: 'link', cookie: github, query: {} });
-  const intruder = await t.signedIn('github', '888');
-  let res = await t.call(API + 'auth/xivauth/callback?code=c&state=' + again.state, { cookie: `${intruder}; ${STATE_COOKIE}=${again.stateSet.value}` });
-  assert.equal(fragment(res), '#auth-error=sign-in-first');
-  res = await t.call(API + 'auth/xivauth/callback?code=c&state=' + again.state, { cookie: `${STATE_COOKIE}=${again.stateSet.value}` });
+  for (const intruder of [await t.signedIn('github', '888'), await t.signedIn('xivauth', XIV_USER)]) {
+    const res = await t.call(API + 'auth/xivauth/callback?code=c&state=' + again.state, { cookie: `${intruder}; ${STATE_COOKIE}=${again.stateSet.value}` });
+    assert.equal(fragment(res), '#auth-error=sign-in-first');
+  }
+  const res = await t.call(API + 'auth/xivauth/callback?code=c&state=' + again.state, { cookie: `${STATE_COOKIE}=${again.stateSet.value}` });
   assert.equal(fragment(res), '#auth-error=sign-in-first', 'signed out meanwhile');
-  assert.equal(t.env.DB.raw.prepare("SELECT COUNT(*) AS n FROM characters WHERE voter = ?").get(sha256hex('github:888')).n, 0);
+  assert.equal(t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM characters').get().n, 1, 'nothing linked to the intruders');
 
-  // Linking needs a GitHub session to start with.
-  let start = await signIn(t, 'xivauth', { mode: 'link' });
+  // Linking needs a session to start with.
+  const start = await signIn(t, 'xivauth', { mode: 'link' });
   assert.equal(start.location.hash, '#auth-error=sign-in-first');
   assert.ok(!setCookies(start.start)[STATE_COOKIE]);
-  start = await signIn(t, 'xivauth', { mode: 'link', cookie: await t.signedIn('xivauth', XIV_USER) });
-  assert.equal(start.location.hash, '#auth-error=refused');
 
   // No character chosen: nothing linked.
   t.useFetch(providers({ characters: [] }).fetcher);
   const empty = await signIn(t, 'xivauth', { mode: 'link', cookie: await t.signedIn('github', '999') });
   assert.equal(fragment(empty.callback), '#auth-error=no-character');
+  assert.equal(t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM characters').get().n, 1);
+});
+
+test('link: an FFXIV voter can link a character after signing in; relinking keeps or restarts first_seen', async () => {
+  const t = setup();
+  t.useFetch(providers().fetcher);
+  const { set } = await signIn(t, 'xivauth');
+  const cookie = `${SESSION_COOKIE}=${set[SESSION_COOKIE].value}`;
+  const key = sha256hex('xivauth:' + XIV_USER);
+
+  const p = providers();
+  t.useFetch(p.fetcher);
+  const link = await signIn(t, 'xivauth', { mode: 'link', cookie });
+  assert.equal(link.location.searchParams.get('scope'), 'character');
+  assert.equal(fragment(link.callback), '#character-linked');
+  assert.ok(!(SESSION_COOKIE in link.set), 'the FFXIV session is unchanged');
+  assert.deepEqual(p.calls.map((c) => c.url), [PROVIDER.xivauth.token, PROVIDER.xivauth.characters]);
+  assert.equal(t.env.DB.raw.prepare('SELECT voter FROM characters').get().voter, key);
+  const dump = JSON.stringify(t.env.DB.raw.prepare('SELECT * FROM characters').all()) + JSON.stringify(t.env.DB.raw.prepare('SELECT * FROM votes').all());
+  assert.ok(!dump.includes(XIV_USER) && !dump.includes('xiv-token'), 'neither the XIVAuth user id nor the token is stored');
+
+  // me shows the signed-in voter's own character, and it costs one query.
+  const calls = t.env.DB.stats.calls;
+  const me = await t.call(API + 'auth/me', { cookie });
+  assert.equal(t.env.DB.stats.calls - calls, 1);
+  assert.equal(me.headers.get('cache-control'), 'private, no-store');
+  assert.deepEqual(await me.json(), {
+    signed_in: true, provider: 'xivauth', character: { name: 'Wyn Ghostty', world: 'Gilgamesh', portrait_url: PORTRAIT }, admin: false,
+  });
+
+  // Signing in again leaves the character alone; relinking the same one keeps first_seen, another starts over.
+  t.env.DB.raw.exec('UPDATE characters SET first_seen = 5, last_seen = 5');
+  await signIn(t, 'xivauth');
+  assert.deepEqual({ ...t.env.DB.raw.prepare('SELECT first_seen, last_seen FROM characters').get() }, { first_seen: 5, last_seen: 5 });
+  await signIn(t, 'xivauth', { mode: 'link', cookie });
+  let again = t.env.DB.raw.prepare('SELECT first_seen, last_seen FROM characters').get();
+  assert.equal(again.first_seen, 5);
+  assert.ok(again.last_seen > 5);
+  t.useFetch(providers({ characters: [{ ...CHARACTER, lodestone_id: '87654321', name: 'Other Alt', home_world: 'Ravana' }] }).fetcher);
+  await signIn(t, 'xivauth', { mode: 'link', cookie });
+  again = t.env.DB.raw.prepare('SELECT lodestone_id, name, world, first_seen FROM characters').get();
+  assert.deepEqual({ ...again, first_seen: again.first_seen > 5 }, { lodestone_id: '87654321', name: 'Other Alt', world: 'Ravana', first_seen: true });
+  assert.equal(t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM characters').get().n, 1, 'one character per voter');
+
+  // A character list that fails is a provider error, and nothing changes.
+  t.useFetch(providers({ fail: { [PROVIDER.xivauth.characters]: () => jsonResponse({ error: 'forbidden' }, 403) } }).fetcher);
+  const original = console.error;
+  console.error = () => {};
+  try {
+    const failed = await signIn(t, 'xivauth', { mode: 'link', cookie });
+    assert.equal(fragment(failed.callback), '#auth-error=provider');
+  } finally {
+    console.error = original;
+  }
+  assert.equal(t.env.DB.raw.prepare('SELECT name FROM characters').get().name, 'Other Alt');
 });
 
 test('claim: signing in moves the anonymous ballot onto the account, account rows win, tallies stay exact', async () => {
@@ -372,7 +393,7 @@ test('claim statements on their own: all-or-nothing, and a no-op for the same ke
   assert.equal(claimStatements(env.DB, 'a'.repeat(64), 'b'.repeat(64)).length, 4);
 });
 
-test('XIVAuth sign-in with an old anonymous ballot claims it and stores the character in the same batch', async () => {
+test('XIVAuth sign-in with an old anonymous ballot claims it in one batch', async () => {
   const t = setup();
   t.useFetch(providers().fetcher);
   const token = 'X'.repeat(43);
@@ -383,7 +404,7 @@ test('XIVAuth sign-in with an old anonymous ballot claims it and stores the char
   assert.equal(t.env.DB.stats.calls - calls, 1);
   const key = sha256hex('xivauth:' + XIV_USER);
   assert.equal(db.prepare('SELECT voter FROM votes').get().voter, key);
-  assert.equal(db.prepare('SELECT voter FROM characters').get().voter, key);
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM characters').get().n, 0);
   assert.equal(set[COOKIE_NAME].value, '');
   talliesMatchVotes(db);
 });
@@ -443,6 +464,7 @@ test('logout clears the session cookie (same-origin POST only); forget deletes t
   t.useFetch(providers().fetcher);
   const { set } = await signIn(t, 'xivauth');
   const cookie = `${SESSION_COOKIE}=${set[SESSION_COOKIE].value}`;
+  assert.equal(fragment((await signIn(t, 'xivauth', { mode: 'link', cookie })).callback), '#character-linked');
   assert.equal((await t.vote({ idea_id: 'ops-weather', vote: 'want', note: 'keep me' }, { cookie })).status, 200);
 
   assert.equal((await t.call(API + 'auth/character/forget', { method: 'POST', body: {}, cookie, headers: { origin: 'https://evil.example' } })).status, 403);
@@ -471,6 +493,7 @@ test('admin/voters: owner only, never cached, with characters, counts, notes and
   t.useFetch(providers().fetcher);
   const { set } = await signIn(t, 'xivauth');
   const player = `${SESSION_COOKIE}=${set[SESSION_COOKIE].value}`;
+  await signIn(t, 'xivauth', { mode: 'link', cookie: player });
   const owner = await t.signedIn('github', '251370');
   const quiet = await t.signedIn('github', '31337');
   const [a, b] = db.prepare('SELECT id FROM ideas ORDER BY sort_order LIMIT 2').all().map((r) => r.id);

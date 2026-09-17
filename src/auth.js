@@ -3,9 +3,9 @@
 //
 // Each provider's access token is used during its callback only (to read the account
 // id and, for XIVAuth, the character the voter chose) and then dropped: nothing about it
-// is stored or logged. D1 cost: a GitHub sign-in touches D1 only to move an anonymous
-// ballot; an XIVAuth sign-in or link is one batch; me is one query when signed in and
-// none otherwise; logout none; forget one; the admin list one batch.
+// is stored or logged. D1 cost: a sign-in touches D1 only to move an anonymous ballot
+// (one batch); a link is one statement; me is one query when signed in and none
+// otherwise; logout none; forget one; the admin list one batch.
 import {
   API_PREFIX, BASE, COOKIE_NAME, LIMITS, PRIVATE, clearVoterCookie, cleanText, isSameOrigin, json, randomToken,
   voterKey, voterToken,
@@ -33,8 +33,11 @@ export const PROVIDER = Object.freeze({
     characters: 'https://xivauth.net/api/v1/characters',
     id: 'XIVAUTH_CLIENT_ID',
     secret: 'XIVAUTH_CLIENT_SECRET',
-    // Signing in reads the account id and the character; linking needs only the character.
-    scope: { signin: 'user character', link: 'character' },
+    // Sign-in asks for `user` only. With `character` in the scope, XIVAuth's preflight
+    // (OAuth::PreflightCheck) refuses anyone without a verified character on its own error
+    // page, which never comes back to the callback. The character is a separate, optional
+    // link from a signed-in session, where that refusal is expected.
+    scope: { signin: 'user', link: 'character' },
   },
 });
 
@@ -62,7 +65,6 @@ export async function startAuth(request, env, url, provider, mode) {
   if (mode === 'link') {
     const session = await readSession(request, env);
     if (!session) return redirect(pageUrl(url, back, 'auth-error=sign-in-first'));
-    if (session.p !== 'github') return redirect(pageUrl(url, back, 'auth-error=refused'));
     state.k = session.k;
   }
   const { verifier, challenge } = await pkcePair();
@@ -216,26 +218,15 @@ export async function finishAuth(request, env, url, provider, fetcher) {
   if (state.m === 'link') {
     // The account that started the link must still be the one signed in.
     session = await readSession(request, env);
-    if (!session || session.p !== 'github' || session.k !== state.k) return fail('sign-in-first');
+    if (!session || session.k !== state.k) return fail('sign-in-first');
   }
 
   const now = Date.now();
   let userId = null, character = null;
   try {
     const token = await exchangeCode(fetcher, env, provider, url, code, state.cv);
-    if (provider === 'github') {
-      userId = await githubUserId(fetcher, token);
-    } else if (state.m === 'link') {
-      character = await xivauthCharacter(fetcher, token);
-    } else {
-      // The character list is a bonus: sign-in still works if only it fails.
-      const [id, picked] = await Promise.all([
-        xivauthUserId(fetcher, token),
-        xivauthCharacter(fetcher, token).catch((err) => { logProviderError(provider, err); return null; }),
-      ]);
-      userId = id;
-      character = picked;
-    }
+    if (state.m === 'link') character = await xivauthCharacter(fetcher, token);
+    else userId = provider === 'github' ? await githubUserId(fetcher, token) : await xivauthUserId(fetcher, token);
   } catch (err) {
     logProviderError(provider, err);
     return fail('provider');
@@ -251,7 +242,6 @@ export async function finishAuth(request, env, url, provider, fetcher) {
   const statements = [];
   const anon = voterToken(request.headers.get('cookie'));
   if (anon) statements.push(...claimStatements(env.DB, await voterKey(anon), key));
-  if (character) statements.push(upsertCharacter(env.DB, key, character, now));
   if (statements.length) await env.DB.batch(statements);
 
   const cookies = [clearStateCookie(), await sessionCookie(env, { p: provider, k: key })];
