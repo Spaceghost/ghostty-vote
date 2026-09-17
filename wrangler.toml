@@ -32,3 +32,11 @@ binding = "DB"
 database_name = "ghostty-vote"
 database_id = "ccbfb295-deb8-49ec-82c2-04a0b82ed4f3"
 migrations_dir = "migrations"
+
+# Non-secret sign-in settings. The secrets are set with `wrangler secret put` and never
+# live in this file: GITHUB_CLIENT_SECRET, XIVAUTH_CLIENT_SECRET, SESSION_SECRET (and,
+# only while rotating it, SESSION_SECRET_PREVIOUS).
+[vars]
+GITHUB_CLIENT_ID = "Iv23liYsdX6oOuO47ulv"          # GitHub App ghostty-for-ffxiv-vote (no repository permissions)
+XIVAUTH_CLIENT_ID = "3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU"
+ADMIN_ACCOUNTS = "github:251370"                   # 'provider:user_id', comma-separated; github:251370 is Spaceghost

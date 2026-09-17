@@ -1,17 +1,38 @@
-// The Worker's whole job: POST api/vote, POST api/suggest, GET api/tallies and GET api/mine.
+// The Worker's whole job: the ballot API (vote, suggest, tallies, mine), sign-in
+// (auth/*, in auth.js) and the owner's voter list (admin/voters).
 // Everything else on the route is a static asset served without invoking this code.
 // D1 budget: a write costs one read query plus one batch; a tally read costs one
 // query per edge location per minute (the rest are answered from the Cache API);
-// api/mine costs one batch, and nothing at all for a request without a voter cookie.
+// api/mine costs one batch, and nothing at all for a request without a session.
+// Writing needs a signed-in session (session.js); the voter is its account key.
+import { getAdminVoters, getMe, finishAuth, postForgetCharacter, postLogout, signInRequired, startAuth } from './auth.js';
 import {
-  API_PREFIX, LIMITS, isSameOrigin, json, randomToken, readJsonBody, route,
-  validateSuggestion, validateVote, voterCookie, voterKey, voterToken,
+  API_PREFIX, LIMITS, PRIVATE, isSameOrigin, json, readJsonBody, route, validateSuggestion, validateVote,
 } from './lib.js';
+import { readSession } from './session.js';
 
 const WRITES = { vote: [validateVote, postVote], suggest: [validateSuggestion, postSuggest] };
 
-// `cache` is the Cache API store (caches.default on Cloudflare); tests pass their own.
-export async function handle(request, env, ctx, cache = globalThis.caches?.default) {
+// name -> (request, env, ctx, url, cache, fetcher) => Response
+const HANDLERS = {
+  tallies: (request, env, ctx, url, cache) => getTallies(env, ctx, url, cache),
+  mine: (request, env, ctx, url) => getMine(request, env, url),
+  vote: (request, env, ctx, url) => serveWrite(request, env, url, 'vote'),
+  suggest: (request, env, ctx, url) => serveWrite(request, env, url, 'suggest'),
+  'auth/github/start': (request, env, ctx, url) => startAuth(request, env, url, 'github', 'signin'),
+  'auth/xivauth/start': (request, env, ctx, url) => startAuth(request, env, url, 'xivauth', 'signin'),
+  'auth/xivauth/link': (request, env, ctx, url) => startAuth(request, env, url, 'xivauth', 'link'),
+  'auth/github/callback': (request, env, ctx, url, cache, fetcher) => finishAuth(request, env, url, 'github', fetcher),
+  'auth/xivauth/callback': (request, env, ctx, url, cache, fetcher) => finishAuth(request, env, url, 'xivauth', fetcher),
+  'auth/me': (request, env, ctx, url) => getMe(request, env, url),
+  'auth/logout': (request, env, ctx, url) => postLogout(request, env, url),
+  'auth/character/forget': (request, env, ctx, url) => postForgetCharacter(request, env, url),
+  'admin/voters': (request, env, ctx, url) => getAdminVoters(request, env, url),
+};
+
+// `cache` is the Cache API store (caches.default on Cloudflare) and `fetcher` the fetch
+// used to reach GitHub and XIVAuth; tests pass their own.
+export async function handle(request, env, ctx, cache = globalThis.caches?.default, fetcher = (...args) => fetch(...args)) {
   const url = new URL(request.url);
   const r = route(url.pathname);
   if (r.kind !== 'api') {
@@ -21,9 +42,7 @@ export async function handle(request, env, ctx, cache = globalThis.caches?.defau
     return json({ error: 'method_not_allowed' }, { status: 405, headers: { allow: r.method } });
   }
   try {
-    if (r.name === 'tallies') return await getTallies(env, ctx, url, cache);
-    if (r.name === 'mine') return await getMine(request, env, url);
-    return await serveWrite(request, env, url, r.name);
+    return await HANDLERS[r.name](request, env, ctx, url, cache, fetcher);
   } catch (err) {
     console.error('ghostty-vote:', err && err.stack ? err.stack : String(err));
     return json({ error: 'server_error', message: 'Something went wrong; try again shortly.' }, { status: 500 });
@@ -50,19 +69,18 @@ async function getTallies(env, ctx, url, cache) {
   return res;
 }
 
-// GET api/mine -> the requesting voter's own ballot and newest suggestions, so the page
-// can show them again on any load. Private to the cookie: never cached (not even by
+// GET api/mine -> the signed-in voter's own ballot and newest suggestions, so the page
+// can show them again on any load. Private to the session: never cached (not even by
 // the browser) and never read from or written to the tallies cache.
-const PRIVATE = { 'cache-control': 'private, no-store', vary: 'Cookie' };
-
 async function getMine(request, env, url) {
   if (!isSameOrigin(request, url)) {
     return json({ error: 'forbidden', message: 'Cross-site request refused.' }, { status: 403, headers: PRIVATE });
   }
-  const mine = { votes: {}, suggestions: [] };
-  const token = voterToken(request.headers.get('cookie'));
-  if (!token) return json(mine, { headers: PRIVATE }); // no cookie, no ballot: D1 is not asked
-  const voter = await voterKey(token);
+  const mine = { signed_in: false, votes: {}, suggestions: [] };
+  const session = await readSession(request, env);
+  if (!session) return json(mine, { headers: PRIVATE }); // no session, no ballot: D1 is not asked
+  mine.signed_in = true;
+  const voter = session.k;
   const [votes, suggestions] = await env.DB.batch([
     env.DB.prepare('SELECT idea_id, vote, note, updated_at FROM votes WHERE voter = ?').bind(voter),
     env.DB.prepare(
@@ -78,17 +96,14 @@ async function getMine(request, env, url) {
 
 async function serveWrite(request, env, url, name) {
   if (!isSameOrigin(request, url)) return json({ error: 'forbidden', message: 'Cross-site request refused.' }, { status: 403 });
+  const session = await readSession(request, env);
+  if (!session) return signInRequired();
   const body = await readJsonBody(request);
   if (!body.ok) return json({ error: body.error, message: body.message }, { status: body.status });
   const [validate, write] = WRITES[name];
   const input = validate(body.value);
   if (!input.ok) return json({ error: input.error, message: input.message }, { status: input.status });
-
-  const token = voterToken(request.headers.get('cookie')) || randomToken();
-  const res = await write(env, await voterKey(token), input.value, Date.now());
-  // The anonymous ID is only handed out (and refreshed) alongside a stored write.
-  if (res.ok) res.headers.append('set-cookie', voterCookie(token));
-  return res;
+  return write(env, session.k, input.value, Date.now());
 }
 
 // Every precheck query starts with the voter's writes in the rate-limit window.

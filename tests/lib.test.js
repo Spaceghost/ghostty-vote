@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   API, BASE, COOKIE_NAME, LIMITS, cleanText, isJsonContentType, isSameOrigin, parseCookies, randomToken,
-  readJsonBody, route, validateSuggestion, validateVote, voterCookie, voterKey, voterToken,
+  readJsonBody, route, validateSuggestion, validateVote, clearVoterCookie, fromBase64url, base64url, voterKey, voterToken,
 } from '../src/lib.js';
 import { sqlString, validateCatalogue } from '../scripts/seed-lib.js';
 
@@ -10,33 +10,42 @@ const post = (body, headers = {}) => new Request('https://spacegho.st' + BASE + 
   method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body,
 });
 
-test('route matches only the four API paths', () => {
+test('route matches only the API paths', () => {
   assert.deepEqual(route(BASE + '/api/vote'), { kind: 'api', name: 'vote', method: 'POST' });
   assert.deepEqual(route(BASE + '/api/suggest'), { kind: 'api', name: 'suggest', method: 'POST' });
   assert.deepEqual(route(BASE + '/api/tallies'), { kind: 'api', name: 'tallies', method: 'GET' });
   assert.deepEqual(route(BASE + '/api/mine'), { kind: 'api', name: 'mine', method: 'GET' });
-  assert.deepEqual(Object.keys(API).sort(), ['mine', 'suggest', 'tallies', 'vote']);
+  assert.deepEqual(route(BASE + '/api/auth/github/start'), { kind: 'api', name: 'auth/github/start', method: 'GET' });
+  assert.deepEqual(route(BASE + '/api/auth/logout'), { kind: 'api', name: 'auth/logout', method: 'POST' });
+  assert.deepEqual(route(BASE + '/api/admin/voters'), { kind: 'api', name: 'admin/voters', method: 'GET' });
+  assert.deepEqual(Object.keys(API).sort(), [
+    'admin/voters', 'auth/character/forget', 'auth/github/callback', 'auth/github/start', 'auth/logout', 'auth/me',
+    'auth/xivauth/callback', 'auth/xivauth/link', 'auth/xivauth/start', 'mine', 'suggest', 'tallies', 'vote',
+  ]);
   // The page and the static files are assets, never Worker routes.
   for (const p of [BASE, BASE + '/', BASE + '/index.html', BASE + '/vote.js', BASE + '/ideas.json', BASE + '/version.json']) {
     assert.equal(route(p).kind, 'none', p);
   }
   // Dropped endpoints and near misses.
-  for (const p of ['ideas', 'version', 'nope', 'vote/', 'mine/', 'mine.json', 'tallies.json', 'constructor', '__proto__', 'toString']) {
+  for (const p of ['ideas', 'version', 'nope', 'vote/', 'mine/', 'mine.json', 'tallies.json', 'constructor', '__proto__', 'toString',
+    'auth', 'auth/', 'auth/github', 'auth/github/start/', 'auth/gitlab/start', 'auth/me/', 'admin', 'admin/', 'admin/voters/', 'auth/github/../me']) {
     assert.equal(route(BASE + '/api/' + p).kind, 'none', p);
   }
   assert.equal(route('/mods/ffxiv/term/voter/api/vote').kind, 'none');
   assert.equal(route('/api/vote').kind, 'none');
 });
 
-test('cookies: parse, token shape, attributes', () => {
+test('cookies: parse, token shape, clearing the anonymous cookie', () => {
   const token = randomToken();
   assert.match(token, /^[A-Za-z0-9_-]{43}$/);
   assert.equal(voterToken(`a=1; ${COOKIE_NAME}=${token}; b=2`), token);
   assert.equal(voterToken(`${COOKIE_NAME}=short`), null);
   assert.equal(voterToken(undefined), null);
   assert.deepEqual({ ...parseCookies('x=1; =bad; y = 2 ; x=3') }, { x: '1', y: '2' });
-  const c = voterCookie(token);
-  for (const part of ['HttpOnly', 'Secure', 'SameSite=Lax', `Path=${BASE}`]) assert.ok(c.includes(part), part);
+  assert.equal(clearVoterCookie(), `${COOKIE_NAME}=; Path=${BASE}; Max-Age=0; HttpOnly; Secure; SameSite=Lax`);
+  const bytes = new Uint8Array([0, 1, 250, 251, 252, 253, 254, 255]);
+  assert.deepEqual(fromBase64url(base64url(bytes)), bytes);
+  for (const bad of ['a', 'ab+c', 'ab/c', 'abc=', null]) assert.equal(fromBase64url(bad), null, String(bad));
 });
 
 test('voterKey is a stable sha-256 hex digest, not the token', async () => {

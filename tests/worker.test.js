@@ -1,79 +1,26 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { handle } from '../src/app.js';
 import worker from '../src/worker.js';
-import { BASE, COOKIE_NAME, LIMITS, voterKey } from '../src/lib.js';
+import { BASE, LIMITS } from '../src/lib.js';
 import { buildSeedSql } from '../scripts/seed-lib.js';
 import { createD1 } from './d1-shim.js';
+import { API, MIGRATIONS, ORIGIN, SEED, allTallies, keyOfCookie, read, setup, sha256hex, talliesMatchVotes } from './harness.js';
 
-const read = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const OPEN_IDEAS = JSON.parse(read('data/catalogue.json')).categories.reduce((n, c) => n + c.ideas.length, 0);
-const MIGRATIONS = [
-  read('migrations/0001_init.sql'), read('migrations/0002_drop_site_assets.sql'), read('migrations/0003_note_only_votes.sql'),
-];
-const SEED = read('seed/seed.sql');
-const ORIGIN = 'https://spacegho.st';
-const API = BASE + '/api/';
-
-// Stand-in for caches.default: honours nothing but presence, which is all the Worker relies on.
-function memoryCache() {
-  const store = new Map();
-  return {
-    store,
-    async match(req) { return store.get(req.url)?.clone(); },
-    async put(req, res) { store.set(req.url, res); },
-  };
-}
-
-function setup() {
-  const env = { DB: createD1(...MIGRATIONS, SEED) };
-  const cache = memoryCache();
-  const waits = [];
-  const ctx = { waitUntil: (p) => waits.push(p) };
-  const call = async (path, { method = 'GET', body, cookie, headers = {} } = {}) => {
-    const res = await handle(new Request(ORIGIN + path, {
-      method,
-      headers: {
-        ...(body !== undefined ? { 'content-type': 'application/json', origin: ORIGIN } : {}),
-        ...(cookie ? { cookie } : {}),
-        ...headers,
-      },
-      body: body === undefined ? undefined : typeof body === 'string' ? body : JSON.stringify(body),
-    }), env, ctx, cache);
-    await Promise.all(waits.splice(0));
-    return res;
-  };
-  const vote = (body, opts = {}) => call(API + 'vote', { method: 'POST', body, ...opts });
-  const mine = (opts = {}) => call(API + 'mine', opts);
-  return { env, cache, call, vote, mine };
-}
-
-const cookieFrom = (res) => (res.headers.get('set-cookie') || '').split(';')[0];
-
-// Every tally recounted from the votes table, next to what the triggers maintain.
-function talliesMatchVotes(db) {
-  const rows = db.prepare(
-    `SELECT id, want, maybe, skip,
-            (SELECT COUNT(*) FROM votes WHERE idea_id = ideas.id AND vote = 'want') AS cw,
-            (SELECT COUNT(*) FROM votes WHERE idea_id = ideas.id AND vote = 'maybe') AS cm,
-            (SELECT COUNT(*) FROM votes WHERE idea_id = ideas.id AND vote = 'skip') AS cs
-     FROM ideas`,
-  ).all();
-  const off = rows.filter((r) => r.want !== r.cw || r.maybe !== r.cm || r.skip !== r.cs).map((r) => r.id);
-  assert.deepEqual(off, [], 'tallies match the votes table');
-}
-const allTallies = (db) => db.prepare('SELECT id, want, maybe, skip FROM ideas ORDER BY id').all().map((r) => ({ ...r }));
 
 test('only the API reaches the Worker; page paths and dropped endpoints are 404', async () => {
   const { call, env } = setup();
-  for (const p of [BASE, BASE + '/', BASE + '/index.html', BASE + '/ideas.json', API + 'ideas', API + 'mine/', API + 'version', '/mods/ffxiv/term/voter']) {
+  for (const p of [BASE, BASE + '/', BASE + '/index.html', BASE + '/admin/', BASE + '/ideas.json', API + 'ideas', API + 'mine/', API + 'version', API + 'auth', API + 'auth/', API + 'auth/github', API + 'admin/', '/mods/ffxiv/term/voter']) {
     assert.equal((await call(p)).status, 404, p);
   }
   assert.equal(env.DB.stats.calls, 0, '404s never touch D1');
   assert.equal((await call(API + 'vote')).status, 405);
   assert.equal((await call(API + 'tallies', { method: 'POST', body: {} })).headers.get('allow'), 'GET');
   assert.equal((await call(API + 'mine', { method: 'POST', body: {} })).headers.get('allow'), 'GET');
+  assert.equal((await call(API + 'auth/logout')).headers.get('allow'), 'POST');
+  assert.equal((await call(API + 'auth/github/callback', { method: 'POST', body: {} })).headers.get('allow'), 'GET');
+  assert.equal((await call(API + 'admin/voters', { method: 'POST', body: {} })).status, 405);
   assert.equal(env.DB.stats.calls, 0, 'wrong methods never touch D1');
   const res = await worker.fetch(new Request(ORIGIN + BASE + '/'), env, { waitUntil() {} });
   assert.equal(res.status, 404, 'the default export routes the same way');
@@ -102,16 +49,15 @@ test('tallies: counts per open idea, one D1 read, then served from the cache', a
   assert.equal(bare.status, 200);
 });
 
-test('voting: cookie, upsert, tallies, clearing keeps the note, and a two-query budget', async () => {
-  const { env, vote, call, cache } = setup();
+test('voting: signed-in only, upsert, tallies, clearing keeps the note, and a two-query budget', async () => {
+  const { env, vote, call, cache, signedIn } = setup();
   const id = 'ops-weather';
+  const alice = await signedIn('github', '42');
   let calls = env.DB.stats.calls;
-  let res = await vote({ idea_id: id, vote: 'want', note: 'yes please' });
+  let res = await vote({ idea_id: id, vote: 'want', note: 'yes please' }, { cookie: alice });
   assert.equal(res.status, 200);
   assert.equal(env.DB.stats.calls - calls, 2, 'one precheck query and one batch');
-  const setCookie = res.headers.get('set-cookie');
-  for (const part of ['HttpOnly', 'Secure', 'SameSite=Lax', `Path=${BASE}`]) assert.ok(setCookie.includes(part));
-  const alice = cookieFrom(res);
+  assert.equal(res.headers.get('set-cookie'), null, 'writes never set cookies');
   let body = await res.json();
   assert.ok(Number.isInteger(body.updated_at) && body.updated_at > 0);
   assert.deepEqual(body, { ok: true, idea_id: id, vote: 'want', note: 'yes please', tally: { want: 1, maybe: 0, skip: 0 }, updated_at: body.updated_at });
@@ -121,9 +67,7 @@ test('voting: cookie, upsert, tallies, clearing keeps the note, and a two-query 
   assert.deepEqual(body.tally, { want: 0, maybe: 1, skip: 0 });
   assert.equal(body.note, 'yes please', 'omitted note is kept');
 
-  res = await vote({ idea_id: id, vote: 'skip' });
-  const bob = cookieFrom(res);
-  assert.notEqual(bob, alice);
+  res = await vote({ idea_id: id, vote: 'skip' }); // another account
   assert.deepEqual((await res.json()).tally, { want: 0, maybe: 1, skip: 1 });
 
   calls = env.DB.stats.calls;
@@ -135,28 +79,44 @@ test('voting: cookie, upsert, tallies, clearing keeps the note, and a two-query 
   cache.store.clear();
   assert.deepEqual((await (await call(API + 'tallies')).json())[id], { want: 0, maybe: 0, skip: 1 });
 
-  const token = alice.split('=')[1];
+  const aliceKey = keyOfCookie(alice);
+  assert.equal(aliceKey, sha256hex('github:42'), "voter key is sha256hex('github:42')");
+  assert.equal(env.DB.raw.prepare('SELECT COUNT(*) AS n FROM votes WHERE voter = ?').get(aliceKey).n, 1);
   const stored = env.DB.raw.prepare('SELECT voter FROM votes UNION SELECT voter FROM write_log').all();
-  assert.ok(stored.length > 0);
-  assert.ok(stored.every((r) => r.voter !== token && /^[0-9a-f]{64}$/.test(r.voter)), 'only hashes are stored');
+  assert.ok(stored.length > 0 && stored.every((r) => /^[0-9a-f]{64}$/.test(r.voter)), 'only hashes are stored');
   talliesMatchVotes(env.DB.raw);
 });
 
+test('writes without a valid session get 401 before D1, and never a cookie', async () => {
+  const { env, call, signedIn } = setup();
+  const good = await signedIn();
+  const tampered = good.slice(0, -2) + (good.endsWith('AA') ? 'BB' : 'AA');
+  const other = setup({ SESSION_SECRET: 'another-secret-that-is-long-enough-to-use-0000' });
+  const foreign = await other.signedIn();
+  for (const cookie of [undefined, '__Secure-ghostty_voter=' + 'A'.repeat(43), tampered, foreign, 'x=1']) {
+    for (const [name, body] of [['vote', { idea_id: 'ops-weather', vote: 'want' }], ['suggest', { title: 'Split-flap CI board' }]]) {
+      const res = await call(API + name, { method: 'POST', body, cookie });
+      assert.equal(res.status, 401, name + ' ' + cookie);
+      assert.equal((await res.json()).error, 'sign_in_required');
+      assert.equal(res.headers.get('set-cookie'), null);
+    }
+  }
+  assert.equal(env.DB.stats.calls, 0, 'no D1 without a session');
+  assert.equal(env.DB.raw.prepare('SELECT COUNT(*) AS n FROM votes').get().n, 0);
+});
+
 test('vote and note combinations: note-only rows, every transition, and deletion when both are empty', async () => {
-  const { env, vote } = setup();
+  const { env, vote, signedIn } = setup();
   const db = env.DB.raw;
   const id = 'ops-weather';
-  let cookie, me;
+  const cookie = await signedIn();
+  const me = keyOfCookie(cookie);
   const rows = () => db.prepare('SELECT vote, note FROM votes WHERE voter = ? AND idea_id = ?').all(me, id).map((r) => ({ ...r }));
   async function step(body, expect, row) {
     const calls = env.DB.stats.calls;
     const res = await vote({ idea_id: id, ...body }, { cookie });
     assert.equal(res.status, 200, JSON.stringify(body));
     assert.ok(env.DB.stats.calls - calls <= 2, 'at most two D1 round trips per write');
-    if (!cookie) {
-      cookie = cookieFrom(res);
-      me = await voterKey(cookie.slice(COOKIE_NAME.length + 1));
-    }
     const got = await res.json();
     assert.deepEqual({ vote: got.vote, note: got.note, tally: got.tally }, expect, JSON.stringify(body));
     assert.deepEqual(rows(), row ? [row] : [], 'stored row after ' + JSON.stringify(body));
@@ -186,7 +146,8 @@ test('vote and note combinations: note-only rows, every transition, and deletion
 });
 
 test('vote rejects bad input without handing out a cookie', async () => {
-  const { vote, env } = setup();
+  const { vote, env, signedIn } = setup();
+  const cookie = await signedIn();
   const cases = [
     [{ body: '{"idea_id":"ops-weather","vote":"want"}', headers: { 'content-type': 'text/plain' } }, 415],
     [{ body: 'not json' }, 400],
@@ -201,7 +162,7 @@ test('vote rejects bad input without handing out a cookie', async () => {
     [{ body: JSON.stringify({ idea_id: 'ops-weather', vote: 'want', note: 'x'.repeat(LIMITS.bodyBytes) }) }, 413],
   ];
   for (const [{ body, headers }, status] of cases) {
-    const res = await vote(body, { headers });
+    const res = await vote(body, { headers, cookie });
     assert.equal(res.status, status, JSON.stringify(body).slice(0, 60));
     assert.equal(res.headers.get('set-cookie'), null);
   }
@@ -212,10 +173,10 @@ test('vote rejects bad input without handing out a cookie', async () => {
 });
 
 test('per-voter rate limit: 300 writes per window, votes and notes alike, with Retry-After', async () => {
-  const { vote, env } = setup();
+  const { vote, env, signedIn } = setup();
   assert.equal(LIMITS.writesPerWindow, 300);
-  let res = await vote({ idea_id: 'ops-weather', vote: 'want' });
-  const cookie = cookieFrom(res);
+  const cookie = await signedIn();
+  let res = await vote({ idea_id: 'ops-weather', vote: 'want' }, { cookie });
   for (let n = 1; n < LIMITS.writesPerWindow; n++) {
     const body = n % 3 === 0 ? { idea_id: 'ops-weather', note: 'draft ' + n } : { idea_id: 'ops-weather', vote: n % 2 ? 'maybe' : 'want' };
     res = await vote(body, { cookie });
@@ -235,19 +196,20 @@ test('per-voter rate limit: 300 writes per window, votes and notes alike, with R
   assert.equal((await vote({ idea_id: 'ops-weather', note: 'later' }, { cookie })).status, 200);
 });
 
-test('mine: without a voter cookie, the empty ballot and no D1 access', async () => {
-  const { env, mine, vote } = setup();
+test('mine: without a session, the empty ballot and no D1 access', async () => {
+  const { env, mine, vote, signedIn } = setup();
   await vote({ idea_id: 'ops-weather', vote: 'want', note: 'someone else' });
+  const good = await signedIn();
   const calls = env.DB.stats.calls;
-  for (const cookie of [undefined, 'other=1', `${COOKIE_NAME}=short`, `${COOKIE_NAME}=${'!'.repeat(43)}`]) {
+  for (const cookie of [undefined, 'other=1', '__Secure-ghostty_voter=' + 'A'.repeat(43), '__Secure-ghostty_session=v1.e30.AAAA', good.replace('v1.', 'v2.')]) {
     const res = await mine({ cookie });
     assert.equal(res.status, 200);
     assert.equal(res.headers.get('cache-control'), 'private, no-store');
     assert.equal(res.headers.get('vary'), 'Cookie');
     assert.equal(res.headers.get('set-cookie'), null);
-    assert.deepEqual(await res.json(), { votes: {}, suggestions: [] });
+    assert.deepEqual(await res.json(), { signed_in: false, votes: {}, suggestions: [] });
   }
-  assert.equal(env.DB.stats.calls, calls, 'no cookie, no D1');
+  assert.equal(env.DB.stats.calls, calls, 'no session, no D1');
 
   const res = await mine({ headers: { 'sec-fetch-site': 'cross-site' } });
   assert.equal(res.status, 403);
@@ -256,10 +218,10 @@ test('mine: without a voter cookie, the empty ballot and no D1 access', async ()
 });
 
 test('mine: the voter\'s own ballot and newest suggestions, in one D1 batch, never cached', async () => {
-  const { env, mine, vote, call, cache } = setup();
+  const { env, mine, vote, call, cache, signedIn } = setup();
   const db = env.DB.raw;
-  let res = await vote({ idea_id: 'ops-weather', vote: 'want', note: 'yes' });
-  const cookie = cookieFrom(res);
+  const cookie = await signedIn();
+  let res = await vote({ idea_id: 'ops-weather', vote: 'want', note: 'yes' }, { cookie });
   await vote({ idea_id: 'ops-weather', vote: 'skip' }); // another voter
   const ids = db.prepare("SELECT id FROM ideas WHERE id <> 'ops-weather' ORDER BY sort_order LIMIT 3").all().map((r) => r.id);
   assert.equal((await vote({ idea_id: ids[1], note: 'another voter\'s note' })).status, 200);
@@ -268,7 +230,7 @@ test('mine: the voter\'s own ballot and newest suggestions, in one D1 batch, nev
   await vote({ idea_id: ids[2], vote: null }, { cookie }); // cleared with no note: gone
 
   // 55 suggestions for this voter (more than the per-day limit, so inserted directly), some sharing a timestamp.
-  const me = await voterKey(cookie.slice(COOKIE_NAME.length + 1));
+  const me = keyOfCookie(cookie);
   const insert = db.prepare('INSERT INTO suggestions (voter, title, detail, created_at) VALUES (?, ?, ?, ?)');
   for (let n = 0; n < 55; n++) insert.run(me, 'idea ' + n, n % 2 ? 'detail ' + n : '', 1000 + Math.floor(n / 2));
   insert.run('f'.repeat(64), 'not mine', '', 99999);
@@ -285,7 +247,8 @@ test('mine: the voter\'s own ballot and newest suggestions, in one D1 batch, nev
   assert.deepEqual([...cache.store.keys()], [ORIGIN + API + 'tallies'], 'mine is never put in the cache');
   const body = await res.json();
 
-  assert.deepEqual(Object.keys(body).sort(), ['suggestions', 'votes']);
+  assert.deepEqual(Object.keys(body).sort(), ['signed_in', 'suggestions', 'votes']);
+  assert.equal(body.signed_in, true);
   assert.deepEqual(Object.keys(body.votes).sort(), [ids[1], 'ops-weather'].sort());
   const { updated_at: u1, ...weather } = body.votes['ops-weather'];
   assert.deepEqual(weather, { vote: 'want', note: 'yes' });
@@ -311,33 +274,34 @@ test('mine: the voter\'s own ballot and newest suggestions, in one D1 batch, nev
   assert.equal(again.votes['ops-weather'].note, 'yes');
 
   // Another voter sees only their own ballot.
-  const other = await (await mine({ cookie: `${COOKIE_NAME}=${'A'.repeat(43)}` })).json();
-  assert.deepEqual(other, { votes: {}, suggestions: [] });
+  const other = await (await mine({ cookie: await signedIn('xivauth', '0190a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5b') })).json();
+  assert.deepEqual(other, { signed_in: true, votes: {}, suggestions: [] });
 });
 
 test('mine: a suggestion sent through the API is listed', async () => {
-  const { call, mine } = setup();
-  const res = await call(API + 'suggest', { method: 'POST', body: { title: 'Split-flap CI board', detail: 'At the Gold Saucer.' } });
-  const cookie = cookieFrom(res);
+  const { call, mine, signedIn } = setup();
+  const cookie = await signedIn();
+  const res = await call(API + 'suggest', { method: 'POST', body: { title: 'Split-flap CI board', detail: 'At the Gold Saucer.' }, cookie });
   const { suggestion } = await res.json();
   assert.deepEqual((await (await mine({ cookie })).json()).suggestions, [suggestion]);
 });
 
 test('suggestions are stored, limited per voter, and cost two queries', async () => {
-  const { call, env } = setup();
-  const suggest = (body, cookie) => call(API + 'suggest', { method: 'POST', body, cookie });
+  const { call, env, signedIn } = setup();
+  const suggest = async (body, cookie) => call(API + 'suggest', { method: 'POST', body, cookie: cookie ?? await signedIn() });
+  const cookie = await signedIn();
   const calls = env.DB.stats.calls;
-  let res = await suggest({ title: 'Split-flap CI board', detail: 'At the Gold Saucer.' });
+  let res = await suggest({ title: 'Split-flap CI board', detail: 'At the Gold Saucer.' }, cookie);
   assert.equal(res.status, 201);
   assert.equal(env.DB.stats.calls - calls, 2);
-  const cookie = cookieFrom(res);
+  assert.equal(res.headers.get('set-cookie'), null);
   const { suggestion } = await res.json();
   assert.equal(suggestion.title, 'Split-flap CI board');
   assert.equal(suggestion.detail, 'At the Gold Saucer.');
   assert.ok(Number.isInteger(suggestion.id) && suggestion.created_at > 0);
   assert.equal(env.DB.raw.prepare("SELECT status FROM suggestions").get().status, 'new');
 
-  assert.equal((await suggest({ title: 't'.repeat(81) })).status, 400);
+  assert.equal((await suggest({ title: 't'.repeat(81) }, cookie)).status, 400);
   for (let n = 1; n < LIMITS.suggestionsPerVoterPerDay; n++) {
     assert.equal((await suggest({ title: 'idea ' + n }, cookie)).status, 201);
   }
