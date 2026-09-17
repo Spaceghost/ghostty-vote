@@ -6,6 +6,10 @@
 // pass as a session. Every payload carries `exp` (Unix seconds). SESSION_SECRET signs;
 // SESSION_SECRET_PREVIOUS (optional) still verifies, so the secret can be rotated
 // without signing everybody out.
+//
+// A session also carries `iat`, the sign-in time. Renewal copies it, so a session can be
+// renewed for at most SESSION_MAX_AGE_S after sign-in (ADMIN_SESSION_MAX_AGE_S for an
+// ADMIN_ACCOUNTS entry); after that it counts as expired and the voter signs in again.
 import { BASE, base64url, cookie, fromBase64url, parseCookies, randomToken, sha256hex, utf8 } from './lib.js';
 
 export const TOKEN_VERSION = 'v1';
@@ -14,6 +18,8 @@ export const STATE_COOKIE = '__Secure-ghostty_oauth';
 export const AUTH_PATH = BASE + '/api/auth';
 export const SESSION_TTL_S = 30 * 24 * 60 * 60;
 export const SESSION_RENEW_S = 15 * 24 * 60 * 60; // api/auth/me re-issues a session with less than this left
+export const SESSION_MAX_AGE_S = 90 * 24 * 60 * 60; // since sign-in, renewals included
+export const ADMIN_SESSION_MAX_AGE_S = 14 * 24 * 60 * 60;
 export const STATE_TTL_S = 20 * 60; // long enough to log in (or sign up) at the provider
 export const SECRET_MIN = 32;
 export const PROVIDERS = Object.freeze(['github', 'xivauth']);
@@ -105,21 +111,35 @@ export async function isAdmin(env, session) {
 }
 
 // ---- cookies ----------------------------------------------------------------------
-export async function sessionCookie(env, { p, k }, now = nowSeconds()) {
+// The latest `exp` a session signed in at `iat` may ever have.
+export const sessionLimit = (iat, admin) => iat + (admin ? ADMIN_SESSION_MAX_AGE_S : SESSION_MAX_AGE_S);
+
+// A new session (no iat: signing in now) or a renewal (iat copied from the old session).
+// exp is 30 days away, but never past sessionLimit.
+export async function sessionCookie(env, { p, k, iat }, now = nowSeconds()) {
   const [secret] = sessionSecrets(env);
   if (!secret) throw new Error('SESSION_SECRET is not configured');
-  const value = await signValue(secret, 'session', { p, k, exp: now + SESSION_TTL_S });
-  return cookie(SESSION_COOKIE, value, BASE, SESSION_TTL_S);
+  if (iat === undefined) iat = now;
+  const exp = Math.min(now + SESSION_TTL_S, sessionLimit(iat, await isAdmin(env, { p, k })));
+  if (!Number.isSafeInteger(iat) || exp <= now) throw new Error('session is past its maximum age');
+  const value = await signValue(secret, 'session', { p, k, iat, exp });
+  return cookie(SESSION_COOKIE, value, BASE, exp - now);
 }
 export const clearSessionCookie = () => cookie(SESSION_COOKIE, '', BASE, 0);
 
-// {p, k, exp} from a valid session cookie, else null.
+// {p, k, iat, exp} from a valid session cookie, else null. A session older than its
+// maximum age is expired whatever its exp says; the admin check (a hash per
+// ADMIN_ACCOUNTS entry) runs only for sessions older than the admin limit.
 export async function readSession(request, env, now = nowSeconds()) {
   const value = parseCookies(request.headers.get('cookie'))[SESSION_COOKIE];
   if (!value) return null;
   const s = await verifyValue(sessionSecrets(env), 'session', value, now);
   if (!s || !PROVIDERS.includes(s.p) || typeof s.k !== 'string' || !KEY_RE.test(s.k)) return null;
-  return { p: s.p, k: s.k, exp: s.exp };
+  if (!Number.isSafeInteger(s.iat) || s.iat > s.exp) return null;
+  const session = { p: s.p, k: s.k, iat: s.iat, exp: s.exp };
+  const age = now - s.iat;
+  if (age > SESSION_MAX_AGE_S || (age > ADMIN_SESSION_MAX_AGE_S && await isAdmin(env, session))) return null;
+  return session;
 }
 
 // The OAuth round trip: {p: provider, s: state, cv: PKCE verifier, m: 'signin'|'link',

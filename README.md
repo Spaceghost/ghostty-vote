@@ -197,16 +197,28 @@ only.
 
 **Sessions** are a stateless cookie, `__Secure-ghostty_session`
 (`Path=/mods/ffxiv/term/vote; HttpOnly; Secure; SameSite=Lax`, 30 days): `v1.<base64url JSON
-{p: provider, k: voter key, exp}>.<base64url HMAC-SHA256>`. The MAC covers the version and a
-purpose (`session` or `oauth`), so a state cookie never passes as a session, and it is verified
-with WebCrypto `crypto.subtle.verify`. `api/auth/me` re-issues a session that has under 15 days left,
-so a regular visitor stays signed in. Nothing about sessions is stored server-side, so signing out
-clears the cookie in that browser only.
+{p: provider, k: voter key, iat, exp}>.<base64url HMAC-SHA256>`, where `iat` is the sign-in time.
+The MAC covers the version and a purpose (`session` or `oauth`), so a state cookie never passes as
+a session, and it is verified with WebCrypto `crypto.subtle.verify`. `api/auth/me` re-issues a
+session that has under 15 days left, so a regular visitor stays signed in. The renewed cookie keeps
+the original `iat`, and its `exp` never goes past `iat` + 90 days (`iat` + 14 days for an
+`ADMIN_ACCOUNTS` entry, whose cookie gets that shorter lifetime from sign-in on). A session older than
+that is refused as expired whatever its `exp` says, and is not renewed, so everyone signs in again
+at least every 90 days (admins every 14). Nothing about sessions is stored server-side, so signing
+out clears the cookie in that browser only; a copied cookie keeps working until its `exp` or that
+limit, whichever comes first.
 
 **Rotating `SESSION_SECRET`.** It must be at least 32 characters, or sign-in answers
 `#auth-error=not-configured` and every write gets 401. To rotate without signing everyone out, set
 the current value as `SESSION_SECRET_PREVIOUS`, set a new `SESSION_SECRET`, and delete
 `SESSION_SECRET_PREVIOUS` after 30 days. To sign everyone out at once, change `SESSION_SECRET` alone.
+
+**If `SESSION_SECRET` leaks** (anyone holding it can sign a session for any account, including an
+admin), do not use the rotation above: that keeps the leaked value valid as
+`SESSION_SECRET_PREVIOUS`. Replace `SESSION_SECRET` with a new random value and make sure
+`SESSION_SECRET_PREVIOUS` is unset (`npx wrangler secret delete SESSION_SECRET_PREVIOUS` if
+`npx wrangler secret list` shows it). Every existing session, forged or not, stops working at once,
+and voters sign in again.
 
 **Characters.** Any signed-in voter, GitHub or FFXIV, can add one with **Link an FFXIV
 character**: an XIVAuth authorization that asks only for `character` and attaches it to the

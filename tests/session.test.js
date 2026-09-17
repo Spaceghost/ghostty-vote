@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { BASE } from '../src/lib.js';
 import {
-  AUTH_PATH, SESSION_COOKIE, SESSION_TTL_S, STATE_COOKIE, STATE_TTL_S, accountKey, adminAccounts, clearSessionCookie,
+  ADMIN_SESSION_MAX_AGE_S, AUTH_PATH, SESSION_COOKIE, SESSION_MAX_AGE_S, SESSION_TTL_S, STATE_COOKIE, STATE_TTL_S, accountKey, adminAccounts, clearSessionCookie,
   constantTimeEqual, isAdmin, nowSeconds, pkcePair, readSession, readState, safeReturnPath, sessionCookie, sessionSecrets,
   signValue, stateCookie, stateMatches, verifyValue,
 } from '../src/session.js';
@@ -74,18 +74,58 @@ test('session cookie: attributes, 30 days, contents checked on read', async () =
   assert.equal(SESSION_TTL_S, 30 * 24 * 3600);
   const s = await readSession(withCookie(set), env);
   assert.deepEqual({ p: s.p, k: s.k }, { p: 'xivauth', k: KEY });
-  assert.ok(Math.abs(s.exp - (nowSeconds() + SESSION_TTL_S)) <= 2);
+  assert.ok(Math.abs(s.iat - nowSeconds()) <= 2, 'iat is the sign-in time');
+  assert.equal(s.exp, s.iat + SESSION_TTL_S);
   assert.equal(await readSession(withCookie(set), env, s.exp), null, 'expired');
   assert.equal(clearSessionCookie(), `${SESSION_COOKIE}=; Path=${BASE}; Max-Age=0; HttpOnly; Secure; SameSite=Lax`);
 
   // Validly signed but not a session this app would issue.
-  for (const payload of [{ p: 'gitlab', k: KEY }, { p: 'github', k: 'nothex' }, { p: 'github' }]) {
+  const iat = nowSeconds();
+  for (const payload of [
+    { p: 'gitlab', k: KEY, iat }, { p: 'github', k: 'nothex', iat }, { p: 'github', iat }, { p: 'github', k: KEY },
+    { p: 'github', k: KEY, iat: String(iat) }, { p: 'github', k: KEY, iat: iat + 3600 },
+  ]) {
     const value = await signValue(SECRET, 'session', { ...payload, exp: nowSeconds() + 60 });
     assert.equal(await readSession(withCookie(`${SESSION_COOKIE}=${value}`), env), null, JSON.stringify(payload));
   }
   // A state cookie's value under the session name does not sign anyone in.
   const state = await stateCookie(env, { p: 'github', s: 'x', cv: 'y', m: 'signin', r: BASE + '/' });
   assert.equal(await readSession(withCookie(SESSION_COOKIE + '=' + state.split(';')[0].split('=')[1]), env), null);
+});
+
+test('maximum session age: 90 days from sign-in, 14 for ADMIN_ACCOUNTS, renewals included', async () => {
+  const now = 1_800_000_000;
+  const DAY = 24 * 3600;
+  assert.deepEqual([SESSION_MAX_AGE_S, ADMIN_SESSION_MAX_AGE_S], [90 * DAY, 14 * DAY]);
+  const admins = { ...env, ADMIN_ACCOUNTS: 'github:251370' };
+  const other = await accountKey('github', '7');
+  const read = async (k, iat, at, e = admins) =>
+    readSession(withCookie(`${SESSION_COOKIE}=${await signValue(SECRET, 'session', { p: 'github', k, iat, exp: at + DAY })}`), e, at);
+
+  // exp is bounded by the maximum age even when the payload says otherwise.
+  assert.ok(await read(other, now, now + SESSION_MAX_AGE_S));
+  assert.equal(await read(other, now, now + SESSION_MAX_AGE_S + 1), null, 'a voter past 90 days');
+  assert.ok(await read(KEY, now, now + ADMIN_SESSION_MAX_AGE_S));
+  assert.equal(await read(KEY, now, now + ADMIN_SESSION_MAX_AGE_S + 1), null, 'an admin past 14 days');
+  assert.ok(await read(KEY, now, now + ADMIN_SESSION_MAX_AGE_S + 1, env), 'the same account without ADMIN_ACCOUNTS');
+
+  // New cookies: the voter's lasts 30 days; the admin's stops at 14.
+  let set = await sessionCookie(admins, { p: 'github', k: other }, now);
+  let s = await readSession(withCookie(set), admins, now);
+  assert.deepEqual([s.iat, s.exp], [now, now + SESSION_TTL_S]);
+  set = await sessionCookie(admins, { p: 'github', k: KEY }, now);
+  s = await readSession(withCookie(set), admins, now);
+  assert.deepEqual([s.iat, s.exp], [now, now + ADMIN_SESSION_MAX_AGE_S]);
+  assert.ok(set.includes(`; Max-Age=${ADMIN_SESSION_MAX_AGE_S};`));
+
+  // A renewal copies iat and never reaches past the limit.
+  const later = now + 80 * DAY;
+  set = await sessionCookie(admins, { p: 'github', k: other, iat: now }, later);
+  s = await readSession(withCookie(set), admins, later);
+  assert.deepEqual([s.iat, s.exp], [now, now + SESSION_MAX_AGE_S]);
+  assert.ok(set.includes(`; Max-Age=${10 * DAY};`));
+  await assert.rejects(sessionCookie(admins, { p: 'github', k: other, iat: now }, now + SESSION_MAX_AGE_S), /maximum age/);
+  await assert.rejects(sessionCookie(admins, { p: 'github', k: KEY, iat: now }, now + ADMIN_SESSION_MAX_AGE_S), /maximum age/);
 });
 
 test('state cookie: short-lived, scoped to api/auth, and the query state must match', async () => {

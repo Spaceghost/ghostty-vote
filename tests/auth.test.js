@@ -6,7 +6,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BASE, COOKIE_NAME, voterKey } from '../src/lib.js';
 import { PROVIDER, claimStatements, pickCharacter, safeImageUrl } from '../src/auth.js';
-import { SESSION_COOKIE, SESSION_RENEW_S, STATE_COOKIE, readSession, signValue } from '../src/session.js';
+import {
+  ADMIN_SESSION_MAX_AGE_S, SESSION_COOKIE, SESSION_MAX_AGE_S, SESSION_RENEW_S, STATE_COOKIE, readSession, signValue,
+} from '../src/session.js';
 import { createD1 } from './d1-shim.js';
 import {
   API, MIGRATIONS, ORIGIN, SECRETS, SEED, allTallies, jsonResponse, keyOfCookie, scriptedFetch, setCookies, setup, sha256hex,
@@ -450,13 +452,43 @@ test('me: signed out costs no D1 and reports an old anonymous ballot; sessions n
   res = await t.call(API + 'auth/me', { cookie: fresh });
   assert.equal(res.headers.get('set-cookie'), null, 'a fresh session is not re-issued');
   const k = sha256hex('github:5');
-  const nearly = await signValue(SECRETS.SESSION_SECRET, 'session', { p: 'github', k, exp: Math.floor(Date.now() / 1000) + SESSION_RENEW_S - 60 });
-  res = await t.call(API + 'auth/me', { cookie: `${SESSION_COOKIE}=${nearly}` });
+  const now = Math.floor(Date.now() / 1000);
+  const DAY = 24 * 3600;
+  const session = (payload) => signValue(SECRETS.SESSION_SECRET, 'session', { p: 'github', k, ...payload }).then((v) => `${SESSION_COOKIE}=${v}`);
+  const read = (value) => readSession(new Request(ORIGIN, { headers: { cookie: `${SESSION_COOKIE}=${value}` } }), t.env);
+  const iat = now - 20 * DAY;
+  res = await t.call(API + 'auth/me', { cookie: await session({ iat, exp: now + SESSION_RENEW_S - 60 }) });
   const renewed = setCookies(res)[SESSION_COOKIE];
   assert.ok(renewed, 'renewed');
-  const s = await readSession(new Request(ORIGIN, { headers: { cookie: `${SESSION_COOKIE}=${renewed.value}` } }), t.env);
+  const s = await read(renewed.value);
   assert.equal(s.k, k);
-  assert.ok(s.exp > Math.floor(Date.now() / 1000) + SESSION_RENEW_S);
+  assert.equal(s.iat, iat, 'renewal copies iat');
+  assert.ok(s.exp > now + SESSION_RENEW_S);
+
+  // Near the 90-day limit, renewal stops at the limit, and a session already there is not re-issued.
+  const old = now - SESSION_MAX_AGE_S + 5 * DAY;
+  res = await t.call(API + 'auth/me', { cookie: await session({ iat: old, exp: now + DAY }) });
+  const capped = await read(setCookies(res)[SESSION_COOKIE].value);
+  assert.deepEqual([capped.iat, capped.exp], [old, old + SESSION_MAX_AGE_S]);
+  assert.ok(setCookies(res)[SESSION_COOKIE].attrs.includes(`Max-Age=${old + SESSION_MAX_AGE_S - now}`));
+  res = await t.call(API + 'auth/me', { cookie: await session({ iat: old, exp: old + SESSION_MAX_AGE_S }) });
+  assert.equal((await res.json()).signed_in, true);
+  assert.equal(res.headers.get('set-cookie'), null, 'no renewal past the maximum age');
+
+  // Older than 90 days (or 14 for an admin) counts as signed out, whatever exp says.
+  res = await t.call(API + 'auth/me', { cookie: await session({ iat: now - SESSION_MAX_AGE_S - 1, exp: now + DAY }) });
+  assert.deepEqual(await res.json(), { signed_in: false, legacy_ballot: false });
+  assert.equal(res.headers.get('set-cookie'), null);
+  assert.equal((await t.vote({ idea_id: 'ops-weather', vote: 'want' }, { cookie: await session({ iat: now - SESSION_MAX_AGE_S - 1, exp: now + DAY }) })).status, 401);
+
+  const owner = sha256hex('github:251370');
+  const adminSession = (payload) => signValue(SECRETS.SESSION_SECRET, 'session', { p: 'github', k: owner, ...payload }).then((v) => `${SESSION_COOKIE}=${v}`);
+  res = await t.call(API + 'auth/me', { cookie: await adminSession({ iat: now - ADMIN_SESSION_MAX_AGE_S - 1, exp: now + DAY }) });
+  assert.equal((await res.json()).signed_in, false, 'admin sessions end after 14 days');
+  res = await t.call(API + 'auth/me', { cookie: await adminSession({ iat: now - 13 * DAY, exp: now + DAY / 2 }) });
+  assert.equal((await res.json()).admin, true);
+  const adminRenewed = await read(setCookies(res)[SESSION_COOKIE].value);
+  assert.equal(adminRenewed.exp, now - 13 * DAY + ADMIN_SESSION_MAX_AGE_S, 'an admin renewal stops at 14 days');
 });
 
 test('logout clears the session cookie (same-origin POST only); forget deletes the character and keeps the votes', async () => {

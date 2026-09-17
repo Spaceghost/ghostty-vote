@@ -12,7 +12,7 @@ import {
 } from './lib.js';
 import {
   SESSION_RENEW_S, accountKey, clearSessionCookie, clearStateCookie, isAccountId, isAdmin, nowSeconds, pkcePair,
-  readSession, readState, safeReturnPath, sessionCookie, sessionSecrets, stateCookie, stateMatches,
+  readSession, readState, safeReturnPath, sessionCookie, sessionLimit, sessionSecrets, stateCookie, stateMatches,
 } from './session.js';
 
 const USER_AGENT = 'ghostty-vote (+https://spacegho.st/mods/ffxiv/term/vote/)';
@@ -269,13 +269,19 @@ export async function getMe(request, env, url) {
     return json({ signed_in: false, legacy_ballot: !!voterToken(request.headers.get('cookie')) }, { headers: PRIVATE });
   }
   const row = await env.DB.prepare('SELECT name, world, portrait_url FROM characters WHERE voter = ?').bind(session.k).first();
+  const admin = await isAdmin(env, session);
   const res = json({
     signed_in: true,
     provider: session.p,
     character: row ? { name: row.name, world: row.world, portrait_url: row.portrait_url } : null,
-    admin: await isAdmin(env, session),
+    admin,
   }, { headers: PRIVATE });
-  if (session.exp - nowSeconds() < SESSION_RENEW_S) res.headers.append('set-cookie', await sessionCookie(env, session));
+  // Renewal keeps iat, so it cannot outlive the maximum age: a session whose exp is
+  // already at that limit is not re-issued, and runs out.
+  const now = nowSeconds();
+  if (session.exp - now < SESSION_RENEW_S && session.exp < sessionLimit(session.iat, admin)) {
+    res.headers.append('set-cookie', await sessionCookie(env, session, now));
+  }
   return res;
 }
 
