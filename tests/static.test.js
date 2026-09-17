@@ -109,6 +109,9 @@ test('page has no inline script, style or handlers, and renders data only throug
   assert.ok(js.includes("$('#link-character').hidden = !!c;") && !/me\.provider !== 'github'/.test(js));
   assert.ok(html.includes('href="/mods/ffxiv/term/vote/api/auth/github/start"') && html.includes('href="/mods/ffxiv/term/vote/api/auth/xivauth/start"'));
   assert.ok(!/No accounts/.test(html), 'the privacy note no longer says there are no accounts');
+  // Voter keys are sha256('provider:id') of public ids: the page must not promise anonymity.
+  assert.ok(html.includes('Your votes, notes and suggestions are linked to your GitHub or XIVAuth account id and are visible to the site owner.'));
+  assert.ok(!/anonym|pseudonym|one-way/i.test(html), 'no anonymity claims on the page');
   for (const endpoint of ["'api/auth/me'", "'auth/logout'", "'auth/character/forget'"]) assert.ok(js.includes(endpoint), endpoint);
   assert.ok(!/createGate|gate\./.test(js + ballot), 'no first-write gate: a session exists before any write');
   assert.ok(/name="viewport"/.test(html) && /prefers-color-scheme: light/.test(read(STATIC_DIR + 'vote.css')));

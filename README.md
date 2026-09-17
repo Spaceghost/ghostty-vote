@@ -169,8 +169,10 @@ tallies stay public and cached without any sign-in.
 
 **One ballot per account.** A signed-in voter's key is `sha256hex('provider:' + provider_user_id)`,
 for example `sha256hex('github:251370')`, stored in the same `voter` columns as before. The GitHub
-id is the numeric user id; the XIVAuth id is its user UUID. The key is a pseudonym, not a secret:
-anyone who knows an account id can compute it.
+id is the numeric user id; the XIVAuth id is its user UUID. The key is not anonymous and not a
+pseudonym: there is no secret in it, GitHub ids are public (`GET https://api.github.com/user/<id>`),
+and anyone who knows an account id can compute the key. Votes, notes and suggestions are linked to
+the voter's GitHub or XIVAuth account id, and the site owner can see them.
 
 **Flow.** `start` creates a random state and a PKCE verifier (S256; GitHub supports it, XIVAuth
 supports it and does not require it for confidential clients), puts both in a signed state cookie
@@ -255,11 +257,14 @@ the listed accounts and answers 401 or 403, without querying D1, to everyone els
 each voter's portrait and `name @ world` linking to the Lodestone, their want/maybe/skip counts,
 notes and suggestions. Voters without a character appear by the start of their voter key.
 
-**Privacy.** Stored per account: the voter key, the ballot (votes, notes, suggestions, write times
-for the rate limit) and, for voters who link one, the character above. Not stored: GitHub login
-names, emails, XIVAuth user ids, provider tokens, IP addresses or user agents. Character data is
-seen only by the owner. Portraits load from the Lodestone's image host in the owner's (and the
-signed-in voter's own) browser.
+**Privacy.** Votes, notes and suggestions are linked to the voter's GitHub or XIVAuth account id
+and are visible to the site owner; this is not an anonymous vote. Stored per account: the voter key
+(`sha256hex('provider:' + id)`, which identifies the account to anyone who has the id), the ballot
+(votes, notes, suggestions, write times for the rate limit) and, for voters who link one, the
+character above. Not stored: GitHub login names, emails, the raw account ids themselves, provider
+tokens, IP addresses or user agents. The owner can still find a GitHub voter's login from the id.
+Character data is seen only by the owner. Portraits load from the Lodestone's image host in the
+owner's (and the signed-in voter's own) browser. The page footer says the same.
 
 **Limits.**
 - Each account can make 300 writes per 10 minutes (votes, note saves and suggestions together,
