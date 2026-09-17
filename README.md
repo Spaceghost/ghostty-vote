@@ -283,11 +283,15 @@ writing notes stays well under one window. The limit protects against a runaway 
 abuse: anyone can make new GitHub or XIVAuth accounts, so a scripted attacker could still use up the
 daily free rows (on the free plan that should mean refused queries until the daily reset, not a
 bill; check Cloudflare's current D1 pricing, this was not observed here), and the page would show
-`server error; will retry…`. A Cloudflare WAF rate-limiting rule (below) is the real guard.
+`server error; will retry…`. The WAF rate-limiting rule in the deploy steps (below) slows cycling
+through accounts from one IP address, because every sign-in goes through `api/auth/`; it does not
+limit writes from sessions that already exist.
 
-Sign-in makes one ballot per account, not per person, so the tallies are still only a guide. If
-abuse shows up, add a Cloudflare WAF rate-limiting rule on `/mods/ffxiv/term/vote/api/`. That rule
-runs at Cloudflare's edge, so this app still stores no IPs.
+Sign-in makes one ballot per account, not per person, so the tallies are still only a guide. The
+Free plan's single rate-limiting rule is spent on `api/auth/*` (deploy step 3). If write abuse shows
+up, widening that rule's path to `/mods/ffxiv/term/vote/api/` with a higher request count (the page
+sends one request per vote click and per note save) is the next step. The rule runs at
+Cloudflare's edge, so this app still stores no IPs.
 
 **Nudging from the plugin.** Store the last catalogue version the player saw. Fetch
 `https://spacegho.st/mods/ffxiv/term/vote/version.json` (a static file, so polling it is free). If
@@ -311,7 +315,7 @@ their names); the client ids and `ADMIN_ACCOUNTS` are in `[vars]`. The registere
 `https://spacegho.st/mods/ffxiv/term/vote/api/auth/github/callback` and
 `https://spacegho.st/mods/ffxiv/term/vote/api/auth/xivauth/callback`.
 
-Do these steps in this order.
+Do these three steps in this order.
 
 **1. D1: apply migration 0004 (and the catalogue seed).** The sign-in Worker reads and writes the
 `characters` table on a character link, `api/auth/me` and the admin list, so the table must exist
@@ -350,6 +354,45 @@ curl -s -o /dev/null -D - https://spacegho.st/mods/ffxiv/term/vote/api/auth/gith
 Deploying the sign-in Worker ends anonymous voting at once: the old page (still cached in a
 browser) gets 401 on every write. Then sign in once with GitHub from the browser that holds your
 old ballot, so it moves onto `github:251370`, and open `/admin/` to check the list.
+
+**3. Add a WAF rate-limiting rule for `/mods/ffxiv/term/vote/api/auth/*`.** This is done in the
+Cloudflare dashboard, not by Wrangler, and nothing in this repository creates or checks it. On the
+Free plan a zone gets one rate-limiting rule, whose expression can use only the URI path (and
+Verified Bot), which counts by IP only, and whose counting period and mitigation timeout are both
+fixed at 10 seconds (Cloudflare's rate limiting rules docs, read on 2026-09-17; not observed in the
+dashboard here). A per-minute budget such as 20 requests per minute cannot be expressed on Free, so
+the rule is 10 requests per 10 seconds per IP. One sign-in round trip is 3 requests to `api/auth/`
+(`start`, `callback`, then `me` when the page loads), and linking a character is 3 more, so a
+person signing in never comes near it; a script cycling through accounts from one address does.
+If `spacegho.st` already uses its one free rate-limiting rule for something else, stop and decide
+which rule to keep instead of replacing it.
+
+In the dashboard: the `spacegho.st` zone, **Security**, **WAF**, **Rate limiting rules**,
+**Create rule** (the menu names may have moved; the settings are what matter):
+
+| Setting | Value |
+| --- | --- |
+| Rule name | `ghostty-vote auth` |
+| If incoming requests match | Field **URI Path**, operator **starts with**, value `/mods/ffxiv/term/vote/api/auth/` |
+| Expression (as the editor shows it) | `starts_with(http.request.uri.path, "/mods/ffxiv/term/vote/api/auth/")` |
+| With the same characteristics | **IP** |
+| When rate exceeds | **Requests** `10`, **Period** `10 seconds` |
+| Then take action | **Block** |
+| For duration | `10 seconds` |
+
+Deploy the rule, then check it from one machine (the 11th request inside 10 seconds should be
+refused; Cloudflare's block response for a rate-limiting rule is expected to be a 429, which has not
+been observed here):
+
+```sh
+for n in $(seq 12); do
+  curl -s -o /dev/null -w '%{http_code}\n' https://spacegho.st/mods/ffxiv/term/vote/api/auth/me
+done                                          # expect 200 ten times, then 429
+```
+
+The rule runs at Cloudflare's edge, before the Worker, so the app itself still stores no IP
+addresses. It limits only `api/auth/*`: votes, notes and suggestions from a session that already
+exists are limited by the per-account write limit above, not by this rule.
 
 **Only for a database without 0002 and 0003.** The live database already has them. A copy that
 does not must get them before step 1:
