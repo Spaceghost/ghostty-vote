@@ -186,15 +186,27 @@ export function upsertCharacter(db, voter, c, now) {
 
 // Moves an anonymous ballot onto an account in one batch. Rows the account does not have
 // change owner (the vote is unchanged, so the tally triggers, which fire only on an
-// UPDATE OF vote, rightly leave the tallies alone). Rows for ideas the account already
-// has are deleted, and the DELETE trigger takes their votes out of the tallies: the
-// account's row wins. Suggestions and the rate-limit log follow the ballot.
+// UPDATE OF vote, rightly leave the tallies alone). Where both have a row for an idea,
+// the account's row keeps what it has and takes only what it lacks: an empty vote or
+// note is filled from the anonymous row (a filled vote goes through the UPDATE trigger
+// and counts), then the anonymous row is deleted and the DELETE trigger takes its vote
+// out of the tallies, so every vote still counts exactly once. Suggestions and the
+// rate-limit log follow the ballot.
 export function claimStatements(db, anonKey, account) {
   if (anonKey === account) return [];
+  const anon = 'SELECT {col} FROM votes AS anon WHERE anon.voter = ?2 AND anon.idea_id = votes.idea_id';
   return [
     db.prepare(
       `UPDATE votes SET voter = ?1 WHERE voter = ?2
        AND NOT EXISTS (SELECT 1 FROM votes AS mine WHERE mine.voter = ?1 AND mine.idea_id = votes.idea_id)`,
+    ).bind(account, anonKey),
+    db.prepare(
+      `UPDATE votes SET
+         vote = CASE WHEN vote = '' THEN (${anon.replace('{col}', 'anon.vote')}) ELSE vote END,
+         note = CASE WHEN note = '' THEN (${anon.replace('{col}', 'anon.note')}) ELSE note END,
+         updated_at = MAX(updated_at, (${anon.replace('{col}', 'anon.updated_at')}))
+       WHERE voter = ?1 AND EXISTS (${anon.replace('{col}', '1')}
+         AND ((votes.vote = '' AND anon.vote <> '') OR (votes.note = '' AND anon.note <> '')))`,
     ).bind(account, anonKey),
     db.prepare('DELETE FROM votes WHERE voter = ?').bind(anonKey),
     db.prepare('UPDATE suggestions SET voter = ?1 WHERE voter = ?2').bind(account, anonKey),

@@ -236,10 +236,13 @@ XIVAuth, and shares the character you choose (name and world) with the site owne
 **Claiming an old ballot.** Ballots from before sign-in are keyed by the anonymous cookie
 `__Secure-ghostty_voter`, which is no longer handed out. When a browser that still has it signs in,
 the callback moves that ballot onto the account in the same D1 batch: votes and notes for ideas the
-account has not voted on change owner, rows for ideas the account already has are deleted (the
-account's row wins), and suggestions and the rate-limit log follow. Moving a row does not touch
-its vote column, so the tally triggers leave it alone; deleting a losing row fires the DELETE
-trigger, which takes that duplicate out of the tallies. Then the cookie is cleared. Signed out, the
+account has no row for change owner. Where the account already has a row for an idea, that row
+keeps its vote and note and only fills what is empty from the anonymous row (an empty vote takes
+the anonymous vote, an empty note the anonymous note); then the anonymous row is deleted.
+Suggestions and the rate-limit log follow. Moving a row does not touch its vote column, so the
+tally triggers leave it alone; filling an empty vote fires the UPDATE trigger, which counts it; and
+deleting the anonymous row fires the DELETE trigger, which takes its vote out of the tallies, so
+each vote is counted exactly once. Then the cookie is cleared. Signed out, the
 page says so when it sees that cookie (`legacy_ballot`) and keeps showing the local copy.
 Anonymous ballots that nobody claims stay in the tallies, as before.
 

@@ -366,7 +366,7 @@ test('claim: signing in moves the anonymous ballot onto the account, account row
   assert.deepEqual(rows(anon), [], 'nothing left under the anonymous key');
   assert.deepEqual(rows(account), [
     { idea_id: a, vote: 'want', note: 'anon note on a' },
-    { idea_id: b, vote: 'maybe', note: '' }, // account row won
+    { idea_id: b, vote: 'maybe', note: 'anon note on b' }, // account vote kept, its empty note filled
     { idea_id: c, vote: '', note: 'note only' },
     { idea_id: d, vote: 'want', note: 'account only' },
   ].sort((x, y) => (x.idea_id < y.idea_id ? -1 : 1)));
@@ -392,7 +392,51 @@ test('claim: signing in moves the anonymous ballot onto the account, account row
 test('claim statements on their own: all-or-nothing, and a no-op for the same key', () => {
   const env = { DB: createD1(...MIGRATIONS, SEED) };
   assert.deepEqual(claimStatements(env.DB, 'a'.repeat(64), 'a'.repeat(64)), []);
-  assert.equal(claimStatements(env.DB, 'a'.repeat(64), 'b'.repeat(64)).length, 4);
+  assert.equal(claimStatements(env.DB, 'a'.repeat(64), 'b'.repeat(64)).length, 5);
+});
+
+test('claim merge: where both rows exist, the account row keeps its vote and note and fills only what is empty', async () => {
+  const t = setup();
+  t.useFetch(providers().fetcher);
+  const db = t.env.DB.raw;
+  const token = 'M'.repeat(43);
+  const anon = await voterKey(token);
+  const account = sha256hex('github:251370');
+  const ids = db.prepare('SELECT id FROM ideas ORDER BY sort_order LIMIT 6').all().map((r) => r.id);
+  const insert = db.prepare('INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at) VALUES (?, ?, ?, ?, 1, ?)');
+  const cases = [
+    // [account vote, account note, anon vote, anon note] -> [vote, note]
+    [['', 'mine', 'want', 'theirs'], ['want', 'mine']], // note-only account row takes the vote
+    [['skip', '', 'maybe', 'theirs'], ['skip', 'theirs']], // voted account row takes the note
+    [['', 'mine', '', 'theirs'], ['', 'mine']], // nothing to fill
+    [['maybe', 'mine', 'want', 'theirs'], ['maybe', 'mine']], // account row full: unchanged
+    [['want', '', 'skip', ''], ['want', '']], // anon row has no note to give
+    [['', 'mine', 'skip', ''], ['skip', 'mine']],
+  ];
+  cases.forEach(([[av, an, xv, xn]], n) => {
+    insert.run(account, ids[n], av, an, 100);
+    insert.run(anon, ids[n], xv, xn, 200 + n);
+    insert.run('f'.repeat(64), ids[n], 'want', '', 50); // a bystander, so tallies are never trivially zero
+  });
+  talliesMatchVotes(db);
+
+  const calls = t.env.DB.stats.calls;
+  const { callback } = await signIn(t, 'github', { cookie: `${COOKIE_NAME}=${token}` });
+  assert.equal(fragment(callback), '#signed-in');
+  assert.equal(t.env.DB.stats.calls - calls, 1, 'still one D1 batch');
+
+  const row = (voter, id) => db.prepare('SELECT vote, note, updated_at FROM votes WHERE voter = ? AND idea_id = ?').get(voter, id);
+  cases.forEach(([, want], n) => {
+    const r = row(account, ids[n]);
+    assert.deepEqual([r.vote, r.note], want, `case ${n}`);
+    const filled = r.vote !== cases[n][0][0] || r.note !== cases[n][0][1];
+    assert.equal(r.updated_at, filled ? 200 + n : 100, `case ${n} updated_at`);
+    assert.equal(row(anon, ids[n]), undefined, `case ${n}: anonymous row deleted`);
+  });
+  talliesMatchVotes(db);
+  const tally = (id) => ({ ...db.prepare('SELECT want, maybe, skip FROM ideas WHERE id = ?').get(id) });
+  assert.deepEqual(tally(ids[0]), { want: 2, maybe: 0, skip: 0 }, 'the filled vote counts once, the bystander once');
+  assert.deepEqual(tally(ids[3]), { want: 1, maybe: 1, skip: 0 }, "the losing anonymous 'want' left the tally");
 });
 
 test('XIVAuth sign-in with an old anonymous ballot claims it in one batch', async () => {
