@@ -21,6 +21,8 @@ test('only the API reaches the Worker; page paths and dropped endpoints are 404'
   assert.equal((await call(API + 'auth/logout')).headers.get('allow'), 'POST');
   assert.equal((await call(API + 'auth/github/callback', { method: 'POST', body: {} })).headers.get('allow'), 'GET');
   assert.equal((await call(API + 'admin/voters', { method: 'POST', body: {} })).status, 405);
+  // HEAD is not GET here, which is why the README's deploy checks use GET.
+  assert.equal((await call(API + 'auth/github/start', { method: 'HEAD' })).status, 405);
   assert.equal(env.DB.stats.calls, 0, 'wrong methods never touch D1');
   const res = await worker.fetch(new Request(ORIGIN + BASE + '/'), env, { waitUntil() {} });
   assert.equal(res.status, 404, 'the default export routes the same way');

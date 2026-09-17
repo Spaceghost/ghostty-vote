@@ -278,7 +278,7 @@ Why 300 fits the D1 free tier (100,000 rows written and 5 million rows read per 
 note write inserts a `write_log` row (plus its two indexes), prunes an expired one, and upserts
 the vote row (plus its index) with a tally update, about 9 rows written. A voter who uses a whole
 window costs about 2,700 rows written, under 3% of the day, and at most 300 × 300 = 90,000 rows
-read, because each write's precheck counts the voter's window. A person voting on all 55 ideas and
+read, because each write's precheck counts the voter's window. A person voting on all 81 ideas and
 writing notes stays well under one window. The limit protects against a runaway page, not against
 abuse: anyone can make new GitHub or XIVAuth accounts, so a scripted attacker could still use up the
 daily free rows (on the free plan that should mean refused queries until the daily reset, not a
@@ -311,10 +311,50 @@ their names); the client ids and `ADMIN_ACCOUNTS` are in `[vars]`. The registere
 `https://spacegho.st/mods/ffxiv/term/vote/api/auth/github/callback` and
 `https://spacegho.st/mods/ffxiv/term/vote/api/auth/xivauth/callback`.
 
+Do these steps in this order.
+
+**1. D1: apply migration 0004 (and the catalogue seed).** The sign-in Worker reads and writes the
+`characters` table on a character link, `api/auth/me` and the admin list, so the table must exist
+before the Worker is deployed. 0004 is additive (`CREATE TABLE IF NOT EXISTS`), leaves every existing
+table alone and is safe to run again. The seed is all upserts and never lowers the catalogue
+version; it puts catalogue version 2 into D1 so the Worker accepts votes on the new ideas that the
+deployed `ideas.json` lists (running it again when D1 already has version 2 changes nothing).
+
 ```sh
 cd ~/ghostty-vote
 node --test                                   # optional sanity check, no installs
+node scripts/build.js --check                 # generated files match data/catalogue.json
 
+npx wrangler d1 execute ghostty-vote --remote --file migrations/0004_sign_in.sql
+npx wrangler d1 execute ghostty-vote --remote --command \
+  "SELECT name FROM sqlite_master WHERE name = 'characters'"      # expect characters
+npx wrangler d1 execute ghostty-vote --remote --file seed/seed.sql
+```
+
+**2. Deploy the Worker and the static assets.** `wrangler deploy` runs `node scripts/build.js`, then
+uploads `public/` as static assets and `src/worker.js` as the script, in one deployment. The
+checks use GET, not `curl -I`: the Worker answers a HEAD request on a GET route with 405, so a HEAD
+check of an API route fails even when the deploy worked.
+
+```sh
+npx wrangler deploy
+
+curl -s -o /dev/null -w '%{http_code}\n' https://spacegho.st/mods/ffxiv/term/vote/   # expect 200, served as an asset
+curl -s https://spacegho.st/mods/ffxiv/term/vote/version.json               # expect {"version":2,"ideas":81,...}
+curl -s https://spacegho.st/mods/ffxiv/term/vote/api/tallies | head -c 200
+curl -s https://spacegho.st/mods/ffxiv/term/vote/api/auth/me               # expect {"signed_in":false,"legacy_ballot":false}
+curl -s -o /dev/null -D - https://spacegho.st/mods/ffxiv/term/vote/api/auth/github/start | grep -i '^location'
+                                              # expect location: https://github.com/login/oauth/authorize?...
+```
+
+Deploying the sign-in Worker ends anonymous voting at once: the old page (still cached in a
+browser) gets 401 on every write. Then sign in once with GitHub from the browser that holds your
+old ballot, so it moves onto `github:251370`, and open `/admin/` to check the list.
+
+**Only for a database without 0002 and 0003.** The live database already has them. A copy that
+does not must get them before step 1:
+
+```sh
 # Drop the unused D1-hosted page. Safe to repeat.
 npx wrangler d1 execute ghostty-vote --remote --file migrations/0002_drop_site_assets.sql
 
@@ -335,29 +375,9 @@ npx wrangler d1 execute ghostty-vote --remote --file migrations/0003_note_only_v
 npx wrangler d1 execute ghostty-vote --remote --command \
   "SELECT sql FROM sqlite_master WHERE name = 'votes'"          # expect vote IN ('', 'want', ...)
 # Only if it went wrong: npx wrangler d1 time-travel restore ghostty-vote --bookmark=<bookmark from info>
-
-# Sign-in: add the characters table. Apply it BEFORE deploying the sign-in Worker, which reads
-# and writes that table on a character link, api/auth/me and the admin list. It is additive
-# (CREATE TABLE IF NOT EXISTS), leaves every existing table alone and is safe to run again.
-npx wrangler d1 execute ghostty-vote --remote --file migrations/0004_sign_in.sql
-npx wrangler d1 execute ghostty-vote --remote --command \
-  "SELECT name FROM sqlite_master WHERE name = 'characters'"      # expect characters
-
-# Runs node scripts/build.js, then uploads public/ as static assets and src/worker.js as the script.
-npx wrangler deploy
-
-curl -sI https://spacegho.st/mods/ffxiv/term/vote/ | head -1            # expect 200, served as an asset
-curl -s  https://spacegho.st/mods/ffxiv/term/vote/version.json          # expect {"version":1,"ideas":55,...}
-curl -s  https://spacegho.st/mods/ffxiv/term/vote/api/tallies | head -c 200
-curl -s  https://spacegho.st/mods/ffxiv/term/vote/api/auth/me              # expect {"signed_in":false,...}
-curl -sI https://spacegho.st/mods/ffxiv/term/vote/api/auth/github/start | grep -i '^location'   # expect github.com/login/oauth/authorize?...
 ```
 
-Deploying the sign-in Worker ends anonymous voting at once: the old page (still cached in a
-browser) gets 401 on every write. Then sign in once with GitHub from the browser that holds your
-old ballot, so it moves onto `github:251370`, and open `/admin/` to check the list.
-
-0002 and 0003 are applied with `d1 execute` rather than `d1 migrations apply` because the live database was
+0002, 0003 and 0004 are applied with `d1 execute` rather than `d1 migrations apply` because the live database was
 loaded from an SQL import. It may have no `d1_migrations` rows, and in that case `migrations apply`
 would try to run 0001 again and fail on the existing tables. Run
 `npx wrangler d1 migrations list ghostty-vote --remote` to see which migrations it records.
