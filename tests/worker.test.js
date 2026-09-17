@@ -8,6 +8,7 @@ import { buildSeedSql } from '../scripts/seed-lib.js';
 import { createD1 } from './d1-shim.js';
 
 const read = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+const OPEN_IDEAS = JSON.parse(read('data/catalogue.json')).categories.reduce((n, c) => n + c.ideas.length, 0);
 const MIGRATIONS = [
   read('migrations/0001_init.sql'), read('migrations/0002_drop_site_assets.sql'), read('migrations/0003_note_only_votes.sql'),
 ];
@@ -84,7 +85,7 @@ test('tallies: counts per open idea, one D1 read, then served from the cache', a
   assert.equal(res.status, 200);
   assert.equal(res.headers.get('cache-control'), `public, max-age=${LIMITS.tallyTtlSeconds}`);
   const tallies = await res.json();
-  assert.equal(Object.keys(tallies).length, 55);
+  assert.equal(Object.keys(tallies).length, OPEN_IDEAS);
   assert.deepEqual(tallies['ops-weather'], { want: 0, maybe: 0, skip: 0 });
   assert.equal(env.DB.stats.calls, 1);
 
@@ -432,7 +433,7 @@ test('re-seeding with a bumped version keeps votes and never rolls back', async 
 
   cache.store.clear();
   const tallies = await (await call(API + 'tallies')).json();
-  assert.equal(Object.keys(tallies).length, 55);
+  assert.equal(Object.keys(tallies).length, OPEN_IDEAS);
   assert.ok(!(retiredId in tallies));
   assert.deepEqual(tallies['brand-new-idea'], { want: 0, maybe: 0, skip: 0 });
   assert.equal(tallies['ops-weather'].want, 1);

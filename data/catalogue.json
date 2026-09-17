@@ -36,21 +36,6 @@
           "added_version": 1
         },
         {
-          "id": "alertmanager-fates",
-          "title": "Alertmanager FATEs",
-          "pitch": "Prometheus alerts appear as FATE-style rings on the ground near you, with countdown, severity and a graded resolve.",
-          "experience": "While gathering, an orange ring pulses nearby: 'DiskPressure: nas/tank 91% (critical)'. Walk in and a panel rises running a read-only runbook (zpool status). When it resolves, the ring closes with a gold, silver or bronze grade by time to fix.",
-          "in_world": true,
-          "audience": "homelab folks, on-call SREs, sysadmins who raid",
-          "wow": 8,
-          "feasibility": "stretch",
-          "effort": "days",
-          "how": "Capture session (ghostty.run) curls Alertmanager and Prometheus, flattened to TSV with jq. Lua keys alerts by fingerprint and anchors rings near the player. New Nelua primitive ghostty.draw_ring projects a tinted polyline. Walk-in by distance to ghostty.player(); rings hidden while BoundByDuty or InCombat.",
-          "risks": "No depth, rings float or sink on slopes without a BGCollision raycast forward. Walk-in must never auto-remediate: read-only or confirm. Cap alert floods; keep Alertmanager tokens out of lua/init.lua.",
-          "tos_safe": true,
-          "added_version": 1
-        },
-        {
           "id": "homelab-minion-menagerie",
           "title": "Homelab Minion Menagerie",
           "pitch": "Each server gets a client-side creature that follows you and acts out its health.",
@@ -471,21 +456,6 @@
       "tagline": "Game-aware QoL for queues, wipes, crafting and the market board.",
       "ideas": [
         {
-          "id": "wipe-rewind",
-          "title": "Wipe Rewind",
-          "pitch": "After a wipe, a panel rises with your own last seconds and your static's strat doc scrolled to the mechanic that killed you.",
-          "experience": "Party wipes; while running back a panel scans in showing the hits and debuffs you took from your own battle log, next to `strats.md` opened at that ability's heading. When the countdown starts it sinks out with the derez.",
-          "in_world": true,
-          "audience": "progression raiders, statics, raid leads with strat docs in git",
-          "wow": 8,
-          "feasibility": "stretch",
-          "effort": "days",
-          "how": "Shim forwards IDutyState wipe/recommence and your own battle-log lines plus the countdown message. Nelua rings the last few seconds, sends them on wipe, and drives rez up, then down on countdown. `wipe recap` maps ability names to headings and opens `less +/'^## ability'`.",
-          "risks": "Post-wipe review of your own data only; no live callouts. Avoid parsing ACT/IINACT network logs. Ability-to-heading maps are hand-maintained per fight; text depends on client language.",
-          "tos_safe": true,
-          "added_version": 1
-        },
-        {
           "id": "queue-pop-eject",
           "title": "Queue Pop Eject",
           "pitch": "When the Duty Finder pops, whatever terminal owns your screen lets go, and an opt-in hook lets your desk react.",
@@ -497,21 +467,6 @@
           "effort": "days",
           "how": "Shim forwards IClientState.CfPop duty id via gu_event. Nelua clears world_full_id and stops capturing keyboard. Lua on_duty_pop picks pet or minimize and sets a countdown title cleared on WaitingForDutyFinder/BoundByDuty. Client-to-agent EVENT frame fork/execs an opt-in hook with only DUTY_ID in env.",
           "risks": "Focus not released means you can't press Commence; test hardest. CfPop may miss some queue types. Never auto-commit, never type into the PTY.",
-          "tos_safe": true,
-          "added_version": 1
-        },
-        {
-          "id": "crafting-solver",
-          "title": "Crafting Solver Over the Anvil",
-          "pitch": "Open a recipe and a terminal above your workstation runs a real solver on your stats and prints paste-ready macros.",
-          "experience": "Pick a new Master recipe and a panel streams a raphael-rs search with a progress bar using your craftsmanship, control and CP. The macro splits into 15-line chunks; tap A to copy chunk 1 and paste it yourself.",
-          "in_world": true,
-          "audience": "crafters gearing for expert recipes",
-          "wow": 7,
-          "feasibility": "stretch",
-          "effort": "days",
-          "how": "Shim forwards recipe id from AgentRecipeNote, stats from PlayerState, job level, triggered on RecipeNote PostRefresh. Agent control socket feeds `craft watch` running raphael-cli. OSC 52 handled in core via igSetClipboardText, so any CLI can copy. Panel anchored above player while PreparingToCraft.",
-          "risks": "Stop at the clipboard; executing macros is automation. Food and potion buffs must be active. Big solves eat minutes and GBs on the host.",
           "tos_safe": true,
           "added_version": 1
         },
@@ -542,21 +497,6 @@
           "effort": "days",
           "how": "Shim forwards IGameGui.HoveredItemChanged and home DC via gu_event; Nelua debounces ~150ms and relays PROTO_EVENT. `term events --kind hover` feeds a shell script calling Universalis. Panel shown while OccupiedSummoningBell.",
           "risks": "Not every row raises a tooltip. Universalis is crowd-sourced and rate-limited. Existing plugins already show prices; the draw is your own tooling. Never write prices back.",
-          "tos_safe": true,
-          "added_version": 1
-        },
-        {
-          "id": "party-finder-fzf",
-          "title": "fzf the Party Finder",
-          "pitch": "Party Finder listings stream into your shell as JSON lines for jq and fzf.",
-          "experience": "Open the Party Finder and `pf | fzf` fuzzy-searches every description for 'practice' minus 'clear pf'. Pick one and its row is highlighted if visible, or its page and recruiter are printed.",
-          "in_world": false,
-          "audience": "raiders hunting practice parties, jq reflexes",
-          "wow": 6,
-          "feasibility": "stretch",
-          "effort": "days",
-          "how": "Shim forwards IPartyFinderGui.ReceiveListing fields as JSON via gu_event; `pf` streams from the agent socket. Highlight is a read-only ImGui rect over LookingForGroup row nodes; no driving the addon.",
-          "risks": "Only pages the game fetched arrive. Strip control characters from player text to avoid escape injection. Keep recruiter names in memory only. Row layout is fragile.",
           "tos_safe": true,
           "added_version": 1
         },
