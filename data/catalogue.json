@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "categories": [
     {
       "name": "The World Is Your Dashboard",
@@ -94,6 +94,51 @@
           "risks": "Without depth occlusion stars draw over rooftops and the illusion breaks. Large graphs don't read as constellations. Decorative and rarely looked at.",
           "tos_safe": true,
           "added_version": 1
+        },
+        {
+          "id": "town-criers",
+          "title": "Town Criers",
+          "pitch": "The NPCs around you start calling out your logs in speech bubbles, so Ul'dah's merchants hawk your warnings and a guard bellows your stack trace.",
+          "experience": "`journalctl -f` runs on a minimized panel as you walk into Ul'dah's Sapphire Avenue Exchange, and the merchants start calling out your log: 'Fresh from the kiln, nginx reloaded!' A warning jitters in a yellow bubble over a Brass Blade. When the backup job fails the nearest guard bellows its stack trace in a big red battle-talk frame and every other bubble falls silent.",
+          "in_world": true,
+          "audience": "homelab folks, streamers, roleplayers with a sense of humour, anyone who tails logs while standing in a city",
+          "wow": 8,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "You pick one session as the crier source and keep it live with run_occluded. The core finds newly written lines from render-state dirty rows and extracts them with ghostty_formatter_format_buf (PLAIN, unwrapped), handing them to Lua, which sorts them by severity with your own patterns. A new shim call walks IObjectTable for EventNpc objects and guard BattleNpcs within about 25 yalms, never players, and returns position and height the way GetObject does today. Lua gives each line to the nearest free NPC with rate limits, and bubbles are ImGui rounded rects projected above each head through the view-projection the world panels already use. Severity picks speech, shaking shout or battle-talk styling, and scripts can shout on purpose with an `ffxiv;crier` APC.",
+          "risks": "Screenshots put hostnames and paths over NPC heads. Bubbles ignore depth, show through walls, and can overlap the NPCs' real balloons. Busy cities have dozens of NPCs in range, so cap it at a handful. Players are excluded on purpose, so no one else's character ever appears to say your text, even locally. Long lines must be trimmed and wrapped.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "process-skyline",
+          "title": "Process Skyline",
+          "pitch": "Your machine's process table rises as a neon city on your island: memory sets a tower's height, CPU lights its windows, and every fork raises a new building.",
+          "experience": "Fly over your island at night and a city of glowing towers stands in the meadow. Firefox is a 60-yalm skyscraper; `make -j32` throws up a district of cc1plus spires that rise, blaze and collapse within seconds; a zombie process stands as a grey ruin with a small green ghost drifting above it. Hover a tower for its name and PID, double-click it and `htop -p` opens on a panel at its base.",
+          "in_world": true,
+          "audience": "sysadmins, homelab folks, island decorators, people who like watching builds",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "A helper on the agent host samples /proc every second and writes the changes as `ESC _ ffxiv;procs;<pid ppid rss cpu state comm> ESC \\` into a hidden session kept live with run_occluded, caught through OPT_UNKNOWN_SEQUENCE with OPT_UNKNOWN_MAX_BYTES raised. Lua lays out a treemap by parent PID at a `here` anchor, so systemd slices become districts, and tower heights move on the same springs world.lua uses for pets. Towers are extruded quads through world_transform_vertices with windows as lit dotted rects, tinted by world.lighting(). Hovering uses ray-box tests built on the world_hit maths, and double-click opens a panel whose profile runs `htop -p <pid>`.",
+          "risks": "Hundreds of processes means hundreds of extruded ImGui boxes, so threads merge, small processes bucket into suburbs and draw calls are capped. Extrusions have no depth test unless routed through the depth pass, so the city shows through hills. Command lines leak tokens in argv, so arguments are hidden by default. On a busy desktop it's just a Chrome city without a filter.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "fishing-for-errors",
+          "title": "Fishing for Errors",
+          "pitch": "Each new kind of error on your machines becomes a fish in the pond, and when you land a real catch it leaps out as a glowing hologram and goes into your Error Guide.",
+          "experience": "You sit on the Mist pier with a rod while journalctl churns on the host. You land a Merlthor Goby, and out of the water arcs a three-yalm coelacanth made of text: 'OOMKilled: jellyfin, first seen 02:14, 37 times', fins flickering red. It's a new species, so a NEW RECORD ribbon unfurls and it goes into your Error Guide beside last week's big fish, ECONNRESET.",
+          "in_world": true,
+          "audience": "homelab folks, anglers, SREs with a sense of humour",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "On the agent host, `xiv-pond` tails journalctl and app logs, collapses lines into signatures by stripping numbers, hex and paths (drain3-style templates), and writes `ESC _ ffxiv;fish;<sig>;<severity>;<count>;<text> ESC \\` into a hidden session kept live with run_occluded. The core captures these through OPT_UNKNOWN_SEQUENCE and queues them. The shim adds a read of ConditionFlag.Fishing and an IChatGui.ChatMessage filter for your own catch message, and only after that message does Lua pop the most severe queued error. Its leap arc starts at a Raycast point ahead of your facing; severity and count set size and colour. The Error Guide is a ghostty.ui tab saved beside world-state.lua; double-click an entry to open its log on a panel.",
+          "risks": "It must never signal bites, hook timing or anything else about the real fish, which would be fishing assistance; it reacts only after the game has told you what you caught. Catch messages differ by client language. Bad templates turn one bug into a hundred species. Log lines carry tokens and hostnames, so redact on the host. It's flavour, not monitoring, so keep a real alert alongside it.",
+          "tos_safe": true,
+          "added_version": 2
         }
       ]
     },
@@ -175,6 +220,36 @@
           "risks": "Amber marking fails for tmux and full-screen apps. Mostly presentation over existing persistence. Staggered boot needs a skip.",
           "tos_safe": true,
           "added_version": 1
+        },
+        {
+          "id": "saucer-arcade-cabinets",
+          "title": "Saucer Arcade Cabinets",
+          "pitch": "Real terminal games run in glowing arcade cabinets along your house wall or beside the Gold Saucer's own machines, with a high-score marquee only you can see.",
+          "experience": "A row of cabinets flickers on along the wall of your FC house: crawl, nethack, tint, and a bastet that picks the worst piece on purpose. Double-click one and the camera fills the screen with it. Beat your own best and the marquee bursts into Jumbo Cactpot-style fireworks while the cabinet's light washes over the floor.",
+          "in_world": true,
+          "audience": "roguelike fans, Gold Saucer regulars, streamers, controller players",
+          "wow": 8,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "Each cabinet is a world panel pinned with `/term pin here` using a profile whose command is the game (crawl, nethack, bastet, tint, moon-buggy, ninvaders). A Lua `cabinet` place() shape tilts the panel back, adds a marquee strip and turns the backlight and light_intensity up. Double-click fly-in already exists. While a cabinet has focus, a keymap mode maps GamepadPressed buttons to arrows and letters through the key encoder with setopt_from_terminal, so DECCKM and kitty flags stay right. The core reads DATA_MODE for synchronized output (2026) and skips render_state_update between begin and end, so fast redraws never tear. The marquee flourish comes from a score-file watcher on the host that writes an `ffxiv;score` APC.",
+          "risks": "Dalamud can read gamepad state but can't reliably swallow it, so the stick may still walk your character; keyboard or unused buttons are safer. In the crowded Gold Saucer panels without a working depth test cover other players in your view. 80x24 roguelikes need a readable pixels_per_yalm at fly-in size. Scores are local and easy to fake, which is fine because nothing is shared. It never touches MGP or the real minigames.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "ansi-gallery",
+          "title": "The ANSI Gallery",
+          "pitch": "Hang classic ANSI art on your house walls, and each piece paints itself at 2400 baud as you walk up to it.",
+          "experience": "You walk the upper floor of your apartment past framed 80-column pieces from 1990s art packs. Step within a few yalms of one and it blanks, then paints line by line at modem speed while a faint handshake plays from your desk speakers. A placard below shows title, artist, group and year from its SAUCE record, and next week, with no shell running at all, the wall is still there.",
+          "in_world": true,
+          "audience": "BBS-era and ANSI art fans, house decorators, retro-computing nerds, streamers",
+          "wow": 7,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "A host tool `ansi-hang` converts .ans files to VT (CP437 to Unicode, iCE colours to bright SGR backgrounds, width from SAUCE), runs the result through libghostty-vt once and saves a GHOSTSNP record with ghostty_snapshot_encode_alloc. In game each frame is a transport-less terminal restored with ghostty_snapshot_decoder_new_buf, so sleep, restarts and the 256 KiB replay ring don't matter. A new lua/gallery.lua triggers the reveal from distance to ghostty.player(): clear the frame, then vt_write the stored VT at a per-frame byte budget (2400, 14400 or 57600 bps presets). Frames are world.lua pins, the placard is a small second panel, and world.lighting() tints them like any panel.",
+          "risks": "The renderer doesn't draw blink, and the font needs full block, shade and box-drawing coverage at the right cell aspect or the art looks broken. 80x25 at a readable pixels_per_yalm takes a lot of wall. vt.h warns the snapshot API will change. Link to 16colo.rs rather than bundling art packs. Only you see the gallery, and without the depth test it can show through walls.",
+          "tos_safe": true,
+          "added_version": 2
         }
       ]
     },
@@ -337,6 +412,21 @@
           "risks": "Unprompted camera moves are jarring; abort on any input or condition change. Needs shell integration. Command names show on stream.",
           "tos_safe": true,
           "added_version": 1
+        },
+        {
+          "id": "shell-tomestones",
+          "title": "Tomestones for Dead Shells",
+          "pitch": "When a process dies its panel falls and leaves a tomestone on the spot, holding an exact snapshot of its last screen and scrollback.",
+          "experience": "The overnight `make -j32` in your workshop gets OOM-killed while you're out gathering. When you come home a cracked slab stands where the panel was: 'make -j32, 1h14m, slain by signal 9'. Click it and the panel rises exactly as it died, scrollback and all, and `/tome raise` runs the command again in the same directory once you confirm.",
+          "in_world": true,
+          "audience": "homelab folks, anyone running long builds, on-call engineers reading a post-mortem",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "On PROTO_EXIT, Session:mark_exited calls ghostty_snapshot_encode_alloc and writes a GHOSTSNP file beside world-state.lua with territory, pose, argv, cwd (DATA_PWD from OSC 7), title (DATA_TITLE), runtime and status; the agent already reports signals as 128+N. The panel derezzes into a drawn slab with the epitaph. Opening a stone builds a transport-less, read-only Session: ghostty_snapshot_decoder_new_buf, decode to decoder_ready so the final screen draws at once, then decoder_next brings older scrollback in as you scroll. A sleeping panel is detached and never sees EXIT, and the agent drops exited sessions, so the agent must hold a finished session until a client collects it, or link libghostty-vt itself (tools/build.sh already builds the host library) and snapshot at the moment of death. `/tome` is already an alias of `/term`, so `raise` is just a new subcommand.",
+          "risks": "Snapshots keep every secret that was on screen: per-profile opt-out, a retention cap and make_private file permissions. vt.h warns the API will change, so version the files and treat old ones as best effort. A graveyard of every `ls` would be silly, so only long runs or non-zero deaths get a stone.",
+          "tos_safe": true,
+          "added_version": 2
         }
       ]
     },
@@ -448,6 +538,36 @@
           "risks": "Low novelty. Chat logger plugins capture external messages. A tag resembling [LS1] invites replying in game chat. Throttle to avoid flooding mid-duty.",
           "tos_safe": true,
           "added_version": 1
+        },
+        {
+          "id": "keystroke-colosseum",
+          "title": "Keystroke Colosseum",
+          "pitch": "Vimgolf duels fought on two towering arena panels, where every keystroke drains your own HP bar and the stands get instant replays.",
+          "experience": "Two FC members face off from opposite pillars in the house courtyard, each under a giant curved panel with the same broken CSV open in vim. Every keystroke knocks a sliver off an HP bar while the stands watch both screens live. Someone lands `:%s/;/,/g` and a floating screen rewinds the last ten seconds for everyone watching. The winner's `:wq` passes the checker and the loser's panel derezzes in a burst of rings.",
+          "in_world": true,
+          "audience": "vim and emacs zealots, FC game nights, coding streamers, programming clubs",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "A duel host on the agent opens both contestant sessions from a challenge file inside a container, counts DATA frames per session as keystrokes and runs a checker when the editor exits. Spectators ATTACH to both sessions, and the agent already fans output to every attached client (agent.nelua broadcast). Counts, clock and result arrive as `ffxiv;duel` APCs through OPT_UNKNOWN_SEQUENCE. Lua places both panels with `at` anchors from a shared arena origin and draws HP bars with new ui progress widgets. For instant replay each spectator's client calls ghostty_snapshot_encode_buf once a second per duel terminal into a 15 s ring, and replay decodes each frame with ghostty_snapshot_decoder_decode into a scratch terminal on a replay panel. The derez reuses world.nelua's rez effect and the `burst` bell preset.",
+          "risks": "Every attached client can write and there's one token, so contestants need session-scoped tokens and spectators a read-only relay before this is safe. Snapshotting two terminals every second costs CPU and memory, so duel sessions use tiny scrollback. DATA frames don't map one-to-one to keystrokes (escape sequences, key repeat), and paste must be disabled or scored by bytes. Contestants run code on the duel box, so the sandbox is mandatory. Players without the plugin see two people typing at thin air.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "bomb-defusal-night",
+          "title": "Keep Typing and Nobody Derezzes",
+          "pitch": "An asymmetric bomb-defusal party game: one player's terminal holds the ticking bomb and everyone else's holds a different page of the manual.",
+          "experience": "Your friend kneels at a sparking crate in the FC garden, the only one who can see the bomb terminal counting down from 03:00. You and two others each float a different manual page, one with wire tables, one with a `strings` dump, one with a regex for the serial, and you all yell clues over voice while she types `cut --wire 4`. Wrong wire: the bomb panel glitches, a red sonar ring bursts out of the crate on everyone's screen, and the timer loses 30 seconds.",
+          "in_world": true,
+          "audience": "FC game nights, Keep Talking and Nobody Explodes fans, event hosts, streamers running viewer games",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "A game-master script on the host's agent generates a puzzle seed, then opens one bomb session and one manual session per reader. Each invite carries a token scoped to one role's session (read-write for the defuser, read-only for readers) and the crate's anchor as a save_state snippet. The bomb TUI emits `ESC _ ffxiv;bomb;strike=1;t=150 ESC \\`, which each client catches through OPT_UNKNOWN_SEQUENCE. Lua turns a strike into a red-tinted `sonar` bell style at the crate anchor, a world.nelua glitch on every panel and a short camera jitter through the existing GetCameraState/SetCameraState path. Detonation plays `burst` and derezzes every panel for a beat. Players talk only over voice or chat they type themselves.",
+          "risks": "Scoped and read-only tokens don't exist yet; today's single token grants a shell. Voice chat is effectively required. Puzzle design is real game-design work. The camera jitter needs a motion-sickness toggle and never fires InCombat or BoundByDuty. Guest sessions need the same sandboxing as any shared shell.",
+          "tos_safe": true,
+          "added_version": 2
         }
       ]
     },
@@ -610,6 +730,96 @@
           "risks": "ImGui overlays never get game DoF or lighting and cover other actors. The game's screenshot likely excludes Dalamud's layer. Bone math breaks on ClientStructs changes.",
           "tos_safe": true,
           "added_version": 1
+        },
+        {
+          "id": "glyphfall",
+          "title": "Glyphfall",
+          "pitch": "Lines that scroll off a world panel fall out of it as real letters that splash in rain, drift in snow and pile up at your feet until you clear the screen.",
+          "experience": "Run `find / 2>/dev/null` on a panel in Ishgard and the lines tumble off its top edge as glowing letters, drifting down through the snow into banks around your boots. In La Noscea rain they splash and fizzle, and in a Thanalan dust storm they blow sideways off the cliff. Type `clear` and a gust sweeps the whole pile away in a derez shimmer.",
+          "in_world": true,
+          "audience": "streamers, screenshot hunters, people who run `yes` for fun",
+          "wow": 8,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "The core keeps a tracked grid ref on the top row of the active area; after new output, that ref's SCREEN position against DATA_SCROLLBACK_ROWS says how many rows just scrolled off, which keeps working once the 10,000-line scrollback is full and the row count stops growing. Each new history row is read back with ghostty_terminal_grid_ref at a HISTORY point plus ghostty_grid_ref_graphemes and ghostty_grid_ref_style, and every non-blank glyph spawns a particle at its cell's spot on the panel's top edge. One Raycast per batch finds the ground, a cheap integrator moves the letters, and they're drawn with PushWorldFont AddText. A new lua/glyphfall.lua turns the ghostty.env() weather id into behaviour: rain splashes and fades, snow drifts and piles, wind and sand push sideways. An empty viewport right after output triggers the sweep.",
+          "risks": "Fast output means thousands of letters a second, so it needs a hard particle cap, sampling of every Nth row and whole-line strips as a fallback. ImGui letters ignore depth unless routed through the depth pass, so piles show through walls. Alt-screen TUIs never scroll into history, so htop never snows. Weather ids need a hand-made table, and house interiors have no weather. It's decoration, not a log.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "magic-lantern-projector",
+          "title": "Magic Lantern",
+          "pitch": "Aim a panel like a projector and its terminal, text and kitty images alike, is thrown onto whatever it hits: walls, furniture, aetherytes and the people walking through the beam.",
+          "experience": "Set a projector at the back of the FC house and run `mpv --vo=kitty trailer.mkv`: the film leaves the glass, covers the far wall, bends over a bookshelf and plays across your own back when you walk through the beam. On a quiet night in Limsa you aim another at the Aetheryte Plaza crystal and htop wraps around its facets. Swing the projector and the image swings with it.",
+          "in_world": true,
+          "audience": "venue owners, FC movie nights, GPose photographers, streamers, VJs",
+          "wow": 10,
+          "feasibility": "research",
+          "effort": "weeks",
+          "how": "The projector's terminal is drawn into a texture (ITextureProvider.CreateDrawListTexture from the shim, or a D3D11 render target on the device GuSceneDepth.ui_device already exposes), with kitty images uploaded through the decode path Kitty Graphics Tapestries needs: GHOSTTY_SYS_OPT_DECODE_PNG, re-uploaded when GHOSTTY_KITTY_IMAGE_DATA_GENERATION changes. A full-screen quad then runs through the same draw-list callbacks as core/depthpass.nelua with a sibling of panel_depth.hlsl: it rebuilds each pixel's world position from the reversed-Z SceneDepth and the inverse view-projection rows that cbuffer already carries, moves it into the projector's frustum from its world.place() pose, and samples the texture with cone falloff and a facing term from depth derivatives. app/lights.nelua tints the panel's Scene.Light toward the frame's average colour, so the room's real lighting brightens too. Alt-drag and Shift-snap aim it.",
+          "risks": "It adds colour over a finished frame; it isn't real lighting, and it lands behind water, glass and hair that don't write depth. Render-to-texture from the native core is unproven, and the depth path has only been checked in a Wine/DXVK probe. Kitty's shm medium doesn't cross the TCP agent, so video arrives as base64 frames: cap resolution and FPS. Flashing video needs a photosensitivity switch. Only you and your stream see it.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "shader-sky",
+          "title": "Paint the Sky",
+          "pitch": "Pipe a pixel shader from your shell and it replaces the sky over Eorzea on your screen only, fed by Eorzea time, the weather and where your camera points.",
+          "experience": "On the Mist lighthouse at dusk you run `aether-sky plasma.hlsl` and the sunset dissolves into a slow demoscene plasma that stops cleanly at rooftops, masts and tree lines. When rain rolls in, the plasma cools to blue and ripples. Swap in a raymarched tunnel and it turns with your camera, so the town seems to sit at the mouth of a wormhole; `aether-sky off` brings the real sky back.",
+          "in_world": true,
+          "audience": "demosceners, shader artists, streamers, screenshot and GPose folks, venue hosts",
+          "wow": 9,
+          "feasibility": "research",
+          "effort": "weeks",
+          "how": "A shell helper compiles the HLSL on the Linux host with the same pinned vkd3d-compiler tools/build-shaders.lua uses, so nothing compiles inside Wine, and sends the DXBC as `ESC _ ffxiv;sky;<base64> ESC \\`, caught through OPT_UNKNOWN_SEQUENCE with OPT_UNKNOWN_MAX_BYTES and OPT_APC_MAX_BYTES raised for the payload. The core checks the DXBC header, creates the pixel shader on GuSceneDepth.ui_device, and adds one full-screen quad at the start of the background draw list through the core/depthpass.nelua callback path, with SceneDepth still bound at t1. The shader keeps only pixels whose reversed-Z depth is 0 (the infinite far plane) and discards the rest. A fixed cbuffer supplies day seconds, rain and weather id from ghostty.env(), the camera-relative inverse view-projection rows panel_depth.hlsl already builds rays from, the depth sizes and the session's bell count.",
+          "risks": "Nobody has checked that the sky really reads depth 0; `/term depth show` comes first. A painted sky hides the sun, moon and clouds, and effects that don't write depth leave odd edges. Shader bytecode from a shell runs on your GPU inside the game process, where a heavy shader can stall frames or remove the device, so accept it only from the focused session, time-box it, and ask before loading one from a remote host. Only you and your stream see it.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "venue-lighting-desk",
+          "title": "The Lighting Desk",
+          "pitch": "A tracker or cue sheet in a terminal drives a rig of real in-game lights channel by channel, and opted-in patrons at the venue see the same show on their own clients.",
+          "experience": "On the stage panel you press play in Furnace: the kick slams a red light up from the floorboards, hi-hats strobe cold blue across the beams, and the lead arpeggio walks a violet spot along the wall, throwing your shadow with it. Mute channel 3 and its spot goes dark mid-bar. The dancer beside you joined the venue's desk at the door, so she /cheers at the same blackout you just saw.",
+          "in_world": true,
+          "audience": "chiptune and tracker musicians, DJs, dance club and venue owners, event hosts",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "On the host, `ffxiv-lightd` reads the tracker's MIDI out (ALSA sequencer or JACK) or a cue script and prints `ESC _ ffxiv;cue;ch=1;n=36;v=127;t=183.250 ESC \\` into a desk session; the APCs never touch the grid and arrive through OPT_UNKNOWN_SEQUENCE only on sessions flagged as desks. A new lua/lightrig.lua maps channels to fixtures (offset from a pinned `here` anchor, colour, range, shadows, attack and decay), and app/lights.nelua grows from one light per panel into a capped pool on the same LightCreate/LightUpdate calls (HostApi.cs:400-451). Patrons ATTACH to the desk session: the agent already broadcasts output to every attached client and replays 256 KiB on join. Cues carry desk time, and a new agent timestamp frame lets clients schedule against a playout buffer of about 150 ms. Fixture offsets hang off the house's ward, plot and room, which an in-game MCP server plugin can already read through HousingManager.",
+          "risks": "Every attached client can write today and there's a single token, so patrons need a read-only broadcast relay first. Nobody knows how many Scene.Lights the renderer tolerates, so cap the pool at 8-16. Strobes need a hard rate limit and a per-patron intensity slider. Sync is only as good as each patron's latency, and the music reaches them over Discord or Twitch with its own drift. Players without the plugin see a normal club. Aetherial Visualizer pulses panels from local audio; this is an authored, shared show.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "algorave-conductor",
+          "title": "Algorave Conductor",
+          "pitch": "Live-code music in a terminal and your character conducts at the exact tempo, while the pattern that just played flares on the panel behind you.",
+          "experience": "In your FC house you evaluate `d1 $ sound \"bd*2 [~ hh] sn\"` in Neovim and your character lifts a hand and beats time at 128 BPM. Every drum hit makes the `d1` line flash on the big curved panel behind you, and `d2`'s pads bloom teal half a bar later. Type `hush` and your arms drop as the room goes quiet.",
+          "in_world": true,
+          "audience": "live coders, algorave and venue hosts, music streamers, roleplayers",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "TidalCycles and Strudel's desktop setups send every event to SuperDirt as OSC over UDP. A host-side `ffxiv-tidal` reads a mirrored copy of that stream (orbit, cps, cycle, delta, sound) and prints `ffxiv;beat` APCs into a hidden session kept live with run_occluded, caught through OPT_UNKNOWN_SEQUENCE. A new lua/conductor.lua converts cps to BPM and drives ghostty.anim_speed on a pose from animation.lua picked per tempo band, with anim_play flourishes on section changes, all client-side like the existing typing loop. For the flash it finds the row holding `d1 $` on the editor panel with ghostty_search_* and GHOSTTY_SEARCH_DATA_VIEWPORT_MATCHES, then glows that rect in the orbit's colour for the event's delta. Sonic Pi works the same way through its OSC cue log.",
+          "risks": "Poses played far off their normal speed look silly, so stick to tempo bands. Tidal doesn't report source spans, so matching an event to its line is a guess; Strudel's events do carry them. The UDP mirror must never add latency to SuperDirt. Animation changes are client-side but stay off in duties. Nobody in the venue sees the code unless they watch your stream.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "cracktro-login",
+          "title": "Cracktro Login",
+          "pitch": "Launching the game plays a 1990s cracktro over the title screen: a sine-scrolling greetz list, copper bars, a starfield and a MOD tune from your desk speakers.",
+          "experience": "Before you press Start, the logo sky fills with copper bars and a chrome sine scroller: 'GREETZ TO <your static> ... <your FC> ... CODE BY YOU'. A four-channel module thumps from your desk speakers. Hit any key and the intro shatters into the scanline derez, leaving the title menu.",
+          "in_world": false,
+          "audience": "demosceners, retro-computing fans, streamers, FCs with a sense of humour",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "The intro is an ordinary terminal program on the agent host: `cracktro` draws truecolor half-block frames (kitty graphics once Kitty Graphics Tapestries lands) and plays the .mod with openmpt123. The core opens it at the title screen, when host.nelua reports not in world and IClientState.IsLoggedIn is false, as a borderless full-screen popup terminal. It holds render_state_update while DATA_MODE shows synchronized output (2026), so each frame presents whole. Greetz come from greetz.txt plus an FC name and friend names cached at your last logout (ClientStructs InfoProxyFriendList; fields to verify). Any key or pad button ends it with the existing derez, once per launch, skippable in settings.",
+          "risks": "Full-screen half-blocks at speed are heavy on the per-glyph ImDrawList path. render.nelua doesn't honour mode 2026 today. If the agent isn't reachable before login it must show nothing and never delay the menu. Friends' names on a streamed title screen are a leak, so friend greetz are opt-in. Copper bars need a calm preset, and MOD files carry their own licences.",
+          "tos_safe": true,
+          "added_version": 2
         }
       ]
     },
@@ -676,6 +886,81 @@
           "risks": "Slow git in big repos adds prompt lag. Check whether OSC 1337 SetUserVar reaches the callback; else use an unused OSC number. Overlapping nameplates, stale state while asleep.",
           "tos_safe": true,
           "added_version": 1
+        },
+        {
+          "id": "failing-suite-extreme",
+          "title": "The Failing Suite (Extreme)",
+          "pitch": "Target a striking dummy and your test suite becomes a trial boss: failing tests are its HP, compiler errors pull as adds on an enemy list, and all green plays Duty Complete.",
+          "experience": "You target the dummy in your FC workshop and type `/term trial pytest`. Its nameplate becomes 'The Failing Suite (Extreme)', a boss bar reads 28 failing of 240, and the worst traceback towers behind it on a hologram panel like a primal. Save a fix and yellow '+17' numbers fly off the dummy while 'E0308 mismatched types: loader.rs' aggros onto the enemy list; click it and nvim jumps to line 214. At zero the hologram shatters in a scanline derez and a Duty Complete banner sweeps the screen.",
+          "in_world": true,
+          "audience": "developers who practise TDD, compiled and typed language folks, streamers who code, raiders with a CI habit",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "A host wrapper runs the suite and the checker under watchexec, reads JUnit or JSON output (`cargo check --message-format=json`, `tsc --watch`, `ruff --output-format json`) and prints `ESC _ ffxiv;suite;pass=..;fail=..;fixed=..;top=<test> ESC \\` plus `ffxiv;diag;<json>` snapshots, caught through OPT_UNKNOWN_SEQUENCE (session.nelua sets neither option today). A new lua/trial.lua diffs snapshots into damage, new adds and kills, ranks adds with primary errors first, and keeps a local hunt log. The hologram is a world panel on the existing `target` anchor raised above the dummy, running `less +G` on the top failure. Boss bar, enemy list and banner are ImGui in chrome.nelua's glass style; numbers go through a new shim call to IFlyTextGui.AddFlyText, and the nameplate is renamed in INamePlateGui.OnNamePlateUpdate only for a BattleNpc whose BNpcName is a striking dummy. Clicking an add writes `goto file:line` to the wrapper, which calls `nvim --server $NVIM --remote-send`.",
+          "risks": "Hitting the dummy puts you in combat, and combat derezzes everything, so this is a boss you watch, not one you fight. AddFlyText may only attach to your own character, so the dummy's numbers might have to be drawn by the plugin. One refactor can spawn 300 adds, so cap and roll them up, and crediting a root-cause fix with its cascade is a heuristic. Giant tracebacks carry paths and secrets. It's gated to dummies outside duties so it never looks like a real combat HUD.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "debugger-trial-arena",
+          "title": "Debugger Trial: The Floor Is the Source File",
+          "pitch": "Attach a DAP debugger and your source file unrolls across the ground as a boss arena: breakpoints are AoE telegraphs, the current line is a tank-buster marker and an uncaught exception is a wipe.",
+          "experience": "`/term trial python -m pytest -x` and the arena rezzes around your feet: `solver.py` lies flat as the floor, breakpoint lines ringed in orange telegraphs, the call stack standing at the north edge like a boss timeline. F10 slides the glowing marker down the floor, and changed locals pop out of their lines as flytext: 'retries 2 -> 3'. Step into a call and the floor derezzes and rebuilds as `http.py`. Then the exception: the screen flashes red, 'ENRAGE: KeyError token' crawls across the arena, and the frame that threw glows.",
+          "in_world": true,
+          "audience": "developers who live in debuggers, raiders, live-coding streamers",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "A host-side `ghostty-dap` runs as a small REPL in its own session and speaks DAP to debugpy, lldb-dap or `dlv dap`. On every `stopped` event it writes `ESC _ ffxiv;dap;<base64 JSON> ESC \\` with file, line, breakpoints, stack and changed variables, forwarded to a new Lua hook through OPT_UNKNOWN_SEQUENCE. The floor is a second world panel placed with pitch -90 through the placement table, running `bat --paging=never` on the file; world_axes and the depth-pass basis already tilt with pitch. Telegraphs reuse the ring renderer in app/bell.nelua projected onto the floor's rows, and the stack is a pet panel. A new keymap action sends F5, F9, F10 and F11 to the ghostty-dap session whichever panel has focus. The arena refuses to open while BoundByDuty and derezzes in combat like every panel.",
+          "risks": "A floor-sized panel adds real overdraw, and no panel has been laid at -90 degrees yet, so it floats slightly above the ground to avoid z-fighting. Reading text at a steep camera angle is the hard part, and first person may be the only readable view. APC through tmux needs passthrough. Every DAP adapter has quirks. It stays a toy until conditional breakpoints and watches exist.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "bisect-heaven-on-high",
+          "title": "Git Bisect, Heaven-on-High",
+          "pitch": "`git bisect` becomes a deep-dungeon descent, one floor per step, ending in a boss room where the first bad commit is waiting.",
+          "experience": "`git bisect start HEAD v1.2` and a floor counter drops in over your pet terminal: 'Heaven-on-High, Floor 1 of ~7, 97 commits remain'. Mark a commit good and a Cairn of Passage lights blue as you sink a floor; bad springs a trap; `skip` spends a Pomander of Safety. Under `git bisect run` the floors flash past in a few breaths. Floor 7 locks shut and a boss nameplate reads 'c41e9d0: hot-swap loader cleanup, 3 weeks ago', with its diff on the panel behind it.",
+          "in_world": true,
+          "audience": "developers hunting regressions, Deep Dungeon grinders",
+          "wow": 8,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "A precmd hook, plus a `git` wrapper for run mode, checks for .git/BISECT_LOG. When it's there, the hook takes bisect_nr and bisect_steps from `git rev-list --bisect-vars` over the bad and good refs, reads the last verdict from `git bisect log`, and spots the `# first bad commit:` line that log gains when the hunt ends. It prints `ffxiv;bisect;floor=..;left=..;verdict=..` as an APC, caught through OPT_UNKNOWN_SEQUENCE (the Stage Directions plumbing). A new lua/bisect.lua maps good, bad and skip to cairn, trap and pomander effects built from bell.lua rings and the worldview glitch and derez, and on the boss floor pins a panel running `git show --stat` beside the pet.",
+          "risks": "It's a theme on top of real work. The precmd hook never fires inside `git bisect run`, so run mode depends on the wrapper. Floor estimates wobble with skips and merges. Deep Dungeon art is limited to game icons through ITextureProvider.GetFromGameIcon and colour. APC through tmux needs passthrough.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "blue-magic-spellbook",
+          "title": "Blue Magic: Learn Commands by Watching",
+          "pitch": "When a pair, an agent or a teammate's panel runs a command you've never typed and it works, you learn it like Blue Magic into a spellbook you can cast from later.",
+          "experience": "Claude, fixing the agent, runs `journalctl --user -u ghostty-agent -g token --since -1h` and it works. Blue motes spiral off its panel into you: 'You learn Journal Scry (No. 37)'. A week later you open the spellbook's grid of icons and pick Journal Scry; the command appears at your prompt with `ghostty-agent` and `-1h` selected as placeholders, waiting for your Enter. Spells you never cast fade to grey.",
+          "in_world": false,
+          "audience": "developers learning from pairs and AI agents, Blue Mage mains",
+          "wow": 7,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "Commands come from two sources. Any shell with OSC 133: the text is read from cells whose GHOSTTY_CELL_DATA_SEMANTIC_CONTENT is INPUT between prompt rows, with the exit code from the agent-side CMD_END frame proposed in Commands Cast Like Spells, since libghostty-vt drops it. And Claude Code: PostToolUse hooks on its Bash tool emit the command and whether it errored. A host helper `ghostty-spellbook` checks $HISTFILE or atuin to decide whether a command is new to you, redacts secret-shaped arguments and turns paths and numbers into placeholders. A new lua/bluemage.lua stores spells, names them from a small word list keyed by binary, draws the book with ghostty.ui widgets and plays the motes over the source panel. Casting goes through `/term type` into the focused session, never `/term send`.",
+          "risks": "A command working for an agent doesn't make it safe, so destructive verbs (`rm`, `dd`, `git push --force`, `terraform apply`) can never be learned, and casting never presses Enter. argv often carries secrets, so redaction is conservative and the spellbook file is made private. The naming whimsy wears off, so plain names are an option.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "palace-of-the-dead-inodes",
+          "title": "Palace of the Dead Inodes",
+          "pitch": "Your filesystem becomes a dungeon you walk: directories rise as doorways around you, files sit as coffers, and walking through a door cds the shell or leaves a permanent door in your house.",
+          "experience": "`/term crawl ~/src` and 'Floor 3: ~/src' flashes across the screen as a ring of doorways rises, one per subdirectory. Walk up to a coffer and it opens into a `bat` preview, and the 4 GB core dump lurking among them is a mimic. Walk through 'ghostty-dalamud' and the ring collapses, the shell cds, and the next floor rezzes in around you. Back home, Alt-drag a folder link out of `ls --hyperlink=auto` and its arch stays on your apartment floor, a door into that repo that's still standing tomorrow.",
+          "in_world": true,
+          "audience": "developers lost in monorepos, people teaching the shell, housing decorators who want a repo room, Deep Dungeon enjoyers",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "A host helper `xiv-crawl` prints `ESC _ ffxiv;floor;<json: names, kinds, sizes> ESC \\` after each cd, caught through OPT_UNKNOWN_SEQUENCE, while OPT_PWD_CHANGED and DATA_PWD confirm where the shell really is. Lua places doors on a ring around ghostty.player() at Raycast ground height, and a segment test on consecutive player positions detects a crossing, which sends `cd -- 'name'` through the `/term send` path only while DATA_CURSOR_AT_PROMPT (OSC 133) is true. Permanent doors come from OSC 8: map the mouse cell to a grid ref, check GHOSTTY_CELL_DATA_HAS_HYPERLINK, read ghostty_grid_ref_hyperlink_uri, accept only file:// links whose host matches the agent's (a hostname added to its OK reply), and save the arch per zone in world-state.lua. Crossing a saved door OPENs a new panel with a PWD env entry, which the agent already chdirs on. Coffers are small preview panels; `..` is the exit portal.",
+          "risks": "Needs open floor such as a house, the island or an empty field, and walls clip doors. Huge directories need paging into floors of about 20. The agent has no stat or hostname today, and file:// links printed over ssh point at other machines. Walking must always be your own movement: the walk-up steering hook must never carry you through a door. Not for use inside a real Deep Dungeon.",
+          "tos_safe": true,
+          "added_version": 2
         }
       ]
     },
@@ -817,6 +1102,183 @@
           "risks": "CJK at 40px bloats the atlas; ImWchar is 16-bit so no astral characters. IME through Wine/Proton on Linux is unreliable. WndProc hooks can conflict with Dalamud's IME.",
           "tos_safe": true,
           "added_version": 1
+        },
+        {
+          "id": "apps-follow-the-sun",
+          "title": "Apps That Follow the Sun",
+          "pitch": "The terminal tells your apps it's light mode at Eorzean dawn and dark mode at dusk, so their themes change as the sun comes up over Thanalan.",
+          "experience": "You're editing on a pet terminal in Ul'dah at 5:58 ET. The sun clears the walls, the glass warms, and on the same beat Neovim and every other app listening for colour-scheme reports switches to its light theme without a keypress. Step into a dungeon or your basement workshop and everything goes dark again; a thunderstorm keeps it dark until the storm passes.",
+          "in_world": false,
+          "audience": "Neovim, Helix and fish users, readability-sensitive players, anyone who plays at odd hours",
+          "wow": 7,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "A Lua hook scheme.decide(env) reads ghostty.env() (day seconds, rain, weather id) plus an indoors flag the shim would add from TerritoryType, and returns light or dark with hysteresis. Sessions register GHOSTTY_TERMINAL_OPT_COLOR_SCHEME so `CSI ? 996 n` queries get the current answer. When the answer flips, every session whose DATA_MODE shows 2031 gets an unsolicited report from ghostty_color_scheme_report_encode written to the PTY. OPT_COLOR_BACKGROUND, FOREGROUND and PALETTE switch to dawn and dusk sets built with ghostty_color_palette_generate and clamped with ghostty_color_contrast, so tools that only query OSC 10/11 at startup get the right colours next launch. Sleeping panels get the latest report on wake.",
+          "risks": "Mode 2031 support is uneven, and many tools read OSC 11 once and never again. A mid-session flip can be jarring, so it's per profile with a manual override and flips at most once per Eorzean hour (about three real minutes). Reports only go to apps that enabled 2031, never into a bare prompt. Soul Crystal Themes recolours the terminal; this tells the apps.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "regional-phosphor",
+          "title": "Allagan Phosphor",
+          "pitch": "Every terminal re-renders in the technology of wherever you stand: Allagan green phosphor, Garlean magitek amber, Sharlayan hologram blue, Crystarium cut glass.",
+          "experience": "Zone into Azys Lla and your btop panel flickers into a curved green Allagan readout, scrolling logs leaving faint phosphor trails. In Garlemald it warms into a rounded amber magitek CRT with a hum bar crawling up the glass. In the Crystarium the slab turns to cut crystal that bends the plaza behind it with rainbow fringes, and a failing build sends a hairline crack across it that seals on the next exit 0.",
+          "in_world": true,
+          "audience": "ricers, lore fans, roleplayers, GPose folks, retro-computing fans",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "Draw each world panel's cells into an offscreen texture with ITextureProvider.CreateDrawListTexture, only when the render state reports GHOSTTY_RENDER_STATE_DIRTY_PARTIAL or FULL, so idle panels cost nothing. Draw that texture on the curved quad through the core/depthpass.nelua callbacks with a material shader built by tools/build-shaders.lua: barrel curvature, shadow mask, scanlines, bloom, and persistence blended with last frame's texture. The glass material also copies the panel's screen rect from the back buffer and offsets its samples by the cylinder normal panel_depth.hlsl already computes. A new lua/materials.lua maps TerritoryType through Lumina to material tables, world.place gains a `material` field, and zone changes crossfade. While DATA_MODE shows synchronized output (2026) the texture keeps its last frame so trails never smear a half-drawn screen. Cracks key off the agent-side CMD_END exit code.",
+          "risks": "Render-to-texture adds a pass and texture memory per dirty panel, and it's unconfirmed that CreateDrawListTexture accepts a draw list built by the native core, so a direct-draw fallback stays. The back-buffer copy is taken after the HUD is drawn, so HUD pieces behind glass bend too. Curvature and bloom cost legibility, so a hold-to-read key snaps back to crisp. Persistence trails can bother motion-sensitive players. Nothing on the depth path has been observed in game.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "scrollback-spire",
+          "title": "The Scrollback Spire",
+          "pitch": "A terminal's whole scrollback rises out of the ground as a tower of text you fly up to read, and every screen of output adds a storey.",
+          "experience": "On your island a slim spire of glowing rows climbs out of the grass, with the live screen at its base. A long build pushes it higher as you watch. Mount up and fly along it: 80 yalms up you're reading yesterday's apt upgrade, and a lit ledge marks the bookmark you left at the first error. Click the ledge and the panel at the base scrolls straight to that line.",
+          "in_world": true,
+          "audience": "sysadmins tailing logs, streamers, flying-mount collectors, anyone who has lost output",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "The base is an ordinary pinned panel. For the rows above it the core reads history with ghostty_terminal_grid_ref at HISTORY points, sized by DATA_SCROLLBACK_ROWS and DATA_TOTAL_ROWS, and caches each row's text once when it scrolls off. Only the band within about 40 yalms of camera height is drawn through world_transform_vertices, with block LOD above and below. Rows sit on a vertical cylinder, so the existing curve and hit maths apply. Bookmarks are tracked grid refs (ghostty_tracked_grid_ref_*), which survive reflow and go empty when pruned. Clicking a ledge calls ghostty_terminal_scroll_viewport with ROW. A new shim read of ConditionFlag.InFlight fades in the upper storeys only while you fly.",
+          "risks": "At a readable size 10,000 lines is about 200 yalms, so it needs a height cap or compressed storeys. A sleeping panel only has the 256 KiB replay ring, so the spire shrinks after wake unless rows are cached on the client. Flying only works in some zones, and on the island after unlocks. Distant rows cost FPS without strict LOD. Old secrets in scrollback become readable from across the map, though only to you.",
+          "tos_safe": true,
+          "added_version": 2
+        }
+      ]
+    },
+    {
+      "name": "Protocol Alchemy",
+      "tagline": "Escape sequences that climb out of the glass and become things you can hold.",
+      "ideas": [
+        {
+          "id": "stage-directions-apc",
+          "title": "Stage Directions in the Byte Stream",
+          "pitch": "A private `ESC _ ffxiv;` escape lets your scripts and TUIs cue real lights, bell rings, poses and camera moves on the same frame as the text they print.",
+          "experience": "Your homemade text adventure prints 'The lantern gutters out.' and on that frame the real light beside your panel dies, a grey wash crosses the glass and a low sonar ring rolls out from your feet. deploy.sh ends with `stage cam=push-in bell=burst`, so the camera eases onto the panel just as LIVE appears. `cat` a stranger's log and nothing happens, because that profile isn't trusted.",
+          "in_world": true,
+          "audience": "storytellers, RP venue hosts, streamers, demoscene nerds, anyone who writes shell scripts for fun",
+          "wow": 9,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "Profiles with `stage = true` set GHOSTTY_TERMINAL_OPT_UNKNOWN_SEQUENCE and a 4 KiB OPT_UNKNOWN_MAX_BYTES; libghostty-vt then hands over every APC it doesn't handle itself (kitty `G` and the glyph protocol stay internal), and the callback keeps only `ffxiv;v=1;` payloads. A new Lua hook, stage.cue(id, verbs), maps a whitelist onto what already exists: app/lights.nelua colour and intensity, bell.lua presets, world.place tint and backlight, anim_play, and showcase-style SetCameraState shots. While DATA_MODE reports synchronized output (2026), cues queue and fire when it clears, so a frame and its effect land together. An `ffxiv;q` probe is answered through the session's WRITE_PTY path so scripts can detect support, and a tiny `stage` shell helper ships beside ghostty-agent. Most of the APC-driven ideas in this batch stand on this plumbing.",
+          "risks": "Output is untrusted: an ssh session to a hostile box, or a log you cat, could flash lights or yank the camera, so it's off per profile by default, with a verb whitelist and a rate limit. Cues arriving in reattach replay are dropped, the way replayed bells already are. Camera and pose verbs are refused in combat, duties, cutscenes and GPose, and there will never be movement, targeting, chat or command verbs. tmux drops unknown APC unless allow-passthrough is on and the sequence is wrapped.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "clipboard-crystals",
+          "title": "Clipboard Crystals",
+          "pitch": "Every OSC 52 copy buds off the panel as an aether crystal that orbits you, and a remote program can read your clipboard only while you hold one out.",
+          "experience": "Yank a stack trace in Neovim over ssh and a small crystal labelled 'nvim@nas: panic: nil map' breaks off the glass and joins the ring at your shoulder. Drop it on another panel to paste; if it carries newlines headed for a shell prompt it glows red and wants a second click. When a remote tool asks to read your clipboard, the panel says 'wants a crystal' and gets nothing until you raise one.",
+          "in_world": true,
+          "audience": "Neovim-over-ssh users, security-minded sysadmins, anyone who has pasted the wrong thing into prod",
+          "wow": 8,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "Register GHOSTTY_TERMINAL_OPT_CLIPBOARD_WRITE: each GhosttyClipboardWrite carries MIME contents (OSC 52, OSC 1337 Copy or OSC 5522), the program name, granted and can_remember, and is answered inside the callback. Store the crystal (capped with OPT_CLIPBOARD_WRITE_MAX_BYTES) and mirror the chosen one to the desktop with the agent's existing CLIP_SET. OPT_CLIPBOARD_READ must also be answered synchronously, which the agent's round-trip CLIP_GET can't do but a crystal already in memory can: reply SUCCESS with the crystal you're holding out, otherwise DENIED plus a local toast. Dropping a crystal runs ghostty_paste_is_safe (bound today but unused), then ghostty_terminal_paste, so bracketed paste (2004) and kitty paste events (5522) are honoured. Crystals ride the pet springs in lua/world.lua; image/png writes wear a MIME badge until Kitty Graphics Tapestries brings texture upload.",
+          "risks": "OSC 52 read is a known way to steal a clipboard, so deny is the default and any remembered grant must be visible and revocable. Many apps never retry a denied read. Crystals hold secrets: memory only, cleared on logout, labels hidden in streamer mode. tmux needs `set-clipboard on`.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "your-feet-are-the-mouse",
+          "title": "Your Feet Are the Mouse",
+          "pitch": "Lay a terminal flat on the floor and any mouse-aware TUI follows your character's footsteps as the pointer, with a jump as the click.",
+          "experience": "Drop a 12-yalm minesweeper board on your apartment floor and step onto it: the hover highlight follows your boots from tile to tile. Jump and the tile under you flips; land on a mine and the board flashes red around your ankles. A friend who visits sees only you hopping around an empty room.",
+          "in_world": true,
+          "audience": "housing decorators, TUI game tinkerers, streamers, anyone with a big empty FC house",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "place() already takes pitch, and world_axes and the depth-pass basis tilt with it, so a `floor` pin lays the panel flat at a Raycast ground height. Each frame ghostty.player() x/z is projected into panel pixels through that basis. The core builds a ghostty_mouse_encoder with setopt_from_terminal, so tracking (1000/1002/1003) and format (SGR 1006, SGR-pixels 1016) come from the app, plus OPT_SIZE and OPT_TRACK_LAST_CELL so motion reports only when you cross a cell. The shim adds ConditionFlag.Jumping to GuObject; its rising edge after a short dwell on a tile sends a button-1 press and release. Stepping on or off the board sends ghostty_focus_encode in or out when mode 1004 is set. Only your own character counts, and only in floor mode.",
+          "risks": "The plugin has never reported a click to a TUI (termview only encodes the wheel), so this is the mouse encoder's first user. Jumps are noisy, hence the dwell. Floors aren't flat everywhere, so raycast the corners and refuse slopes, and a flat panel may z-fight the floor in the depth test. Other players' positions must never become input.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "emoji-pyrotechnics",
+          "title": "Emoji Pyrotechnics",
+          "pitch": "Sparkle, party-popper and fire emoji printed by your tools burst out of their exact cell as particle effects that spill into the room.",
+          "experience": "Your test runner prints its party popper and confetti rains out of that cell, bouncing on the floor around the panel. `cargo` sparkles send glitter drifting past your ear, and a log line with a fire emoji sheds embers that vanish behind the pillar in front of you. Scroll back over them and nothing fires again: each emoji gets one show.",
+          "in_world": true,
+          "audience": "streamers, JS and Rust developers, gitmoji fans, chat-TUI users",
+          "wow": 8,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "After Session:feed, walk the render state with ghostty_render_state_row_iterator_next_dirty and read GHOSTTY_RENDER_STATE_ROW_CELLS_DATA_GRAPHEMES_UTF8 per cell, matching a table in a new lua/pyro.lua that maps a grapheme to an emitter preset. Grapheme clustering (mode 2027) keeps ZWJ and VS16 sequences in one cell, so a flag or a skin-toned emoji is a single emitter. Each hit pins its row with a capped ghostty_terminal_grid_ref_track so redraws and scrolling don't refire it, and bursts during reattach replay are skipped the way core/bell.nelua skips replayed bells. Cell rects map to world space through world_transform_vertices; particles are quads through the depth-pass callbacks, landing at one Raycast per burst.",
+          "risks": "Dalamud's 16-bit ImWchar can't draw emoji outside the BMP, so most source cells still show tofu and the particles are shapes, not glyphs. Emoji-heavy output such as a gitmoji log needs a per-second budget. TUIs that clear and redraw make old emoji look new. Needs a photosensitivity switch, and emitters stay off in duties.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "waymarked-scrollback",
+          "title": "Waymarked Scrollback",
+          "pitch": "Your last eight commands stand on the floor as waymarks A to D and 1 to 4, and stepping onto one scrolls the panel to that command's output.",
+          "experience": "After a long debugging session eight markers fan out in front of your panel, green for clean exits and red for failures. Step onto red 3 and the panel scrolls back to `terraform plan` and outlines its output. Alt-drag the marker away and that output tears off as a frozen page, colours intact, that you stick on the wall beside the fix. A healer watching the same session drops marker A on a stack trace, and it rides that line on your copy as new output pours in.",
+          "in_world": true,
+          "audience": "developers, SREs, on-call rotations inside FCs, anyone who scrolls up hunting for which run failed",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "The core walks history with ghostty_terminal_grid_ref and GHOSTTY_ROW_DATA_SEMANTIC_PROMPT to find prompt rows and pins each with ghostty_terminal_grid_ref_track, so markers survive scrolling and reflow; when ghostty_tracked_grid_ref_has_value goes false the row was pruned and the marker crumbles. libghostty-vt parses the OSC 133 exit code but doesn't keep it, so colours come from the agent-side CMD_END frame proposed in Commands Cast Like Spells. Standing on a marker (distance from ghostty.player()) calls scroll_viewport with ROW and ghostty_terminal_select_output on the tracked ref. Tearing off formats that selection with ghostty_terminal_selection_format_alloc in VT format and feeds it into a transport-less, read-only terminal pinned like any panel. Shared marks are a MARK frame carrying the line text and output byte offset; each viewer resolves it with ghostty_search_* and tracks the hit.",
+          "risks": "Needs shell integration on every host, through ssh and tmux. Tracked refs add work on every update, so cap them. These are drawn markers only plugin users see: never place real waymarks, which the whole party sees. Repeated log lines can resolve a shared mark to the wrong row, and a late joiner whose 256 KiB replay lost the line can't place it. Torn-off pages keep whatever secrets were printed.",
+          "tos_safe": true,
+          "added_version": 2
+        }
+      ]
+    },
+    {
+      "name": "Familiars",
+      "tagline": "AI agents that work beside you, report in character and wait politely for the pull to end.",
+      "ideas": [
+        {
+          "id": "agent-party-formation",
+          "title": "Your Agents Are a Light Party",
+          "pitch": "Parallel Claude Code agents fight at your side as a light party: tank plans, healer reviews, two DPS implement in their own worktrees, with context as MP and every tool call as a cast.",
+          "experience": "`/term party refactor-loader` and four pet terminals rez into formation: planner out front, reviewer behind you, implementers on your flanks. The party list reads 'DPS, wt/loader-a, Casting: Edit loader.nelua' while MP drains as context fills, and a member waiting for permission pulses with an exclamation mark. When both DPS branches go green a Limit Break gauge fills for a merge you run yourself. Share the party with your FC and members who log in find it working at the workshop bench.",
+          "in_world": true,
+          "audience": "developers running several AI coding agents at once, developer FCs, raiders who think in roles",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "`ghostty-party` reads a composition from lua/party.lua (role, job icon, prompt file, worktree), runs `git worktree add` per member, and OPENs `claude` with a CWD env entry and a GHOSTTY_SESSION variable. Claude Code hooks (PreToolUse, PostToolUse, Notification, PreCompact, Stop, SubagentStop) call a tiny `ghostty-emit` that writes to a new unix socket on ghostty-agent, which buffers EVENT frames for detached sessions and broadcasts them; MP comes from the last usage entry in the hook's transcript_path. Formation is a new anchor preset on the pet springs in lua/world.lua, and frames are ImGui with job icons from ITextureProvider.GetFromGameIcon. Agents running outside Ghostty join through an in-game MCP server plugin: the shim subscribes to that plugin's agent-board IPC and change event and turns its status posts into frames. The LB button only types `git merge` into the tank's session with `/term type`, never Enter.",
+          "risks": "Four live agents cost real money and quota, so the party list shows spend. Hook payloads and tool names change between Claude Code releases. Sharing with the FC puts code, prompts and secrets on other clients, and every attached client can write today, so it needs a read-only relay, a share toggle and redaction. Worktrees pile up and need an explicit disband. Inside duties the formation collapses to frames only. No in-game MCP server has been observed working yet.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "familiar-tells-ready-check",
+          "title": "Ready Checks for Your Agents",
+          "pitch": "When an agent needs you mid-duty it waits for the wipe or the kill, and then every pending question arrives at once as a ready check.",
+          "experience": "Queued in Limsa, a local echo line tagged [Ghostty] pops up: 'Claude on bazzite-sway: pin the base image digest, or keep floating stable?' Click it and its panel slides in beside you. Mid-pull two more agents stall without a sound. The boss dies, and a Ready Check window lists all three, each with the last lines of its prompt and its numbered choices; you tick 1, 1 and 3 before the loot rolls finish.",
+          "in_world": false,
+          "audience": "developers who leave agents running while they play, raiders, on-call devs",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "Claude Code's Notification and Stop hooks send `ghostty-emit waiting` (the EVENT frame from Your Agents Are a Light Party); other agents can use OSC 9 or 777, which reach GHOSTTY_TERMINAL_OPT_DESKTOP_NOTIFICATION once session.nelua registers it. Out of combat the shim prints the line with IChatGui.Print and a link payload that focuses the session's panel; while InCombat or BoundByDuty is set, lines queue. The Ready Check opens on ICondition.ConditionChange (combat off) or IDutyState.DutyWiped and DutyCompleted, as a local window styled after the game's, never the real /readycheck. Each row renders the session's bottom rows from render state, options are parsed from lines shaped like `1. Yes`, and a click sends only that digit through the key encoder to that session. CLAUDE.md can also tell agents to call an in-game MCP server's duty-state tool before asking and keep working while you're inside.",
+          "risks": "One-click approvals between pulls is how you approve an `rm -rf` without reading it, so rows show the full command and destructive patterns can't be answered from the check. Parsing Claude Code's prompt off the screen breaks when its TUI changes. Local lines must never look like a real player's tell, both for clarity and honest screenshots. Nothing is ever sent to other players.",
+          "tos_safe": true,
+          "added_version": 2
+        },
+        {
+          "id": "feed-the-familiar",
+          "title": "Feed It to the Familiar",
+          "pitch": "Alt-drag a failing terminal onto your AI companion and it swallows the last command's output as context and starts on the fix.",
+          "experience": "`cargo test` just went red on the panel by the window. Alt-grab it, carry it across the room and let go over the Claude pet at your shoulder: the panel folds into it with a gulp of light, then springs back to the wall. The pet's input box reads '[Pasted text: cargo test in ~/cascadia, exit 101, 212 lines]', and a moment later its cast bar says 'Reading main/cascadia-tools/solver.go'.",
+          "in_world": true,
+          "audience": "developers pairing with Claude Code or other terminal agents",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "world.drop(id, pose) already fires when an Alt-drag ends (core/policy.nelua:544); lua/world.lua checks the drop point against panels whose profile has `familiar = true`. The core scans GHOSTTY_ROW_DATA_SEMANTIC_PROMPT upward for the last OSC 133 prompt, takes a grid ref on the output after it, calls ghostty_terminal_select_output and ghostty_terminal_selection_format_alloc (plain, unwrapped, trimmed, capped to the tail). A header adds DATA_TITLE, DATA_PWD from OSC 7, the command from INPUT-semantic cells and the exit code from the agent's CMD_END frame. The block goes through ghostty_paste_encode into the familiar's session as a bracketed paste. Without OSC 133 it falls back to a PLAIN formatter over the viewport. The swallow reuses the present and fly-in tween in worldview.nelua.",
+          "risks": "It sends terminal output, env dumps and tokens in stderr included, to a hosted model: show a byte count, redact token-shaped strings, confirm the first time. If the familiar sits in a permission prompt the paste lands in the wrong place, so drops are refused unless its last hook state is idle. The source shell needs OSC 133 through tmux and ssh. Alt-drag already means move, so drop targets need a clear highlight.",
+          "tos_safe": true,
+          "added_version": 2
         }
       ]
     }
@@ -829,6 +1291,11 @@
     "echo-replays",
     "moogle-mail",
     "ops-weather",
-    "folding-screen-splits"
+    "folding-screen-splits",
+    "stage-directions-apc",
+    "your-feet-are-the-mouse",
+    "magic-lantern-projector",
+    "failing-suite-extreme",
+    "agent-party-formation"
   ]
 }

@@ -54,7 +54,7 @@ test('version.json lets a client count new ideas statically', () => {
   next.categories[0].ideas.push({ id: 'later-idea', title: 'Later', wow: 1, added_version: 3 });
   const bumped = buildVersion(next);
   const newSince = (since) => Object.entries(bumped.added).reduce((n, [ver, c]) => n + (Number(ver) > since ? c : 0), 0);
-  assert.equal(newSince(1), 1);
+  assert.equal(newSince(cat.version), 1);
   assert.equal(newSince(3), 0);
   assert.throws(() => buildVersion({ version: 1, categories: [] }), /invalid catalogue/);
 });
