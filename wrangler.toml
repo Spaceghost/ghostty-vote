@@ -12,14 +12,23 @@ routes = [
   { pattern = "spacegho.st/mods/ffxiv/term/vote*", zone_name = "spacegho.st" }
 ]
 
+# Regenerates public/mods/ffxiv/term/vote/{ideas,version}.json and seed/seed.sql
+# from data/catalogue.json before every deploy (plain node, no dependencies).
+[build]
+command = "node scripts/build.js"
+
+# Static Assets: the page, vote.js, vote.css, ideas.json and version.json are served
+# from public/ at their real URL paths without invoking the Worker (free, not counted
+# as Worker requests). Only the API paths run the Worker. Unmatched paths under the
+# route fall through to the Worker, which answers 404.
+[assets]
+directory = "public"
+html_handling = "auto-trailing-slash"   # public/.../vote/index.html is served at /vote/; /vote redirects there
+not_found_handling = "none"
+run_worker_first = ["/mods/ffxiv/term/vote/api/*"]
+
 [[d1_databases]]
 binding = "DB"
 database_name = "ghostty-vote"
-database_id = "REPLACE_WITH_DATABASE_ID"
+database_id = "ccbfb295-deb8-49ec-82c2-04a0b82ed4f3"
 migrations_dir = "migrations"
-
-# Import src/page.html as a string.
-[[rules]]
-type = "Text"
-globs = ["**/*.html"]
-fallthrough = true

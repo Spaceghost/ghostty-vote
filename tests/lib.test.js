@@ -1,8 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import {
-  BASE, COOKIE_NAME, LIMITS, cleanText, isJsonContentType, isSameOrigin, parseCookies, randomToken,
+  API, BASE, COOKIE_NAME, LIMITS, cleanText, isJsonContentType, isSameOrigin, parseCookies, randomToken,
   readJsonBody, route, validateSuggestion, validateVote, voterCookie, voterKey, voterToken,
 } from '../src/lib.js';
 import { sqlString, validateCatalogue } from '../scripts/seed-lib.js';
@@ -11,13 +10,21 @@ const post = (body, headers = {}) => new Request('https://spacegho.st' + BASE + 
   method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body,
 });
 
-test('route matches only the vote path', () => {
-  assert.deepEqual(route(BASE), { kind: 'page' });
-  assert.deepEqual(route(BASE + '/'), { kind: 'redirect', location: BASE });
-  assert.deepEqual(route(BASE + '/api/ideas'), { kind: 'api', name: 'ideas' });
-  assert.deepEqual(route(BASE + '/api/nope'), { kind: 'api', name: null });
-  assert.equal(route('/mods/ffxiv/term/voter').kind, 'none');
-  assert.equal(route(BASE + '/api/ideas/').name, null);
+test('route matches only the three API paths', () => {
+  assert.deepEqual(route(BASE + '/api/vote'), { kind: 'api', name: 'vote', method: 'POST' });
+  assert.deepEqual(route(BASE + '/api/suggest'), { kind: 'api', name: 'suggest', method: 'POST' });
+  assert.deepEqual(route(BASE + '/api/tallies'), { kind: 'api', name: 'tallies', method: 'GET' });
+  assert.deepEqual(Object.keys(API).sort(), ['suggest', 'tallies', 'vote']);
+  // The page and the static files are assets, never Worker routes.
+  for (const p of [BASE, BASE + '/', BASE + '/index.html', BASE + '/vote.js', BASE + '/ideas.json', BASE + '/version.json']) {
+    assert.equal(route(p).kind, 'none', p);
+  }
+  // Dropped endpoints and near misses.
+  for (const p of ['ideas', 'mine', 'version', 'nope', 'vote/', 'tallies.json', 'constructor', '__proto__', 'toString']) {
+    assert.equal(route(BASE + '/api/' + p).kind, 'none', p);
+  }
+  assert.equal(route('/mods/ffxiv/term/voter/api/vote').kind, 'none');
+  assert.equal(route('/api/vote').kind, 'none');
 });
 
 test('cookies: parse, token shape, attributes', () => {
@@ -103,13 +110,4 @@ test('validateCatalogue catches bad data', () => {
   assert.deepEqual(validateCatalogue({ version: 1, categories: [{ name: 'C', ideas: [idea] }] }), []);
   const errs = validateCatalogue({ version: 1, top_picks: ['zz'], categories: [{ name: 'C', ideas: [idea, { ...idea, added_version: 2 }] }] });
   assert.equal(errs.length, 3);
-});
-
-test('page renders data only through textContent', () => {
-  const html = readFileSync(new URL('../src/page.html', import.meta.url), 'utf8');
-  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) {
-    assert.ok(!html.includes(sink), `page must not use ${sink}`);
-  }
-  assert.equal(html.match(/<script nonce="__NONCE__">/g).length, 2);
-  assert.ok(!/<script(?![^>]*nonce)/.test(html), 'every script carries the nonce');
 });

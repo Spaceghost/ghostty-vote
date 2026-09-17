@@ -1,0 +1,122 @@
+// The static site: generated JSON matches data/catalogue.json, the page needs no
+// inline code, headers and wrangler config keep the Worker off static paths.
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { buildSeedSql } from '../scripts/seed-lib.js';
+import { BASE, PUBLIC_URL, STATIC_DIR, buildIdeas, buildOutputs, buildVersion } from '../scripts/static-lib.js';
+
+const root = new URL('../', import.meta.url);
+const read = (p) => readFileSync(new URL(p, root), 'utf8');
+const catalogue = () => JSON.parse(read('data/catalogue.json'));
+
+function walk(dir, prefix = '') {
+  return readdirSync(new URL(dir, root)).flatMap((name) => {
+    const rel = prefix + name;
+    return statSync(new URL(dir + name, root)).isDirectory() ? walk(dir + name + '/', rel + '/') : [rel];
+  });
+}
+
+test('committed ideas.json, version.json and seed.sql match data/catalogue.json', () => {
+  for (const [path, body] of Object.entries(buildOutputs(catalogue(), buildSeedSql))) {
+    assert.equal(read(path), body, `${path} is stale; run node scripts/build.js`);
+  }
+});
+
+test('ideas.json carries the catalogue and no tallies', () => {
+  const cat = catalogue();
+  const data = JSON.parse(read(STATIC_DIR + 'ideas.json'));
+  assert.deepEqual(data, buildIdeas(cat));
+  assert.equal(data.version, cat.version);
+  assert.deepEqual(data.categories.map((c) => c.name), cat.categories.map((c) => c.name));
+  const ids = cat.categories.flatMap((c) => c.ideas.map((i) => i.id));
+  assert.deepEqual(data.ideas.map((i) => i.id), ids);
+  assert.deepEqual(data.ideas.filter((i) => i.top_pick).map((i) => i.id).sort(), [...cat.top_picks].sort());
+  for (const i of data.ideas) {
+    assert.equal(i.tally, undefined);
+    assert.equal(typeof i.in_world, 'boolean');
+    assert.ok(i.added_version >= 1 && i.added_version <= cat.version);
+  }
+});
+
+test('version.json lets a client count new ideas statically', () => {
+  const cat = catalogue();
+  const v = JSON.parse(read(STATIC_DIR + 'version.json'));
+  const total = cat.categories.reduce((n, c) => n + c.ideas.length, 0);
+  assert.deepEqual(v, buildVersion(cat));
+  assert.equal(v.version, cat.version);
+  assert.equal(v.ideas, total);
+  assert.equal(Object.values(v.added).reduce((a, b) => a + b, 0), total);
+  assert.equal(v.url, 'https://spacegho.st/mods/ffxiv/term/vote/');
+
+  const next = structuredClone(cat);
+  next.version = 3;
+  next.categories[0].ideas.push({ id: 'later-idea', title: 'Later', wow: 1, added_version: 3 });
+  const bumped = buildVersion(next);
+  const newSince = (since) => Object.entries(bumped.added).reduce((n, [ver, c]) => n + (Number(ver) > since ? c : 0), 0);
+  assert.equal(newSince(1), 1);
+  assert.equal(newSince(3), 0);
+  assert.throws(() => buildVersion({ version: 1, categories: [] }), /invalid catalogue/);
+});
+
+test('public/ holds only the site, at its real URL paths', () => {
+  assert.equal(BASE, '/mods/ffxiv/term/vote/');
+  assert.equal(PUBLIC_URL, 'https://spacegho.st/mods/ffxiv/term/vote/');
+  assert.deepEqual(walk('public/').sort(), [
+    '_headers',
+    'mods/ffxiv/term/vote/ideas.json',
+    'mods/ffxiv/term/vote/index.html',
+    'mods/ffxiv/term/vote/version.json',
+    'mods/ffxiv/term/vote/vote.css',
+    'mods/ffxiv/term/vote/vote.js',
+  ]);
+});
+
+test('page has no inline script, style or handlers, and renders data only through textContent', () => {
+  const html = read(STATIC_DIR + 'index.html');
+  const js = read(STATIC_DIR + 'vote.js');
+  assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html), 'every script is external');
+  assert.ok(!/<style/i.test(html), 'no style elements');
+  assert.ok(!/\sstyle=/i.test(html), 'no style attributes');
+  assert.ok(!/\son[a-z]+=/i.test(html), 'no inline event handlers');
+  assert.ok(!/nonce/i.test(html));
+  for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
+    assert.ok(walk('public/').includes(ref[1].slice(1)), `${ref[1]} exists in public/`);
+  }
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) {
+    assert.ok(!js.includes(sink), `vote.js must not use ${sink}`);
+  }
+  for (const endpoint of ['api/ideas', 'api/mine', 'api/version']) assert.ok(!js.includes(endpoint), endpoint);
+  assert.ok(js.includes("'ideas.json'") && js.includes("'api/tallies'"));
+  assert.ok(html.includes('Johnneylee Jack Rollins') && html.includes('https://github.com/Spaceghost'));
+  assert.ok(/name="viewport"/.test(html) && /prefers-color-scheme: light/.test(read(STATIC_DIR + 'vote.css')));
+  for (const f of ['index.html', 'vote.js', 'vote.css']) {
+    if (f !== 'index.html') assert.ok(!/[^\t\n\x20-\x7e]/.test(read(STATIC_DIR + f)), `${f} is plain ASCII`);
+  }
+});
+
+test('_headers sets a strict CSP for the static files', () => {
+  const headers = read('public/_headers');
+  const block = headers.split(/\n(?=\/)/).find((b) => b.startsWith('/mods/ffxiv/term/vote/*\n'));
+  assert.ok(block, 'rule for /mods/ffxiv/term/vote/*');
+  const csp = block.match(/^\s+Content-Security-Policy: (.+)$/m)[1].split(';').map((d) => d.trim());
+  for (const d of [
+    "default-src 'none'", "script-src 'self'", "style-src 'self' https://fonts.googleapis.com",
+    'font-src https://fonts.gstatic.com', "connect-src 'self'", "frame-ancestors 'none'", "base-uri 'none'",
+  ]) assert.ok(csp.includes(d), d);
+  assert.ok(!/unsafe-inline|nonce-/.test(block));
+  assert.match(block, /X-Content-Type-Options: nosniff/);
+  assert.match(block, /Referrer-Policy: no-referrer/);
+});
+
+test('wrangler.toml serves assets first and runs the Worker only for the API', () => {
+  const toml = read('wrangler.toml');
+  const assets = toml.slice(toml.indexOf('[assets]'), toml.indexOf('[[d1_databases]]'));
+  assert.match(assets, /^directory = "public"$/m);
+  assert.match(assets, /^run_worker_first = \["\/mods\/ffxiv\/term\/vote\/api\/\*"\]$/m);
+  assert.match(assets, /^html_handling = "auto-trailing-slash"/m);
+  assert.match(toml, /^main = "src\/worker\.js"$/m);
+  assert.match(toml, /^command = "node scripts\/build\.js"$/m);
+  assert.match(toml, /^database_id = "ccbfb295-deb8-49ec-82c2-04a0b82ed4f3"$/m);
+  assert.ok(!toml.includes('[[rules]]'), 'no bundled text modules');
+});

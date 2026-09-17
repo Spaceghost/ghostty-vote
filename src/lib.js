@@ -1,5 +1,7 @@
 // Pure request helpers: routing, cookies, voter identity, body parsing and
 // validation. No bindings, so `node --test` can exercise them directly.
+// The page, script, styles, ideas.json and version.json are static assets
+// (public/); only the API paths below ever reach the Worker.
 
 export const BASE = '/mods/ffxiv/term/vote';
 export const API_PREFIX = BASE + '/api/';
@@ -20,18 +22,16 @@ export const LIMITS = Object.freeze({
   dayMs: 24 * 60 * 60 * 1000,
   suggestionsPerVoterPerDay: 10,
   suggestionsPerDay: 300,
+  tallyTtlSeconds: 60, // edge + browser cache for GET api/tallies
 });
 
-const API_NAMES = new Set(['ideas', 'mine', 'version', 'vote', 'suggest']);
+// name -> the one HTTP method it accepts.
+export const API = Object.freeze({ vote: 'POST', suggest: 'POST', tallies: 'GET' });
 
 export function route(pathname) {
-  if (pathname === BASE) return { kind: 'page' };
-  if (pathname === BASE + '/') return { kind: 'redirect', location: BASE };
-  if (pathname.startsWith(API_PREFIX)) {
-    const name = pathname.slice(API_PREFIX.length);
-    return { kind: 'api', name: API_NAMES.has(name) ? name : null };
-  }
-  return { kind: 'none' };
+  if (!pathname.startsWith(API_PREFIX)) return { kind: 'none' };
+  const name = pathname.slice(API_PREFIX.length);
+  return Object.hasOwn(API, name) ? { kind: 'api', name, method: API[name] } : { kind: 'none' };
 }
 
 export function parseCookies(header) {
@@ -172,24 +172,4 @@ export function json(data, { status = 200, headers = {} } = {}) {
       ...headers,
     },
   });
-}
-
-export function pageSecurityHeaders(nonce) {
-  return {
-    'content-type': 'text/html; charset=utf-8',
-    'cache-control': 'no-cache',
-    'content-security-policy': [
-      "default-src 'none'",
-      `script-src 'nonce-${nonce}'`,
-      `style-src 'nonce-${nonce}' https://fonts.googleapis.com`,
-      'font-src https://fonts.gstatic.com',
-      "connect-src 'self'",
-      'img-src data:',
-      "base-uri 'none'",
-      "form-action 'self'",
-      "frame-ancestors 'none'",
-    ].join('; '),
-    'x-content-type-options': 'nosniff',
-    'referrer-policy': 'no-referrer',
-  };
 }
