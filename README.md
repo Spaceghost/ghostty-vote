@@ -11,14 +11,14 @@ It is built to stay on Cloudflare's free tier with as little server-side code as
   Requests for static assets are free and unlimited, and they do not count as Worker requests,
   because the Worker script never runs for them.
 - **One small Worker** runs only for `/mods/ffxiv/term/vote/api/*` (`assets.run_worker_first`). It
-  records votes, notes and suggestions, returns tallies, and hands each visitor back their own
-  ballot.
+  signs voters in with GitHub or FFXIV (XIVAuth), records votes, notes and suggestions, returns
+  tallies, and hands each voter back their own ballot.
 - **D1** (free tier) holds the votes, notes, suggestions and tallies. Each write uses two D1 round
   trips, and reading a visitor's own ballot uses one. Tallies are cached for 60 seconds, so a burst
   of page loads costs one D1 read per Cloudflare location.
 
 The Worker route is exactly `spacegho.st/mods/ffxiv/term/vote*`. No other path on the zone is
-touched.
+touched. There are no Durable Objects, KV namespaces or other bindings: sessions are signed cookies.
 
 ## Status
 
@@ -47,6 +47,24 @@ touched.
   tab" step failed for the page both before and after the review changes, because the driver types
   into a tab that is already in the background; a separate check that types in the visible tab and
   then closes it (or navigates away) passed.
+- Sign-in: `node --test` covers the signed cookies (sign, verify, tampering,
+  purpose, expiry, secret rotation), OAuth state checks, the return-path check against open
+  redirects, voter key derivation, admin gating, the anonymous-ballot claim with tallies recounted,
+  migration 0004 on a database that already has 0001-0003 and votes, and both providers' callbacks
+  through the real handler with a scripted `fetch` standing in for GitHub and XIVAuth. The page and
+  admin page were driven once in headless Firefox 156 (Marionette) against a local Node stand-in
+  (same approach as above: cookies renamed without `__Secure-`/`Secure`, provider authorize pages
+  faked, provider APIs scripted): signed out with disabled controls and the prompt, the old-ballot
+  hint, GitHub sign-in with the claim, voting and reload, linking and forgetting a character, the
+  admin list, sign-out, the admin page signed out, and an error fragment. That run is not in the repo.
+- Not verified against the real providers: nothing has signed in with the real GitHub App or
+  XIVAuth client. The XIVAuth request and response shapes come from its source (XIVAuth/XIVAuth at
+  4bc2440, Doorkeeper 5.9.6), not live calls; the GitHub ones from GitHub's docs. In particular:
+  GitHub's token endpoint accepting a form body (its docs show query parameters), XIVAuth's
+  `api/v1/characters` list shape and the exact portrait host (`img2.finalfantasyxiv.com` in
+  XIVAuth's Lodestone fixtures; the Worker keeps any `https://*.finalfantasyxiv.com` URL and the CSP
+  allows the same), and whether XIVAuth skips its consent screen (and so the character choice) for
+  a returning voter.
 - Not yet tested: nothing in this layout has run on Cloudflare. That covers `wrangler` itself,
   Static Assets routing and `_headers`, the Cache API, real D1 (including migration 0003 on the
   live database), the zone route, the real `__Secure-` cookie, and any browser other than that
@@ -63,14 +81,18 @@ touched.
 | `public/mods/ffxiv/term/vote/version.json` | Generated: `{version, ideas, added: {version: count}, url}` |
 | `public/_headers` | CSP and other security headers for the static files |
 | `src/worker.js` | Worker entry |
-| `src/app.js` | The four API endpoints, D1 queries, tally cache, rate limits |
-| `src/lib.js` | Pure helpers: routing, cookies, voter hashing, body parsing, validation |
+| `public/mods/ffxiv/term/vote/admin/index.html`, `admin.js` | The owner's voter list: a static shell, data only from `api/admin/voters` |
+| `src/app.js` | Routing, the ballot endpoints, D1 queries, tally cache, rate limits |
+| `src/auth.js` | Sign-in (GitHub, XIVAuth), the claim, `me`, logout, forget, the admin voter list |
+| `src/session.js` | Signed cookies (HMAC-SHA256), account keys, admin gating, return-path check, PKCE |
+| `src/lib.js` | Pure helpers: routing table, cookies, hashing, body parsing, validation |
 | `data/catalogue.json` | The ideas (the source of truth), with `version` and per-idea `added_version` |
 | `scripts/build.js` | Generates `ideas.json`, `version.json` and `seed/seed.sql` from the catalogue (`--check` to verify) |
 | `seed/seed.sql` | Generated, idempotent upserts of the catalogue into D1 |
 | `migrations/0001_init.sql` | Schema: `catalogue`, `categories`, `ideas`, `votes`, `suggestions`, `write_log` |
 | `migrations/0002_drop_site_assets.sql` | Drops the unused `site_assets`/`deploy_sources` tables (`IF EXISTS`) |
 | `migrations/0003_note_only_votes.sql` | Rebuilds `votes` so a row can hold a note without a vote (`vote = ''`), then recounts the tallies |
+| `migrations/0004_sign_in.sql` | Adds the `characters` table (additive, `IF NOT EXISTS`) |
 | `tests/` | `node --test` suites (no dependencies) |
 
 `wrangler deploy` runs `node scripts/build.js` first (the `[build]` command), so the generated
@@ -84,6 +106,7 @@ Static, served without the Worker (paths under `https://spacegho.st/mods/ffxiv/t
 | Path | Notes |
 | --- | --- |
 | `/` | The page. `/vote` redirects to `/vote/`. `?since=N` marks ideas newer than version N as new |
+| `/admin/` | The owner's voter list (`X-Robots-Tag: noindex`). Holds no data; shows nothing without an admin session |
 | `/ideas.json` | The catalogue |
 | `/version.json` | A cheap poll for the plugin (see below) |
 
@@ -91,19 +114,30 @@ Worker:
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| POST | `/api/vote` | `{idea_id, vote?, note?}` → `{ok, idea_id, vote: string\|null, note, tally, updated_at}`. `vote`: `"want"\|"maybe"\|"skip"` sets it, `null` or `""` clears it, leaving it out keeps it. `note` (up to 280): a string sets it (`""` clears it), leaving it out or `null` keeps it. At least one of the two is required. Clearing a vote keeps the note; a row left with neither is deleted |
-| POST | `/api/suggest` | `{title (3-80 chars), detail? (up to 600)}` → `201 {ok, suggestion: {id, title, detail, created_at}}` |
+| POST | `/api/vote` | Needs a session (else 401 `sign_in_required`). `{idea_id, vote?, note?}` → `{ok, idea_id, vote: string\|null, note, tally, updated_at}`. `vote`: `"want"\|"maybe"\|"skip"` sets it, `null` or `""` clears it, leaving it out keeps it. `note` (up to 280): a string sets it (`""` clears it), leaving it out or `null` keeps it. At least one of the two is required. Clearing a vote keeps the note; a row left with neither is deleted |
+| POST | `/api/suggest` | Needs a session. `{title (3-80 chars), detail? (up to 600)}` → `201 {ok, suggestion: {id, title, detail, created_at}}` |
 | GET | `/api/tallies` | `{idea_id: {want, maybe, skip}}` for every open idea. `Cache-Control: public, max-age=60`, also stored in the Cache API under one key (query strings are ignored). Sent without credentials |
-| GET | `/api/mine` | The caller's own ballot: `{votes: {idea_id: {vote: string\|null, note, updated_at}}, suggestions: [{id, title, detail, created_at}]}` (the newest 50 suggestions). `Cache-Control: private, no-store`, `Vary: Cookie`, never put in the Cache API. Without a valid voter cookie it returns `{votes: {}, suggestions: []}` without querying D1; with one, it is one D1 batch. A cross-site request gets a 403 |
+| GET | `/api/mine` | The signed-in voter's own ballot: `{signed_in, votes: {idea_id: {vote: string\|null, note, updated_at}}, suggestions: [{id, title, detail, created_at}]}` (the newest 50 suggestions). `Cache-Control: private, no-store`, `Vary: Cookie`, never put in the Cache API. Without a valid session it returns `{signed_in: false, votes: {}, suggestions: []}` without querying D1; with one, it is one D1 batch. A cross-site request gets a 403 |
+| GET | `/api/auth/github/start`, `/api/auth/xivauth/start` | Navigations. `?return=` may name the vote page (keeping a numeric `?since=`) or `/admin/`; anything else returns to the vote page. Sets the state cookie and redirects (303) to the provider. A cross-site start is refused |
+| GET | `/api/auth/xivauth/link` | Like start, for a signed-in GitHub voter: asks XIVAuth for the `character` scope only and attaches that character to the GitHub account |
+| GET | `/api/auth/github/callback`, `/api/auth/xivauth/callback` | The registered callback URLs. Checks the state, exchanges the code (with the PKCE verifier), reads the account id (and character), claims an old anonymous ballot, sets the session and redirects to the page with `#signed-in`, `#character-linked` or `#auth-error=<code>` |
+| GET | `/api/auth/me` | `{signed_in: false, legacy_ballot}` without D1, or `{signed_in: true, provider, character: {name, world, portrait_url}\|null, admin}` (one query). Renews a session with under 15 days left |
+| POST | `/api/auth/logout` | Same-origin only. Clears the session cookie; no D1 |
+| POST | `/api/auth/character/forget` | Same-origin, needs a session. Deletes the voter's character row; votes stay |
+| GET | `/api/admin/voters` | Only for accounts in `ADMIN_ACCOUNTS` (401 signed out, 403 otherwise, both before D1). One D1 batch: every voter with `{voter, you, character, want, maybe, skip, last_active, notes[], suggestions[]}` plus `totals`. `Cache-Control: private, no-store` |
 
 Any other path that reaches the Worker gets a 404 without touching D1. The server rejects a POST
 without `Content-Type: application/json` (415), a body over 4 KB (413), invalid input (400), a
 cross-site `Origin` (403), an unknown or retired idea (404) and the wrong method (405). Tallies
 count only rows with a vote; a note-only row counts toward nothing.
 
-**The visitor's own ballot.** Votes, notes and suggestions are kept on the server, keyed by the
-voter cookie, and the page loads them back from `GET api/mine` every time it opens, so a reload, a
-second tab or a browser with cleared `localStorage` shows the same ballot. The page also keeps a
+**The voter's own ballot.** Votes, notes and suggestions are kept on the server, keyed by the
+signed-in account, and the page loads them back from `GET api/mine` every time it opens, so a
+reload, a second tab, another browser signed in to the same account or a browser with cleared
+`localStorage` shows the same ballot. Signed out, the vote buttons are `aria-disabled` (a click
+points at the sign-in buttons), the note boxes and suggestion form are disabled, and the local copy
+is cleared unless the browser still has an old anonymous ballot to claim; signing out clears it too.
+A 401 from any save flips the page to signed out. The page also keeps a
 copy in `localStorage` (`ghostty-vote:votes`, `ghostty-vote:suggestions`) to paint straight away
 and to show when the server cannot be reached; when `api/mine` answers, the server copy replaces
 it, except for ideas where a note is being typed or a change is still being saved. Open tabs pick
@@ -123,24 +157,85 @@ hidden or closed (`visibilitychange`, `pagehide`), typed notes and waiting chang
 away the same way. Other 4xx answers (a retired idea, say) are
 not retried; a refused vote goes back to what the server has, and typed note text stays in the box.
 
-**Clearing cookies.** The ballot is found only through the cookie. A browser that loses it (cleared
-cookies, a different browser or device, or 400 days without saving anything) gets an empty ballot back from
-`api/mine`, and the page shows that. Its next vote starts a new voter. The old ballot stays on the
-server and in the tallies, and nothing can link the two, so tallies can count that person twice.
-A browser that does not keep the cookie at all (cookies blocked for the site) still saves each
-change, but under a new voter every time; the page then keeps showing what it saved during that
-visit instead of letting an empty `api/mine` answer wipe it, and a reload shows an empty ballot.
+## Sign-in
 
-**Voter identity.** The cookie `__Secure-ghostty_voter` holds 32 random bytes and is set
-`HttpOnly; Secure; SameSite=Lax; Path=/mods/ffxiv/term/vote`. It is only set (and its 400 days
-renewed) together with a stored write; `api/mine` reads it but never sets it. D1 stores a SHA-256
-hash of the token, never the token itself. The app stores no IPs, accounts or user agents. Each
-voter gets one row per idea (an upsert on `(voter, idea_id)`) holding their vote, note, or both.
-Until a first-time visitor's first write has come back, the page sends writes one at a time, so
-two early clicks cannot be given two different cookies.
+Voting, notes and suggestions need a sign-in with **GitHub** (the GitHub App
+`ghostty-for-ffxiv-vote`, user-to-server OAuth, no repository permissions) or **FFXIV** through
+[XIVAuth](https://xivauth.net) (a confidential client with the `user` and `character` scopes). The
+tallies stay public and cached without any sign-in.
+
+**One ballot per account.** A signed-in voter's key is `sha256hex('provider:' + provider_user_id)`,
+for example `sha256hex('github:251370')`, stored in the same `voter` columns as before. The GitHub
+id is the numeric user id; the XIVAuth id is its user UUID. The key is a pseudonym, not a secret:
+anyone who knows an account id can compute it.
+
+**Flow.** `start` creates a random state and a PKCE verifier (S256; GitHub supports it, XIVAuth
+supports it and does not require it for confidential clients), puts both in a signed state cookie
+(`__Secure-ghostty_oauth`, `Path=/mods/ffxiv/term/vote/api/auth`, 20 minutes, `HttpOnly; Secure;
+SameSite=Lax`) and redirects to the provider. The callback checks the signature, expiry, provider and
+state (constant time), exchanges the code with the client secret and verifier, and reads:
+
+- GitHub: `GET https://api.github.com/user` (with `User-Agent`), keeping only `id`.
+- XIVAuth: `GET https://xivauth.net/api/v1/user`, keeping only `id`, and
+  `GET https://xivauth.net/api/v1/characters`, keeping the first character's name, home world,
+  Lodestone id and portrait URL. With the plain `character` scope XIVAuth returns at most the one
+  character the voter picked on its consent screen. If none is picked (or the list fails), sign-in
+  still works and nothing is stored or changed.
+
+The access token is used only inside that callback and then dropped: it is never stored, put in a
+cookie or logged, and no refresh token is asked for. Errors log the provider, stage and HTTP status
+only.
+
+**Sessions** are a stateless cookie, `__Secure-ghostty_session`
+(`Path=/mods/ffxiv/term/vote; HttpOnly; Secure; SameSite=Lax`, 30 days): `v1.<base64url JSON
+{p: provider, k: voter key, exp}>.<base64url HMAC-SHA256>`. The MAC covers the version and a
+purpose (`session` or `oauth`), so a state cookie never passes as a session, and it is verified
+with WebCrypto `crypto.subtle.verify`. `api/auth/me` re-issues a session that has under 15 days left,
+so a regular visitor stays signed in. Nothing about sessions is stored server-side, so signing out
+clears the cookie in that browser only.
+
+**Rotating `SESSION_SECRET`.** It must be at least 32 characters, or sign-in answers
+`#auth-error=not-configured` and every write gets 401. To rotate without signing everyone out, set
+the current value as `SESSION_SECRET_PREVIOUS`, set a new `SESSION_SECRET`, and delete
+`SESSION_SECRET_PREVIOUS` after 30 days. To sign everyone out at once, change `SESSION_SECRET` alone.
+
+**Characters.** Signing in with FFXIV records the chosen character in `characters`, keyed by the
+voter key: `lodestone_id`, `name`, `world`, `portrait_url` (kept only if it is `https` on
+`*.finalfantasyxiv.com`, else `''`), `first_seen` and `last_seen` (epoch ms; `first_seen` starts
+over when the character changes, `last_seen` moves on each FFXIV sign-in or link). A GitHub voter
+can add one with **Link an FFXIV character**, a second XIVAuth authorization that asks only for
+`character` and attaches it to the GitHub account (the state cookie names that account, and the
+callback refuses if a different one is signed in by then). **Forget my character** deletes the
+row; the ballot stays. The page says next to the buttons: "Signing in with FFXIV shares the
+character you choose (name and world) with the site owner."
+
+**Claiming an old ballot.** Ballots from before sign-in are keyed by the anonymous cookie
+`__Secure-ghostty_voter`, which is no longer handed out. When a browser that still has it signs in,
+the callback moves that ballot onto the account in the same D1 batch: votes and notes for ideas the
+account has not voted on change owner, rows for ideas the account already has are deleted (the
+account's row wins), and suggestions and the rate-limit log follow. Moving a row does not touch
+its vote column, so the tally triggers leave it alone; deleting a losing row fires the DELETE
+trigger, which takes that duplicate out of the tallies. Then the cookie is cleared. Signed out, the
+page says so when it sees that cookie (`legacy_ballot`) and keeps showing the local copy.
+Anonymous ballots that nobody claims stay in the tallies, as before.
+
+**Owner-only voter list.** `ADMIN_ACCOUNTS` in `wrangler.toml` `[vars]` lists `provider:user_id`
+entries, separated by commas or spaces: `github:251370` is Spaceghost (`GET
+https://api.github.com/users/Spaceghost` shows `"id": 251370`). To add an XIVAuth account, append
+`xivauth:<user UUID>` (from `GET https://xivauth.net/api/v1/user` for that account) and deploy.
+`/admin/` is a static page; it fetches `api/admin/voters`, which checks the session's key against
+the listed accounts and answers 401 or 403, without querying D1, to everyone else. The list shows
+each voter's portrait and `name @ world` linking to the Lodestone, their want/maybe/skip counts,
+notes and suggestions. Voters without a character appear by the start of their voter key.
+
+**Privacy.** Stored per account: the voter key, the ballot (votes, notes, suggestions, write times
+for the rate limit) and, for FFXIV sign-ins or links, the character above. Not stored: GitHub login
+names, emails, XIVAuth user ids, provider tokens, IP addresses or user agents. Character data is
+seen only by the owner. Portraits load from the Lodestone's image host in the owner's (and the
+signed-in voter's own) browser.
 
 **Limits.**
-- Each voter can make 300 writes per 10 minutes (votes, note saves and suggestions together,
+- Each account can make 300 writes per 10 minutes (votes, note saves and suggestions together,
   counted from `write_log` timestamps). It was 60, and a real session went past that: 55 votes in
   five minutes, after which note saves failed with 429. The page now also retries a 429 instead of
   dropping the note.
@@ -153,12 +248,12 @@ the vote row (plus its index) with a tally update, about 9 rows written. A voter
 window costs about 2,700 rows written, under 3% of the day, and at most 300 × 300 = 90,000 rows
 read, because each write's precheck counts the voter's window. A person voting on all 55 ideas and
 writing notes stays well under one window. The limit protects against a runaway page, not against
-abuse: anyone can get a new cookie and a new count, so a scripted attacker could still use up the
+abuse: anyone can make new GitHub or XIVAuth accounts, so a scripted attacker could still use up the
 daily free rows (on the free plan that should mean refused queries until the daily reset, not a
 bill; check Cloudflare's current D1 pricing, this was not observed here), and the page would show
 `server error; will retry…`. A Cloudflare WAF rate-limiting rule (below) is the real guard.
 
-Anyone who clears their cookies starts over as a new voter, so the tallies are only a guide. If
+Sign-in makes one ballot per account, not per person, so the tallies are still only a guide. If
 abuse shows up, add a Cloudflare WAF rate-limiting rule on `/mods/ffxiv/term/vote/api/`. That rule
 runs at Cloudflare's edge, so this app still stores no IPs.
 
@@ -178,7 +273,11 @@ proxied (orange-cloud) DNS record. Array values for `run_worker_first` need Wran
 ### Updating the existing deployment
 
 The live Worker `ghostty-vote` and its D1 database (`database_id` is already in `wrangler.toml`)
-already have the 0001 schema and the seed.
+already have migrations 0001-0003 and the seed. For sign-in, the secrets `GITHUB_CLIENT_SECRET`,
+`XIVAUTH_CLIENT_SECRET` and `SESSION_SECRET` must already be set (`npx wrangler secret list` shows
+their names); the client ids and `ADMIN_ACCOUNTS` are in `[vars]`. The registered callback URLs are
+`https://spacegho.st/mods/ffxiv/term/vote/api/auth/github/callback` and
+`https://spacegho.st/mods/ffxiv/term/vote/api/auth/xivauth/callback`.
 
 ```sh
 cd ~/ghostty-vote
@@ -205,13 +304,26 @@ npx wrangler d1 execute ghostty-vote --remote --command \
   "SELECT sql FROM sqlite_master WHERE name = 'votes'"          # expect vote IN ('', 'want', ...)
 # Only if it went wrong: npx wrangler d1 time-travel restore ghostty-vote --bookmark=<bookmark from info>
 
+# Sign-in: add the characters table. Apply it BEFORE deploying the sign-in Worker, which reads
+# and writes that table on FFXIV sign-in, api/auth/me and the admin list. It is additive
+# (CREATE TABLE IF NOT EXISTS), leaves every existing table alone and is safe to run again.
+npx wrangler d1 execute ghostty-vote --remote --file migrations/0004_sign_in.sql
+npx wrangler d1 execute ghostty-vote --remote --command \
+  "SELECT name FROM sqlite_master WHERE name = 'characters'"      # expect characters
+
 # Runs node scripts/build.js, then uploads public/ as static assets and src/worker.js as the script.
 npx wrangler deploy
 
 curl -sI https://spacegho.st/mods/ffxiv/term/vote/ | head -1            # expect 200, served as an asset
 curl -s  https://spacegho.st/mods/ffxiv/term/vote/version.json          # expect {"version":1,"ideas":55,...}
 curl -s  https://spacegho.st/mods/ffxiv/term/vote/api/tallies | head -c 200
+curl -s  https://spacegho.st/mods/ffxiv/term/vote/api/auth/me              # expect {"signed_in":false,...}
+curl -sI https://spacegho.st/mods/ffxiv/term/vote/api/auth/github/start | grep -i '^location'   # expect github.com/login/oauth/authorize?...
 ```
+
+Deploying the sign-in Worker ends anonymous voting at once: the old page (still cached in a
+browser) gets 401 on every write. Then sign in once with GitHub from the browser that holds your
+old ballot, so it moves onto `github:251370`, and open `/admin/` to check the list.
 
 0002 and 0003 are applied with `d1 execute` rather than `d1 migrations apply` because the live database was
 loaded from an SQL import. It may have no `d1_migrations` rows, and in that case `migrations apply`
@@ -228,8 +340,10 @@ npx wrangler deploy
 ```
 
 For a local preview, apply the migrations and seed with `--local` instead of `--remote`, run
-`npx wrangler dev`, and open `http://localhost:8787/mods/ffxiv/term/vote/`. The voter cookie is
-`Secure`, so a browser may refuse to store it over plain `http://localhost`.
+`npx wrangler dev`, and open `http://localhost:8787/mods/ffxiv/term/vote/`. The session and state
+cookies are `__Secure-` and `Secure`, so a browser may refuse to store them over plain
+`http://localhost`, and the providers only redirect to the registered `https://spacegho.st`
+callbacks, so sign-in cannot complete locally. Put local secrets in `.dev.vars` (ignored by git).
 
 ## Adding ideas later
 
@@ -258,7 +372,11 @@ npx wrangler d1 execute ghostty-vote --remote --command \
   "SELECT id, title, detail, datetime(created_at / 1000, 'unixepoch') FROM suggestions WHERE status = 'new'"
 npx wrangler d1 execute ghostty-vote --remote --command \
   "UPDATE suggestions SET status = 'accepted' WHERE id = 1"   # or declined / duplicate
+npx wrangler d1 execute ghostty-vote --remote --command \
+  "SELECT name, world, lodestone_id, datetime(last_seen / 1000, 'unixepoch') FROM characters ORDER BY last_seen DESC"
 ```
+
+The same, with notes and suggestions per voter, is on `/admin/` for accounts in `ADMIN_ACCOUNTS`.
 
 Suggestion status is for the maintainer only. The page does not show it to visitors.
 
