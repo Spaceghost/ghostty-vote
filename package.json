@@ -2,10 +2,10 @@
   "name": "ghostty-vote",
   "private": true,
   "type": "module",
-  "description": "Public feature vote for the Ghostty for FFXIV plugin, served by a Cloudflare Worker + D1.",
+  "description": "Public feature vote for the Ghostty for FFXIV plugin: static page on Workers Static Assets, a tiny API Worker and D1.",
   "scripts": {
-    "test": "node --test",
-    "seed": "node scripts/gen-seed.js",
-    "seed:check": "node scripts/gen-seed.js --check"
+    "build": "node scripts/build.js",
+    "check": "node scripts/build.js --check",
+    "test": "node --test"
   }
 }

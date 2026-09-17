@@ -1,0 +1,16 @@
+# Headers for the static files under public/. Workers Static Assets applies these
+# without invoking the Worker; responses from the Worker (api/*) set their own.
+/mods/ffxiv/term/vote/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
+# The plugin (or anything else) may poll these.
+/mods/ffxiv/term/vote/version.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/term/vote/ideas.json
+  Access-Control-Allow-Origin: *
