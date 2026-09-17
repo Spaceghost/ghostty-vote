@@ -119,23 +119,6 @@
     return api;
   }
 
-  // Runs tasks one at a time until unlock(), then side by side. A first-time visitor
-  // has no voter cookie yet, and two first writes sent together would each be given
-  // a different one; after one write has succeeded the cookie is set.
-  function createGate() {
-    let open = false, tail = Promise.resolve();
-    return {
-      get open() { return open; },
-      unlock() { open = true; },
-      run(task) {
-        if (open) return task();
-        const p = tail.then(task);
-        tail = p.catch(() => {});
-        return p;
-      },
-    };
-  }
-
   // o.send(id, fields, {keepalive}) -> Promise of the api/vote response; it rejects
   //   with {status?, retryAfter?} (no status: the network failed).
   // o.onSaved(id, data, fields)   a request succeeded and nothing newer superseded it
@@ -242,6 +225,6 @@
   root.GhosttyBallot = Object.freeze({
     VOTES, ID_RE, NOTE_MAX,
     normalizeBallot, normalizeSuggestions, mergeBallot, ballotLost, noteNeedsRewrite, mergeSuggestions, adjustTally,
-    isTransient, retryDelay, createDebouncer, createGate, createSaveQueue,
+    isTransient, retryDelay, createDebouncer, createSaveQueue,
   });
 })(globalThis);

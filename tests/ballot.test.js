@@ -141,25 +141,6 @@ test('debouncer: typing restarts the wait, and fire/fireAll run it at once', asy
   assert.equal(runs.length, 3, 'fired timers do not run again');
 });
 
-test('gate: first writes go one at a time until unlocked', async () => {
-  const gate = B.createGate();
-  const log = [];
-  const task = (name, ms) => () => { log.push('start ' + name); return new Promise((r) => setTimeout(() => { log.push('end ' + name); r(name); }, ms)); };
-  const first = gate.run(task('a', 20));
-  const second = gate.run(task('b', 1));
-  assert.equal(await first, 'a');
-  gate.unlock();
-  assert.equal(await second, 'b');
-  assert.deepEqual(log, ['start a', 'end a', 'start b', 'end b']);
-  const both = [gate.run(task('c', 10)), gate.run(task('d', 1))];
-  await Promise.all(both);
-  assert.deepEqual(log.slice(4), ['start c', 'start d', 'end d', 'end c'], 'side by side once open');
-  // A failed task does not block the ones behind it.
-  const closed = B.createGate();
-  await assert.rejects(closed.run(() => Promise.reject(new Error('x'))));
-  assert.equal(await closed.run(() => 'next'), 'next');
-});
-
 test('queue: one request in flight per idea; newer fields coalesce and win', async () => {
   const { queue, sent, events } = harness();
   queue.change('a', { note: 'h' });

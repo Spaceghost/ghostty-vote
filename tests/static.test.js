@@ -64,6 +64,8 @@ test('public/ holds only the site, at its real URL paths', () => {
   assert.equal(PUBLIC_URL, 'https://spacegho.st/mods/ffxiv/term/vote/');
   assert.deepEqual(walk('public/').sort(), [
     '_headers',
+    'mods/ffxiv/term/vote/admin/admin.js',
+    'mods/ffxiv/term/vote/admin/index.html',
     'mods/ffxiv/term/vote/ballot.js',
     'mods/ffxiv/term/vote/ideas.json',
     'mods/ffxiv/term/vote/index.html',
@@ -84,8 +86,11 @@ test('page has no inline script, style or handlers, and renders data only throug
   assert.ok(!/\sstyle=/i.test(html), 'no style attributes');
   assert.ok(!/\son[a-z]+=/i.test(html), 'no inline event handlers');
   assert.ok(!/nonce/i.test(html));
+  const files = walk('public/');
   for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
-    assert.ok(walk('public/').includes(ref[1].slice(1)), `${ref[1]} exists in public/`);
+    if (ref[1].startsWith('/mods/ffxiv/term/vote/api/')) continue; // Worker routes, not files
+    const path = ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '');
+    assert.ok(files.includes(path), `${ref[1]} exists in public/`);
   }
   for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) {
     assert.ok(!js.includes(sink), `vote.js must not use ${sink}`);
@@ -96,10 +101,32 @@ test('page has no inline script, style or handlers, and renders data only throug
   assert.ok(js.includes("'ideas.json'") && js.includes("'api/tallies'") && js.includes("'api/mine'"));
   assert.ok(!/disabled: !vote/.test(js), 'the note box is never disabled');
   assert.ok(html.includes('Johnneylee Jack Rollins') && html.includes('https://github.com/Spaceghost'));
+  // Sign-in: both buttons, the disclosure next to them, and the character controls.
+  for (const id of ['signin-github', 'signin-xivauth', 'logout', 'link-character', 'forget-character']) assert.ok(html.includes(`id="${id}"`), id);
+  assert.ok(html.includes('Signing in with FFXIV shares the character you choose (name and world) with the site owner.'));
+  assert.ok(html.includes('href="/mods/ffxiv/term/vote/api/auth/github/start"') && html.includes('href="/mods/ffxiv/term/vote/api/auth/xivauth/start"'));
+  assert.ok(!/No accounts/.test(html), 'the privacy note no longer says there are no accounts');
+  for (const endpoint of ["'api/auth/me'", "'auth/logout'", "'auth/character/forget'"]) assert.ok(js.includes(endpoint), endpoint);
+  assert.ok(!/createGate|gate\./.test(js + ballot), 'no first-write gate: a session exists before any write');
   assert.ok(/name="viewport"/.test(html) && /prefers-color-scheme: light/.test(read(STATIC_DIR + 'vote.css')));
-  for (const f of ['index.html', 'vote.js', 'ballot.js', 'vote.css']) {
+  for (const f of ['index.html', 'vote.js', 'ballot.js', 'vote.css', 'admin/admin.js']) {
     if (f !== 'index.html') assert.ok(!/[^\t\n\x20-\x7e]/.test(read(STATIC_DIR + f)), `${f} is plain ASCII`);
   }
+});
+
+test('admin page: a static shell with no inline code and no data; the list comes only from the gated API', () => {
+  const html = read(STATIC_DIR + 'admin/index.html');
+  const js = read(STATIC_DIR + 'admin/admin.js');
+  assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
+  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/term/vote/admin/admin.js']);
+  assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
+  const files = walk('public/');
+  for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
+    assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
+  }
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
+  assert.ok(js.includes("'api/admin/voters'") && js.includes("cache: 'no-store'"));
+  assert.ok(!/[0-9a-f]{64}|lodestone_id":|"voters":/.test(html), 'no voter data in the HTML');
 });
 
 test('_headers sets a strict CSP for the static files', () => {
@@ -110,7 +137,10 @@ test('_headers sets a strict CSP for the static files', () => {
   for (const d of [
     "default-src 'none'", "script-src 'self'", "style-src 'self' https://fonts.googleapis.com",
     'font-src https://fonts.gstatic.com', "connect-src 'self'", "frame-ancestors 'none'", "base-uri 'none'",
+    'img-src data: https://*.finalfantasyxiv.com',
   ]) assert.ok(csp.includes(d), d);
+  const admin = headers.split(/\n(?=\/)/).find((b) => b.startsWith('/mods/ffxiv/term/vote/admin/*\n'));
+  assert.match(admin, /X-Robots-Tag: noindex/);
   assert.ok(!/unsafe-inline|nonce-/.test(block));
   assert.match(block, /X-Content-Type-Options: nosniff/);
   assert.match(block, /Referrer-Policy: no-referrer/);
@@ -126,4 +156,9 @@ test('wrangler.toml serves assets first and runs the Worker only for the API', (
   assert.match(toml, /^command = "node scripts\/build\.js"$/m);
   assert.match(toml, /^database_id = "ccbfb295-deb8-49ec-82c2-04a0b82ed4f3"$/m);
   assert.ok(!toml.includes('[[rules]]'), 'no bundled text modules');
+  const vars = toml.slice(toml.indexOf('[vars]'));
+  assert.match(vars, /^GITHUB_CLIENT_ID = "Iv23liYsdX6oOuO47ulv"/m);
+  assert.match(vars, /^XIVAUTH_CLIENT_ID = "3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU"/m);
+  assert.match(vars, /^ADMIN_ACCOUNTS = "github:251370"/m);
+  assert.ok(!/^\s*(GITHUB_CLIENT_SECRET|XIVAUTH_CLIENT_SECRET|SESSION_SECRET\w*)\s*=/m.test(toml), 'secrets never go in wrangler.toml');
 });

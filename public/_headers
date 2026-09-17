@@ -1,7 +1,9 @@
 # Headers for the static files under public/. Workers Static Assets applies these
 # without invoking the Worker; responses from the Worker (api/*) set their own.
+# img-src allows the Lodestone's image hosts for character portraits (img2.finalfantasyxiv.com
+# in XIVAuth's fixtures); the Worker only stores portrait URLs on *.finalfantasyxiv.com.
 /mods/ffxiv/term/vote/*
-  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: no-referrer
@@ -14,3 +16,7 @@
 
 /mods/ffxiv/term/vote/ideas.json
   Access-Control-Allow-Origin: *
+
+# The owner's voter list: a static shell with no data (api/admin/voters is gated).
+/mods/ffxiv/term/vote/admin/*
+  X-Robots-Tag: noindex, nofollow

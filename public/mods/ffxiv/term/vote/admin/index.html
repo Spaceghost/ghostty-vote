@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ghostty FFXIV Voters</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
+<link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
+<!-- Static and empty on purpose: admin.js fetches the list from api/admin/voters, which answers
+     only the accounts in ADMIN_ACCOUNTS. Not deferred, so the saved theme applies before first paint. -->
+<script src="/mods/ffxiv/term/vote/admin/admin.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topline">
+      <span class="eyebrow">ghostty for ffxiv · voters</span>
+      <a class="chip" href="/mods/ffxiv/term/vote/">Back to the vote</a>
+    </div>
+    <h1>Who <span class="glyph">voted</span></h1>
+    <p class="lede">For the site owner. Characters appear for voters who signed in with FFXIV or linked one; everyone else by the first characters of their voter key.</p>
+    <div class="prompt" id="summary" aria-live="polite">$ <b>voters</b> &nbsp; loading…</div>
+  </header>
+
+  <div class="bar" role="toolbar" aria-label="Filter voters" id="filters" hidden>
+    <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-filter="character" aria-pressed="false">With a character</button>
+    <button class="chip" type="button" data-filter="words" aria-pressed="false">Notes or suggestions</button>
+  </div>
+
+  <main id="voters"><p class="empty">Loading…</p></main>
+</div>
+</body>
+</html>

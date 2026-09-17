@@ -71,6 +71,22 @@ h1 .glyph { color: var(--gold); }
 }
 .banner p { margin: 0; flex: 1 1 240px; }
 
+/* Sign-in panel: the same card look as the banner and the suggestion form. */
+.account {
+  display: grid; gap: 10px; background: var(--slate); border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 14px;
+}
+.account > div { display: grid; gap: 10px; }
+.account .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.account-text { margin: 0; }
+.account .disclosure { margin: 0; }
+.account .notice:empty { display: none; }
+.who { display: flex; gap: 12px; align-items: center; }
+.portrait {
+  width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 50% 12%;
+  border: 1px solid var(--gold-dim); background: var(--ink); flex: none;
+}
+
 .bar {
   position: sticky; top: 0; z-index: 5;
   display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -132,6 +148,8 @@ article.idea[data-vote="skip"] { opacity: 0.66; }
 .vote button[data-v="want"][aria-pressed="true"] { background: var(--want); color: var(--on-accent); border-color: var(--want); }
 .vote button[data-v="maybe"][aria-pressed="true"] { background: var(--maybe); color: var(--on-accent); border-color: var(--maybe); }
 .vote button[data-v="skip"][aria-pressed="true"] { background: var(--skip); color: var(--on-accent); border-color: var(--skip); }
+.vote button[aria-disabled="true"] { cursor: default; opacity: 0.6; }
+textarea:disabled, input:disabled { opacity: 0.6; cursor: not-allowed; }
 details { border-top: 1px dashed var(--line); padding-top: 8px; }
 summary { cursor: pointer; color: var(--muted); font: 13px var(--mono); padding-block: 4px; }
 details p { margin: 6px 0 0; font-size: 15px; }
@@ -148,10 +166,19 @@ textarea, input[type="text"] {
 .yours .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .btn { font: 700 15px/1 var(--body); padding: 11px 16px; border-radius: 8px; border: 0; background: var(--gold); color: var(--on-accent); cursor: pointer; }
 .btn.ghost { background: transparent; color: var(--aether); border: 1px solid color-mix(in oklab, var(--aether) 55%, var(--line)); }
-.btn[disabled] { opacity: 0.5; cursor: default; }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.5; cursor: default; }
+a.btn { display: inline-block; text-decoration: none; }
 .notice { font: 13px var(--mono); color: var(--maybe); }
 .empty { color: var(--muted); font-style: italic; }
 .small { font-size: 14px; color: var(--muted); }
+/* Owner's voter list (admin/). */
+.voter .who { align-items: flex-start; }
+.voter h3 a { color: var(--text); }
+.voter .portrait { width: 56px; height: 56px; }
+.portrait.blank { display: block; }
+.voter .small { margin: 2px 0 0; font-size: 13px; }
+a.chip { text-decoration: none; display: inline-flex; align-items: center; }
+
 footer { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; max-width: 72ch; }
 footer p { margin: 0; }
 @media (prefers-reduced-motion: no-preference) {

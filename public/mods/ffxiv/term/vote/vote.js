@@ -1,7 +1,8 @@
 // Ghostty for FFXIV vote page. A static asset: the catalogue comes from ideas.json,
-// tallies from GET api/tallies (edge-cached for a minute), and the visitor's own ballot
-// from GET api/mine (keyed by the voter cookie), painted first from localStorage.
-// Changes go to POST api/vote and api/suggest through the save queue in ballot.js.
+// tallies from GET api/tallies (edge-cached for a minute), who is signed in from
+// GET api/auth/me, and the signed-in voter's own ballot from GET api/mine, painted
+// first from localStorage. Changes go to POST api/vote and api/suggest through the
+// save queue in ballot.js; signed out, the voting controls stay disabled.
 // All data is rendered through textContent; no HTML strings are built from data.
 (function () {
   'use strict';
@@ -18,6 +19,7 @@
   function storage(kind) { try { return window[kind]; } catch (e) { return null; } }
   function getItem(kind, k) { try { return storage(kind)?.getItem(k) ?? null; } catch (e) { return null; } }
   function setItem(kind, k, v) { try { storage(kind)?.setItem(k, v); } catch (e) {} }
+  function removeItem(kind, k) { try { storage(kind)?.removeItem(k); } catch (e) {} }
 
   // Runs before first paint, so a saved theme never flashes the other one.
   const savedTheme = getItem('localStorage', KEY.theme);
@@ -46,9 +48,15 @@
     status: {},     // per-card save status text
     touched: {},    // id -> writeSeq of its last local change or save
     writeSeq: 0, mineAt: 0, mineBusy: false,
-    storedWrite: false, // a write succeeded on this page, so the voter cookie should be set
+    storedWrite: false, // a write succeeded on this page, so the session cookie is working
     suggestions: [], sentIds: new Set(),
+    // 'checking' until api/auth/me answers, then 'in' or 'out'; 'offline' if it could not
+    // be asked (the controls stay usable, and a 401 flips the page to 'out').
+    auth: 'checking',
+    me: null, // {provider, character: {name, world, portrait_url} | null, admin} when signed in
+    legacyBallot: false, // signed out, but this browser still has a ballot from before sign-in
   };
+  const canVote = () => state.auth === 'in' || state.auth === 'offline';
   const $ = (s) => document.querySelector(s);
 
   function el(tag, attrs, ...kids) {
@@ -76,15 +84,13 @@
     }
     return data;
   }
-  // Until one write has succeeded (and so set the voter cookie), writes go one at a time.
-  const gate = B.createGate();
-  const post = (name, body, keepalive) => gate.run(() => request('api/' + name, {
+  const post = (name, body, keepalive) => request('api/' + name, {
     method: 'POST',
     credentials: 'same-origin',
     keepalive: !!keepalive,
     headers: { accept: 'application/json', 'content-type': 'application/json' },
     body: JSON.stringify(body),
-  })).then((data) => { gate.unlock(); return data; });
+  });
 
   function errorText(e, offline) {
     if (e && e.status) return e.message;
@@ -201,6 +207,13 @@
   }
 
   const NOTE_PLACEHOLDER = 'A note for the plan (optional, only the maintainer sees it)';
+  const NOTE_SIGNED_OUT = 'Sign in to leave a note';
+
+  // The cue above the vote buttons: the visitor's state, or why the buttons do nothing.
+  function cueOf(vote) {
+    if (state.auth === 'out') return ['cue open', vote ? 'your vote \u00b7 sign in to change it' : 'sign in to vote'];
+    return vote ? ['cue', 'your vote'] : ['cue open', 'not voted yet'];
+  }
 
   function card(i) {
     const mine = state.votes[i.id];
@@ -219,10 +232,15 @@
     meta.append(wow);
     a.append(meta, tallyNode(i));
 
-    a.append(el('span', { id: 'cue-' + i.id, class: vote ? 'cue' : 'cue open', text: vote ? 'your vote' : 'not voted yet' }));
+    const [cueClass, cueText] = cueOf(vote);
+    a.append(el('span', { id: 'cue-' + i.id, class: cueClass, text: cueText }));
     const vr = el('div', { class: 'vote', role: 'group', 'aria-label': 'Your vote on ' + i.title });
     for (const [v, label] of LABELS) {
-      const b = el('button', { type: 'button', id: 'v-' + v + '-' + i.id, 'data-v': v, 'aria-pressed': String(vote === v), text: label });
+      // aria-disabled rather than disabled: the buttons stay focusable, and a click explains why.
+      const b = el('button', {
+        type: 'button', id: 'v-' + v + '-' + i.id, 'data-v': v, 'aria-pressed': String(vote === v), text: label,
+        'aria-disabled': canVote() ? false : 'true',
+      });
       b.addEventListener('click', () => castVote(i.id, v));
       vr.append(b);
     }
@@ -239,8 +257,8 @@
     // Always enabled: a note can be left with or without a vote, and survives clearing the vote.
     const draft = state.drafts[i.id];
     const ta = el('textarea', {
-      id: 'note-' + i.id, rows: '2', maxlength: String(NOTE_MAX), placeholder: NOTE_PLACEHOLDER,
-      'aria-label': 'Note on ' + i.title,
+      id: 'note-' + i.id, rows: '2', maxlength: String(NOTE_MAX), placeholder: canVote() ? NOTE_PLACEHOLDER : NOTE_SIGNED_OUT,
+      'aria-label': 'Note on ' + i.title, disabled: !canVote(),
     });
     ta.value = draft !== undefined ? draft : (mine?.note || '');
     const st = el('span', { id: 'note-state-' + i.id, text: state.status[i.id] || '' });
@@ -264,7 +282,7 @@
     const vote = mine?.vote || '';
     document.getElementById('idea-' + i.id).setAttribute('data-vote', vote);
     const cue = document.getElementById('cue-' + i.id);
-    if (cue) { cue.className = vote ? 'cue' : 'cue open'; cue.textContent = vote ? 'your vote' : 'not voted yet'; }
+    if (cue) [cue.className, cue.textContent] = cueOf(vote);
     for (const [v] of LABELS) document.getElementById('v-' + v + '-' + i.id)?.setAttribute('aria-pressed', String(vote === v));
     document.getElementById('tally-' + i.id)?.replaceWith(tallyNode(i));
     const ta = document.getElementById('note-' + i.id);
@@ -406,6 +424,7 @@
   function castVote(id, v) {
     const idea = state.byId.get(id);
     if (!idea) return;
+    if (!canVote()) { if (state.auth === 'out') promptSignIn(); return; }
     const cur = state.votes[id] || { vote: '', note: '' };
     const next = cur.vote === v ? '' : v; // clicking the active choice clears it
     idea.tally = B.adjustTally(idea.tally, cur.vote, next);
@@ -427,7 +446,6 @@
   }
 
   function onSaved(id, data) {
-    gate.unlock();
     state.storedWrite = true;
     const vote = VOTES.includes(data.vote) ? data.vote : '';
     const note = typeof data.note === 'string' ? data.note : '';
@@ -443,7 +461,8 @@
 
   // The server refused a change for good (e.g. the idea was retired): put the vote
   // back to what the server has unless a newer one is queued. Note text stays as typed.
-  function onFailed(id, fields) {
+  function onFailed(id, fields, err) {
+    if (err && err.status === 401) signedOutMidway();
     if (!('vote' in fields) || 'vote' in (queue.pending(id) || {})) return;
     const cur = state.votes[id] || { vote: '', note: '' };
     const back = state.saved[id]?.vote || '';
@@ -473,11 +492,11 @@
       state.mineBusy = false;
     }
     if (!data || typeof data !== 'object') return;
+    if (data.signed_in === false) { signedOutMidway(); return; } // the session ended: keep what is shown
     const votes = B.normalizeBallot(data.votes);
     const suggestions = B.normalizeSuggestions(data.suggestions, KEEP_SUGGESTIONS);
     // Empty after this page stored writes: the cookie did not stick, so keep what is shown.
     if (B.ballotLost(votes, suggestions, state.votes, state.suggestions, state.storedWrite)) return;
-    if (Object.keys(votes).length || suggestions.length) gate.unlock(); // the cookie is already set
     const keepLocal = (id) => isBusy(id) || (state.touched[id] || 0) > since;
     const saved = { ...votes };
     for (const id of Object.keys(state.touched)) {
@@ -489,6 +508,160 @@
     state.suggestions = B.mergeSuggestions(suggestions, state.suggestions, state.sentIds, KEEP_SUGGESTIONS);
     saveSuggestions();
     renderSuggestions();
+  }
+
+  // ---- sign-in ------------------------------------------------------------------
+  // Sign-in is a navigation to api/auth/<provider>/start, which comes back to this page
+  // with a fragment: #signed-in, #character-linked or #auth-error=<code>.
+  const AUTH_ERRORS = {
+    denied: 'Sign-in was cancelled.',
+    expired: 'Sign-in took too long, or this browser blocked its cookie. Please try again.',
+    state: 'That sign-in could not be verified. Please try again.',
+    provider: 'GitHub or XIVAuth did not answer as expected. Please try again in a moment.',
+    'not-configured': 'Sign-in is not set up yet.',
+    'sign-in-first': 'Sign in with GitHub first, then link a character.',
+    'no-character': 'No character was shared, so nothing was linked. Pick a verified character on XIVAuth to link it.',
+    refused: 'Start sign-in from the buttons on this page.',
+    'bad-request': 'Sign-in failed. Please try again.',
+  };
+
+  function authFragmentMessage() {
+    const h = location.hash;
+    let msg = null;
+    if (h === '#signed-in') msg = '';
+    else if (h === '#character-linked') msg = 'Character linked.';
+    else {
+      const m = /^#auth-error=([a-z-]{1,32})$/.exec(h);
+      if (m) msg = Object.hasOwn(AUTH_ERRORS, m[1]) ? AUTH_ERRORS[m[1]] : AUTH_ERRORS['bad-request'];
+    }
+    if (msg !== null) {
+      try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    }
+    return msg;
+  }
+
+  function setNotice(text) { $('#account-notice').textContent = text || ''; }
+
+  function renderAccount() {
+    const out = state.auth === 'out', me = state.me;
+    $('#signed-out').hidden = !out;
+    $('#signed-in').hidden = !(state.auth === 'in' && me);
+    const back = '?return=' + encodeURIComponent(location.pathname + location.search);
+    $('#signin-github').href = BASE + 'api/auth/github/start' + back;
+    $('#signin-xivauth').href = BASE + 'api/auth/xivauth/start' + back;
+    $('#link-character').href = BASE + 'api/auth/xivauth/link' + back;
+    $('#signed-out-text').textContent = state.legacyBallot
+      ? 'Sign in to keep voting. The votes you made in this browser before sign-in move to your account.'
+      : 'Sign in to vote: one ballot per account. Anyone can read the tallies.';
+    if (!me) return;
+    const c = me.character;
+    const via = me.provider === 'github' ? 'GitHub' : 'FFXIV';
+    $('#who').textContent = c ? 'Signed in with ' + via + ' as ' + c.name + (c.world ? ' @ ' + c.world : '') : 'Signed in with ' + via;
+    const img = $('#who-portrait');
+    img.hidden = !(c && c.portrait_url);
+    if (c && c.portrait_url) img.src = c.portrait_url; else img.removeAttribute('src');
+    $('#link-character').hidden = me.provider !== 'github' || !!c;
+    $('#link-disclosure').hidden = me.provider !== 'github' || !!c;
+    $('#forget-character').hidden = !c;
+    $('#admin-link').hidden = !me.admin;
+  }
+
+  function renderSuggestForm() {
+    const on = canVote();
+    $('#s-title').disabled = !on;
+    $('#s-detail').disabled = !on;
+    $('#s-send').setAttribute('aria-disabled', String(!on));
+  }
+
+  function applyAuth() {
+    renderAccount();
+    renderSuggestForm();
+    if (state.ideas.length) render();
+  }
+
+  function forgetLocalBallot() {
+    removeItem('localStorage', KEY.votes);
+    removeItem('localStorage', KEY.suggestions);
+    state.saved = {};
+    state.suggestions = [];
+    renderSuggestions();
+    applyBallot({}, false);
+  }
+
+  function promptSignIn() {
+    setNotice('Sign in with GitHub or FFXIV to vote.');
+    const target = $('#signin-github');
+    target.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: no-preference)').matches ? 'smooth' : 'auto' });
+    target.focus({ preventScroll: true });
+  }
+
+  // A write or api/mine found no session (expired, or signed out in another tab).
+  function signedOutMidway() {
+    if (state.auth === 'out') return;
+    state.auth = 'out';
+    state.me = null;
+    applyAuth();
+    setNotice('You are signed out. Sign in again to keep voting.');
+  }
+
+  async function loadAuth() {
+    let me = null;
+    try {
+      me = await request('api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+    } catch (e) {
+      me = null;
+    }
+    if (!me || typeof me !== 'object') {
+      state.auth = 'offline';
+    } else if (me.signed_in === true) {
+      state.auth = 'in';
+      const c = me.character && typeof me.character === 'object' && typeof me.character.name === 'string' ? me.character : null;
+      state.me = {
+        provider: me.provider === 'xivauth' ? 'xivauth' : 'github',
+        character: c && { name: c.name, world: typeof c.world === 'string' ? c.world : '', portrait_url: /^https:\/\//.test(c.portrait_url) ? c.portrait_url : '' },
+        admin: me.admin === true,
+      };
+    } else {
+      state.auth = 'out';
+      state.me = null;
+      state.legacyBallot = me.legacy_ballot === true;
+      // Keep showing an old anonymous ballot (sign-in moves it); otherwise nothing here is this visitor's.
+      if (!state.legacyBallot) forgetLocalBallot();
+    }
+    applyAuth();
+  }
+
+  async function logout() {
+    $('#logout').disabled = true;
+    try {
+      await post('auth/logout', {});
+      state.auth = 'out';
+      state.me = null;
+      state.legacyBallot = false;
+      forgetLocalBallot();
+      applyAuth();
+      setNotice('Signed out.');
+    } catch (err) {
+      setNotice(errorText(err));
+    } finally {
+      $('#logout').disabled = false;
+    }
+  }
+
+  async function forgetCharacter() {
+    const b = $('#forget-character');
+    b.disabled = true;
+    try {
+      await post('auth/character/forget', {});
+      if (state.me) state.me.character = null;
+      renderAccount();
+      setNotice('Character forgotten. Your votes stay.');
+      $('#logout').focus();
+    } catch (err) {
+      if (err.status === 401) signedOutMidway(); else setNotice(errorText(err));
+    } finally {
+      b.disabled = false;
+    }
   }
 
   // ---- controls and load ------------------------------------------------------
@@ -521,10 +694,14 @@
       target.querySelector('.vote button')?.focus({ preventScroll: true });
     });
 
+    $('#logout').addEventListener('click', logout);
+    $('#forget-character').addEventListener('click', forgetCharacter);
+
     const sTitle = $('#s-title'), sDetail = $('#s-detail'), sState = $('#s-state'), sSend = $('#s-send');
     sDetail.addEventListener('input', () => { $('#s-count').textContent = sDetail.value.length + ' / ' + DETAIL_MAX; });
     $('#suggest').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!canVote()) { sState.textContent = state.auth === 'out' ? 'Sign in to send a suggestion.' : ''; if (state.auth === 'out') promptSignIn(); return; }
       const title = sTitle.value.trim(), detail = sDetail.value.trim();
       if (title.length < 3) { sState.textContent = 'Give the idea a short title (3+ characters).'; sTitle.focus(); return; }
       sSend.disabled = true;
@@ -543,6 +720,7 @@
         sState.textContent = 'Thanks! It is in the review pile.';
       } catch (err) {
         sState.textContent = errorText(err);
+        if (err.status === 401) signedOutMidway();
       } finally {
         sSend.disabled = false;
       }
@@ -550,6 +728,8 @@
 
     // Another tab saved a change: pick it up, leaving alone whatever is being edited here.
     window.addEventListener('storage', (e) => {
+      // Removed (not changed) means another tab signed out; the session cookie is shared.
+      if (e.key === KEY.votes && e.newValue === null) { signedOutMidway(); applyBallot({}, false); return; }
       if (e.key === KEY.votes) applyBallot(B.mergeBallot(state.votes, loadVotes(), isBusy), true);
       if (e.key === KEY.suggestions) { state.suggestions = loadSuggestions(); renderSuggestions(); }
     });
@@ -558,7 +738,7 @@
     // page). Coming back: re-read the server ballot, at most every MINE_REFRESH_MS.
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') { notes.fireAll(); queue.flush(false); }
-      else if (Date.now() - state.mineAt >= MINE_REFRESH_MS) loadMine();
+      else if (canVote() && Date.now() - state.mineAt >= MINE_REFRESH_MS) loadMine();
     });
     window.addEventListener('pagehide', () => { notes.fireAll(); queue.flush(true); });
     window.addEventListener('online', () => queue.flush(false));
@@ -569,7 +749,8 @@
     state.saved = { ...state.votes };
     state.suggestions = loadSuggestions();
     renderSuggestions();
-    loadMine(); // in parallel; it applies itself whenever it lands
+    // Who is signed in first, then their ballot; both apply themselves whenever they land.
+    loadAuth().then(() => { if (canVote()) loadMine(); });
     try {
       // The catalogue is a static file; tallies are the only server read, and the page works without them.
       const [data, tallies] = await Promise.all([
@@ -598,7 +779,11 @@
   }
 
   function start() {
+    const msg = authFragmentMessage();
     wireControls();
+    renderAccount();
+    renderSuggestForm();
+    if (msg) setNotice(msg);
     load();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
