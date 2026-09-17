@@ -1,0 +1,11 @@
+{
+  "name": "ghostty-vote",
+  "private": true,
+  "type": "module",
+  "description": "Public feature vote for the Ghostty for FFXIV plugin, served by a Cloudflare Worker + D1.",
+  "scripts": {
+    "test": "node --test",
+    "seed": "node scripts/gen-seed.js",
+    "seed:check": "node scripts/gen-seed.js --check"
+  }
+}
