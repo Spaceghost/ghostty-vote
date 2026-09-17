@@ -1,7 +1,8 @@
-// The Worker's whole job: POST api/vote, POST api/suggest and GET api/tallies.
+// The Worker's whole job: POST api/vote, POST api/suggest, GET api/tallies and GET api/mine.
 // Everything else on the route is a static asset served without invoking this code.
 // D1 budget: a write costs one read query plus one batch; a tally read costs one
-// query per edge location per minute (the rest are answered from the Cache API).
+// query per edge location per minute (the rest are answered from the Cache API);
+// api/mine costs one batch, and nothing at all for a request without a voter cookie.
 import {
   API_PREFIX, LIMITS, isSameOrigin, json, randomToken, readJsonBody, route,
   validateSuggestion, validateVote, voterCookie, voterKey, voterToken,
@@ -21,6 +22,7 @@ export async function handle(request, env, ctx, cache = globalThis.caches?.defau
   }
   try {
     if (r.name === 'tallies') return await getTallies(env, ctx, url, cache);
+    if (r.name === 'mine') return await getMine(request, env, url);
     return await serveWrite(request, env, url, r.name);
   } catch (err) {
     console.error('ghostty-vote:', err && err.stack ? err.stack : String(err));
@@ -46,6 +48,32 @@ async function getTallies(env, ctx, url, cache) {
     else await put;
   }
   return res;
+}
+
+// GET api/mine -> the requesting voter's own ballot and newest suggestions, so the page
+// can show them again on any load. Private to the cookie: never cached (not even by
+// the browser) and never read from or written to the tallies cache.
+const PRIVATE = { 'cache-control': 'private, no-store', vary: 'Cookie' };
+
+async function getMine(request, env, url) {
+  if (!isSameOrigin(request, url)) {
+    return json({ error: 'forbidden', message: 'Cross-site request refused.' }, { status: 403, headers: PRIVATE });
+  }
+  const mine = { votes: {}, suggestions: [] };
+  const token = voterToken(request.headers.get('cookie'));
+  if (!token) return json(mine, { headers: PRIVATE }); // no cookie, no ballot: D1 is not asked
+  const voter = await voterKey(token);
+  const [votes, suggestions] = await env.DB.batch([
+    env.DB.prepare('SELECT idea_id, vote, note, updated_at FROM votes WHERE voter = ?').bind(voter),
+    env.DB.prepare(
+      'SELECT id, title, detail, created_at FROM suggestions WHERE voter = ? ORDER BY created_at DESC, id DESC LIMIT ?',
+    ).bind(voter, LIMITS.mySuggestions),
+  ]);
+  for (const { idea_id: ideaId, vote, note, updated_at: updatedAt } of votes.results) {
+    mine.votes[ideaId] = { vote: vote || null, note, updated_at: updatedAt };
+  }
+  mine.suggestions = suggestions.results;
+  return json(mine, { headers: PRIVATE });
 }
 
 async function serveWrite(request, env, url, name) {
@@ -94,28 +122,28 @@ async function postVote(env, voter, { idea_id: ideaId, vote, note }, now) {
   if (limited) return limited;
   if (!pre || !pre.known) return json({ error: 'unknown_idea', message: 'No such idea.' }, { status: 404 });
 
-  const change = vote === null
-    ? env.DB.prepare('DELETE FROM votes WHERE voter = ? AND idea_id = ?').bind(voter, ideaId)
-    : env.DB.prepare(
-      `INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at)
-       VALUES (?1, ?2, ?3, COALESCE(?4, ''), ?5, ?5)
-       ON CONFLICT (voter, idea_id) DO UPDATE SET
-         vote = excluded.vote, note = COALESCE(?4, votes.note), updated_at = excluded.updated_at
-       RETURNING vote, note`,
-    ).bind(voter, ideaId, vote, note, now);
-
+  // null keeps the stored vote or note, '' clears it. The row goes once both are empty;
+  // the triggers keep the tallies right through every step ('' counts toward nothing).
   const results = await env.DB.batch([
     ...logWrite(env, voter, now),
-    change,
+    env.DB.prepare(
+      `INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at)
+       VALUES (?1, ?2, COALESCE(?3, ''), COALESCE(?4, ''), ?5, ?5)
+       ON CONFLICT (voter, idea_id) DO UPDATE SET
+         vote = COALESCE(?3, votes.vote), note = COALESCE(?4, votes.note), updated_at = excluded.updated_at
+       RETURNING vote, note, updated_at`,
+    ).bind(voter, ideaId, vote, note, now),
+    env.DB.prepare("DELETE FROM votes WHERE voter = ? AND idea_id = ? AND vote = '' AND note = ''").bind(voter, ideaId),
     env.DB.prepare('SELECT want, maybe, skip FROM ideas WHERE id = ?').bind(ideaId),
   ]);
-  const mine = vote === null ? null : results[2].results[0] || null;
+  const row = results[2].results[0];
   return json({
     ok: true,
     idea_id: ideaId,
-    vote: mine ? mine.vote : null,
-    note: mine ? mine.note : '',
-    tally: tallyOf(results[3].results[0]),
+    vote: row.vote || null,
+    note: row.note,
+    tally: tallyOf(results[4].results[0]),
+    updated_at: row.updated_at,
   });
 }
 

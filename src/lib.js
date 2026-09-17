@@ -18,15 +18,24 @@ export const LIMITS = Object.freeze({
   detail: 600,
   bodyBytes: 4096,
   windowMs: 10 * 60 * 1000,
-  writesPerWindow: 60,
+  // Per voter. The page saves every vote click and every pause in note typing, so a
+  // busy visitor went past the old 60 (55 votes in 5 minutes, then note saves failed).
+  // 300 is out of reach for a person voting and writing notes, and one full window
+  // costs about 300 * 9 = 2,700 of D1's 100,000 free rows written per day (a vote
+  // write touches write_log and its two indexes, the vote row and its index, and the
+  // tally) and at most 300 * 300 = 90,000 of the 5 million free rows read (the
+  // precheck counts the window). It is a guard against a runaway client, not against
+  // abuse: a new cookie starts a new count, which is what a WAF rule is for (README).
+  writesPerWindow: 300,
   dayMs: 24 * 60 * 60 * 1000,
   suggestionsPerVoterPerDay: 10,
   suggestionsPerDay: 300,
+  mySuggestions: 50, // newest suggestions GET api/mine returns
   tallyTtlSeconds: 60, // edge + browser cache for GET api/tallies
 });
 
 // name -> the one HTTP method it accepts.
-export const API = Object.freeze({ vote: 'POST', suggest: 'POST', tallies: 'GET' });
+export const API = Object.freeze({ vote: 'POST', suggest: 'POST', tallies: 'GET', mine: 'GET' });
 
 export function route(pathname) {
   if (!pathname.startsWith(API_PREFIX)) return { kind: 'none' };
@@ -132,18 +141,27 @@ export function cleanText(value, { multiline = false } = {}) {
   return s.trim();
 }
 
+// POST api/vote body -> {idea_id, vote, note} where, for both fields, null keeps the
+// stored value. vote: omitted keeps it, null or "" clears it ('' in the result), or
+// "want" | "maybe" | "skip". note: omitted or null keeps it, a string replaces it ("" clears).
 export function validateVote(body) {
-  const { idea_id: ideaId, vote } = body;
+  const { idea_id: ideaId } = body;
   if (typeof ideaId !== 'string' || !ID_RE.test(ideaId)) return fail(400, 'bad_idea_id', 'idea_id is missing or malformed.');
-  if (vote !== null && !VOTES.includes(vote)) {
-    return fail(400, 'bad_vote', 'vote must be "want", "maybe", "skip", or null to retract.');
+  let vote = null;
+  if (body.vote === null || body.vote === '') vote = '';
+  else if (body.vote !== undefined) {
+    if (!VOTES.includes(body.vote)) {
+      return fail(400, 'bad_vote', 'vote must be "want", "maybe", "skip", or null to clear it.');
+    }
+    vote = body.vote;
   }
-  let note = null; // null keeps any existing note
-  if (vote !== null && body.note !== undefined && body.note !== null) {
+  let note = null;
+  if (body.note !== undefined && body.note !== null) {
     note = cleanText(body.note, { multiline: true });
     if (note === null) return fail(400, 'bad_note', 'note must be a string.');
     if (note.length > LIMITS.note) return fail(400, 'note_too_long', `note must be at most ${LIMITS.note} characters.`);
   }
+  if (body.vote === undefined && note === null) return fail(400, 'nothing_to_save', 'Send a vote, a note, or both.');
   return { ok: true, value: { idea_id: ideaId, vote, note } };
 }
 

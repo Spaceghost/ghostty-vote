@@ -12,7 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
 <link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
-<!-- Not deferred on purpose: it applies the saved theme before first paint, then waits for the DOM. -->
+<!-- Not deferred on purpose: vote.js applies the saved theme before first paint, then waits for the DOM.
+     ballot.js (its DOM-free logic) must load first. -->
+<script src="/mods/ffxiv/term/vote/ballot.js"></script>
 <script src="/mods/ffxiv/term/vote/vote.js"></script>
 </head>
 <body>
@@ -73,9 +75,8 @@
   </section>
 
   <footer>
-  <footer>
-    <p class="small"><strong>Privacy.</strong> No accounts. Your votes, notes and suggestions are remembered in this browser's local storage so the page can show them again. They are also sent to the server, which keeps them next to a one-way hash of a random, anonymous ID held in a cookie that only this page can use. This site does not store IP addresses or personal details. Notes and suggestions are visible only to you and the maintainer. The tallies can be up to a minute old. Fonts load from Google Fonts.</p>
-    <p class="small">Clearing this site's data forgets your ballot on this device. Made by Johnneylee Jack Rollins, <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+    <p class="small"><strong>Privacy.</strong> No accounts. Your votes, notes and suggestions are saved on the server as you make them, next to a one-way hash of a random, anonymous ID held in a cookie that only this page can use, and the page loads them back from there whenever you open it. A copy is kept in this browser's local storage so the page can show them straight away. This site does not store IP addresses or personal details. Notes and suggestions are visible only to you and the maintainer. The tallies can be up to a minute old. Fonts load from Google Fonts.</p>
+    <p class="small">Clearing this site's cookies starts a new, empty ballot in this browser; the server keeps the old one, but the page can no longer find it. Made by Johnneylee Jack Rollins, <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
   </footer>
 </div>
 </body>

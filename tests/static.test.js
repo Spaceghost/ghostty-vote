@@ -64,6 +64,7 @@ test('public/ holds only the site, at its real URL paths', () => {
   assert.equal(PUBLIC_URL, 'https://spacegho.st/mods/ffxiv/term/vote/');
   assert.deepEqual(walk('public/').sort(), [
     '_headers',
+    'mods/ffxiv/term/vote/ballot.js',
     'mods/ffxiv/term/vote/ideas.json',
     'mods/ffxiv/term/vote/index.html',
     'mods/ffxiv/term/vote/version.json',
@@ -75,7 +76,10 @@ test('public/ holds only the site, at its real URL paths', () => {
 test('page has no inline script, style or handlers, and renders data only through textContent', () => {
   const html = read(STATIC_DIR + 'index.html');
   const js = read(STATIC_DIR + 'vote.js');
+  const ballot = read(STATIC_DIR + 'ballot.js');
   assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html), 'every script is external');
+  const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(scripts, ['/mods/ffxiv/term/vote/ballot.js', '/mods/ffxiv/term/vote/vote.js'], 'ballot.js loads before vote.js');
   assert.ok(!/<style/i.test(html), 'no style elements');
   assert.ok(!/\sstyle=/i.test(html), 'no style attributes');
   assert.ok(!/\son[a-z]+=/i.test(html), 'no inline event handlers');
@@ -85,12 +89,15 @@ test('page has no inline script, style or handlers, and renders data only throug
   }
   for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) {
     assert.ok(!js.includes(sink), `vote.js must not use ${sink}`);
+    assert.ok(!ballot.includes(sink), `ballot.js must not use ${sink}`);
   }
-  for (const endpoint of ['api/ideas', 'api/mine', 'api/version']) assert.ok(!js.includes(endpoint), endpoint);
-  assert.ok(js.includes("'ideas.json'") && js.includes("'api/tallies'"));
+  assert.ok(!/document|window|fetch\(/.test(ballot.replace(/^\s*\/\/.*$/gm, '')), 'ballot.js stays free of the DOM and network');
+  for (const endpoint of ['api/ideas', 'api/version']) assert.ok(!js.includes(endpoint), endpoint);
+  assert.ok(js.includes("'ideas.json'") && js.includes("'api/tallies'") && js.includes("'api/mine'"));
+  assert.ok(!/disabled: !vote/.test(js), 'the note box is never disabled');
   assert.ok(html.includes('Johnneylee Jack Rollins') && html.includes('https://github.com/Spaceghost'));
   assert.ok(/name="viewport"/.test(html) && /prefers-color-scheme: light/.test(read(STATIC_DIR + 'vote.css')));
-  for (const f of ['index.html', 'vote.js', 'vote.css']) {
+  for (const f of ['index.html', 'vote.js', 'ballot.js', 'vote.css']) {
     if (f !== 'index.html') assert.ok(!/[^\t\n\x20-\x7e]/.test(read(STATIC_DIR + f)), `${f} is plain ASCII`);
   }
 });

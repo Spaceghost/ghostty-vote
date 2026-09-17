@@ -10,17 +10,18 @@ const post = (body, headers = {}) => new Request('https://spacegho.st' + BASE + 
   method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body,
 });
 
-test('route matches only the three API paths', () => {
+test('route matches only the four API paths', () => {
   assert.deepEqual(route(BASE + '/api/vote'), { kind: 'api', name: 'vote', method: 'POST' });
   assert.deepEqual(route(BASE + '/api/suggest'), { kind: 'api', name: 'suggest', method: 'POST' });
   assert.deepEqual(route(BASE + '/api/tallies'), { kind: 'api', name: 'tallies', method: 'GET' });
-  assert.deepEqual(Object.keys(API).sort(), ['suggest', 'tallies', 'vote']);
+  assert.deepEqual(route(BASE + '/api/mine'), { kind: 'api', name: 'mine', method: 'GET' });
+  assert.deepEqual(Object.keys(API).sort(), ['mine', 'suggest', 'tallies', 'vote']);
   // The page and the static files are assets, never Worker routes.
   for (const p of [BASE, BASE + '/', BASE + '/index.html', BASE + '/vote.js', BASE + '/ideas.json', BASE + '/version.json']) {
     assert.equal(route(p).kind, 'none', p);
   }
   // Dropped endpoints and near misses.
-  for (const p of ['ideas', 'mine', 'version', 'nope', 'vote/', 'tallies.json', 'constructor', '__proto__', 'toString']) {
+  for (const p of ['ideas', 'version', 'nope', 'vote/', 'mine/', 'mine.json', 'tallies.json', 'constructor', '__proto__', 'toString']) {
     assert.equal(route(BASE + '/api/' + p).kind, 'none', p);
   }
   assert.equal(route('/mods/ffxiv/term/voter/api/vote').kind, 'none');
@@ -77,16 +78,44 @@ test('cleanText strips control and bidi characters', () => {
   assert.equal(cleanText(42), null);
 });
 
-test('validateVote', () => {
-  assert.deepEqual(validateVote({ idea_id: 'ops-weather', vote: 'want' }).value, { idea_id: 'ops-weather', vote: 'want', note: null });
-  assert.equal(validateVote({ idea_id: 'ops-weather', vote: 'maybe', note: ' hi ' }).value.note, 'hi');
-  assert.equal(validateVote({ idea_id: 'ops-weather', vote: null, note: 'ignored' }).value.note, null);
-  assert.equal(validateVote({ idea_id: 'ops-weather', vote: 'pass' }).error, 'bad_vote');
-  assert.equal(validateVote({ idea_id: 'ops-weather' }).error, 'bad_vote');
+test('validateVote: vote and note each keep (null), clear or set', () => {
+  const id = 'ops-weather';
+  const value = (body) => {
+    const r = validateVote(body);
+    assert.ok(r.ok, JSON.stringify(body));
+    return r.value;
+  };
+  // vote: omitted keeps (null), null or "" clears (''), a choice sets it.
+  assert.deepEqual(value({ idea_id: id, vote: 'want' }), { idea_id: id, vote: 'want', note: null });
+  assert.deepEqual(value({ idea_id: id, vote: null }), { idea_id: id, vote: '', note: null });
+  assert.deepEqual(value({ idea_id: id, vote: '' }), { idea_id: id, vote: '', note: null });
+  assert.deepEqual(value({ idea_id: id, note: 'n' }), { idea_id: id, vote: null, note: 'n' });
+  // note: omitted or null keeps (null), any string sets it (cleaned; "" clears).
+  assert.equal(value({ idea_id: id, vote: 'maybe', note: ' hi ' }).note, 'hi');
+  assert.equal(value({ idea_id: id, vote: 'maybe', note: null }).note, null);
+  assert.equal(value({ idea_id: id, note: '' }).note, '');
+  assert.equal(value({ idea_id: id, note: '   ' }).note, '');
+  assert.deepEqual(value({ idea_id: id, vote: null, note: 'kept' }), { idea_id: id, vote: '', note: 'kept' });
+  assert.deepEqual(value({ idea_id: id, vote: '', note: '' }), { idea_id: id, vote: '', note: '' });
+
+  assert.equal(validateVote({ idea_id: id }).error, 'nothing_to_save');
+  assert.equal(validateVote({ idea_id: id, note: null }).error, 'nothing_to_save');
+  for (const vote of ['pass', 'WANT', 0, false, [], {}, ['want']]) {
+    assert.equal(validateVote({ idea_id: id, vote }).error, 'bad_vote', JSON.stringify(vote));
+  }
   assert.equal(validateVote({ idea_id: '../x', vote: 'want' }).error, 'bad_idea_id');
+  assert.equal(validateVote({ vote: 'want' }).error, 'bad_idea_id');
   assert.equal(validateVote({ idea_id: 'x', vote: 'want', note: 5 }).error, 'bad_note');
+  assert.equal(validateVote({ idea_id: 'x', note: [] }).error, 'bad_note');
   assert.ok(validateVote({ idea_id: 'x', vote: 'want', note: 'n'.repeat(280) }).ok);
   assert.equal(validateVote({ idea_id: 'x', vote: 'want', note: 'n'.repeat(281) }).error, 'note_too_long');
+  assert.equal(validateVote({ idea_id: 'x', note: 'n'.repeat(281) }).error, 'note_too_long');
+});
+
+test('limits: a busy ballot session fits the write window', () => {
+  assert.equal(LIMITS.writesPerWindow, 300);
+  assert.equal(LIMITS.windowMs, 10 * 60 * 1000);
+  assert.equal(LIMITS.mySuggestions, 50);
 });
 
 test('validateSuggestion', () => {

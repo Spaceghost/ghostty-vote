@@ -141,7 +141,6 @@ textarea, input[type="text"] {
   background: var(--ink); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
   padding: 8px 10px; font: 16px/1.4 var(--body);
 }
-textarea:disabled { opacity: 0.55; }
 .note-row { display: flex; justify-content: space-between; gap: 8px; font: 11px var(--mono); color: var(--muted); min-height: 14px; }
 
 .yours { margin-top: 48px; display: grid; gap: 14px; }
