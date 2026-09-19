@@ -15,6 +15,7 @@ import { readSession } from './session.js';
 import {
   getAdminAlmanac, getAggregate, postAdminAlmanacReview, postAdminAlmanacSuite, postResult,
 } from './almanac.js';
+import { getPluginMaster } from './plugins.js';
 import { getAdminGallery, getAdminImage, getPublicImage, getShots, postAdminReview, postAdminThumb, postUpload } from './gallery.js';
 
 const WRITES = { vote: [validateVote, postVote], suggest: [validateSuggestion, postSuggest] };
@@ -43,6 +44,8 @@ const HANDLERS = {
   'gallery/shots': (request, env, ctx, url, cache) => getShots(env, ctx, url, cache),
   'gallery/img': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, false),
   'gallery/thumb': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, true),
+  // the Dalamud plugin repository (src/plugins.js), at /mods/ffxiv/plugins.json
+  plugins: (request, env, ctx, url, cache, fetcher) => getPluginMaster(request, env, ctx, url, cache, fetcher),
   // the Almanac community model leaderboard (src/almanac.js), under /mods/ffxiv/almanac
   'almanac/results': (request, env, ctx, url) => postResult(request, env, url),
   'almanac/leaderboard': (request, env, ctx, url, cache) => getAggregate(env, ctx, url, cache, 'leaderboard'),

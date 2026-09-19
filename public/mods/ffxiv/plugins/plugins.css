@@ -1,0 +1,35 @@
+/* The plugin repository page. Builds on the vote page's vote.css (colours, type, chips). */
+.topline .row { display: flex; gap: 8px; flex-wrap: wrap; }
+section { margin-top: 32px; }
+section h2 { font: 400 26px/1.2 var(--display); margin: 0 0 8px; }
+
+.repo-url {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  border: 1px solid var(--gold); border-radius: 10px; background: var(--slate);
+  padding: 12px 14px; margin: 10px 0 16px;
+}
+.repo-url code { font: 600 15px/1.4 var(--mono); color: var(--gold); word-break: break-all; }
+
+ol.steps { margin: 0 0 12px; padding-left: 22px; }
+ol.steps li { margin: 6px 0; }
+ol.steps code, .mod code, .note code, p code { font: 13px var(--mono); color: var(--text); background: var(--slate-2); border-radius: 4px; padding: 1px 5px; }
+
+p.note {
+  border-left: 3px solid var(--gold); background: var(--slate); border-radius: 0 8px 8px 0;
+  padding: 10px 14px; margin: 12px 0 0;
+}
+
+.mod {
+  border: 1px solid var(--line); border-radius: 10px; background: var(--slate);
+  padding: 14px 16px; margin: 14px 0;
+}
+.mod h3 { font: 400 22px/1.2 var(--display); margin: 0 0 4px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.mod .ver { font: 600 13px var(--mono); color: var(--aether); }
+.mod .punch { color: var(--gold); font-style: italic; margin: 0 0 10px; }
+.mod p { margin: 8px 0; }
+.mod .needs, .mod .links { font-size: 14px; }
+.mod .links a { white-space: nowrap; }
+.mod.pending { opacity: 0.92; border-style: dashed; }
+.chip.pending-chip { font-size: 12px; cursor: default; border-color: var(--line); color: var(--muted); }
+
+footer { margin: 40px 0 24px; border-top: 1px solid var(--line); padding-top: 14px; }

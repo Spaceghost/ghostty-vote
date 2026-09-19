@@ -11,7 +11,11 @@ preview_urls = false
 routes = [
   { pattern = "spacegho.st/mods/ffxiv/term/vote*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/term/gallery*", zone_name = "spacegho.st" },
-  { pattern = "spacegho.st/mods/ffxiv/almanac*", zone_name = "spacegho.st" }
+  { pattern = "spacegho.st/mods/ffxiv/almanac*", zone_name = "spacegho.st" },
+  # The Dalamud plugin repository and the page explaining how to add it. The listing is
+  # assembled by the Worker from each plugin repository's own release assets (src/plugins.js);
+  # the page, and the committed fallback listing, are static assets.
+  { pattern = "spacegho.st/mods/ffxiv/plugins*", zone_name = "spacegho.st" }
 ]
 
 # Regenerates public/mods/ffxiv/term/vote/{ideas,version}.json and seed/seed.sql
@@ -25,9 +29,12 @@ command = "node scripts/build.js"
 # route fall through to the Worker, which answers 404.
 [assets]
 directory = "public"
+# src/plugins.js reads the committed plugins.json through this binding when GitHub is
+# unreachable; nothing else uses it.
+binding = "ASSETS"
 html_handling = "auto-trailing-slash"   # public/.../vote/index.html is served at /vote/; /vote redirects there
 not_found_handling = "none"
-run_worker_first = ["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json"]
+run_worker_first = ["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json", "/mods/ffxiv/plugins.json"]
 
 [[d1_databases]]
 binding = "DB"

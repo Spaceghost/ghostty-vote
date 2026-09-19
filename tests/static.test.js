@@ -69,6 +69,10 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/almanac/index.html',
     'mods/ffxiv/almanac/schema/recommendations.v1.json',
     'mods/ffxiv/almanac/schema/results.v1.json',
+    'mods/ffxiv/plugins.json',
+    'mods/ffxiv/plugins/index.html',
+    'mods/ffxiv/plugins/plugins.css',
+    'mods/ffxiv/plugins/plugins.js',
     'mods/ffxiv/term/gallery/gallery.css',
     'mods/ffxiv/term/gallery/gallery.js',
     'mods/ffxiv/term/gallery/index.html',
@@ -165,8 +169,9 @@ test('wrangler.toml serves assets first and runs the Worker only for the API', (
   const assets = toml.slice(toml.indexOf('[assets]'), toml.indexOf('[[d1_databases]]'));
   assert.match(assets, /^directory = "public"$/m);
   assert.equal(assets.match(/^run_worker_first = (.+)$/m)[1],
-    '["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json"]',
-    'the Worker runs for the APIs, the (approved-only) gallery images and the two Almanac aggregates, nothing else');
+    '["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json", "/mods/ffxiv/plugins.json"]',
+    'the Worker runs for the APIs, the (approved-only) gallery images, the two Almanac aggregates and the plugin repository listing, nothing else');
+  assert.match(toml, /\{ pattern = "spacegho\.st\/mods\/ffxiv\/plugins\*", zone_name = "spacegho\.st" \}/);
   assert.match(toml, /\{ pattern = "spacegho\.st\/mods\/ffxiv\/almanac\*", zone_name = "spacegho\.st" \}/);
   assert.ok(!/mods\/ffxiv\/ai\b/.test(toml), 'no /mods/ffxiv/ai route');
   assert.match(assets, /^html_handling = "auto-trailing-slash"/m);

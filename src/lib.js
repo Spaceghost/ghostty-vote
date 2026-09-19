@@ -12,6 +12,11 @@ export const GALLERY_BASE = '/mods/ffxiv/term/gallery';
 // The Almanac community model leaderboard (src/almanac.js); its admin endpoints also live
 // under the vote's api/admin/ for the same cookie-path reason.
 export const ALMANAC_BASE = '/mods/ffxiv/almanac';
+// The Dalamud plugin repository listing every mod here (src/plugins.js); the page beside
+// it, /mods/ffxiv/plugins/, is a static asset.
+import { PLUGINS_PATH } from '../scripts/plugins-lib.js';
+
+export { PLUGINS_PATH };
 const SHOT_ID_RE = /^[A-Za-z0-9_-]{22}$/;
 // The anonymous voter cookie from before sign-in. It is no longer handed out; sign-in
 // reads it once to move that ballot onto the account, then clears it.
@@ -81,6 +86,8 @@ const ALMANAC_API = Object.freeze({
 });
 
 export function route(pathname) {
+  // The Dalamud plugin repository (src/plugins.js): one GET, no session, no database.
+  if (pathname === PLUGINS_PATH) return { kind: 'api', name: 'plugins', method: 'GET' };
   if (pathname.startsWith(ALMANAC_BASE + '/')) {
     const rest = pathname.slice(ALMANAC_BASE.length);
     return Object.hasOwn(ALMANAC_API, rest) ? { kind: 'api', name: ALMANAC_API[rest][0], method: ALMANAC_API[rest][1] } : { kind: 'none' };

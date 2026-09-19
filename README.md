@@ -283,6 +283,32 @@ Checked by hand against `wrangler dev` (local D1): submissions, the per-address 
 the 13th in an hour), a duplicate, an unknown-field refusal, both JSON files, and the page
 rendered in headless Firefox (tables and scatter).
 
+## Plugin repository
+
+The site also hosts the **Dalamud plugin repository** for every FFXIV mod here, so a player
+adds one URL in game and installs any of them with one click:
+
+```
+https://spacegho.st/mods/ffxiv/plugins.json
+```
+
+`/xlsettings` → **Experimental** → **Custom Plugin Repositories** → paste → **+** → **Save and
+Close**, then `/xlplugins` → **All Plugins**. [`/mods/ffxiv/plugins/`](public/mods/ffxiv/plugins/index.html)
+is the page that says so with a section per mod and the build-it-yourself path.
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/mods/ffxiv/plugins.json` | The plugin master Dalamud reads: a JSON array of manifests. Assembled by [`src/plugins.js`](src/plugins.js) from each plugin repository's own release assets — `.../releases/latest/download/pluginmaster.json` for the stable channel and `.../releases/download/testing/pluginmaster-testing.json` for the floating testing channel — merged, cached at the edge for 10 minutes and served with `Access-Control-Allow-Origin: *`. No D1, no KV, no session |
+
+Why a Worker for a file that could be static: a release then updates the listing on its own,
+with no deploy here and no token in any repository. What each plugin is, and which of them are
+published at all, lives in [`data/mods.json`](data/mods.json); `scripts/build.js` turns it into
+the committed [`public/mods/ffxiv/plugins.json`](public/mods/ffxiv/plugins.json), which is served
+only if GitHub cannot be reached, and into `src/mods-data.js` for the Worker. A mod with
+`listed: false` (its repository is not public yet) stays off the listing and appears on the page
+as something to build yourself; a listed mod whose repository has cut no release yet is simply
+absent from the listing until it has one, and needs no change here when it does.
+
 ## Sign-in
 
 Voting, notes and suggestions need a sign-in with **GitHub** (the GitHub App
