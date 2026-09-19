@@ -4,7 +4,6 @@
 // https://dalamud.dev/plugin-development/plugin-submission — the fields below are the
 // ones it actually uses, checked against a live copy of the official repository.
 export const PLUGINS_PATH = '/mods/ffxiv/plugins.json';
-export const PLUGINS_PAGE = '/mods/ffxiv/plugins/';
 export const STATIC_PLUGINS = 'public' + PLUGINS_PATH;
 // How long an assembled listing stays in the edge cache. Dalamud refreshes the
 // repository when the installer opens, so this is only about how quickly a new release
