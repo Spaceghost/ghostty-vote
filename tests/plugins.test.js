@@ -57,6 +57,7 @@ test('committed plugins.json matches data/mods.json', () => {
     assert.ok(usableEntry(e), `${e.InternalName} is not installable`);
     assert.equal(e.DalamudApiLevel, 15);
     assert.match(e.DownloadLinkInstall, /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/releases\/latest\/download\/latest\.zip$/);
+    assert.equal(e.DownloadLinkTesting, undefined, 'the fallback names no testing download either');
     assert.match(e.IconUrl, /^https:\/\//);
   }
 });
@@ -101,6 +102,7 @@ test('the served listing is what the repositories published', async () => {
   assert.deepEqual(listing.map((e) => e.InternalName), ['GhosttyDalamud']);
   assert.equal(listing[0].AssemblyVersion, '0.3.0.0');
   assert.equal(listing[0].IsTestingExclusive, false);
+  assert.equal(listing[0].DownloadLinkTesting, undefined, 'no testing download until a test build exists');
   assert.equal(res.headers.get('access-control-allow-origin'), '*');
   assert.match(res.headers.get('cache-control'), /max-age=\d+/);
 });
@@ -172,7 +174,7 @@ test('the fallback entry alone is enough to install a plugin', () => {
     const e = fallbackEntry(mod);
     assert.ok(usableEntry(e));
     assert.equal(e.DownloadLinkInstall, stableZip(mod.repo));
-    assert.equal(e.DownloadLinkTesting, testingZip(mod.repo));
+    assert.equal(e.DownloadLinkTesting, undefined);
   }
 });
 

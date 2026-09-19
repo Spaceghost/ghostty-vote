@@ -66,7 +66,6 @@ export function fallbackEntry(mod) {
     ...(mod.images && mod.images.length ? { ImageUrls: mod.images } : {}),
     DownloadLinkInstall: stableZip(mod.repo),
     DownloadLinkUpdate: stableZip(mod.repo),
-    DownloadLinkTesting: testingZip(mod.repo),
     IsTestingExclusive: false,
     LastUpdate: 0,
   };
@@ -101,7 +100,12 @@ export function mergeChannels(stable, testing) {
   if (!s && !t) return null;
   if (!s) return { ...t, IsTestingExclusive: true };
   const entry = { ...s, IsTestingExclusive: false };
-  if (!t) return entry;
+  if (!t) {
+    // No test build published: do not advertise a testing download that 404s.
+    delete entry.DownloadLinkTesting;
+    delete entry.TestingAssemblyVersion;
+    return entry;
+  }
   entry.TestingAssemblyVersion = t.TestingAssemblyVersion || t.AssemblyVersion;
   entry.DownloadLinkTesting = t.DownloadLinkTesting || t.DownloadLinkInstall;
   if (t.TestingDalamudApiLevel) entry.TestingDalamudApiLevel = t.TestingDalamudApiLevel;
