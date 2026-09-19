@@ -117,6 +117,9 @@ Objects, and sessions are signed cookies.
 files are always current when they are uploaded. They are committed too, and the tests fail if
 they are stale.
 
+Checks, tests, the build and a credential-free `wrangler` dry run all run from one script,
+`tools/ci/run.sh` (`tools/ci/local.sh` to reproduce CI locally); see [docs/CI.md](docs/CI.md).
+
 ## Endpoints
 
 Static, served without the Worker (paths under `https://spacegho.st/mods/ffxiv/term/vote`):

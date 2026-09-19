@@ -1,0 +1,94 @@
+# Check, test, build and dry-run-bundle on every push and pull request; see
+# docs/CI.md. Both jobs run the same thing -- `tools/ci/run.sh all` -- so the
+# workflow holds no build knowledge of its own.
+#
+# The hosted job's runner comes from the repository variable CI_RUNS_ON (a JSON
+# string or label array), default GitHub's ubuntu-latest. Nothing here installs
+# node: ubuntu-latest ships a node far newer than the 20 this repository needs,
+# and the `deps`/`check` stages fail loudly on a too-old one rather than
+# skipping tests. That keeps this file free of another pinned action SHA.
+#
+# No job in this workflow has a secret or can reach Cloudflare. Deploying for
+# real is deploy.yml.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+    paths-ignore: ['**.md', 'docs/**']
+  pull_request:
+    paths-ignore: ['**.md', 'docs/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hosted:
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # the pinned wrangler that deploy-dry fetches through npx; nothing else
+      # in this repository is downloaded, and a cold cache only costs the fetch
+      - name: Cache the npm download cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ghostty-vote-ci/npm
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/ci/run.sh') }}
+
+      - name: Check, test, build, dry-run
+        run: tools/ci/run.sh all
+
+      # public/ is what `wrangler deploy` uploads as Static Assets; scripts/build.js
+      # regenerates ideas.json, version.json and the schema copy into it
+      - name: Upload the built static assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ghostty-vote-public-${{ github.sha }}
+          path: public
+          if-no-files-found: error
+          retention-days: 14
+
+  self-hosted:
+    # Two gates, and a fork pull request fails the first one, so it can never
+    # reach this runner: a self-hosted runner executes whatever the workflow in
+    # the checkout says, and a fork's pull request can edit that workflow. The
+    # head repository must be this repository (so: a branch here, a push, or a
+    # dispatch), and the owner must have opted in with CI_SELF_HOSTED=true --
+    # otherwise the job is skipped and nobody is waiting on an offline runner.
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && vars.CI_SELF_HOSTED == 'true' }}
+    runs-on: [self-hosted, Linux, X64, ghostty-vote]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # A self-hosted runner image is whatever the owner built; it may well have
+      # no node. Say what to install instead of letting the run look green.
+      - name: Probe for node
+        run: |
+          if ! command -v node >/dev/null; then
+            echo "::error::this self-hosted runner has no node on PATH; install Node.js 20 or newer on the runner host (Fedora/Bazzite: sudo dnf install nodejs; Debian/Ubuntu: sudo apt install nodejs npm), or unset the repository variable CI_SELF_HOSTED to stop scheduling this job"
+            exit 1
+          fi
+          tools/ci/run.sh deps
+
+      - name: Check, test, build, dry-run
+        run: tools/ci/run.sh all
+
+      - name: Upload the built static assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ghostty-vote-public-self-hosted-${{ github.sha }}
+          path: public
+          if-no-files-found: error
+          retention-days: 14
