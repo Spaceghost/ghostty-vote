@@ -1,0 +1,38 @@
+/* Almanac community model leaderboard. Builds on the vote page's vote.css (colours, type, chips). */
+.topline .row { display: flex; gap: 8px; flex-wrap: wrap; }
+section { margin-top: 32px; }
+section h2 { font: 400 26px/1.2 var(--display); margin: 0 0 8px; }
+section h3 { font: 600 13px/1.2 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin: 20px 0 8px; }
+.bar { flex-wrap: wrap; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--slate); }
+table.board { width: 100%; border-collapse: collapse; font: 13px/1.4 var(--mono); }
+table.board caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+table.board th, table.board td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.board tbody tr:last-child td { border-bottom: 0; }
+table.board td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.board td.model b { color: var(--text); font-weight: 600; }
+table.board td .small { font-size: 12px; }
+table.board th { background: var(--slate-2); }
+button.sort { all: unset; cursor: pointer; color: var(--muted); font: 600 12px var(--mono); letter-spacing: 0.04em; }
+button.sort:focus-visible { outline: 2px solid var(--aether); outline-offset: 2px; }
+th[aria-sort="ascending"] button.sort, th[aria-sort="descending"] button.sort { color: var(--gold); }
+td.conf.low { color: var(--muted); }
+td.conf.medium { color: var(--text); }
+td.conf.high { color: var(--want); }
+.scatter { border: 1px solid var(--line); border-radius: 10px; background: var(--slate); padding: 8px; }
+svg.plot { width: 100%; height: auto; display: block; font: 12px var(--mono); }
+svg.plot .grid { stroke: var(--line); stroke-width: 1; }
+svg.plot .grid.minor { stroke-dasharray: 2 4; }
+svg.plot .tick { fill: var(--muted); }
+svg.plot .axis { fill: var(--muted); font-size: 12px; }
+svg.plot .pt .hit { fill: transparent; }
+svg.plot .pt .dot { fill: var(--aether); stroke: var(--slate); stroke-width: 2; }
+svg.plot .pt.low .dot { fill: var(--slate); stroke: var(--aether); stroke-width: 2; }
+svg.plot .pt:hover .dot, svg.plot .pt:focus .dot { stroke: var(--gold); stroke-width: 3; }
+svg.plot .pt:focus { outline: none; }
+svg.plot .tip rect { fill: var(--ink); stroke: var(--line); }
+svg.plot .tip text { fill: var(--text); font-size: 12px; }
+.legend { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 6px 4px 0; }
+.legend .key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--aether); }
+.legend .key.solid { background: var(--aether); }
+.share code { font: 13px var(--mono); color: var(--gold); }

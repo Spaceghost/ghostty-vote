@@ -3,7 +3,8 @@
 // api/admin/gallery, which answer only accounts in ADMIN_ACCOUNTS (403 for anyone else,
 // 401 when signed out). Rendered through textContent only. Approving a screenshot first
 // makes its thumbnail here, in the owner's browser (a canvas), so the Worker never has to
-// decode an image.
+// decode an image. The Almanac leaderboard's results and suites (api/admin/almanac) can be
+// hidden, deleted or deprecated here too.
 (function () {
   'use strict';
   const BASE = '/mods/ffxiv/term/vote/';
@@ -235,6 +236,89 @@
     $('#queue').replaceChildren(...out);
   }
 
+  // ---- Almanac leaderboard moderation ---------------------------------------------------
+  const RESULT_ID = /^[A-Za-z0-9_-]{22}$/;
+
+  function almanacMessage(text) {
+    $('#almanac-summary').replaceChildren('$ ', el('b', { text: 'almanac' }), '  ' + text);
+  }
+
+  async function almanacPost(path, body, row) {
+    for (const b of row.querySelectorAll('button')) b.disabled = true;
+    const note = row.querySelector('.notice');
+    try {
+      const res = await fetch(BASE + 'api/admin/almanac/' + path, {
+        method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error((data && str(data.message)) || String(res.status));
+      loadAlmanac();
+    } catch (e) {
+      if (note) note.textContent = 'failed: ' + e.message;
+      for (const b of row.querySelectorAll('button')) b.disabled = false;
+    }
+  }
+
+  function suiteRow(s) {
+    const row = el('p', { class: 'row' });
+    row.append(el('span', { class: 'k', text: str(s.suite_id) + ' ' + str(s.suite_version) + DOT + (s.results | 0) + ' results' + DOT + (s.deprecated ? 'deprecated' : 'current') + DOT + 'sha ' + str(s.sha256).slice(0, 12) + DOT + 'first seen ' + when(s.created_at) }));
+    const b = el('button', { class: 'btn ghost', type: 'button', text: s.deprecated ? 'Restore suite' : 'Deprecate suite' });
+    b.addEventListener('click', () => {
+      if (!s.deprecated && !window.confirm('Deprecate ' + s.suite_id + ' ' + s.suite_version + '? Its results leave the leaderboard and new ones are refused.')) return;
+      almanacPost('suite', { suite_id: s.suite_id, suite_version: s.suite_version, deprecated: !s.deprecated }, row);
+    });
+    row.append(b, el('span', { class: 'notice' }));
+    return row;
+  }
+
+  function resultRow(r) {
+    if (!RESULT_ID.test(str(r.id))) return null;
+    const tr = el('tr', { class: r.status === 'hidden' ? 'hidden-row' : '' });
+    const cells = [
+      when(r.created_at), r.status, str(r.suite_id) + ' ' + str(r.suite_version), r.mode, str(r.model) + ' ' + str(r.quant), r.backend,
+      str(r.gpu_model) + ' (' + ((r.vram_mb | 0) / 1024).toFixed(1) + ' GB)', r.os, (+r.score).toFixed(1), (+r.tokens_per_s).toFixed(1) + ' tok/s', str(r.submitter),
+    ];
+    for (const c of cells) tr.append(el('td', { text: str(String(c)) }));
+    const td = el('td', { class: 'row' });
+    const button = (label, action, cls) => {
+      const b = el('button', { class: 'btn' + (cls ? ' ' + cls : ''), type: 'button', text: label });
+      b.addEventListener('click', () => {
+        if (action === 'delete' && !window.confirm('Delete this result for good?')) return;
+        almanacPost('review', { id: r.id, action }, td);
+      });
+      td.append(b);
+    };
+    if (r.status === 'hidden') button('Unhide', 'unhide', 'ghost'); else button('Hide', 'hide', 'ghost');
+    button('Delete', 'delete', 'ghost');
+    td.append(el('span', { class: 'notice' }));
+    tr.append(td);
+    return tr;
+  }
+
+  async function loadAlmanac() {
+    let res;
+    try {
+      res = await fetch(BASE + 'api/admin/almanac', { credentials: 'same-origin', cache: 'no-store', headers: { accept: 'application/json' } });
+    } catch (e) {
+      return almanacMessage('could not reach the server');
+    }
+    if (res.status === 401 || res.status === 403) { $('#almanac').replaceChildren(); return almanacMessage('owner only'); }
+    let data = null;
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok || !data || typeof data !== 'object') return almanacMessage('results could not be loaded (' + res.status + ')');
+    const t = data.totals || {};
+    const results = Array.isArray(data.results) ? data.results : [];
+    const suites = Array.isArray(data.suites) ? data.suites : [];
+    almanacMessage((t.results | 0) + ' results' + DOT + (t.hidden | 0) + ' hidden' + DOT + (t.submitters | 0) + ' submitters' + DOT + suites.length + ' suites');
+    $('#almanac-suites').replaceChildren(...suites.map(suiteRow));
+    if (!results.length) { $('#almanac').replaceChildren(el('p', { class: 'empty', text: 'No results yet.' })); return; }
+    const head = el('tr');
+    for (const h of ['sent', 'status', 'suite', 'mode', 'model', 'backend', 'gpu', 'os', 'score', 'speed', 'from', '']) head.append(el('th', { scope: 'col', text: h }));
+    const body = el('tbody');
+    for (const r of results) { const row = resultRow(r); if (row) body.append(row); }
+    $('#almanac').replaceChildren(el('div', { class: 'scroll' }, el('table', { class: 'results' }, el('thead', null, head), body)));
+  }
+
   function start() {
     for (const b of document.querySelectorAll('.chip[data-filter]')) {
       b.addEventListener('click', () => {
@@ -245,6 +329,7 @@
     }
     load();
     loadQueue();
+    loadAlmanac();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();

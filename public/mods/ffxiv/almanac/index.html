@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Almanac Model Leaderboard</title>
+<meta name="description" content="Community benchmarks of local AI models for Almanac, the open-source local AI companion for FFXIV: which model fits which GPU, and how quality trades against speed and VRAM.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
+<link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
+<link rel="stylesheet" href="/mods/ffxiv/almanac/almanac.css">
+<!-- Static: the data comes from leaderboard.json (computed from D1, cached 5 minutes).
+     Not deferred, so the saved theme applies before first paint. -->
+<script src="/mods/ffxiv/almanac/almanac.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topline">
+      <span class="eyebrow">almanac for ffxiv · community model leaderboard</span>
+      <span class="row">
+        <a class="chip" href="/mods/ffxiv/term/vote/">Ghostty vote</a>
+        <a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a>
+        <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+      </span>
+    </div>
+    <h1>Which local model for <span class="glyph">your</span> GPU?</h1>
+    <p class="lede"><strong>Almanac</strong> is the open-source local AI companion for Final Fantasy XIV (<a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">github.com/Spaceghost/almanac-dalamud</a>), made by <strong>Johnneylee Jack Rollins</strong>. It runs a model on your own machine. These results come from players who ran its benchmark suite and chose to share them, so you can pick the model that gives the best answers for the memory and speed you have.</p>
+    <div class="prompt" id="summary" aria-live="polite">$ <b>almanac</b> leaderboard &nbsp; loading…</div>
+  </header>
+
+  <div class="bar" role="toolbar" aria-label="What to show">
+    <label for="f-suite">suite <select id="f-suite"></select></label>
+    <label for="f-mode">mode <select id="f-mode">
+      <option value="live">live (in game)</option>
+      <option value="mock">mock (fixtures)</option>
+    </select></label>
+    <label for="f-tier">VRAM <select id="f-tier"><option value="">every tier</option></select></label>
+  </div>
+
+  <section aria-labelledby="tiers-h">
+    <h2 id="tiers-h">Best models by VRAM tier</h2>
+    <p class="small">Grouped by the dedicated VRAM of the card the run was measured on. Click a column heading to sort. <b>Score</b> is the suite's weighted score (0-100) with its 95% range; <b>who</b> counts distinct submitters.</p>
+    <div id="tiers"><p class="empty">Loading…</p></div>
+  </section>
+
+  <section aria-labelledby="scatter-h">
+    <h2 id="scatter-h">Quality vs speed</h2>
+    <p class="small">One dot per model and quantisation in the chosen tiers: higher is better answers, further right is faster generation (log scale). Hover or focus a dot for details; the tables above hold the same numbers.</p>
+    <div id="scatter" class="scatter"></div>
+  </section>
+
+  <section aria-labelledby="gpu-h">
+    <h2 id="gpu-h">By GPU family</h2>
+    <div class="bar"><label for="f-gpu">GPU <select id="f-gpu"></select></label></div>
+    <div id="gpu"></div>
+  </section>
+
+  <section class="share" aria-labelledby="share-h">
+    <h2 id="share-h">Add your results</h2>
+    <p>In game, open Almanac's benchmark and run the suite on the model you use. When it finishes, the plugin asks before it sends anything; choose <strong>Share</strong>. Scripts can use the same endpoint: <code>POST /mods/ffxiv/almanac/api/results</code> with a JSON body that follows <a href="/mods/ffxiv/almanac/schema/results.v1.json">the results schema</a>. The plugin reads its model suggestions from <a href="/mods/ffxiv/almanac/recommendations.json">recommendations.json</a>.</p>
+    <p class="small" id="method"></p>
+  </section>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> Sharing is opt-in and needs no account. A result holds the suite, the model, the backend, the GPU's marketing name, its VRAM, the operating system family and the scores; the server refuses anything else, and refuses text that looks like a file path, an address or an e-mail. Your IP address is not stored: a keyed digest of it counts submissions for the rate limit and makes each submitter count once per model. The site owner can hide results that look wrong. To have a result removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+  </footer>
+</div>
+</body>
+</html>

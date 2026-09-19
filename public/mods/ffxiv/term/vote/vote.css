@@ -78,6 +78,7 @@ h1 .glyph { color: var(--gold); }
 }
 .account > div { display: grid; gap: 10px; }
 .account .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.topline .row { display: flex; gap: 8px; flex-wrap: wrap; }
 .account-text { margin: 0; }
 .account .disclosure { margin: 0; }
 .account .notice:empty { display: none; }

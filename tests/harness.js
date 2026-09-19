@@ -12,7 +12,7 @@ export const read = (p) => readFileSync(new URL('../' + p, import.meta.url), 'ut
 export const MIGRATIONS = [
   read('migrations/0001_init.sql'), read('migrations/0002_drop_site_assets.sql'),
   read('migrations/0003_note_only_votes.sql'), read('migrations/0004_sign_in.sql'),
-  read('migrations/0005_gallery.sql'),
+  read('migrations/0005_gallery.sql'), read('migrations/0006_almanac.sql'),
 ];
 export const SEED = read('seed/seed.sql');
 export const ORIGIN = 'https://spacegho.st';

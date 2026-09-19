@@ -24,6 +24,7 @@
       <span class="eyebrow">ghostty for ffxiv · voters</span>
       <span class="row">
         <a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a>
+        <a class="chip" href="/mods/ffxiv/almanac/">Almanac models</a>
         <a class="chip" href="/mods/ffxiv/term/vote/">Back to the vote</a>
       </span>
     </div>
@@ -36,6 +37,13 @@
     <h2 id="queue-h">Gallery queue</h2>
     <div class="prompt" id="queue-summary" aria-live="polite">$ <b>gallery</b> --pending &nbsp; loading…</div>
     <div id="queue"></div>
+  </section>
+
+  <section class="queue" aria-labelledby="almanac-h">
+    <h2 id="almanac-h">Almanac results</h2>
+    <div class="prompt" id="almanac-summary" aria-live="polite">$ <b>almanac</b> --results &nbsp; loading…</div>
+    <div id="almanac-suites"></div>
+    <div id="almanac"></div>
   </section>
 
   <div class="bar" role="toolbar" aria-label="Filter voters" id="filters" hidden>

@@ -19,6 +19,7 @@ test('route matches only the API paths', () => {
   assert.deepEqual(route(BASE + '/api/auth/logout'), { kind: 'api', name: 'auth/logout', method: 'POST' });
   assert.deepEqual(route(BASE + '/api/admin/voters'), { kind: 'api', name: 'admin/voters', method: 'GET' });
   assert.deepEqual(Object.keys(API).sort(), [
+    'admin/almanac', 'admin/almanac/review', 'admin/almanac/suite',
     'admin/gallery', 'admin/gallery/image', 'admin/gallery/review', 'admin/gallery/thumb',
     'admin/voters', 'auth/character/forget', 'auth/github/callback', 'auth/github/start', 'auth/logout', 'auth/me',
     'auth/xivauth/callback', 'auth/xivauth/link', 'auth/xivauth/start', 'mine', 'suggest', 'tallies', 'vote',

@@ -64,6 +64,11 @@ test('public/ holds only the site, at its real URL paths', () => {
   assert.equal(PUBLIC_URL, 'https://spacegho.st/mods/ffxiv/term/vote/');
   assert.deepEqual(walk('public/').sort(), [
     '_headers',
+    'mods/ffxiv/almanac/almanac.css',
+    'mods/ffxiv/almanac/almanac.js',
+    'mods/ffxiv/almanac/index.html',
+    'mods/ffxiv/almanac/schema/recommendations.v1.json',
+    'mods/ffxiv/almanac/schema/results.v1.json',
     'mods/ffxiv/term/gallery/gallery.css',
     'mods/ffxiv/term/gallery/gallery.js',
     'mods/ffxiv/term/gallery/index.html',
@@ -134,7 +139,7 @@ test('admin page: a static shell with no inline code and no data; the list comes
     assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
   }
   for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
-  assert.ok(js.includes("'api/admin/voters'") && js.includes("'api/admin/gallery'") && js.includes("cache: 'no-store'"));
+  assert.ok(js.includes("'api/admin/voters'") && js.includes("'api/admin/gallery'") && js.includes("'api/admin/almanac'") && js.includes("cache: 'no-store'"));
   assert.ok(!/[0-9a-f]{64}|lodestone_id":|"voters":/.test(html), 'no voter data in the HTML');
 });
 
@@ -160,8 +165,10 @@ test('wrangler.toml serves assets first and runs the Worker only for the API', (
   const assets = toml.slice(toml.indexOf('[assets]'), toml.indexOf('[[d1_databases]]'));
   assert.match(assets, /^directory = "public"$/m);
   assert.equal(assets.match(/^run_worker_first = (.+)$/m)[1],
-    '["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*"]',
-    'the Worker runs for the APIs and the (approved-only) gallery images, nothing else');
+    '["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json"]',
+    'the Worker runs for the APIs, the (approved-only) gallery images and the two Almanac aggregates, nothing else');
+  assert.match(toml, /\{ pattern = "spacegho\.st\/mods\/ffxiv\/almanac\*", zone_name = "spacegho\.st" \}/);
+  assert.ok(!/mods\/ffxiv\/ai\b/.test(toml), 'no /mods/ffxiv/ai route');
   assert.match(assets, /^html_handling = "auto-trailing-slash"/m);
   assert.match(toml, /^main = "src\/worker\.js"$/m);
   assert.match(toml, /^command = "node scripts\/build\.js"$/m);
@@ -190,4 +197,36 @@ test('gallery page: static, no inline code, images only from its own approved pa
   const headers = read('public/_headers');
   const block = headers.split(/\n(?=\/)/).find((b) => b.startsWith('/mods/ffxiv/term/gallery/*\n'));
   assert.ok(block && /img-src 'self' data:;/.test(block) && /frame-ancestors 'none'/.test(block) && !/unsafe-inline/.test(block));
+});
+
+test('almanac page: static, no inline code, data only from leaderboard.json, linked from the other pages', () => {
+  const html = read('public/mods/ffxiv/almanac/index.html');
+  const js = read('public/mods/ffxiv/almanac/almanac.js');
+  assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
+  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/almanac/almanac.js']);
+  const files = walk('public/');
+  for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
+    if (ref[1] === '/mods/ffxiv/almanac/recommendations.json') continue; // computed by the Worker
+    assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
+  }
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
+  assert.ok(!/[^\t\n\x20-\x7e]/.test(js), 'almanac.js is plain ASCII');
+  assert.ok(js.includes("'leaderboard.json'"));
+  assert.ok(html.includes('https://github.com/Spaceghost/almanac-dalamud') && /Almanac/.test(html));
+  for (const page of ['public/mods/ffxiv/term/vote/index.html', 'public/mods/ffxiv/term/gallery/index.html', 'public/mods/ffxiv/term/vote/admin/index.html']) {
+    assert.ok(read(page).includes('href="/mods/ffxiv/almanac/"'), page + ' links the leaderboard');
+  }
+  const headers = read('public/_headers');
+  const block = headers.split(/\n(?=\/)/).find((b) => b.startsWith('/mods/ffxiv/almanac/*\n'));
+  assert.ok(block && /script-src 'self'/.test(block) && /frame-ancestors 'none'/.test(block) && !/unsafe-inline/.test(block));
+});
+
+test('the published results schema matches the shared copy and the generated Worker module', async () => {
+  const published = JSON.parse(read('public/mods/ffxiv/almanac/schema/results.v1.json'));
+  const { default: generated } = await import('../src/almanac-schema.js');
+  assert.deepEqual(generated, published, 'run: node scripts/build.js');
+  const { existsSync, readFileSync } = await import('node:fs');
+  // ALMANAC_SHARED_SCHEMA: the benchmark suite's copy of the schema, when it is checked out beside this one
+  const shared = process.env.ALMANAC_SHARED_SCHEMA;
+  if (shared && existsSync(shared)) assert.deepEqual(JSON.parse(readFileSync(shared, 'utf8')), published, 'shared schema changed: copy it into public/mods/ffxiv/almanac/schema/');
 });

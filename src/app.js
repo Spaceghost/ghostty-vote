@@ -1,6 +1,7 @@
 // The Worker's whole job: the ballot API (vote, suggest, tallies, mine), sign-in
 // (auth/*, in auth.js), the owner's voter list (admin/voters) and the screenshot
-// gallery's upload, approved list, images and moderation queue (gallery.js).
+// gallery's upload, approved list, images and moderation queue (gallery.js), and the
+// Almanac leaderboard's submissions, aggregates and moderation (almanac.js).
 // Everything else on the route is a static asset served without invoking this code.
 // D1 budget: a write costs one read query plus one batch; a tally read costs one
 // query per edge location per minute (the rest are answered from the Cache API);
@@ -11,6 +12,9 @@ import {
   API_PREFIX, LIMITS, PRIVATE, isSameOrigin, json, readJsonBody, route, validateSuggestion, validateVote,
 } from './lib.js';
 import { readSession } from './session.js';
+import {
+  getAdminAlmanac, getAggregate, postAdminAlmanacReview, postAdminAlmanacSuite, postResult,
+} from './almanac.js';
 import { getAdminGallery, getAdminImage, getPublicImage, getShots, postAdminReview, postAdminThumb, postUpload } from './gallery.js';
 
 const WRITES = { vote: [validateVote, postVote], suggest: [validateSuggestion, postSuggest] };
@@ -39,6 +43,13 @@ const HANDLERS = {
   'gallery/shots': (request, env, ctx, url, cache) => getShots(env, ctx, url, cache),
   'gallery/img': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, false),
   'gallery/thumb': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, true),
+  // the Almanac community model leaderboard (src/almanac.js), under /mods/ffxiv/almanac
+  'almanac/results': (request, env, ctx, url) => postResult(request, env, url),
+  'almanac/leaderboard': (request, env, ctx, url, cache) => getAggregate(env, ctx, url, cache, 'leaderboard'),
+  'almanac/recommendations': (request, env, ctx, url, cache) => getAggregate(env, ctx, url, cache, 'recommendations'),
+  'admin/almanac': (request, env, ctx, url) => getAdminAlmanac(request, env, url),
+  'admin/almanac/review': (request, env, ctx, url, cache) => postAdminAlmanacReview(request, env, url, cache),
+  'admin/almanac/suite': (request, env, ctx, url, cache) => postAdminAlmanacSuite(request, env, url, cache),
 };
 
 // `cache` is the Cache API store (caches.default on Cloudflare) and `fetcher` the fetch
