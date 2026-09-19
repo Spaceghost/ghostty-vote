@@ -64,6 +64,9 @@ test('public/ holds only the site, at its real URL paths', () => {
   assert.equal(PUBLIC_URL, 'https://spacegho.st/mods/ffxiv/term/vote/');
   assert.deepEqual(walk('public/').sort(), [
     '_headers',
+    'mods/ffxiv/term/gallery/gallery.css',
+    'mods/ffxiv/term/gallery/gallery.js',
+    'mods/ffxiv/term/gallery/index.html',
     'mods/ffxiv/term/vote/admin/admin.js',
     'mods/ffxiv/term/vote/admin/index.html',
     'mods/ffxiv/term/vote/ballot.js',
@@ -131,7 +134,7 @@ test('admin page: a static shell with no inline code and no data; the list comes
     assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
   }
   for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
-  assert.ok(js.includes("'api/admin/voters'") && js.includes("cache: 'no-store'"));
+  assert.ok(js.includes("'api/admin/voters'") && js.includes("'api/admin/gallery'") && js.includes("cache: 'no-store'"));
   assert.ok(!/[0-9a-f]{64}|lodestone_id":|"voters":/.test(html), 'no voter data in the HTML');
 });
 
@@ -143,7 +146,7 @@ test('_headers sets a strict CSP for the static files', () => {
   for (const d of [
     "default-src 'none'", "script-src 'self'", "style-src 'self' https://fonts.googleapis.com",
     'font-src https://fonts.gstatic.com', "connect-src 'self'", "frame-ancestors 'none'", "base-uri 'none'",
-    'img-src data: https://*.finalfantasyxiv.com',
+    "img-src 'self' data: https://*.finalfantasyxiv.com",
   ]) assert.ok(csp.includes(d), d);
   const admin = headers.split(/\n(?=\/)/).find((b) => b.startsWith('/mods/ffxiv/term/vote/admin/*\n'));
   assert.match(admin, /X-Robots-Tag: noindex/);
@@ -156,7 +159,9 @@ test('wrangler.toml serves assets first and runs the Worker only for the API', (
   const toml = read('wrangler.toml');
   const assets = toml.slice(toml.indexOf('[assets]'), toml.indexOf('[[d1_databases]]'));
   assert.match(assets, /^directory = "public"$/m);
-  assert.match(assets, /^run_worker_first = \["\/mods\/ffxiv\/term\/vote\/api\/\*"\]$/m);
+  assert.equal(assets.match(/^run_worker_first = (.+)$/m)[1],
+    '["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*"]',
+    'the Worker runs for the APIs and the (approved-only) gallery images, nothing else');
   assert.match(assets, /^html_handling = "auto-trailing-slash"/m);
   assert.match(toml, /^main = "src\/worker\.js"$/m);
   assert.match(toml, /^command = "node scripts\/build\.js"$/m);
@@ -167,4 +172,22 @@ test('wrangler.toml serves assets first and runs the Worker only for the API', (
   assert.match(vars, /^XIVAUTH_CLIENT_ID = "3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU"/m);
   assert.match(vars, /^ADMIN_ACCOUNTS = "github:251370"/m);
   assert.ok(!/^\s*(GITHUB_CLIENT_SECRET|XIVAUTH_CLIENT_SECRET|SESSION_SECRET\w*)\s*=/m.test(toml), 'secrets never go in wrangler.toml');
+});
+
+test('gallery page: static, no inline code, images only from its own approved paths', () => {
+  const html = read('public/mods/ffxiv/term/gallery/index.html');
+  const js = read('public/mods/ffxiv/term/gallery/gallery.js');
+  assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
+  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/term/gallery/gallery.js']);
+  const files = walk('public/');
+  for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
+    assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
+  }
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
+  assert.ok(!/[^\t\n\x20-\x7e]/.test(js), 'gallery.js is plain ASCII');
+  assert.ok(html.includes('It is shown publicly here, with the credit you gave, once the site owner has reviewed it.'), 'consent line');
+  assert.ok(html.includes('/term share'));
+  const headers = read('public/_headers');
+  const block = headers.split(/\n(?=\/)/).find((b) => b.startsWith('/mods/ffxiv/term/gallery/*\n'));
+  assert.ok(block && /img-src 'self' data:;/.test(block) && /frame-ancestors 'none'/.test(block) && !/unsafe-inline/.test(block));
 });

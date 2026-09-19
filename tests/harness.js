@@ -12,6 +12,7 @@ export const read = (p) => readFileSync(new URL('../' + p, import.meta.url), 'ut
 export const MIGRATIONS = [
   read('migrations/0001_init.sql'), read('migrations/0002_drop_site_assets.sql'),
   read('migrations/0003_note_only_votes.sql'), read('migrations/0004_sign_in.sql'),
+  read('migrations/0005_gallery.sql'),
 ];
 export const SEED = read('seed/seed.sql');
 export const ORIGIN = 'https://spacegho.st';
@@ -30,6 +31,23 @@ export function memoryCache() {
     store,
     async match(req) { return store.get(req.url)?.clone(); },
     async put(req, res) { store.set(req.url, res); },
+    async delete(req) { return store.delete(req.url); },
+  };
+}
+
+// Stand-in for a KV namespace (GALLERY_KV): bytes in, a stream out.
+export function memoryKV() {
+  const store = new Map();
+  return {
+    store,
+    async put(key, value) { store.set(key, new Uint8Array(value)); },
+    async get(key, opts) {
+      const v = store.get(key);
+      if (!v) return null;
+      if (opts?.type !== 'stream') throw new Error('only streams are used');
+      return new Blob([v]).stream();
+    },
+    async delete(key) { store.delete(key); },
   };
 }
 

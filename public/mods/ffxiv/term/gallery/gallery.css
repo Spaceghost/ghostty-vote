@@ -1,0 +1,20 @@
+/* Ghostty for FFXIV gallery. Builds on the vote page's vote.css (colours, type, buttons). */
+.topline .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.share { margin-block: 8px 28px; display: grid; gap: 12px; }
+.share form { display: grid; gap: 8px; max-width: 640px; }
+.share code { font: 13px var(--mono); color: var(--gold); }
+.share .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+input[type="file"] { font: 14px var(--body); color: var(--muted); }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+figure.shot {
+  margin: 0; background: var(--slate); border: 1px solid var(--line); border-radius: 12px;
+  overflow: hidden; display: grid;
+}
+figure.shot a { display: block; line-height: 0; }
+figure.shot img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--slate-2); }
+figure.shot figcaption { padding: 8px 12px 10px; font: 13px/1.4 var(--mono); color: var(--muted); }
+figure.shot figcaption b { color: var(--text); font-weight: 600; }
+/* the owner's queue on the admin page */
+.queue { display: grid; gap: 12px; margin-block: 8px 28px; }
+.queue h2 { font: 400 24px/1.2 var(--display); margin: 0; }
+.queue .row { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 12px 12px; }

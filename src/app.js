@@ -1,5 +1,6 @@
 // The Worker's whole job: the ballot API (vote, suggest, tallies, mine), sign-in
-// (auth/*, in auth.js) and the owner's voter list (admin/voters).
+// (auth/*, in auth.js), the owner's voter list (admin/voters) and the screenshot
+// gallery's upload, approved list, images and moderation queue (gallery.js).
 // Everything else on the route is a static asset served without invoking this code.
 // D1 budget: a write costs one read query plus one batch; a tally read costs one
 // query per edge location per minute (the rest are answered from the Cache API);
@@ -10,6 +11,7 @@ import {
   API_PREFIX, LIMITS, PRIVATE, isSameOrigin, json, readJsonBody, route, validateSuggestion, validateVote,
 } from './lib.js';
 import { readSession } from './session.js';
+import { getAdminGallery, getAdminImage, getPublicImage, getShots, postAdminReview, postAdminThumb, postUpload } from './gallery.js';
 
 const WRITES = { vote: [validateVote, postVote], suggest: [validateSuggestion, postSuggest] };
 
@@ -28,6 +30,15 @@ const HANDLERS = {
   'auth/logout': (request, env, ctx, url) => postLogout(request, env, url),
   'auth/character/forget': (request, env, ctx, url) => postForgetCharacter(request, env, url),
   'admin/voters': (request, env, ctx, url) => getAdminVoters(request, env, url),
+  'admin/gallery': (request, env, ctx, url) => getAdminGallery(request, env, url),
+  'admin/gallery/image': (request, env, ctx, url) => getAdminImage(request, env, url),
+  'admin/gallery/review': (request, env, ctx, url, cache) => postAdminReview(request, env, url, cache),
+  'admin/gallery/thumb': (request, env, ctx, url) => postAdminThumb(request, env, url),
+  // the screenshot gallery (src/gallery.js), under /mods/ffxiv/term/gallery
+  'gallery/upload': (request, env, ctx, url) => postUpload(request, env, url),
+  'gallery/shots': (request, env, ctx, url, cache) => getShots(env, ctx, url, cache),
+  'gallery/img': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, false),
+  'gallery/thumb': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, true),
 };
 
 // `cache` is the Cache API store (caches.default on Cloudflare) and `fetcher` the fetch
@@ -42,7 +53,7 @@ export async function handle(request, env, ctx, cache = globalThis.caches?.defau
     return json({ error: 'method_not_allowed' }, { status: 405, headers: { allow: r.method } });
   }
   try {
-    return await HANDLERS[r.name](request, env, ctx, url, cache, fetcher);
+    return await HANDLERS[r.name](request, env, ctx, url, cache, fetcher, r);
   } catch (err) {
     console.error('ghostty-vote:', err && err.stack ? err.stack : String(err));
     return json({ error: 'server_error', message: 'Something went wrong; try again shortly.' }, { status: 500 });

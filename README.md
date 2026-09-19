@@ -1,8 +1,9 @@
 # ghostty-vote
 
-Public feature vote for the **Ghostty for FFXIV** plugin by Johnneylee Jack Rollins
-([github.com/Spaceghost](https://github.com/Spaceghost)), at
-`https://spacegho.st/mods/ffxiv/term/vote/`.
+Public feature vote and screenshot gallery for the **Ghostty for FFXIV** plugin by
+Johnneylee Jack Rollins ([github.com/Spaceghost](https://github.com/Spaceghost)), at
+`https://spacegho.st/mods/ffxiv/term/vote/` and `https://spacegho.st/mods/ffxiv/term/gallery/`
+(see [Gallery](#gallery)).
 
 It is built to stay on Cloudflare's free tier with as little server-side code as possible:
 
@@ -10,15 +11,18 @@ It is built to stay on Cloudflare's free tier with as little server-side code as
   [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) from `public/`.
   Requests for static assets are free and unlimited, and they do not count as Worker requests,
   because the Worker script never runs for them.
-- **One small Worker** runs only for `/mods/ffxiv/term/vote/api/*` (`assets.run_worker_first`). It
-  signs voters in with GitHub or FFXIV (XIVAuth), records votes, notes and suggestions, returns
-  tallies, and hands each voter back their own ballot.
+- **One small Worker** runs only for `/mods/ffxiv/term/vote/api/*` and the gallery's `api/*`,
+  `img/*` and `thumb/*` (`assets.run_worker_first`). It signs voters in with GitHub or FFXIV
+  (XIVAuth), records votes, notes and suggestions, returns tallies, hands each voter back their
+  own ballot, and takes, queues and serves (once approved) gallery screenshots.
 - **D1** (free tier) holds the votes, notes, suggestions and tallies. Each write uses two D1 round
   trips, and reading a visitor's own ballot uses one. Tallies are cached for 60 seconds, so a burst
   of page loads costs one D1 read per Cloudflare location.
 
-The Worker route is exactly `spacegho.st/mods/ffxiv/term/vote*`. No other path on the zone is
-touched. There are no Durable Objects, KV namespaces or other bindings: sessions are signed cookies.
+The Worker routes are exactly `spacegho.st/mods/ffxiv/term/vote*` and
+`spacegho.st/mods/ffxiv/term/gallery*`. No other path on the zone is touched. The only bindings
+are D1 and, for the gallery's images, one KV namespace (`GALLERY_KV`); there are no Durable
+Objects, and sessions are signed cookies.
 
 ## Status
 
@@ -95,6 +99,10 @@ touched. There are no Durable Objects, KV namespaces or other bindings: sessions
 | `migrations/0002_drop_site_assets.sql` | Drops the unused `site_assets`/`deploy_sources` tables (`IF EXISTS`) |
 | `migrations/0003_note_only_votes.sql` | Rebuilds `votes` so a row can hold a note without a vote (`vote = ''`), then recounts the tallies |
 | `migrations/0004_sign_in.sql` | Adds the `characters` table (additive, `IF NOT EXISTS`) |
+| `migrations/0005_gallery.sql` | Adds the gallery's `shots` and `upload_log` tables (additive, `IF NOT EXISTS`) |
+| `src/gallery.js` | The gallery: upload, approved list and images, the owner's queue |
+| `src/image.js` | PNG/JPEG checks and metadata stripping, without decoding pixels |
+| `public/mods/ffxiv/term/gallery/` | The gallery page (`index.html`, `gallery.js`, `gallery.css`) |
 | `tests/` | `node --test` suites (no dependencies) |
 
 `wrangler deploy` runs `node scripts/build.js` first (the `[build]` command), so the generated
@@ -158,6 +166,62 @@ seconds; a 429 holds every save until its `Retry-After`. Every save is sent with
 hidden or closed (`visibilitychange`, `pagehide`), typed notes and waiting changes are sent right
 away the same way. Other 4xx answers (a retired idea, say) are
 not retried; a refused vote goes back to what the server has, and typed note text stays in the box.
+
+## Gallery
+
+Players share screenshots of the plugin at `https://spacegho.st/mods/ffxiv/term/gallery/`.
+The plugin uploads one when the player clicks **Share** on its prompt (after a screenshot
+taken with a terminal on screen, or `/term share`); the page also takes a picked file.
+Uploads need no account and land in a moderation queue on the owner's `/admin/` page
+(under the vote), and **only approved shots are ever listed or served**: every public
+image request checks the shot's status in D1 first.
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| POST | `/mods/ffxiv/term/gallery/api/upload` | Raw PNG or JPEG body (`Content-Type` is not trusted; the bytes decide), at most 8 MiB. `?credit=` optional (60 characters, cleaned like notes). `201 {ok, id, status: "pending", message}`; a byte-identical shot answers `200 {…, duplicate: true}`. A cross-site browser `Origin` gets 403. Requests with `X-Ghostty-Client` are recorded as from the plugin |
+| GET | `/mods/ffxiv/term/gallery/api/shots` | `{shots: [{id, src, thumb, width, height, credit, approved_at}]}`, approved only, newest 500. Cached 60 s in the Cache API (cleared in the approving location) and by browsers |
+| GET | `/mods/ffxiv/term/gallery/img/<id>`, `/thumb/<id>` | An approved image or its thumbnail; 404 for anything else. `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; sandbox`, cached a day |
+| GET | `/mods/ffxiv/term/vote/api/admin/gallery` | Owner only (401/403 like `admin/voters`): `{pending[], reviewed[] (newest 100), store}` |
+| GET | `/mods/ffxiv/term/vote/api/admin/gallery/image?id=…[&thumb=1]` | Owner only: any stored shot, `private, no-store` |
+| POST | `/mods/ffxiv/term/vote/api/admin/gallery/review` | Owner only, JSON `{id, action}`: `approve`, `approve_anon` (drops the credit), `reject` (deletes the image), `remove` (takes an approved shot down and deletes it) |
+| POST | `/mods/ffxiv/term/vote/api/admin/gallery/thumb?id=…` | Owner only: a JPEG thumbnail (at most 1280 px a side, 600 KB) |
+
+The admin endpoints sit under the vote's `api/admin/` because the owner's session cookie is
+scoped to `/mods/ffxiv/term/vote`. When the owner clicks **Approve**, `admin.js` first draws
+the image into a canvas at 960 px wide and uploads that JPEG as the thumbnail, so the Worker
+never decodes an image and the gallery page does not load full screenshots in its grid.
+
+**Checks and privacy.** `src/image.js` walks the PNG chunks or JPEG segments without decoding
+pixels: PNG keeps only `IHDR PLTE IDAT IEND tRNS gAMA cHRM sRGB iCCP sBIT pHYs`; JPEG keeps
+every segment up to the first scan except `APPn` (JFIF `APP0`, the ICC profile in `APP2` and
+Adobe's `APP14` stay) and comments. So EXIF (camera, GPS, times), XMP and text chunks are gone
+before anything is stored. Each side must be 64 to 16384 pixels. The uploader's IP address is
+never stored: `sha256(GALLERY_SECRET or SESSION_SECRET + ip)` counts uploads for the limits,
+is shown to the owner as its first 8 hex characters, and is cleared when the shot is
+reviewed. `upload_log` rows older than a day are pruned by the next upload.
+
+**Limits.** 6 uploads an hour and 20 a day per address, 200 a day for the whole site, and at
+most 300 shots waiting for review (after that uploads get 429 `gallery_full` until the owner
+catches up). One D1 read decides before the body is read, so a refused upload costs no
+storage. The free plan's single WAF rate-limiting rule is spent on `api/auth/*`, so these
+limits are the Worker's own.
+
+**Storage.** Images live under `shots/<id>` and `thumbs/<id>` in a KV namespace bound as
+`GALLERY_KV` (free plan: 1 GB, 1,000 writes and 100,000 reads a day, 25 MiB a value; an upload
+is one write, a thumbnail one more, a rejection two deletes). An R2 bucket bound as
+`GALLERY_R2` is used instead when present (the account needs R2 enabled in the dashboard
+first; `wrangler r2 bucket list` answered code 10042, "Please enable R2", on 2026-09-19).
+KV is eventually consistent: the owner can see "not in the store (yet)" for up to a minute
+after an upload in another location.
+
+Tested: `node --test` (`tests/gallery.test.js`) covers the image checks and stripping, the
+routes, upload → queue → approve/reject/remove, that pending, rejected and removed shots are
+never listed or served, the thumbnail, credit cleaning, duplicates, the size, type, origin,
+per-address and queue limits, and the cached list. Checked once by hand against
+`wrangler dev` (local D1 and KV): a 5.5 MB PNG with a `tEXt` chunk and a JPEG with EXIF
+uploaded, stripped, queued, approved and rejected; the public list and image only after
+approval; the per-address limit (4 more, then 429). Not verified: the admin page's canvas
+thumbnail in a real browser, and anything on Cloudflare before the deploy below.
 
 ## Sign-in
 
@@ -393,6 +457,25 @@ done                                          # expect 200 ten times, then 429
 The rule runs at Cloudflare's edge, before the Worker, so the app itself still stores no IP
 addresses. It limits only `api/auth/*`: votes, notes and suggestions from a session that already
 exists are limited by the per-account write limit above, not by this rule.
+
+**The gallery (done on 2026-09-19).** The KV namespace `ghostty-gallery` was created and
+its id put in `wrangler.toml`, migration 0005 (additive) applied, then the Worker deployed with
+the second route. For a fresh account, the same three steps:
+
+```sh
+npx wrangler kv namespace create ghostty-gallery          # put the id under [[kv_namespaces]]
+npx wrangler d1 execute ghostty-vote --remote --file migrations/0005_gallery.sql
+npx wrangler deploy
+curl -s https://spacegho.st/mods/ffxiv/term/gallery/api/shots   # expect {"shots":[...]}
+```
+
+Checked on the live site after that deploy: the page and `gallery.js` load with the gallery CSP,
+`api/shots` answers, a test PNG uploaded with `201 pending` and its image stayed 404 while
+pending; that test row, its `upload_log` row and its KV key were then deleted by hand. Not
+checked live: approving from `/admin/` (it needs the owner's sign-in), the thumbnail, and the
+plugin's own upload. `GALLERY_SECRET` is optional (`npx wrangler secret put GALLERY_SECRET`);
+without it the uploader digest is keyed with `SESSION_SECRET`, and rotating either restarts
+the per-address counts.
 
 **Only for a database without 0002 and 0003.** The live database already has them. A copy that
 does not must get them before step 1:

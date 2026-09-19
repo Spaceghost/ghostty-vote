@@ -1,6 +1,9 @@
-// Ghostty for FFXIV vote: the owner's voter list. A static page with no data in it; the
-// list comes from GET api/admin/voters, which answers only accounts in ADMIN_ACCOUNTS
-// (403 for anyone else, 401 when signed out). Rendered through textContent only.
+// Ghostty for FFXIV vote: the owner's voter list and the gallery's moderation queue. A
+// static page with no data in it; both come from GET api/admin/voters and
+// api/admin/gallery, which answer only accounts in ADMIN_ACCOUNTS (403 for anyone else,
+// 401 when signed out). Rendered through textContent only. Approving a screenshot first
+// makes its thumbnail here, in the owner's browser (a canvas), so the Worker never has to
+// decode an image.
 (function () {
   'use strict';
   const BASE = '/mods/ffxiv/term/vote/';
@@ -123,6 +126,115 @@
     render();
   }
 
+  // ---- gallery queue ------------------------------------------------------------------
+  const SHOT_ID = /^[A-Za-z0-9_-]{22}$/;
+  const THUMB_WIDTH = 960;
+  const adminImage = (id, thumb) => BASE + 'api/admin/gallery/image?id=' + encodeURIComponent(id) + (thumb ? '&thumb=1' : '');
+  const kb = (n) => (n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB');
+
+  function queueMessage(text) {
+    $('#queue-summary').replaceChildren('$ ', el('b', { text: 'gallery' }), '  ' + text);
+  }
+
+  // A JPEG at most THUMB_WIDTH wide, drawn from the stored image.
+  async function makeThumb(id) {
+    const res = await fetch(adminImage(id), { credentials: 'same-origin', cache: 'no-store' });
+    if (!res.ok) throw new Error('image ' + res.status);
+    const bmp = await createImageBitmap(await res.blob());
+    const scale = Math.min(1, THUMB_WIDTH / bmp.width);
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(bmp.width * scale));
+    canvas.height = Math.max(1, Math.round(bmp.height * scale));
+    canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+    bmp.close();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.82));
+    if (!blob) throw new Error('no thumbnail');
+    const put = await fetch(BASE + 'api/admin/gallery/thumb?id=' + encodeURIComponent(id), {
+      method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'image/jpeg' }, body: blob,
+    });
+    if (!put.ok) throw new Error('thumbnail ' + put.status);
+  }
+
+  async function review(id, action, card) {
+    for (const b of card.querySelectorAll('button')) b.disabled = true;
+    const note = card.querySelector('.notice');
+    try {
+      if (action === 'approve' || action === 'approve_anon') {
+        note.textContent = 'making the thumbnail\u2026';
+        try { await makeThumb(id); } catch (e) { note.textContent = 'no thumbnail (' + e.message + '); approving anyway\u2026'; }
+      }
+      const res = await fetch(BASE + 'api/admin/gallery/review', {
+        method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id, action }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error((data && str(data.message)) || String(res.status));
+      loadQueue();
+    } catch (e) {
+      note.textContent = 'failed: ' + e.message;
+      for (const b of card.querySelectorAll('button')) b.disabled = false;
+    }
+  }
+
+  function shotCard(s, pending) {
+    if (!SHOT_ID.test(str(s.id))) return null;
+    const card = el('figure', { class: 'shot' });
+    const thumb = !pending && s.has_thumb;
+    if (s.status === 'pending' || s.status === 'approved') {
+      card.append(el('a', { href: adminImage(s.id), target: '_blank', rel: 'noopener' },
+        el('img', { src: adminImage(s.id, thumb), alt: 'shot ' + s.id, loading: 'lazy', width: String(s.width | 0 || 16), height: String(s.height | 0 || 9) })));
+    }
+    const cap = el('figcaption', { text: [
+      s.status, (s.width | 0) + '\u00d7' + (s.height | 0), kb(s.bytes | 0), str(s.source),
+      s.credit ? 'credit: ' + str(s.credit) : 'no credit', s.uploader ? 'from ' + str(s.uploader) : '',
+      'sent ' + when(s.created_at), s.reviewed_at ? 'reviewed ' + when(s.reviewed_at) : '',
+    ].filter(Boolean).join(DOT) });
+    card.append(cap);
+    const row = el('div', { class: 'row' });
+    const button = (label, action, cls) => {
+      const b = el('button', { class: 'btn' + (cls ? ' ' + cls : ''), type: 'button', text: label });
+      b.addEventListener('click', () => review(s.id, action, card));
+      row.append(b);
+    };
+    if (pending) {
+      button('Approve', 'approve');
+      if (s.credit) button('Approve without credit', 'approve_anon', 'ghost');
+      button('Reject', 'reject', 'ghost');
+    } else if (s.status === 'approved') {
+      button('Remove', 'remove', 'ghost');
+    }
+    row.append(el('span', { class: 'notice' }));
+    card.append(row);
+    return card;
+  }
+
+  async function loadQueue() {
+    let res;
+    try {
+      res = await fetch(BASE + 'api/admin/gallery', { credentials: 'same-origin', cache: 'no-store', headers: { accept: 'application/json' } });
+    } catch (e) {
+      return queueMessage('could not reach the server');
+    }
+    if (res.status === 401 || res.status === 403) { $('#queue').replaceChildren(); return queueMessage('owner only'); }
+    let data = null;
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok || !data || typeof data !== 'object') return queueMessage('the queue could not be loaded (' + res.status + ')');
+    const pending = Array.isArray(data.pending) ? data.pending : [];
+    const reviewed = Array.isArray(data.reviewed) ? data.reviewed : [];
+    queueMessage(pending.length + ' waiting for review' + DOT + reviewed.length + ' recent decisions' + DOT + 'store: ' + str(data.store));
+    const grid = el('div', { class: 'shots' });
+    for (const s of pending) { const c = shotCard(s, true); if (c) grid.append(c); }
+    const out = [pending.length ? grid : el('p', { class: 'empty', text: 'Nothing waiting. Screenshots players share appear here first.' })];
+    if (reviewed.length) {
+      const d = el('details');
+      d.append(el('summary', { text: 'Recent decisions (' + reviewed.length + ')' }));
+      const g = el('div', { class: 'shots' });
+      for (const s of reviewed) { const c = shotCard(s, false); if (c) g.append(c); }
+      d.append(g);
+      out.push(d);
+    }
+    $('#queue').replaceChildren(...out);
+  }
+
   function start() {
     for (const b of document.querySelectorAll('.chip[data-filter]')) {
       b.addEventListener('click', () => {
@@ -132,6 +244,7 @@
       });
     }
     load();
+    loadQueue();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();

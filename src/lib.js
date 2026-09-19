@@ -6,6 +6,10 @@
 
 export const BASE = '/mods/ffxiv/term/vote';
 export const API_PREFIX = BASE + '/api/';
+// The screenshot gallery sits beside the vote; its admin endpoints live under the vote's
+// api/admin/ so the owner's session cookie (Path=/mods/ffxiv/term/vote) reaches them.
+export const GALLERY_BASE = '/mods/ffxiv/term/gallery';
+const SHOT_ID_RE = /^[A-Za-z0-9_-]{22}$/;
 // The anonymous voter cookie from before sign-in. It is no longer handed out; sign-in
 // reads it once to move that ballot onto the account, then clears it.
 export const COOKIE_NAME = '__Secure-ghostty_voter';
@@ -52,9 +56,25 @@ export const API = Object.freeze({
   'auth/me': 'GET',
   'auth/character/forget': 'POST',
   'admin/voters': 'GET',
+  'admin/gallery': 'GET',
+  'admin/gallery/image': 'GET',
+  'admin/gallery/review': 'POST',
+  'admin/gallery/thumb': 'POST',
 });
 
+// Under GALLERY_BASE: the upload, the approved list and the approved images.
+const GALLERY_API = Object.freeze({ '/api/upload': 'POST', '/api/shots': 'GET' });
+
+export const isShotId = (id) => typeof id === 'string' && SHOT_ID_RE.test(id);
+
 export function route(pathname) {
+  if (pathname.startsWith(GALLERY_BASE + '/')) {
+    const rest = pathname.slice(GALLERY_BASE.length);
+    if (Object.hasOwn(GALLERY_API, rest)) return { kind: 'api', name: 'gallery' + rest.slice(4), method: GALLERY_API[rest] };
+    const m = /^\/(img|thumb)\/([^/]+)$/.exec(rest);
+    if (m && isShotId(m[2])) return { kind: 'api', name: 'gallery/' + m[1], method: 'GET', id: m[2] };
+    return { kind: 'none' };
+  }
   if (!pathname.startsWith(API_PREFIX)) return { kind: 'none' };
   const name = pathname.slice(API_PREFIX.length);
   return Object.hasOwn(API, name) ? { kind: 'api', name, method: API[name] } : { kind: 'none' };

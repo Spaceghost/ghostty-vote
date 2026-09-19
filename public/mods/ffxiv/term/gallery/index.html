@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ghostty FFXIV Gallery</title>
+<meta name="description" content="Screenshots of the Ghostty for FFXIV terminal plugin, shared by players.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
+<link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
+<link rel="stylesheet" href="/mods/ffxiv/term/gallery/gallery.css">
+<!-- Not deferred: gallery.js applies the saved theme before first paint, then waits for the DOM. -->
+<script src="/mods/ffxiv/term/gallery/gallery.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topline">
+      <span class="eyebrow">ghostty for ffxiv · gallery</span>
+      <span class="row">
+        <a class="chip" href="/mods/ffxiv/term/vote/">Vote on features</a>
+        <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+      </span>
+    </div>
+    <h1>Terminals in <span class="glyph">Eorzea</span></h1>
+    <p class="lede"><strong>Ghostty for FFXIV</strong> puts a real Ghostty terminal inside Final Fantasy XIV, made by <strong>Johnneylee Jack Rollins</strong> (<a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>). These screenshots were shared by players.</p>
+    <div class="prompt" id="summary" aria-live="polite">$ <b>ls</b> gallery/ &nbsp; loading…</div>
+  </header>
+
+  <section class="share" aria-labelledby="share-h">
+    <div class="cat-head">
+      <h2 id="share-h">Share yours</h2>
+      <p><strong>In game:</strong> with a Ghostty terminal on screen, take a normal screenshot with the game's screenshot key. The plugin asks <em>Share to the Ghostty gallery?</em>; click <strong>Share</strong>. <code>/term share</code> offers your latest screenshot at any time.</p>
+    </div>
+    <form id="upload" novalidate>
+      <label for="u-file" class="eyebrow">Or pick a screenshot here (PNG or JPEG, up to 8 MB)</label>
+      <input type="file" id="u-file" accept="image/png,image/jpeg">
+      <label for="u-credit" class="eyebrow">Credit (optional, e.g. your character and world)</label>
+      <input type="text" id="u-credit" maxlength="60" placeholder="Wyn Ghostty @ Gilgamesh" autocomplete="off">
+      <div class="row">
+        <button class="btn" type="submit" id="u-send">Share screenshot</button>
+        <span class="notice" id="u-state" aria-live="polite"></span>
+      </div>
+      <p class="small disclosure">Sharing uploads the image to this site. It is shown publicly here, with the credit you gave, once the site owner has reviewed it. Location and camera details inside the file are removed before it is stored.</p>
+    </form>
+  </section>
+
+  <main id="shots"><p class="empty">Loading screenshots…</p></main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> Uploads need no account. The server keeps the image (with its embedded metadata removed), the optional credit, the image size and the upload time. It does not keep your IP address: a keyed digest of it counts uploads for the rate limit and is cleared once the screenshot is reviewed. Only screenshots the owner approved are listed or served. To have one taken down, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+  </footer>
+</div>
+</body>
+</html>

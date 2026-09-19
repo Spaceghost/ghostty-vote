@@ -7,9 +7,10 @@ compatibility_date = "2026-09-01"
 workers_dev = false
 preview_urls = false
 
-# Exactly this path prefix on spacegho.st; every other route on the zone is untouched.
+# Exactly these path prefixes on spacegho.st; every other route on the zone is untouched.
 routes = [
-  { pattern = "spacegho.st/mods/ffxiv/term/vote*", zone_name = "spacegho.st" }
+  { pattern = "spacegho.st/mods/ffxiv/term/vote*", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/term/gallery*", zone_name = "spacegho.st" }
 ]
 
 # Regenerates public/mods/ffxiv/term/vote/{ideas,version}.json and seed/seed.sql
@@ -25,13 +26,20 @@ command = "node scripts/build.js"
 directory = "public"
 html_handling = "auto-trailing-slash"   # public/.../vote/index.html is served at /vote/; /vote redirects there
 not_found_handling = "none"
-run_worker_first = ["/mods/ffxiv/term/vote/api/*"]
+run_worker_first = ["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*"]
 
 [[d1_databases]]
 binding = "DB"
 database_name = "ghostty-vote"
 database_id = "ccbfb295-deb8-49ec-82c2-04a0b82ed4f3"
 migrations_dir = "migrations"
+
+# Screenshot gallery images (src/gallery.js). A KV namespace works on the free plan without
+# anything else to enable; to move to R2, bind a bucket as GALLERY_R2 instead (the Worker
+# prefers it) and copy the objects over. Only approved shots are ever served.
+[[kv_namespaces]]
+binding = "GALLERY_KV"
+id = "ad74181ad97d4d3692e235c94beab40d"   # ghostty-gallery
 
 # Non-secret sign-in settings. The secrets are set with `wrangler secret put` and never
 # live in this file: GITHUB_CLIENT_SECRET, XIVAUTH_CLIENT_SECRET, SESSION_SECRET (and,
