@@ -11,7 +11,7 @@
   var GALLERY = '/mods/ffxiv/term/gallery/';
   var THEME_KEY = 'ghostty-vote:theme'; // shared with the vote, gallery, leaderboard and plugins pages
   var MAX_BYTES = 8 * 1024 * 1024;
-  var MODS = ['ghostty', 'xivmcp', 'xivdesktop', 'almanac'];
+  var MODS = ['ghostty', 'xivmcp', 'xivdesktop', 'xivarcade', 'almanac'];
   var DOT = ' \u00b7 ';
 
   function get(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }

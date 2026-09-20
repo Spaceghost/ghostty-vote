@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "mod": "xivarcade",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "first-run",
+      "title": "Three Steps",
+      "kind": "screenshot",
+      "caption": "The welcome with no games yet: three checks, one command each, and the dim Final Fantasy shelf below.",
+      "files": []
+    },
+    {
+      "id": "shelf",
+      "title": "The Shelf Lights Up",
+      "kind": "gif",
+      "caption": "Dropping a file you own into a console folder: its entry on the Final Fantasy shelf lights up by itself.",
+      "files": []
+    },
+    {
+      "id": "panel",
+      "title": "A Classic in Limsa",
+      "kind": "video",
+      "caption": "A game starts in RetroArch on the Linux host and appears as a panel beside the character, then is pinned.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "search",
+      "title": "Fuzzy Launch",
+      "kind": "gif",
+      "caption": "Typing ff7 in the search box, Enter, the save check, the game starting.",
+      "files": []
+    },
+    {
+      "id": "sync",
+      "title": "Saves in Step",
+      "kind": "screenshot",
+      "caption": "The save-sync panel: status, the pairing steps with their copy buttons, a kept conflict.",
+      "files": []
+    },
+    {
+      "id": "launchbox",
+      "title": "From LaunchBox",
+      "kind": "screenshot",
+      "caption": "A copied LaunchBox library read as it is, with the player's own box art.",
+      "files": []
+    }
+  ]
+}

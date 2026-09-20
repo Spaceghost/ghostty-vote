@@ -113,6 +113,32 @@
       "build": "dotnet build XivDesktop.slnx -c Release",
       "umbraWidget": null,
       "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+    },
+    {
+      "internalName": "XivArcade",
+      "name": "XivArcade",
+      "listed": false,
+      "repo": null,
+      "assemblyVersion": "0.1.0.0",
+      "dalamudApiLevel": 15,
+      "author": "Johnneylee Jack Rollins",
+      "punchline": "Your own classic games as game panels, with saves kept in step across your machines.",
+      "description": "A library for the classic games you own, for FINAL FANTASY XIV running under Wine on Linux. /arcade lists the game files in folders you choose, starts them in RetroArch on the Linux host, and shows them as world panels through Ghostty when it is installed. Every save and save state lives in one folder that Syncthing copies between your machines. It downloads no games, BIOS files or artwork.",
+      "tags": [
+        "emulation",
+        "retroarch",
+        "linux",
+        "saves",
+        "utility"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivarcade.png",
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivarcade-banner.png"
+      ],
+      "needs": "A Linux host running the game under Wine, RetroArch, and your own game files. Ghostty for panels and Syncthing for save sync are optional.",
+      "build": "dotnet build XivArcade.slnx -c Release",
+      "umbraWidget": null,
+      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
     }
   ]
 }
