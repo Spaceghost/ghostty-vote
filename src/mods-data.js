@@ -118,8 +118,8 @@ export default {
     {
       "internalName": "XivArcade",
       "name": "XivArcade",
-      "listed": false,
-      "repo": null,
+      "listed": true,
+      "repo": "Spaceghost/xivarcade-dalamud",
       "assemblyVersion": "0.1.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
