@@ -17,9 +17,9 @@
     "ApplicableVersion": "any",
     "DalamudApiLevel": 15,
     "RepoUrl": "https://github.com/Spaceghost/almanac-dalamud",
-    "IconUrl": "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/main/images/icon.png",
+    "IconUrl": "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/icon.png",
     "ImageUrls": [
-      "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/main/images/banner.png"
+      "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/banner.png"
     ],
     "DownloadLinkInstall": "https://github.com/Spaceghost/almanac-dalamud/releases/latest/download/latest.zip",
     "DownloadLinkUpdate": "https://github.com/Spaceghost/almanac-dalamud/releases/latest/download/latest.zip",

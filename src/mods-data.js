@@ -30,9 +30,9 @@ export default {
         "ghostty",
         "utility"
       ],
-      "icon": "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/main/images/icon.png",
+      "icon": "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/master/images/icon.png",
       "images": [
-        "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/main/images/banner.png"
+        "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/master/images/banner.png"
       ],
       "needs": "ghostty-agent running on the machine the game runs on.",
       "build": "tools/build.sh, then tools/package.sh",
@@ -57,9 +57,9 @@ export default {
         "chat",
         "utility"
       ],
-      "icon": "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/main/images/icon.png",
+      "icon": "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/icon.png",
       "images": [
-        "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/main/images/banner.png"
+        "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/banner.png"
       ],
       "needs": "A local model server (Ollama, LM Studio, llama.cpp or any OpenAI-compatible API), and XivMcp for game tools.",
       "build": "dotnet build dalamud/Almanac.Dalamud.slnx -c Release",
@@ -82,7 +82,9 @@ export default {
         "utility"
       ],
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivmcp.png",
-      "images": [],
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivmcp-banner.png"
+      ],
       "needs": "An MCP client on the same machine (Claude Code, Codex, Almanac).",
       "build": "dotnet build XivMcp.slnx -c Release",
       "umbraWidget": "Umbra.XivMcp",
@@ -105,7 +107,9 @@ export default {
         "utility"
       ],
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivdesktop.png",
-      "images": [],
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivdesktop-banner.png"
+      ],
       "needs": "Ghostty and ghostty-agent, and a Linux host running the game under Wine.",
       "build": "dotnet build XivDesktop.slnx -c Release",
       "umbraWidget": null,
