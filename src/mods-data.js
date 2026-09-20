@@ -30,9 +30,9 @@ export default {
         "ghostty",
         "utility"
       ],
-      "icon": "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/master/images/icon.png",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/ghostty.png",
       "images": [
-        "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/master/images/banner.png"
+        "https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png"
       ],
       "needs": "ghostty-agent running on the machine the game runs on.",
       "build": "tools/build.sh, then tools/package.sh",

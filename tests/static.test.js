@@ -70,6 +70,8 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/almanac/schema/recommendations.v1.json',
     'mods/ffxiv/almanac/schema/results.v1.json',
     'mods/ffxiv/plugins.json',
+    'mods/ffxiv/plugins/icons/ghostty-banner.png',
+    'mods/ffxiv/plugins/icons/ghostty.png',
     'mods/ffxiv/plugins/icons/xivdesktop-banner.png',
     'mods/ffxiv/plugins/icons/xivdesktop.png',
     'mods/ffxiv/plugins/icons/xivmcp-banner.png',
