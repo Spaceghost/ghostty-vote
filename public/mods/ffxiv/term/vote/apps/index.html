@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Connected apps</title>
+<meta name="description" content="Link Ghostty in FFXIV or Almanac to your GitHub or XIVAuth sign-in, and see or disconnect the apps you linked.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
+<link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
+<link rel="stylesheet" href="/mods/ffxiv/term/gallery/gallery.css">
+<meta name="robots" content="noindex, nofollow">
+<script src="/mods/ffxiv/term/vote/apps/apps.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topline">
+      <span class="eyebrow">ghostty for ffxiv · connected apps</span>
+      <span class="row">
+        <a class="chip" href="/mods/ffxiv/term/vote/">Vote on features</a>
+        <a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a>
+        <a class="chip" href="/mods/ffxiv/almanac/">Almanac models</a>
+      </span>
+    </div>
+    <h1>Connected <span class="glyph">apps</span></h1>
+    <p class="lede">The plugins and the command line cannot sign in with a browser, so they borrow your sign-in: the app shows a short code, you approve it here, and it may then share screenshots or submit benchmark results in your name until you disconnect it.</p>
+  </header>
+
+  <main>
+    <section class="queue" id="signin" hidden>
+      <h2>Sign in first</h2>
+      <p>Everything new on this site comes from a signed-in GitHub or XIVAuth account. Your code is kept while you sign in.</p>
+      <div class="row">
+        <a class="btn" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/term/vote/apps/">Sign in with GitHub</a>
+        <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/term/vote/apps/">Sign in with FFXIV</a>
+      </div>
+      <p class="small disclosure">Signing in with FFXIV needs an XIVAuth account and shares no character.</p>
+    </section>
+
+    <section class="queue" id="link" hidden>
+      <h2>Link an app</h2>
+      <form id="code-form" novalidate>
+        <label for="code" class="eyebrow">The code the app is showing</label>
+        <div class="row">
+          <input type="text" id="code" maxlength="16" placeholder="BCDF-GHJK" autocomplete="off" autocapitalize="characters" spellcheck="false">
+          <button class="btn" type="submit" id="code-check">Continue</button>
+        </div>
+      </form>
+      <div id="ask" hidden>
+        <p id="ask-text"></p>
+        <ul id="ask-scopes"></ul>
+        <p class="small disclosure">Only approve a code you asked an app for yourself, just now. If someone sent you this code or this link, say no: approving lets whoever holds the app post in your name.</p>
+        <div class="row">
+          <button class="btn" type="button" id="approve">Approve</button>
+          <button class="btn ghost" type="button" id="deny">No, refuse it</button>
+        </div>
+      </div>
+      <p class="notice" id="link-state" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="queue" id="apps-section" hidden>
+      <h2>Your connected apps</h2>
+      <p class="small" id="whoami"></p>
+      <div id="apps"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> A link stores which app it is, what it may do, when it was made, last used and when it ends (180 days), under the same account key as your ballot. The app's token is shown to the app once; the server keeps only a SHA-256 of it. Disconnecting an app here ends its access at once; what it already sent stays until you ask the owner to remove it through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+  </footer>
+</div>
+</body>
+</html>

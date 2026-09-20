@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS device_codes (
   user_code    TEXT NOT NULL UNIQUE,
   client       TEXT NOT NULL,                    -- a key of CLIENTS in src/clients.js
   scope        TEXT NOT NULL,                    -- space-separated
-  status       TEXT NOT NULL DEFAULT 'pending',  -- pending | approved | denied
+  status       TEXT NOT NULL DEFAULT 'pending',  -- pending | approved | denied | redeemed
   provider     TEXT NOT NULL DEFAULT '',         -- who approved
   account      TEXT NOT NULL DEFAULT '',
   requester    TEXT NOT NULL DEFAULT '',

@@ -103,10 +103,13 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/term/gallery/index.html',
     'mods/ffxiv/term/index.html',
     'mods/ffxiv/term/media/manifest.json',
+    'mods/ffxiv/term/vote/admin/accounts.js',
     'mods/ffxiv/term/vote/admin/admin.js',
     'mods/ffxiv/term/vote/admin/analytics.css',
     'mods/ffxiv/term/vote/admin/analytics.js',
     'mods/ffxiv/term/vote/admin/index.html',
+    'mods/ffxiv/term/vote/apps/apps.js',
+    'mods/ffxiv/term/vote/apps/index.html',
     'mods/ffxiv/term/vote/ballot.js',
     'mods/ffxiv/term/vote/beacon.js',
     'mods/ffxiv/term/vote/ideas.json',
@@ -173,13 +176,15 @@ test('admin page: a static shell with no inline code and no data; the list comes
   const js = read(STATIC_DIR + 'admin/admin.js');
   assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
   assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]),
-    ['/mods/ffxiv/term/vote/admin/admin.js', '/mods/ffxiv/term/vote/admin/analytics.js']);
+    ['/mods/ffxiv/term/vote/admin/admin.js', '/mods/ffxiv/term/vote/admin/analytics.js', '/mods/ffxiv/term/vote/admin/accounts.js']);
   assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
   const files = walk('public/');
   for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
     assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
   }
-  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
+  const accounts = read(STATIC_DIR + 'admin/accounts.js');
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink) && !accounts.includes(sink), sink);
+  assert.ok(accounts.includes("'admin/accounts'") && accounts.includes("'admin/accounts/ban'") && accounts.includes("'admin/tokens/revoke'") && !/[^\t\n\x20-\x7e]/.test(accounts));
   assert.ok(js.includes("'api/admin/voters'") && js.includes("'api/admin/gallery'") && js.includes("'api/admin/almanac'") && js.includes("cache: 'no-store'"));
   assert.ok(!/[0-9a-f]{64}|lodestone_id":|"voters":/.test(html), 'no voter data in the HTML');
 });
@@ -231,15 +236,44 @@ test('gallery page: static, no inline code, images only from its own approved pa
     ['/mods/ffxiv/term/gallery/gallery.js', '/mods/ffxiv/term/vote/beacon.js']);
   const files = walk('public/');
   for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
+    if (ref[1].startsWith('/mods/ffxiv/term/vote/api/auth/')) continue; // the sign-in buttons: Worker routes
     assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
   }
   for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
   assert.ok(!/[^\t\n\x20-\x7e]/.test(js), 'gallery.js is plain ASCII');
   assert.ok(html.includes('It is shown publicly here, with the credit you gave, once the site owner has reviewed it.'), 'consent line');
   assert.ok(html.includes('/term share'));
+  // Signed out, the form gives way to the two sign-in buttons, which come back to this page.
+  for (const p of ['github', 'xivauth']) assert.ok(html.includes(`id="signin-${p}" href="/mods/ffxiv/term/vote/api/auth/${p}/start?return=/mods/ffxiv/term/gallery/"`), p);
+  assert.ok(/<form id="upload" novalidate hidden>/.test(html) && /<div id="signin" class="signin" hidden>/.test(html), 'nothing is offered before the page knows who is asking');
+  assert.ok(js.includes("VOTE_API + 'gallery/upload'") && js.includes("credentials: 'same-origin'") && js.includes("VOTE_API + 'auth/me'"));
+  assert.ok(!/needs no account/i.test(html) && html.includes('which sign-in you used, a key derived from that account'), 'the privacy note says what is kept with a shot');
   const headers = read('public/_headers');
   const block = headers.split(/\n(?=\/)/).find((b) => b.startsWith('/mods/ffxiv/term/gallery/*\n'));
   assert.ok(block && /img-src 'self' data:;/.test(block) && /frame-ancestors 'none'/.test(block) && !/unsafe-inline/.test(block));
+});
+
+test('connected apps page: static, no inline code, no data, codes and tokens never rendered as HTML', () => {
+  const html = read(STATIC_DIR + 'apps/index.html');
+  const js = read(STATIC_DIR + 'apps/apps.js');
+  assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
+  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/term/vote/apps/apps.js']);
+  assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
+  const files = walk('public/');
+  for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"?]+)/g)) {
+    if (ref[1].startsWith('/mods/ffxiv/term/vote/api/')) continue;
+    assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
+  }
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function', 'localStorage.setItem', 'console.']) assert.ok(!js.includes(sink), sink);
+  assert.ok(!/[^\t\n\x20-\x7e]/.test(js), 'apps.js is plain ASCII');
+  for (const endpoint of ["'device/lookup'", "'device/approve'", "'apps/revoke'", "'apps'", "'auth/me'"]) assert.ok(js.includes(endpoint), endpoint);
+  assert.ok(html.includes('Only approve a code you asked an app for yourself'), 'the phishing warning sits beside the Approve button');
+  assert.ok(!/gvt_|access_token|device_code/.test(js + html), 'the page never handles a token or a device code');
+  for (const page of ['public/mods/ffxiv/term/vote/index.html', 'public/mods/ffxiv/term/gallery/index.html', 'public/mods/ffxiv/almanac/index.html', 'public/mods/ffxiv/term/vote/privacy/index.html']) {
+    assert.ok(read(page).includes('href="/mods/ffxiv/term/vote/apps/"'), page + ' links the connected apps page');
+  }
+  assert.ok(!/needs no account/i.test(read('public/mods/ffxiv/almanac/index.html')));
+  assert.match(read('public/_headers'), /\/mods\/ffxiv\/term\/vote\/apps\/\*\n  X-Robots-Tag: noindex/);
 });
 
 test('almanac page: static, no inline code, data only from leaderboard.json, linked from the other pages', () => {

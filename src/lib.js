@@ -74,6 +74,20 @@ export const API = Object.freeze({
   'admin/almanac': 'GET',
   'admin/almanac/review': 'POST',
   'admin/almanac/suite': 'POST',
+  // Browser writes that need the session cookie live here, because the cookie's Path is
+  // the vote's: the gallery page and the mod pages upload through this one.
+  'gallery/upload': 'POST',
+  // the device link, connected apps and account moderation (src/device.js)
+  'device/code': 'POST',
+  'device/token': 'POST',
+  'device/lookup': 'POST',
+  'device/approve': 'POST',
+  apps: 'GET',
+  'apps/revoke': 'POST',
+  'token/revoke': 'POST',
+  'admin/accounts': 'GET',
+  'admin/accounts/ban': 'POST',
+  'admin/tokens/revoke': 'POST',
 });
 
 // Under GALLERY_BASE: the upload, the approved list and the approved images.

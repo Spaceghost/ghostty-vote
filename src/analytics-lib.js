@@ -80,6 +80,8 @@ const BUCKETS = [
   [/^\/mods\/ffxiv\/term\/vote\/api\/admin\//, 'admin'],
   [/^\/mods\/ffxiv\/term\/vote\/api\/beacon$/, 'beacon'],
   [/^\/mods\/ffxiv\/term\/vote\/api\/auth\//, 'vote-auth'],
+  [/^\/mods\/ffxiv\/term\/vote\/api\/(?:device\/|apps(?:\/|$)|token\/)/, 'device-link'],
+  [/^\/mods\/ffxiv\/term\/vote\/api\/(?:gallery|shots)\/upload$/, 'gallery-upload'],
   [/^\/mods\/ffxiv\/term\/vote\/api\//, 'vote-api'],
   [/^\/mods\/ffxiv\/term\/vote(?:\/|$)/, 'vote-page'],
 ];

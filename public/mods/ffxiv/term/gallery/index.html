@@ -36,9 +36,18 @@
   <section class="share" aria-labelledby="share-h">
     <div class="cat-head">
       <h2 id="share-h">Share yours</h2>
-      <p><strong>In game:</strong> with a Ghostty terminal on screen, take a normal screenshot with the game's screenshot key. The plugin asks <em>Share to the Ghostty gallery?</em>; click <strong>Share</strong>. <code>/term share</code> offers your latest screenshot at any time.</p>
+      <p><strong>In game:</strong> with a Ghostty terminal on screen, take a normal screenshot with the game's screenshot key. The plugin asks <em>Share to the Ghostty gallery?</em>; click <strong>Share</strong>. <code>/term share</code> offers your latest screenshot at any time. The first time, Ghostty (0.3.0 or newer) shows a short code and opens <a href="/mods/ffxiv/term/vote/apps/">the connected apps page</a>, where you sign in and approve it.</p>
     </div>
-    <form id="upload" novalidate>
+    <div id="signin" class="signin" hidden>
+      <p><strong>Sign in to share a screenshot.</strong> Everything new on this site comes from a signed-in GitHub or XIVAuth account.</p>
+      <div class="row">
+        <a class="btn" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/term/gallery/">Sign in with GitHub</a>
+        <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/term/gallery/">Sign in with FFXIV</a>
+      </div>
+      <p class="small disclosure">Signing in with FFXIV needs an XIVAuth account and shares no character. What is kept with a screenshot is in the privacy note below.</p>
+    </div>
+    <p class="small" id="whoami" hidden></p>
+    <form id="upload" novalidate hidden>
       <label for="u-file" class="eyebrow">Or pick a screenshot here (PNG or JPEG, up to 8 MB)</label>
       <input type="file" id="u-file" accept="image/png,image/jpeg">
       <label for="u-credit" class="eyebrow">Credit (optional, e.g. your character and world)</label>
@@ -54,7 +63,7 @@
   <main id="shots"><p class="empty">Loading screenshots…</p></main>
 
   <footer>
-    <p class="small"><strong>Privacy.</strong> Uploads need no account. The server keeps the image (with its embedded metadata removed), the optional credit, the image size and the upload time. It does not keep your IP address: a keyed digest of it counts uploads for the rate limit and is cleared once the screenshot is reviewed. Only screenshots the owner approved are listed or served. To have one taken down, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+    <p class="small"><strong>Privacy.</strong> Sharing needs a sign-in with GitHub or FFXIV (XIVAuth), on this page or through the plugin's link. With each screenshot the server keeps the image (with its embedded metadata removed), the optional credit, the image size, the upload time, which sign-in you used, a key derived from that account's id, and which linked app sent it, if one did. If you linked a character on the vote page, the site owner sees its name and world beside your screenshots. Only the credit is ever shown publicly. No login name, e-mail or provider token is kept. It does not keep your IP address: a keyed digest of it counts uploads for the rate limit and is cleared once the screenshot is reviewed. Only screenshots the owner approved are listed or served. To have one taken down, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
     <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>.</p>
   </footer>
 </div>

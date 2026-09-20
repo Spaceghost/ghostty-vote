@@ -3,6 +3,7 @@
 // outlier trimming, tiers, confidence), recommendations.json against its schema, the
 // cached reads and the owner's moderation.
 import test from 'node:test';
+import { SUITE_SHA, result } from './fixtures.js';
 import assert from 'node:assert/strict';
 import { compile } from '../src/jsonschema.js';
 import { ALMANAC, validateResult } from '../src/almanac.js';
@@ -11,32 +12,10 @@ import { ALMANAC_BASE, route } from '../src/lib.js';
 import { API, ORIGIN, read, setup } from './harness.js';
 
 const RESULTS = ALMANAC_BASE + '/api/results';
-const SUITE_SHA = 'a'.repeat(64);
-
-export function result(over = {}) {
-  const base = {
-    schema_version: 1,
-    suite: { id: 'ffxiv-core', version: '1.0.0', sha256: SUITE_SHA },
-    client: { name: 'almanac-dalamud', version: '0.3.0' },
-    mode: 'live',
-    hardware: { gpu_model: 'NVIDIA GeForce RTX 4060', gpu_vendor: 'nvidia', vram_mb: 8192, system_ram_gb: 32, os: 'windows' },
-    backend: { kind: 'ollama', version: '0.12.3' },
-    model: { name: 'qwen3.5:9b', family: 'qwen', params_b: 9, quant: 'Q4_K_M', context: 8192, tool_calling: 'native' },
-    metrics: { score: 72.5, success_rate: 0.8, tool_call_validity: 0.95, quality: 0.7, tokens_per_s: 42.1, ttft_ms: 310, peak_vram_mb: 6900, total_s: 120 },
-    tasks: [
-      { id: 'market.price', success: true, score: 1, tool_calls: 2, tool_calls_valid: 2, ttft_ms: 300, tokens_per_s: 40, output_tokens: 120, duration_ms: 4000, error: null },
-      { id: 'quest.next', success: false, score: 0.4, tool_calls: 1, tool_calls_valid: 1, ttft_ms: null, tokens_per_s: null, error: 'wrong_answer' },
-    ],
-  };
-  const out = structuredClone(base);
-  for (const [k, v] of Object.entries(over)) {
-    if (v && typeof v === 'object' && !Array.isArray(v) && out[k] && typeof out[k] === 'object') Object.assign(out[k], v);
-    else out[k] = v;
-  }
-  return out;
-}
-
-const post = (t, body, ip = '198.51.100.7', headers = {}) => t.call(RESULTS, { method: 'POST', body, headers: { 'cf-connecting-ip': ip, ...headers } });
+// A linked Almanac, one account per address (tests/gate.test.js covers the gate itself).
+const post = (t, body, ip = '198.51.100.7', headers = {}) => t.call(RESULTS, {
+  method: 'POST', body, headers: { 'cf-connecting-ip': ip, ...t.linked('almanac', { provider: 'xivauth', id: 'ip-' + ip }).header, ...headers },
+});
 
 // ---- the validator ---------------------------------------------------------------------------
 test('jsonschema: strict objects, finite numbers, enums, patterns, unsupported keywords throw', () => {
@@ -131,8 +110,8 @@ test('POST results: size, JSON, origin and schema are checked before anything is
   big.client.version = 'x'.repeat(32);
   const padded = JSON.stringify(big).replace('{', '{' + ' '.repeat(ALMANAC.maxBytes));
   assert.equal((await post(t, padded)).status, 413);
-  assert.equal((await t.call(RESULTS, { method: 'POST', body: 'not json' })).status, 400);
-  assert.equal((await t.call(RESULTS, { method: 'POST', body: result(), headers: { 'content-type': 'text/plain' } })).status, 415);
+  assert.equal((await post(t, 'not json')).status, 400);
+  assert.equal((await post(t, result(), '198.51.100.7', { 'content-type': 'text/plain' })).status, 415);
   assert.equal((await post(t, result(), '198.51.100.7', { origin: 'https://evil.example' })).status, 403);
   assert.equal((await post(t, result({ extra: true }))).status, 400);
   assert.equal((await t.call(RESULTS)).status, 405);

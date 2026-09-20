@@ -85,7 +85,10 @@ function watch(request, response, env, ctx, url, banned) {
 async function record(request, response, env, url, banned, now) {
   const day = dayKey(now);
   const bucket = bucketOf(url.pathname);
-  const outcome = banned ? 'banned' : outcomeOf(response.status);
+  // An app waiting for its link to be approved polls into 400s (RFC 8628): that is the flow
+  // working, not a refusal, so it must not put the player's address digest in the abuse log.
+  const waiting = bucket === 'device-link' && response.status === 400;
+  const outcome = banned ? 'banned' : waiting ? 'ok' : outcomeOf(response.status);
   const cf = request.cf || {};
   const country = countryOf(cf.country);
   const ua = request.headers.get('user-agent') || '';

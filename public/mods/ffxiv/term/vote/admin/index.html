@@ -19,6 +19,8 @@
 <script src="/mods/ffxiv/term/vote/admin/admin.js"></script>
 <!-- The analytics and abuse panels; their data comes from api/admin/analytics, gated the same way. -->
 <script src="/mods/ffxiv/term/vote/admin/analytics.js" defer></script>
+<!-- Accounts, linked apps and bans; from api/admin/accounts, gated the same way. -->
+<script src="/mods/ffxiv/term/vote/admin/accounts.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -47,6 +49,24 @@
     <div class="prompt" id="almanac-summary" aria-live="polite">$ <b>almanac</b> --results &nbsp; loading…</div>
     <div id="almanac-suites"></div>
     <div id="almanac"></div>
+  </section>
+
+  <section class="queue" aria-labelledby="accounts-h">
+    <h2 id="accounts-h">Accounts and linked apps</h2>
+    <div class="prompt" id="accounts-summary" aria-live="polite">$ <b>accounts</b> &nbsp; loading…</div>
+    <div id="accounts"></div>
+    <h3>Linked apps</h3>
+    <div id="tokens"></div>
+    <h3>Banned</h3>
+    <div id="bans"></div>
+    <form id="ban-form" class="row" novalidate>
+      <label class="eyebrow" for="ban-provider">Ban by id</label>
+      <select id="ban-provider"><option value="github">github</option><option value="xivauth">xivauth</option></select>
+      <input type="text" id="ban-id" maxlength="64" placeholder="account id at the provider" autocomplete="off">
+      <input type="text" id="ban-reason" maxlength="200" placeholder="reason (optional)" autocomplete="off">
+      <button class="btn ghost" type="submit">Ban</button>
+    </form>
+    <p class="small">Everything written since the account gate carries the sign-in and the account key (the first characters are shown). Rows from before it have neither and show as <em>legacy</em> in the queues. A ban stops every new write and link from that account and disconnects its apps; it deletes nothing.</p>
   </section>
 
   <section class="queue" aria-labelledby="stats-h">

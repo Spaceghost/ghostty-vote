@@ -185,8 +185,8 @@
         el('img', { src: adminImage(s.id, thumb), alt: 'shot ' + s.id, loading: 'lazy', width: String(s.width | 0 || 16), height: String(s.height | 0 || 9) })));
     }
     const cap = el('figcaption', { text: [
-      s.status, (s.width | 0) + '\u00d7' + (s.height | 0), kb(s.bytes | 0), str(s.source) + (s.mod ? ' for ' + str(s.mod) : '') + (s.provider ? ' via ' + str(s.provider) : ''),
-      s.credit ? 'credit: ' + str(s.credit) : 'no credit', s.uploader ? 'from ' + str(s.uploader) : '',
+      s.status, (s.width | 0) + '\u00d7' + (s.height | 0), kb(s.bytes | 0), str(s.source),
+      s.credit ? 'credit: ' + str(s.credit) : 'no credit', s.account ? str(s.provider) + ' ' + str(s.account).slice(0, 10) : 'legacy (no account)', s.mod ? 'mod: ' + str(s.mod) : '', s.uploader ? 'from ' + str(s.uploader) : '',
       'sent ' + when(s.created_at), s.reviewed_at ? 'reviewed ' + when(s.reviewed_at) : '',
     ].filter(Boolean).join(DOT) });
     card.append(cap);
@@ -276,7 +276,7 @@
     const tr = el('tr', { class: r.status === 'hidden' ? 'hidden-row' : '' });
     const cells = [
       when(r.created_at), r.status, str(r.suite_id) + ' ' + str(r.suite_version), r.mode, str(r.model) + ' ' + str(r.quant), r.backend,
-      str(r.gpu_model) + ' (' + ((r.vram_mb | 0) / 1024).toFixed(1) + ' GB)', r.os, (+r.score).toFixed(1), (+r.tokens_per_s).toFixed(1) + ' tok/s', str(r.submitter),
+      str(r.gpu_model) + ' (' + ((r.vram_mb | 0) / 1024).toFixed(1) + ' GB)', r.os, (+r.score).toFixed(1), (+r.tokens_per_s).toFixed(1) + ' tok/s', r.account ? str(r.provider) + ' ' + str(r.account).slice(0, 10) : 'legacy ' + str(r.submitter),
     ];
     for (const c of cells) tr.append(el('td', { text: str(String(c)) }));
     const td = el('td', { class: 'row' });

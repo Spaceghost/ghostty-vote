@@ -1,9 +1,12 @@
-// Ghostty for FFXIV gallery: lists the approved screenshots from GET api/shots and sends
-// a picked file to POST api/upload (it waits for review before it is ever shown).
+// Ghostty for FFXIV gallery: lists the approved screenshots from GET api/shots and, for a
+// signed-in visitor, sends a picked file to the vote API's gallery/upload (where the session
+// cookie reaches); it waits for review before it is ever shown. Signed out, the form gives
+// way to the two sign-in buttons.
 // Rendered through textContent and attributes only.
 (function () {
   'use strict';
   const BASE = '/mods/ffxiv/term/gallery/';
+  const VOTE_API = '/mods/ffxiv/term/vote/api/';
   const THEME_KEY = 'ghostty-vote:theme'; // shared with the vote page
   const MAX_BYTES = 8 * 1024 * 1024;
   const DOT = ' \u00b7 ';
@@ -69,6 +72,29 @@
     $('#shots').replaceChildren(shots.length ? grid : el('p', { class: 'empty', text: 'No screenshots yet. Be the first to share one!' }));
   }
 
+  // me: the answer of api/auth/me, or null when signed out (or when it cannot be asked).
+  function signedIn(me) {
+    const yes = !!(me && me.signed_in);
+    $('#signin').hidden = yes;
+    $('#upload').hidden = !yes;
+    const who = $('#whoami');
+    who.hidden = !yes;
+    if (yes) {
+      const c = me.character;
+      who.textContent = 'Signed in with ' + (me.provider === 'github' ? 'GitHub' : 'FFXIV') + (c && c.name ? ' as ' + str(c.name) + (c.world ? ' @ ' + str(c.world) : '') : '') + '.';
+      if (c && c.name && !$('#u-credit').value) $('#u-credit').value = str(c.name) + (c.world ? ' @ ' + str(c.world) : '');
+    }
+  }
+
+  async function whoAmI() {
+    let me = null;
+    try {
+      const res = await fetch(VOTE_API + 'auth/me', { credentials: 'same-origin', cache: 'no-store', headers: { accept: 'application/json' } });
+      if (res.ok) me = await res.json();
+    } catch (e) {}
+    signedIn(me);
+  }
+
   async function upload(ev) {
     ev.preventDefault();
     const state = $('#u-state');
@@ -83,13 +109,14 @@
     let res = null;
     let data = null;
     try {
-      res = await fetch(BASE + 'api/upload' + (credit ? '?credit=' + encodeURIComponent(credit) : ''), {
-        method: 'POST', credentials: 'omit', headers: { 'content-type': file.type }, body: file,
+      res = await fetch(VOTE_API + 'gallery/upload' + (credit ? '?credit=' + encodeURIComponent(credit) : ''), {
+        method: 'POST', credentials: 'same-origin', headers: { 'content-type': file.type }, body: file,
       });
       data = await res.json().catch(() => null);
     } catch (e) {}
     send.disabled = false;
     if (!res) { state.textContent = 'Could not reach the server; try again.'; return; }
+    if (res.status === 401) { signedIn(null); return; }
     state.textContent = (data && str(data.message)) || (res.ok ? 'Thanks! It shows here once it is reviewed.' : 'The upload failed (' + res.status + ').');
     if (res.ok) $('#upload').reset();
   }
@@ -103,6 +130,7 @@
     });
     applyTheme(document.documentElement.dataset.theme || '');
     $('#upload').addEventListener('submit', upload);
+    whoAmI();
     load();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });

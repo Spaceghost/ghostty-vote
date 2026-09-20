@@ -6,48 +6,9 @@ import { handle } from '../src/app.js';
 import { inspectImage } from '../src/image.js';
 import { GALLERY_BASE, route } from '../src/lib.js';
 import { API, ORIGIN, memoryKV, setup } from './harness.js';
+import { bytes, chunk, jpeg, png } from './fixtures.js';
 
 const G = GALLERY_BASE + '/';
-
-// ---- tiny images -------------------------------------------------------------------------
-const bytes = (...parts) => {
-  const arr = [];
-  for (const p of parts) {
-    if (typeof p === 'string') for (const c of p) arr.push(c.charCodeAt(0));
-    else if (typeof p === 'number') arr.push(p);
-    else arr.push(...p);
-  }
-  return new Uint8Array(arr);
-};
-const be32 = (n) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255];
-const be16 = (n) => [(n >>> 8) & 255, n & 255];
-const chunk = (type, data) => bytes(be32(data.length), type, data, [0, 0, 0, 0]);
-
-export function png(w = 640, h = 360, { extra = [], seed = 0 } = {}) {
-  return bytes([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
-    chunk('IHDR', bytes(be32(w), be32(h), 8, 6, 0, 0, 0)),
-    chunk('tEXt', bytes('Comment\0taken at home')),
-    ...extra,
-    chunk('eXIf', bytes('MM\0*GPS')),
-    chunk('IDAT', bytes([1, 2, 3, seed & 255, (seed >> 8) & 255])),
-    chunk('tIME', bytes([7, 234, 9, 19, 12, 0, 0])),
-    chunk('IEND', bytes()));
-}
-
-export function jpeg(w = 800, h = 450, seed = 0) {
-  const seg = (m, data) => bytes(0xff, m, be16(data.length + 2), data);
-  return bytes(0xff, 0xd8,
-    seg(0xe0, bytes('JFIF\0', 1, 1, 0, 0, 1, 0, 1, 0, 0)),
-    seg(0xe1, bytes('Exif\0\0', 'GPS 37.7N 122.4W camera')),
-    seg(0xe1, bytes('http://ns.adobe.com/xap/1.0/\0<x:xmpmeta/>')),
-    seg(0xfe, bytes('a private comment')),
-    seg(0xe2, bytes('ICC_PROFILE\0', 1, 1, 'icc')),
-    seg(0xdb, bytes(0, ...new Array(64).fill(1))),
-    seg(0xc0, bytes(8, be16(h), be16(w), 1, 1, 0x11, 0)),
-    seg(0xda, bytes(1, 1, 0, 0, 63, 0)),
-    bytes([0x12, 0x34, seed & 255, 0xff, 0x00, 0x56]),
-    bytes(0xff, 0xd9));
-}
 
 const has = (hay, needle) => Buffer.from(hay).includes(Buffer.from(needle));
 
@@ -104,8 +65,10 @@ function gallerySetup(extra = {}) {
     }), t.env, { waitUntil() {} }, t.cache);
     return res;
   };
-  const upload = (img, { ip = '203.0.113.7', credit, headers = {} } = {}) => raw(G + 'api/upload' + (credit !== undefined ? '?credit=' + encodeURIComponent(credit) : ''), {
-    method: 'POST', body: img, headers: { 'content-type': 'image/png', 'cf-connecting-ip': ip, 'x-ghostty-client': 'test', ...headers },
+  // The plugin: a linked-app token. One account per address unless `as` names another,
+  // so the per-address tests read as they always did.
+  const upload = (img, { ip = '203.0.113.7', credit, headers = {}, as = 'ip-' + ip } = {}) => raw(G + 'api/upload' + (credit !== undefined ? '?credit=' + encodeURIComponent(credit) : ''), {
+    method: 'POST', body: img, headers: { 'content-type': 'image/png', 'cf-connecting-ip': ip, 'x-ghostty-client': 'test', ...t.linked('ghostty', { provider: 'xivauth', id: as }).header, ...headers },
   });
   return { ...t, raw, upload };
 }
@@ -249,7 +212,7 @@ test('upload without a store configured answers 503; the web page upload is mark
   const closed = gallerySetup({ GALLERY_KV: undefined });
   assert.equal((await closed.upload(png())).status, 503);
   const t = gallerySetup();
-  const res = await t.raw(G + 'api/upload', { method: 'POST', body: png(), headers: { 'content-type': 'image/png', origin: ORIGIN, 'sec-fetch-site': 'same-origin' } });
+  const res = await t.raw(API + 'gallery/upload', { method: 'POST', body: png(), cookie: await t.signedIn(), headers: { 'content-type': 'image/png', origin: ORIGIN, 'sec-fetch-site': 'same-origin' } });
   assert.equal(res.status, 201);
   assert.equal(t.env.DB.raw.prepare('SELECT source FROM shots').get().source, 'web');
 });

@@ -1,9 +1,11 @@
-// The screenshot gallery: anonymous uploads (from the plugin or the gallery page) go into
-// a moderation queue; only shots the owner approved are ever listed or served.
+// The screenshot gallery: uploads from a signed-in account (the gallery page and the mod
+// pages, with the session cookie) or from a linked app (the plugin, with a Bearer token
+// carrying gallery:upload; src/account.js) go into a moderation queue; only shots the
+// owner approved are ever listed or served. Nothing is accepted without an account.
 //
-//   POST gallery/api/upload        raw PNG or JPEG body (<= 8 MiB), ?credit= optional
-//   POST vote/api/shots/upload?mod= the same, from a minisite: a session is required, and the
-//                                  shot carries its mod and the account that sent it
+//   POST gallery/api/upload        raw PNG or JPEG body (<= 8 MiB), ?credit= and ?mod= optional
+//   POST vote/api/gallery/upload   the same handler, where the session cookie reaches (the gallery page)
+//   POST vote/api/shots/upload?mod= the same, from a minisite: the mod is required
 //   GET  gallery/api/shots[?mod=]  the approved shots, newest first (cached 60 s)
 //   GET  gallery/img/<id>          an approved image;  gallery/thumb/<id> its thumbnail
 //   GET  vote/api/admin/gallery    the queue and recent decisions      (ADMIN_ACCOUNTS)
@@ -17,6 +19,7 @@
 // digest of it counts uploads for the limits, and review clears it from the shot.
 import { isAdmin, readSession } from './session.js';
 import { signInRequired } from './auth.js';
+import { authorize } from './account.js';
 import { GALLERY_BASE, PRIVATE, cleanText, isSameOrigin, isShotId, json, randomToken, readJsonBody, sha256hex } from './lib.js';
 import { inspectImage } from './image.js';
 import { MOD_IDS, isModId } from './clients.js';
@@ -28,6 +31,8 @@ export const GALLERY = Object.freeze({
   credit: 60,
   perAddressPerHour: 6,
   perAddressPerDay: 20,
+  perAccountPerHour: 6,
+  perAccountPerDay: 20,
   perDay: 200,          // every uploader together; KV's free tier allows 1,000 writes a day
   pendingMax: 300,      // the queue refuses more until the owner catches up
   listMax: 500,
@@ -102,19 +107,20 @@ export function cleanCredit(raw) {
 const listKey = (url, mod) => new Request(url.origin + GALLERY_BASE + '/api/shots' + (mod ? '?mod=' + mod : ''));
 
 // ---- POST gallery/api/upload -------------------------------------------------------------
-// POST vote/api/shots/upload?mod=<id>[&credit=]: the minisites' "Add yours". Nothing is
-// accepted without a session, and the shot goes into the same moderation queue.
+// POST vote/api/shots/upload?mod=<id>[&credit=]: the minisites' "Add yours". The same gate
+// and the same moderation queue as every other upload; only here the mod is required.
 export async function postMemberUpload(request, env, url) {
-  if (!isSameOrigin(request, url)) return fail(403, 'forbidden', 'Cross-site request refused.', PRIVATE);
-  const session = await readSession(request, env);
-  if (!session) return fail(401, 'sign_in_required', 'Sign in with GitHub or FFXIV to share a screenshot.', PRIVATE);
-  const mod = url.searchParams.get('mod');
-  if (!isModId(mod)) return fail(400, 'bad_mod', 'mod must be one of: ' + MOD_IDS.join(', ') + '.', PRIVATE);
-  return postUpload(request, env, url, { mod, provider: session.p, account: session.k });
+  if (!isModId(url.searchParams.get('mod'))) return fail(400, 'bad_mod', 'mod must be one of: ' + MOD_IDS.join(', ') + '.', PRIVATE);
+  return postUpload(request, env, url);
 }
 
-export async function postUpload(request, env, url, member = null) {
+export async function postUpload(request, env, url) {
   if (!isSameOrigin(request, url)) return fail(403, 'forbidden', 'Cross-site request refused.');
+  const auth = await authorize(request, env, url, 'gallery:upload');
+  if (!auth.ok) return auth.response;
+  const { p: provider, k: account } = auth.account;
+  const rawMod = url.searchParams.get('mod');
+  if (rawMod !== null && !isModId(rawMod)) return fail(400, 'bad_mod', 'mod is not one of the mods published here.');
   const store = galleryStore(env);
   if (!store) return fail(503, 'gallery_closed', 'The gallery is not taking uploads right now.');
   const now = Date.now();
@@ -124,10 +130,13 @@ export async function postUpload(request, env, url, member = null) {
     `SELECT
        (SELECT COUNT(*) FROM upload_log WHERE uploader = ?1 AND at > ?2) AS hour,
        (SELECT COUNT(*) FROM upload_log WHERE uploader = ?1 AND at > ?3) AS day,
+       (SELECT COUNT(*) FROM upload_log WHERE account = ?4 AND at > ?2) AS acct_hour,
+       (SELECT COUNT(*) FROM upload_log WHERE account = ?4 AND at > ?3) AS acct_day,
        (SELECT COUNT(*) FROM upload_log WHERE at > ?3) AS site,
        (SELECT COUNT(*) FROM shots WHERE status = 'pending') AS pending`,
-  ).bind(uploader, now - GALLERY.hourMs, now - GALLERY.dayMs).first();
-  if (pre.hour >= GALLERY.perAddressPerHour || pre.day >= GALLERY.perAddressPerDay) {
+  ).bind(uploader, now - GALLERY.hourMs, now - GALLERY.dayMs, account).first();
+  if (pre.hour >= GALLERY.perAddressPerHour || pre.day >= GALLERY.perAddressPerDay
+    || pre.acct_hour >= GALLERY.perAccountPerHour || pre.acct_day >= GALLERY.perAccountPerDay) {
     return fail(429, 'rate_limited', 'That is a lot of screenshots at once; try again later.', { 'retry-after': '3600' });
   }
   if (pre.site >= GALLERY.perDay || pre.pending >= GALLERY.pendingMax) {
@@ -147,16 +156,17 @@ export async function postUpload(request, env, url, member = null) {
 
   const id = randomToken(16);
   const credit = cleanCredit(url.searchParams.get('credit'));
-  const source = request.headers.get('x-ghostty-client') ? 'plugin' : 'web';
+  const source = auth.via === 'token' ? 'plugin' : 'web';
   await store.put(shotKey(id), img.bytes, img.type);
   try {
     await env.DB.batch([
       env.DB.prepare(
-        `INSERT INTO shots (id, status, content_type, bytes, width, height, digest, credit, source, uploader, created_at, mod, provider, account)
-         VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO shots (id, status, content_type, bytes, width, height, digest, credit, source, uploader, created_at,
+           provider, account, token_id, mod)
+         VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       ).bind(id, img.type, img.bytes.length, img.width, img.height, digest, credit, source, uploader, now,
-        member ? member.mod : null, member ? member.provider : '', member ? member.account : ''),
-      env.DB.prepare('INSERT INTO upload_log (uploader, at) VALUES (?, ?)').bind(uploader, now),
+        provider, account, auth.tokenId, rawMod),
+      env.DB.prepare('INSERT INTO upload_log (uploader, at, account) VALUES (?, ?, ?)').bind(uploader, now, account),
       env.DB.prepare('DELETE FROM upload_log WHERE at <= ?').bind(now - GALLERY.dayMs),
     ]);
   } catch (err) {
@@ -249,12 +259,13 @@ async function adminGate(request, env, url) {
 export async function getAdminGallery(request, env, url) {
   const gate = await adminGate(request, env, url);
   if (gate) return gate;
-  const cols = 'id, status, content_type, bytes, width, height, credit, source, uploader, has_thumb, created_at, reviewed_at, mod, provider';
+  const cols = 'id, status, content_type, bytes, width, height, credit, source, uploader, has_thumb, created_at, reviewed_at, provider, account, mod';
   const [pending, reviewed] = await env.DB.batch([
     env.DB.prepare(`SELECT ${cols} FROM shots WHERE status = 'pending' ORDER BY created_at, id`),
     env.DB.prepare(`SELECT ${cols} FROM shots WHERE status <> 'pending' ORDER BY reviewed_at DESC, id LIMIT 100`),
   ]);
-  const shape = (r) => ({ ...r, uploader: r.uploader ? r.uploader.slice(0, 8) : '' });
+  // provider '' and account '': a shot from before uploads needed an account (legacy).
+  const shape = (r) => ({ ...r, uploader: r.uploader ? r.uploader.slice(0, 8) : '', legacy: !r.account });
   return json({
     generated_at: Date.now(),
     store: env.GALLERY_R2 ? 'r2' : env.GALLERY_KV ? 'kv' : 'none',

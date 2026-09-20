@@ -1,7 +1,7 @@
 // Shared set-up for the API tests: the real migrations and seed on the D1 shim, a
 // stand-in Cache API, sign-in settings, signed sessions and a scripted fetch.
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { handle } from '../src/app.js';
 import { BASE, parseCookies } from '../src/lib.js';
@@ -97,11 +97,28 @@ export function setup(extraEnv = {}) {
     const set = await sessionCookie(env, { p: provider, k: sha256hex(provider + ':' + id) });
     return set.split(';')[0];
   };
+  // A linked app's token, as the device link would have minted it: the row goes straight
+  // into api_tokens (hashed) and the Bearer value comes back. `who` keys a stable account.
+  const tokens = new Map();
+  const linked = (client = 'ghostty', { provider = 'github', id, scope, expiresAt = Date.now() + 86400000, revokedAt = 0, fresh = false } = {}) => {
+    id ??= String(nextId++);
+    const memo = [client, provider, id, scope, expiresAt, revokedAt].join('|');
+    if (!fresh && tokens.has(memo)) return tokens.get(memo);
+    const token = 'gvt_' + randomBytes(32).toString('base64url');
+    const tokenId = randomBytes(16).toString('base64url');
+    env.DB.raw.prepare(
+      `INSERT INTO api_tokens (id, token_hash, provider, account, client, scope, created_at, expires_at, revoked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(tokenId, sha256hex(token), provider, sha256hex(provider + ':' + id), client,
+      scope ?? (client === 'almanac' ? 'almanac:submit' : 'gallery:upload'), Date.now(), expiresAt, revokedAt);
+    const out = { token, tokenId, account: sha256hex(provider + ':' + id), header: { authorization: 'Bearer ' + token } };
+    tokens.set(memo, out);
+    return out;
+  };
   // Without a cookie, each write comes from a new signed-in voter, as a stranger would.
   const vote = async (body, opts = {}) => call(API + 'vote', { method: 'POST', body, ...opts, cookie: opts.cookie ?? await signedIn() });
   const mine = (opts = {}) => call(API + 'mine', opts);
   return {
-    env, cache, call, vote, mine, signedIn,
+    env, cache, call, vote, mine, signedIn, linked,
     useFetch(fn) { fetcher = fn; },
   };
 }

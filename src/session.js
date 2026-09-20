@@ -164,21 +164,29 @@ export async function readState(request, env, now = nowSeconds()) {
 export const stateMatches = (cookieState, queryState) => !!cookieState && constantTimeEqual(cookieState.s, queryState);
 
 // ---- redirects and PKCE -----------------------------------------------------------
-// Sign-in only ever returns to the vote page, its admin page or a mod minisite, keeping
-// nothing but a numeric ?since=. Anything else (other hosts, scheme-relative or
-// backslash tricks, API paths, encoded slashes) falls back to the vote page.
-// The mod minisites too: their community screenshots section has the sign-in buttons.
+// Sign-in only ever returns to a page of this site: the vote page, its admin and connected
+// apps pages, the gallery or a mod's minisite (every page with sign-in buttons), keeping
+// nothing but a numeric ?since= or, for the connected apps page, a device-link ?code=.
+// Anything else (other hosts, scheme-relative or backslash tricks, API paths, encoded
+// slashes) falls back to the vote page.
 const RETURNS = new Set([
-  BASE + '/', BASE + '/admin/',
+  BASE + '/', BASE + '/admin/', BASE + '/apps/', '/mods/ffxiv/term/gallery/',
+  // the mod minisites: their community screenshots section has the sign-in buttons
   '/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/almanac/about/',
 ]);
+const USER_CODE_RE = /^[A-Z]{4}-[A-Z]{4}$/;
 export function safeReturnPath(raw) {
   const fallback = BASE + '/';
   if (typeof raw !== 'string' || raw.length > 256 || !raw.startsWith('/') || raw.startsWith('//')) return fallback;
   if (/[\\\u0000-\u0020\u007f]/.test(raw)) return fallback;
   let u;
   try { u = new URL(raw, 'https://return.invalid'); } catch { return fallback; }
-  if (u.origin !== 'https://return.invalid' || !RETURNS.has(u.pathname) || u.username || u.password) return fallback;
+  if (u.origin !== 'https://return.invalid' || u.username || u.password) return fallback;
+  if (!RETURNS.has(u.pathname) || raw.includes('..')) return fallback;
+  if (u.pathname === BASE + '/apps/') {
+    const code = u.searchParams.get('code');
+    return u.pathname + (code !== null && USER_CODE_RE.test(code) ? '?code=' + code : '');
+  }
   const since = u.searchParams.get('since');
   return u.pathname + (since !== null && /^\d{1,9}$/.test(since) ? '?since=' + since : '');
 }

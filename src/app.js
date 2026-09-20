@@ -7,7 +7,12 @@
 // query per edge location per minute (the rest are answered from the Cache API);
 // api/mine costs one batch, and nothing at all for a request without a session.
 // Writing needs a signed-in session (session.js); the voter is its account key.
-import { getAdminVoters, getMe, finishAuth, postForgetCharacter, postLogout, signInRequired, startAuth } from './auth.js';
+import { getAdminVoters, getMe, finishAuth, postForgetCharacter, postLogout, startAuth } from './auth.js';
+import { authorize, banned } from './account.js';
+import {
+  getAdminAccounts, getApps, postAdminBan, postAdminTokenRevoke, postAppRevoke, postDeviceApprove, postDeviceCode,
+  postDeviceLookup, postDeviceToken, postTokenRevoke,
+} from './device.js';
 import {
   API_PREFIX, LIMITS, PRIVATE, isSameOrigin, json, readJsonBody, route, validateSuggestion, validateVote,
 } from './lib.js';
@@ -45,6 +50,17 @@ const HANDLERS = {
   'gallery/shots': (request, env, ctx, url, cache) => getShots(env, ctx, url, cache),
   'gallery/img': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, false),
   'gallery/thumb': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, true),
+  // the device link, connected apps and account moderation (src/device.js)
+  'device/code': (request, env, ctx, url) => postDeviceCode(request, env, url),
+  'device/token': (request, env, ctx, url) => postDeviceToken(request, env, url),
+  'device/lookup': (request, env, ctx, url) => postDeviceLookup(request, env, url),
+  'device/approve': (request, env, ctx, url) => postDeviceApprove(request, env, url),
+  apps: (request, env, ctx, url) => getApps(request, env, url),
+  'apps/revoke': (request, env, ctx, url) => postAppRevoke(request, env, url),
+  'token/revoke': (request, env, ctx, url) => postTokenRevoke(request, env, url),
+  'admin/accounts': (request, env, ctx, url) => getAdminAccounts(request, env, url),
+  'admin/accounts/ban': (request, env, ctx, url) => postAdminBan(request, env, url),
+  'admin/tokens/revoke': (request, env, ctx, url) => postAdminTokenRevoke(request, env, url),
   // the Dalamud plugin repository (src/plugins.js), at /mods/ffxiv/plugins.json
   plugins: (request, env, ctx, url, cache, fetcher) => getPluginMaster(request, env, ctx, url, cache, fetcher),
   // the Almanac community model leaderboard (src/almanac.js), under /mods/ffxiv/almanac
@@ -122,18 +138,20 @@ async function getMine(request, env, url) {
 
 async function serveWrite(request, env, url, name) {
   if (!isSameOrigin(request, url)) return json({ error: 'forbidden', message: 'Cross-site request refused.' }, { status: 403 });
-  const session = await readSession(request, env);
-  if (!session) return signInRequired();
+  // A ballot is a person's: the session only, no linked-app token carries a scope for it.
+  const auth = await authorize(request, env, url, null, { deferBan: true }); // the precheck query looks the ban up
+  if (!auth.ok) return auth.response;
   const body = await readJsonBody(request);
   if (!body.ok) return json({ error: body.error, message: body.message }, { status: body.status });
   const [validate, write] = WRITES[name];
   const input = validate(body.value);
   if (!input.ok) return json({ error: input.error, message: input.message }, { status: input.status });
-  return write(env, session.k, input.value, Date.now());
+  return write(env, auth.account, input.value, Date.now());
 }
 
 // Every precheck query starts with the voter's writes in the rate-limit window.
-const WINDOW_SQL = 'COUNT(*) AS n, MIN(at) AS oldest';
+// ?1 is the voter in both: the ban rides along, so the gate costs no extra query.
+const WINDOW_SQL = 'COUNT(*) AS n, MIN(at) AS oldest, EXISTS (SELECT 1 FROM account_bans WHERE account = ?1) AS banned';
 
 function rateLimited(row, now) {
   if (!row || row.n < LIMITS.writesPerWindow) return null;
@@ -154,11 +172,12 @@ function logWrite(env, voter, now) {
 
 const tallyOf = (row) => ({ want: row?.want ?? 0, maybe: row?.maybe ?? 0, skip: row?.skip ?? 0 });
 
-async function postVote(env, voter, { idea_id: ideaId, vote, note }, now) {
+async function postVote(env, { p: provider, k: voter }, { idea_id: ideaId, vote, note }, now) {
   const pre = await env.DB.prepare(
     `SELECT ${WINDOW_SQL}, EXISTS (SELECT 1 FROM ideas WHERE id = ?3 AND retired = 0) AS known
      FROM write_log WHERE voter = ?1 AND at > ?2`,
   ).bind(voter, now - LIMITS.windowMs, ideaId).first();
+  if (pre?.banned) return banned();
   const limited = rateLimited(pre, now);
   if (limited) return limited;
   if (!pre || !pre.known) return json({ error: 'unknown_idea', message: 'No such idea.' }, { status: 404 });
@@ -168,12 +187,12 @@ async function postVote(env, voter, { idea_id: ideaId, vote, note }, now) {
   const results = await env.DB.batch([
     ...logWrite(env, voter, now),
     env.DB.prepare(
-      `INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at)
-       VALUES (?1, ?2, COALESCE(?3, ''), COALESCE(?4, ''), ?5, ?5)
+      `INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at, provider)
+       VALUES (?1, ?2, COALESCE(?3, ''), COALESCE(?4, ''), ?5, ?5, ?6)
        ON CONFLICT (voter, idea_id) DO UPDATE SET
-         vote = COALESCE(?3, votes.vote), note = COALESCE(?4, votes.note), updated_at = excluded.updated_at
+         vote = COALESCE(?3, votes.vote), note = COALESCE(?4, votes.note), updated_at = excluded.updated_at, provider = ?6
        RETURNING vote, note, updated_at`,
-    ).bind(voter, ideaId, vote, note, now),
+    ).bind(voter, ideaId, vote, note, now, provider),
     env.DB.prepare("DELETE FROM votes WHERE voter = ? AND idea_id = ? AND vote = '' AND note = ''").bind(voter, ideaId),
     env.DB.prepare('SELECT want, maybe, skip FROM ideas WHERE id = ?').bind(ideaId),
   ]);
@@ -188,7 +207,7 @@ async function postVote(env, voter, { idea_id: ideaId, vote, note }, now) {
   });
 }
 
-async function postSuggest(env, voter, { title, detail }, now) {
+async function postSuggest(env, { p: provider, k: voter }, { title, detail }, now) {
   const since = now - LIMITS.dayMs;
   const pre = await env.DB.prepare(
     `SELECT ${WINDOW_SQL},
@@ -196,6 +215,7 @@ async function postSuggest(env, voter, { title, detail }, now) {
             (SELECT COUNT(*) FROM suggestions WHERE created_at > ?3) AS today
      FROM write_log WHERE voter = ?1 AND at > ?2`,
   ).bind(voter, now - LIMITS.windowMs, since).first();
+  if (pre?.banned) return banned();
   const limited = rateLimited(pre, now);
   if (limited) return limited;
   if (pre.mine >= LIMITS.suggestionsPerVoterPerDay) {
@@ -207,8 +227,8 @@ async function postSuggest(env, voter, { title, detail }, now) {
   const results = await env.DB.batch([
     ...logWrite(env, voter, now),
     env.DB.prepare(
-      'INSERT INTO suggestions (voter, title, detail, created_at) VALUES (?, ?, ?, ?) RETURNING id, title, detail, created_at',
-    ).bind(voter, title, detail, now),
+      'INSERT INTO suggestions (voter, title, detail, created_at, provider) VALUES (?, ?, ?, ?, ?) RETURNING id, title, detail, created_at',
+    ).bind(voter, title, detail, now, provider),
   ]);
   return json({ ok: true, suggestion: results[2].results[0] }, { status: 201 });
 }

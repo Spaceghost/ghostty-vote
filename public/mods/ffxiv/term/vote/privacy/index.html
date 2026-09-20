@@ -65,12 +65,18 @@
     </section>
 
     <section>
+      <h2>Things you send</h2>
+      <p>Nothing new is stored on this site without a signed-in account from one of two places: GitHub, or XIVAuth (FFXIV). That covers votes, notes and suggestions, screenshots shared to the gallery or to a mod's page, and Almanac benchmark results. The plugins and the command line sign in by showing a short code that you approve on <a href="/mods/ffxiv/term/vote/apps/">the connected apps page</a>, where you can also disconnect them.</p>
+      <p>With each thing you send, the server keeps which of the two sign-ins you used and a key for the account: a SHA-256 of the provider name and your account id there. The key does not hide who you are from the owner (GitHub ids are public), and it is what lets the owner act on an account, not an address, when something is abusive. If you linked a character, the owner sees its name and world beside what you sent; that is the only display name kept. Your login name, e-mail address and the provider's token are not stored. Things sent before this rule existed stay as they were, with no account on them.</p>
+    </section>
+
+    <section>
       <h2>What is never collected</h2>
       <ul>
         <li>No cookies, for analytics, ever. (Signing in to vote sets a session cookie; that is the vote's own cookie and is described on <a href="/mods/ffxiv/term/vote/">that page</a>.)</li>
         <li>No third-party analytics, no advertising, no tag managers, no fingerprinting, no cross-site tracking. Nothing is sold, shared or sent to anyone else.</li>
         <li>No IP addresses stored, for anything. No User-Agent strings stored. No full URLs, no query strings, no page contents.</li>
-        <li>No profile of a visitor, no session identifier, no visit history, no linking of a page view to a vote, a screenshot or a benchmark result.</li>
+        <li>No profile of a visitor, no session identifier, no visit history, no linking of a page view to a vote, a screenshot or a benchmark result. (Those three are linked to the account that sent them, as described above; page views are not.)</li>
         <li>No consent banner, because there is nothing to consent to.</li>
       </ul>
       <p>Cloudflare, which serves this site, keeps its own request logs and security analytics as part of running the network; the owner can see aggregate totals and attack data there. That is Cloudflare's processing, not extra collection by this site.</p>

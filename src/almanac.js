@@ -1,5 +1,7 @@
-// The Almanac community model leaderboard: anonymous, opt-in benchmark results from the
-// almanac-dalamud plugin (github.com/Spaceghost/almanac-dalamud), aggregated on read.
+// The Almanac community model leaderboard: opt-in benchmark results from the almanac-dalamud
+// plugin and CLI (github.com/Spaceghost/almanac-dalamud), aggregated on read. A result needs
+// an account: a linked app's Bearer token carrying almanac:submit, or a session
+// (src/account.js). Results from before that rule keep account = '' (legacy).
 //
 //   POST almanac/api/results           one run, JSON per schema/results.v1.json (<= 64 KiB)
 //   GET  almanac/leaderboard.json      every bucket the leaderboard page shows  (cached 5 min)
@@ -18,12 +20,15 @@ import { compile } from './jsonschema.js';
 import { buildBoard, buildRecommendations } from './almanac-board.js';
 import { isAdmin, readSession } from './session.js';
 import { signInRequired } from './auth.js';
+import { authorize } from './account.js';
 import { ALMANAC_BASE, PRIVATE, isSameOrigin, isShotId, json, randomToken, readJsonBody, sha256hex } from './lib.js';
 
 export const ALMANAC = Object.freeze({
   maxBytes: 64 * 1024,
   perAddressPerHour: 12,
   perAddressPerDay: 40,
+  perAccountPerHour: 12,
+  perAccountPerDay: 40,
   perDay: 500,             // every submitter together (D1 free tier: 100,000 rows written a day)
   maxTokensPerS: 5000,     // plausibility caps the schema leaves open
   maxTtftMs: 3_600_000,
@@ -93,6 +98,9 @@ const submitterKey = (env, ip) => sha256hex('almanac-results:' + (env.GALLERY_SE
 // ---- POST almanac/api/results ------------------------------------------------------------
 export async function postResult(request, env, url) {
   if (!isSameOrigin(request, url)) return fail(403, 'forbidden', 'Cross-site request refused.');
+  const auth = await authorize(request, env, url, 'almanac:submit');
+  if (!auth.ok) return auth.response;
+  const { p: provider, k: account } = auth.account;
   const body = await readJsonBody(request, ALMANAC.maxBytes);
   if (!body.ok) return fail(body.status, body.error, body.message);
   const input = validateResult(body.value);
@@ -107,13 +115,16 @@ export async function postResult(request, env, url) {
     `SELECT
        (SELECT COUNT(*) FROM almanac_submit_log WHERE submitter = ?1 AND at > ?2) AS hour,
        (SELECT COUNT(*) FROM almanac_submit_log WHERE submitter = ?1 AND at > ?3) AS day,
+       (SELECT COUNT(*) FROM almanac_submit_log WHERE account = ?7 AND at > ?2) AS acct_hour,
+       (SELECT COUNT(*) FROM almanac_submit_log WHERE account = ?7 AND at > ?3) AS acct_day,
        (SELECT COUNT(*) FROM almanac_submit_log WHERE at > ?3) AS site,
        (SELECT id FROM almanac_results WHERE digest = ?4) AS dup,
        (SELECT sha256 FROM almanac_suites WHERE suite_id = ?5 AND suite_version = ?6) AS suite_sha,
        (SELECT deprecated FROM almanac_suites WHERE suite_id = ?5 AND suite_version = ?6) AS deprecated`,
-  ).bind(submitter, now - ALMANAC.hourMs, now - ALMANAC.dayMs, digest, v.suite.id, v.suite.version).first();
+  ).bind(submitter, now - ALMANAC.hourMs, now - ALMANAC.dayMs, digest, v.suite.id, v.suite.version, account).first();
   if (pre.dup) return json({ ok: true, id: pre.dup, duplicate: true, message: 'This run was already submitted. Thank you!' });
-  if (pre.hour >= ALMANAC.perAddressPerHour || pre.day >= ALMANAC.perAddressPerDay) {
+  if (pre.hour >= ALMANAC.perAddressPerHour || pre.day >= ALMANAC.perAddressPerDay
+    || pre.acct_hour >= ALMANAC.perAccountPerHour || pre.acct_day >= ALMANAC.perAccountPerDay) {
     return fail(429, 'rate_limited', 'That is a lot of results at once; try again later.', { 'retry-after': '3600' });
   }
   if (pre.site >= ALMANAC.perDay) return fail(429, 'leaderboard_full', 'The leaderboard is full for today; try again tomorrow.', { 'retry-after': '3600' });
@@ -133,13 +144,13 @@ export async function postResult(request, env, url) {
     env.DB.prepare(
       `INSERT INTO almanac_results (id, suite_id, suite_version, mode, model, quant, context, tool_calling, backend,
          gpu_vendor, gpu_model, vram_mb, os, score, success_rate, tool_call_validity, tokens_per_s, ttft_ms,
-         peak_vram_mb, task_scores, payload, digest, submitter, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         peak_vram_mb, task_scores, payload, digest, submitter, created_at, provider, account, token_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(id, v.suite.id, v.suite.version, v.mode, v.model.name.toLowerCase(), v.model.quant.toUpperCase() || 'UNKNOWN',
       v.model.context, v.model.tool_calling, v.backend.kind, v.hardware.gpu_vendor, v.hardware.gpu_model || 'unknown',
       v.hardware.vram_mb, v.hardware.os, m.score, m.success_rate, m.tool_call_validity, m.tokens_per_s, m.ttft_ms,
-      m.peak_vram_mb ?? null, JSON.stringify(tasks), payload, digest, submitter, now),
-    env.DB.prepare('INSERT INTO almanac_submit_log (submitter, at) VALUES (?, ?)').bind(submitter, now),
+      m.peak_vram_mb ?? null, JSON.stringify(tasks), payload, digest, submitter, now, provider, account, auth.tokenId),
+    env.DB.prepare('INSERT INTO almanac_submit_log (submitter, at, account) VALUES (?, ?, ?)').bind(submitter, now, account),
     env.DB.prepare('DELETE FROM almanac_submit_log WHERE at <= ?').bind(now - ALMANAC.dayMs),
   ]);
   return json({ ok: true, id, message: 'Thanks! Your run counts toward the leaderboard within a few minutes.' }, { status: 201 });
@@ -154,7 +165,7 @@ export async function loadBoard(env, now = Date.now()) {
     env.DB.prepare(
       `SELECT r.suite_id, r.suite_version, r.mode, r.model, r.quant, r.context, r.tool_calling, r.backend, r.gpu_vendor,
               r.gpu_model, r.vram_mb, r.score, r.success_rate, r.tool_call_validity, r.tokens_per_s, r.ttft_ms,
-              r.peak_vram_mb, r.task_scores, r.submitter
+              r.peak_vram_mb, r.task_scores, CASE WHEN r.account <> '' THEN r.account ELSE r.submitter END AS submitter
        FROM almanac_results r JOIN almanac_suites s ON s.suite_id = r.suite_id AND s.suite_version = r.suite_version
        WHERE r.status = 'visible' AND s.deprecated = 0
        ORDER BY r.created_at DESC LIMIT ?`,
@@ -206,7 +217,7 @@ export async function getAdminAlmanac(request, env, url) {
   const [results, suites, totals] = await env.DB.batch([
     env.DB.prepare(
       `SELECT id, status, suite_id, suite_version, mode, model, quant, backend, gpu_vendor, gpu_model, vram_mb, os,
-              score, tokens_per_s, ttft_ms, peak_vram_mb, submitter, created_at, reviewed_at
+              score, tokens_per_s, ttft_ms, peak_vram_mb, submitter, created_at, reviewed_at, provider, account
        FROM almanac_results ORDER BY created_at DESC, id LIMIT ?`,
     ).bind(ALMANAC.adminList),
     env.DB.prepare(
@@ -220,7 +231,7 @@ export async function getAdminAlmanac(request, env, url) {
     generated_at: Date.now(),
     totals: { results: totals.results[0]?.results | 0, hidden: totals.results[0]?.hidden | 0, submitters: totals.results[0]?.submitters | 0 },
     suites: suites.results.map((s) => ({ ...s, deprecated: !!s.deprecated })),
-    results: results.results.map((r) => ({ ...r, submitter: r.submitter.slice(0, 8) })),
+    results: results.results.map((r) => ({ ...r, submitter: r.submitter.slice(0, 8), legacy: !r.account })),
   }, { headers: PRIVATE });
 }
 

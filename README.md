@@ -103,6 +103,9 @@ Objects, and sessions are signed cookies.
 | `migrations/0004_sign_in.sql` | Adds the `characters` table (additive, `IF NOT EXISTS`) |
 | `migrations/0005_gallery.sql` | Adds the gallery's `shots` and `upload_log` tables (additive, `IF NOT EXISTS`) |
 | `src/gallery.js` | The gallery: upload, approved list and images, the owner's queue |
+| `src/account.js` | The account gate: a session or a linked app's Bearer token (scope, expiry, revocation, bans) and the machine-readable 401 |
+| `src/device.js`, `src/clients.js` | The device link, connected apps, the owner's accounts/tokens/bans; the apps that may link and their scopes |
+| `public/.../vote/apps/` | The connected apps page: approve a device link by its code, list and disconnect linked apps |
 | `src/image.js` | PNG/JPEG checks and metadata stripping, without decoding pixels |
 | `public/mods/ffxiv/term/gallery/` | The gallery page (`index.html`, `gallery.js`, `gallery.css`) |
 | `migrations/0006_almanac.sql` | Adds the leaderboard's `almanac_results`, `almanac_suites` and `almanac_submit_log` tables (additive, `IF NOT EXISTS`) |
@@ -183,13 +186,13 @@ not retried; a refused vote goes back to what the server has, and typed note tex
 Players share screenshots of the plugin at `https://spacegho.st/mods/ffxiv/term/gallery/`.
 The plugin uploads one when the player clicks **Share** on its prompt (after a screenshot
 taken with a terminal on screen, or `/term share`); the page also takes a picked file.
-Uploads need no account and land in a moderation queue on the owner's `/admin/` page
+Uploads need an account ([Account gate and linked apps](#account-gate-and-linked-apps)) and land in a moderation queue on the owner's `/admin/` page
 (under the vote), and **only approved shots are ever listed or served**: every public
 image request checks the shot's status in D1 first.
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| POST | `/mods/ffxiv/term/gallery/api/upload` | Raw PNG or JPEG body (`Content-Type` is not trusted; the bytes decide), at most 8 MiB. `?credit=` optional (60 characters, cleaned like notes). `201 {ok, id, status: "pending", message}`; a byte-identical shot answers `200 {…, duplicate: true}`. A cross-site browser `Origin` gets 403. Requests with `X-Ghostty-Client` are recorded as from the plugin |
+| POST | `/mods/ffxiv/term/gallery/api/upload` | Raw PNG or JPEG body (`Content-Type` is not trusted; the bytes decide), at most 8 MiB. `?credit=` optional (60 characters, cleaned like notes). `201 {ok, id, status: "pending", message}`; a byte-identical shot answers `200 {…, duplicate: true}`. A cross-site browser `Origin` gets 403. Needs a Bearer token with `gallery:upload` (recorded as from the plugin) or a session (web); `?mod=` optionally tags the shot with a mod id (`ghostty`, `almanac`, `xivmcp`, `xivdesktop`), and the list carries `mod` so a mod's page can filter. The same handler answers `POST /mods/ffxiv/term/vote/api/gallery/upload` (the gallery page) and `POST /mods/ffxiv/term/vote/api/shots/upload?mod=` (a minisite; the mod is required), where the session cookie (Path = the vote) reaches: browsers upload there |
 | GET | `/mods/ffxiv/term/gallery/api/shots` | `{shots: [{id, src, thumb, width, height, credit, approved_at}]}`, approved only, newest 500. Cached 60 s in the Cache API (cleared in the approving location) and by browsers |
 | GET | `/mods/ffxiv/term/gallery/img/<id>`, `/thumb/<id>` | An approved image or its thumbnail; 404 for anything else. `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; sandbox`, cached a day |
 | GET | `/mods/ffxiv/term/vote/api/admin/gallery` | Owner only (401/403 like `admin/voters`): `{pending[], reviewed[] (newest 100), store}` |
@@ -245,7 +248,7 @@ Everything is in D1; there is no KV or R2 for the leaderboard.
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| POST | `/mods/ffxiv/almanac/api/results` | Anonymous, JSON (`Content-Type: application/json`, at most 64 KiB) following [`schema/results.v1.json`](public/mods/ffxiv/almanac/schema/results.v1.json). Every object is strict: an unknown field anywhere is `400 schema`. Free-text fields (`gpu_model`, versions, model name/family/quant) allow only `A-Za-z0-9 ._:/@+(),#-` (trademark signs are dropped from `gpu_model`) and are refused (`400 looks_private`) when they look like a path, IP address, URL or e-mail. `201 {ok, id, message}`; an identical resubmission answers `200 {ok, id, duplicate: true}`. `409 suite_mismatch` when the suite's `sha256` differs from the first one accepted for that suite version; `410 suite_deprecated` for a deprecated suite; `429 rate_limited` / `leaderboard_full`. A cross-site browser `Origin` gets 403 |
+| POST | `/mods/ffxiv/almanac/api/results` | Needs a Bearer token with `almanac:submit` (or a session). JSON (`Content-Type: application/json`, at most 64 KiB) following [`schema/results.v1.json`](public/mods/ffxiv/almanac/schema/results.v1.json). Every object is strict: an unknown field anywhere is `400 schema`. Free-text fields (`gpu_model`, versions, model name/family/quant) allow only `A-Za-z0-9 ._:/@+(),#-` (trademark signs are dropped from `gpu_model`) and are refused (`400 looks_private`) when they look like a path, IP address, URL or e-mail. `201 {ok, id, message}`; an identical resubmission answers `200 {ok, id, duplicate: true}`. `409 suite_mismatch` when the suite's `sha256` differs from the first one accepted for that suite version; `410 suite_deprecated` for a deprecated suite; `429 rate_limited` / `leaderboard_full`. A cross-site browser `Origin` gets 403 |
 | GET | `/mods/ffxiv/almanac/leaderboard.json` | Everything the page shows: `{schema_version, generated_at, method, tiers[], gpu_classes[], suites[], groups[], gpu[]}`. `groups` are per suite, mode, VRAM tier, model and quant: medians of score, tokens/s, time to first token, peak VRAM, success rate and tool-call validity, the score's 95% range, `samples` (submitters), `runs`, `trimmed`, `confidence`, `rank_score` and per-task medians. No submitter digests |
 | GET | `/mods/ffxiv/almanac/recommendations.json` | For the plugin, following [`schema/recommendations.v1.json`](public/mods/ffxiv/almanac/schema/recommendations.v1.json): per tier (`min_vram_mb <= vram < max_vram_mb`) up to 5 models, best first, with `samples`, `confidence` and `notes`. Uses the non-deprecated suite with the most live submitters; live runs only, falling back to mock runs (noted) in a tier without live ones |
 | GET | `/mods/ffxiv/almanac/schema/*.json` | The two JSON Schemas (static, `Access-Control-Allow-Origin: *`) |
@@ -282,6 +285,51 @@ outlier trimming, ranking, the cached reads and all moderation actions with cach
 Checked by hand against `wrangler dev` (local D1): submissions, the per-address limit (429 on
 the 13th in an hour), a duplicate, an unknown-field refusal, both JSON files, and the page
 rendered in headless Firefox (tables and scatter).
+
+## Account gate and linked apps
+
+Nothing a visitor sends is stored without an account from one of the two sign-ins, GitHub or
+XIVAuth (`src/account.js`). A browser proves it with the session cookie; a plugin or the CLI,
+which cannot hold one, with `Authorization: Bearer gvt_...`, an API token the player approved
+through a device link (`src/device.js`, RFC 8628 in shape). Every new row carries `provider`
+and `account` (the account key, `sha256('provider:id')`, the same value `votes.voter` holds)
+and, from an app, `token_id`. Rows from before migration 0008 keep both empty: that is what
+*legacy* means on the admin page. The cookie-less page beacon and the aggregate counters
+(`src/analytics.js`) are not something a visitor sends and are not gated.
+
+| Write | Credential | Scope |
+| --- | --- | --- |
+| `api/vote`, `api/suggest` | session only | none exists |
+| gallery upload (both paths) | session, or token | `gallery:upload` |
+| `almanac/api/results` | token, or session | `almanac:submit` |
+
+Without a credential: `401 {ok: false, error: "sign_in_required", message, sign_in: {providers,
+github, xivauth, device: {code_endpoint, token_endpoint, verification_uri}}, min_client:
+{ghostty, almanac}}` with `WWW-Authenticate: Bearer`. A bad token: `401 invalid_token |
+token_revoked | token_expired` (same body shape); a good token without the scope: `403
+insufficient_scope`; a banned account: `403 account_banned`. The message names the plugin
+version that can link, because plugins older than that still upload without a credential.
+
+All under `/mods/ffxiv/term/vote/api/`:
+
+| Method | Path | What it does |
+| --- | --- | --- |
+| POST | `device/code` | `{client_id: "ghostty" \| "almanac", scope?}` -> `{device_code, user_code, verification_uri, verification_uri_complete, expires_in: 900, interval: 5, client_name, scope}`. Ten an hour per address, 500 in progress site-wide |
+| POST | `device/token` | `{client_id, device_code}` -> `400 authorization_pending \| slow_down \| access_denied \| expired_token \| invalid_grant`, or once `200 {access_token, token_type: "Bearer", expires_in, scope, token_id}` (180 days) |
+| POST | `device/lookup`, `device/approve` | Session. `{user_code}` says which app asks for what; `{user_code, action: "approve" \| "deny"}` answers it, once |
+| GET, POST | `apps`, `apps/revoke` | Session. The account's linked apps; `{id}` disconnects one |
+| POST | `token/revoke` | Bearer. An app disconnects itself |
+| GET | `admin/accounts` | Owner. Accounts that wrote or linked, every token (never its value), bans |
+| POST | `admin/accounts/ban`, `admin/tokens/revoke` | Owner. `{account}` or `{provider, id}`, `banned`, `reason?`; `{id}`. A ban stops writes and links and revokes the account's tokens; it deletes nothing |
+
+The apps an account may link, their scopes and first linking version are `src/clients.js`.
+Device codes and tokens are returned once, travel only in bodies and the Authorization
+header, are never logged, and are stored as SHA-256 only. The user code is not a secret (it
+does nothing without a signed-in approval), so the verification link may carry it; the page
+that takes it is `/mods/ffxiv/term/vote/apps/`, which also lists and disconnects linked apps.
+Limits are per account as well as per address (gallery 6/hour and 20/day, Almanac 12/hour and
+40/day, at most 10 live tokens per account), and the leaderboard counts an account, not an
+address, once per model.
 
 ## Plugin repository
 
@@ -455,6 +503,17 @@ You need a Cloudflare login that can edit Workers, Workers Routes on the `spaceg
 D1. Either run `npx wrangler login` once (it opens a browser), or export `CLOUDFLARE_API_TOKEN`
 (with those permissions) and `CLOUDFLARE_ACCOUNT_ID`. The route only fires if `spacegho.st` has a
 proxied (orange-cloud) DNS record. Array values for `run_worker_first` need Wrangler 4.20 or later.
+
+### The account gate (migration 0008)
+
+Unlike the earlier files, 0008 adds columns and must be applied exactly once. Deploying the
+Worker after it ends anonymous uploads and results at once; plugins older than Ghostty 0.3.0
+and Almanac 0.2.0 get a 401 whose message says so.
+
+```sh
+npx wrangler d1 execute ghostty-vote --remote --file migrations/0008_account_gate.sql
+npx wrangler deploy
+```
 
 ### The Almanac leaderboard (migration 0006)
 

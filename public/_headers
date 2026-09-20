@@ -22,6 +22,10 @@
 /mods/ffxiv/term/vote/admin/*
   X-Robots-Tag: noindex, nofollow
 
+# Connected apps: approving a device link and listing linked apps (api/device/*, api/apps).
+/mods/ffxiv/term/vote/apps/*
+  X-Robots-Tag: noindex, nofollow
+
 # The screenshot gallery: its own images only (gallery/img/*, gallery/thumb/*, served by the
 # Worker for approved shots only).
 /mods/ffxiv/term/gallery/*
