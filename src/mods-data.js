@@ -68,8 +68,8 @@ export default {
     {
       "internalName": "XivMcp",
       "name": "XivMcp",
-      "listed": false,
-      "repo": null,
+      "listed": true,
+      "repo": "Spaceghost/xiv-mcp",
       "assemblyVersion": "0.1.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
@@ -81,7 +81,7 @@ export default {
         "api",
         "utility"
       ],
-      "icon": null,
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivmcp.png",
       "images": [],
       "needs": "An MCP client on the same machine (Claude Code, Codex, Almanac).",
       "build": "dotnet build XivMcp.slnx -c Release",
@@ -91,8 +91,8 @@ export default {
     {
       "internalName": "XivDesktop",
       "name": "XivDesktop",
-      "listed": false,
-      "repo": null,
+      "listed": true,
+      "repo": "Spaceghost/xiv-desktop",
       "assemblyVersion": "1.0.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
@@ -104,7 +104,7 @@ export default {
         "linux",
         "utility"
       ],
-      "icon": null,
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivdesktop.png",
       "images": [],
       "needs": "Ghostty and ghostty-agent, and a Linux host running the game under Wine.",
       "build": "dotnet build XivDesktop.slnx -c Release",

@@ -1,0 +1,19 @@
+/* The owner's analytics panels on the admin page. Every chart is SVG drawn with SVG
+   attributes, never an inline style: the page's CSP has no 'unsafe-inline' for styles. */
+.chart { width: 100%; height: auto; display: block; margin: 0.5rem 0 0.2rem; overflow: visible; }
+.chart text { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 9px; fill: currentColor; }
+.chart .grid { stroke: currentColor; opacity: 0.15; stroke-width: 1; }
+.chart .dim { opacity: 0.6; }
+.chart .bar { fill: #6fd6d0; }
+.chart .bar.bad { fill: #e0a0a0; }
+.chart .track { fill: currentColor; opacity: 0.1; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin: 0.1rem 0 0.3rem; font-size: 0.85rem; }
+.legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.legend svg { display: block; }
+
+.panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 0.6rem 1.4rem; }
+.panels h3 { margin: 0.4rem 0 0.1rem; font-size: 0.95rem; }
+.stat { font-variant-numeric: tabular-nums; }
+.warn { color: #e0a0a0; }
+table.results td.n, table.results th.n { text-align: right; font-variant-numeric: tabular-nums; }

@@ -16,6 +16,7 @@
      ballot.js (its DOM-free logic) must load first. -->
 <script src="/mods/ffxiv/term/vote/ballot.js"></script>
 <script src="/mods/ffxiv/term/vote/vote.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -106,6 +107,7 @@
     <p class="small"><strong>Privacy.</strong> Voting needs a GitHub or FFXIV (XIVAuth) sign-in, so each account has one ballot. Your votes, notes and suggestions are linked to your GitHub or XIVAuth account id and are visible to the site owner. They are stored under a SHA-256 hash of the provider name and that id, and the hash does not hide who you are: GitHub account ids are public, so anyone who has the id can work out the hash, and the owner can look the account up. The server does not store your GitHub username, your email address, IP addresses or the sign-in token, which is used once and thrown away. The sign-in itself is a signed cookie that only this page can use; it lasts 30 days and renews while you keep visiting, but ends 90 days after you signed in, or when you sign out.</p>
     <p class="small">If you link a character, the site keeps the character you chose on XIVAuth: its name, world, Lodestone ID and portrait link, and when it was first and last seen. Only the site owner sees it, next to your ballot. <strong>Forget my character</strong> deletes it, and your votes stay. Notes and suggestions are visible only to you and the maintainer. A copy of your ballot is kept in this browser's local storage so the page can show it straight away. The tallies can be up to a minute old. Fonts load from Google Fonts, and character portraits from the Lodestone.</p>
     <p class="small">Voted here before sign-in existed? Sign in from the same browser and those votes move to your account. Made by Johnneylee Jack Rollins, <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>.</p>
   </footer>
 </div>
 </body>

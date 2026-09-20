@@ -70,6 +70,8 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/almanac/schema/recommendations.v1.json',
     'mods/ffxiv/almanac/schema/results.v1.json',
     'mods/ffxiv/plugins.json',
+    'mods/ffxiv/plugins/icons/xivdesktop.png',
+    'mods/ffxiv/plugins/icons/xivmcp.png',
     'mods/ffxiv/plugins/index.html',
     'mods/ffxiv/plugins/plugins.css',
     'mods/ffxiv/plugins/plugins.js',
@@ -77,10 +79,14 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/term/gallery/gallery.js',
     'mods/ffxiv/term/gallery/index.html',
     'mods/ffxiv/term/vote/admin/admin.js',
+    'mods/ffxiv/term/vote/admin/analytics.css',
+    'mods/ffxiv/term/vote/admin/analytics.js',
     'mods/ffxiv/term/vote/admin/index.html',
     'mods/ffxiv/term/vote/ballot.js',
+    'mods/ffxiv/term/vote/beacon.js',
     'mods/ffxiv/term/vote/ideas.json',
     'mods/ffxiv/term/vote/index.html',
+    'mods/ffxiv/term/vote/privacy/index.html',
     'mods/ffxiv/term/vote/version.json',
     'mods/ffxiv/term/vote/vote.css',
     'mods/ffxiv/term/vote/vote.js',
@@ -93,7 +99,8 @@ test('page has no inline script, style or handlers, and renders data only throug
   const ballot = read(STATIC_DIR + 'ballot.js');
   assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html), 'every script is external');
   const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(scripts, ['/mods/ffxiv/term/vote/ballot.js', '/mods/ffxiv/term/vote/vote.js'], 'ballot.js loads before vote.js');
+  assert.deepEqual(scripts, ['/mods/ffxiv/term/vote/ballot.js', '/mods/ffxiv/term/vote/vote.js', '/mods/ffxiv/term/vote/beacon.js'],
+    'ballot.js loads before vote.js, and the page-view beacon last');
   assert.ok(!/<style/i.test(html), 'no style elements');
   assert.ok(!/\sstyle=/i.test(html), 'no style attributes');
   assert.ok(!/\son[a-z]+=/i.test(html), 'no inline event handlers');
@@ -127,7 +134,7 @@ test('page has no inline script, style or handlers, and renders data only throug
   for (const endpoint of ["'api/auth/me'", "'auth/logout'", "'auth/character/forget'"]) assert.ok(js.includes(endpoint), endpoint);
   assert.ok(!/createGate|gate\./.test(js + ballot), 'no first-write gate: a session exists before any write');
   assert.ok(/name="viewport"/.test(html) && /prefers-color-scheme: light/.test(read(STATIC_DIR + 'vote.css')));
-  for (const f of ['index.html', 'vote.js', 'ballot.js', 'vote.css', 'admin/admin.js']) {
+  for (const f of ['index.html', 'vote.js', 'ballot.js', 'vote.css', 'admin/admin.js', 'beacon.js', 'admin/analytics.js', 'admin/analytics.css']) {
     if (f !== 'index.html') assert.ok(!/[^\t\n\x20-\x7e]/.test(read(STATIC_DIR + f)), `${f} is plain ASCII`);
   }
 });
@@ -136,7 +143,8 @@ test('admin page: a static shell with no inline code and no data; the list comes
   const html = read(STATIC_DIR + 'admin/index.html');
   const js = read(STATIC_DIR + 'admin/admin.js');
   assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
-  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/term/vote/admin/admin.js']);
+  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]),
+    ['/mods/ffxiv/term/vote/admin/admin.js', '/mods/ffxiv/term/vote/admin/analytics.js']);
   assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
   const files = walk('public/');
   for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
@@ -190,7 +198,8 @@ test('gallery page: static, no inline code, images only from its own approved pa
   const html = read('public/mods/ffxiv/term/gallery/index.html');
   const js = read('public/mods/ffxiv/term/gallery/gallery.js');
   assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
-  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/term/gallery/gallery.js']);
+  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]),
+    ['/mods/ffxiv/term/gallery/gallery.js', '/mods/ffxiv/term/vote/beacon.js']);
   const files = walk('public/');
   for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
     assert.ok(files.includes(ref[1].slice(1) + (ref[1].endsWith('/') ? 'index.html' : '')), ref[1]);
@@ -208,7 +217,8 @@ test('almanac page: static, no inline code, data only from leaderboard.json, lin
   const html = read('public/mods/ffxiv/almanac/index.html');
   const js = read('public/mods/ffxiv/almanac/almanac.js');
   assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
-  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/almanac/almanac.js']);
+  assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]),
+    ['/mods/ffxiv/almanac/almanac.js', '/mods/ffxiv/term/vote/beacon.js']);
   const files = walk('public/');
   for (const ref of html.matchAll(/(?:src|href)="(\/mods\/[^"]+)"/g)) {
     if (ref[1] === '/mods/ffxiv/almanac/recommendations.json') continue; // computed by the Worker

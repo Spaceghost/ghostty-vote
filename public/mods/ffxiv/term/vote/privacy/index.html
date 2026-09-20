@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What this site counts</title>
+<meta name="description" content="Exactly what the Ghostty for FFXIV pages measure, what is stored, for how long, and what is never collected.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
+<link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
+<!-- This page counts itself like the others; see below for what that means. -->
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topline">
+      <span class="eyebrow">ghostty for ffxiv · privacy</span>
+      <span class="row">
+        <a class="chip" href="/mods/ffxiv/term/vote/">Vote on features</a>
+        <a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a>
+        <a class="chip" href="/mods/ffxiv/almanac/">Almanac models</a>
+      </span>
+    </div>
+    <h1>What this site <span class="glyph">counts</span></h1>
+    <p class="lede">Short version: how many people opened each page and how many machines fetched each file, per day. No cookies for any of it, no third-party scripts, nothing sold or shared, and nothing that says which of those people was you.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Pages</h2>
+      <p>When you open one of these pages, it sends one line to this site's own server: the path of the page you opened, and the host name of the page that linked you here if your browser offered one — <code>reddit.com</code>, not the link, and never a query string. Links from inside this site are recorded as <code>self</code>.</p>
+      <p>That line is added to a counter for the day. Nothing is kept about you: no cookie is set or read, no local or session storage is used, your address is not stored, and your browser's User-Agent string is not stored. The script that sends it, <a href="/mods/ffxiv/term/vote/beacon.js">beacon.js</a>, is twenty lines and served from this site; you can read it.</p>
+      <p><strong>If your browser sends Do Not Track or Global Privacy Control, nothing is sent and nothing is counted.</strong></p>
+    </section>
+
+    <section>
+      <h2>Files that programs fetch</h2>
+      <p>Some things here are fetched by software rather than by people: the Dalamud plugin repository at <code>/mods/ffxiv/plugins.json</code>, the Almanac's <code>recommendations.json</code> and <code>leaderboard.json</code>, the gallery's listing, and release downloads. Each of those requests adds one to a counter for the day, recorded as five things and nothing else:</p>
+      <ul>
+        <li>the date, in UTC;</li>
+        <li>which kind of thing was asked for — the plugin repository, a download, the vote page, and so on, from a short fixed list;</li>
+        <li>a coarse class of client, worked out from the User-Agent and then thrown away: <em>dalamud</em>, <em>browser</em>, <em>bot</em>, <em>other</em> or <em>none</em>. The User-Agent string itself is never stored;</li>
+        <li>whether it worked;</li>
+        <li>the two-letter country Cloudflare already attaches to the request.</li>
+      </ul>
+      <p>Those counters are shared by everyone who asked for the same thing on the same day. They are kept for 400 days and then deleted. There is no row anywhere that represents one visitor, one session, or one machine.</p>
+      <p><strong>The plugins themselves do not phone home.</strong> Nothing was added to any plugin for this. What the site knows about installs is only what it can see from the outside: how many times the repository file was fetched, and by what class of client.</p>
+    </section>
+
+    <section>
+      <h2>Requests that get refused</h2>
+      <p>One thing is kept per-machine, and only for machines that are being turned away: a request that trips a rate limit, sends a body the server rejects, posts from another site, is already banned, or walks a run of URLs that do not exist. For those the server records the day, what was asked for, why it was refused, the country, the network (the AS number), how many times, and a keyed digest of the address.</p>
+      <p>The digest is a SHA-256 of the address with a secret and a week number mixed in. It is not the address and cannot be turned back into one. Because the week number is part of it, the same address becomes a different digest every seven days, so a digest cannot follow anyone from one week to the next. The whole log is deleted after 30 days.</p>
+      <p>That is enough for the owner to see an attack in progress and block it, and not enough to build a picture of anybody. Ordinary requests that succeed never appear here.</p>
+    </section>
+
+    <section>
+      <h2>Blocking</h2>
+      <p>The owner can refuse a digest, a network, a country or a User-Agent pattern; a refused request gets a plain 451 and no data about it beyond the same counters above. A block on an address digest expires at the end of the week that digest belongs to at the latest, because after that it no longer means anything.</p>
+    </section>
+
+    <section>
+      <h2>What is never collected</h2>
+      <ul>
+        <li>No cookies, for analytics, ever. (Signing in to vote sets a session cookie; that is the vote's own cookie and is described on <a href="/mods/ffxiv/term/vote/">that page</a>.)</li>
+        <li>No third-party analytics, no advertising, no tag managers, no fingerprinting, no cross-site tracking. Nothing is sold, shared or sent to anyone else.</li>
+        <li>No IP addresses stored, for anything. No User-Agent strings stored. No full URLs, no query strings, no page contents.</li>
+        <li>No profile of a visitor, no session identifier, no visit history, no linking of a page view to a vote, a screenshot or a benchmark result.</li>
+        <li>No consent banner, because there is nothing to consent to.</li>
+      </ul>
+      <p>Cloudflare, which serves this site, keeps its own request logs and security analytics as part of running the network; the owner can see aggregate totals and attack data there. That is Cloudflare's processing, not extra collection by this site.</p>
+      <p>Everything above is implemented in <a href="https://github.com/Spaceghost" rel="noopener">the open</a> — the schema is <code>migrations/0007_analytics.sql</code> and the code is <code>src/analytics.js</code>. Questions, or something that looks wrong: <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small">The vote, the gallery and the Almanac each keep a little more than this, because they hold something you chose to send; each of those pages says exactly what, at the bottom.</p>
+  </footer>
+</div>
+</body>
+</html>

@@ -73,6 +73,8 @@ test('the fallback names only downloads that exist', () => {
   released.mods[0].released = true;
   assert.equal(JSON.parse(buildPluginMaster(released))[0].InternalName, released.mods[0].internalName);
   const wrong = structuredClone(data);
+  wrong.mods[2].listed = false;
+  delete wrong.mods[2].repo;
   wrong.mods[2].released = true;
   assert.ok(validateMods(wrong).some((e) => /released but not listed/.test(e)));
 });
@@ -83,8 +85,9 @@ test('mods.json is checked, and an unpublished mod may not be listed', () => {
   bad.mods[0].assemblyVersion = '1.2.3';
   assert.ok(validateMods(bad).some((e) => /assemblyVersion/.test(e)));
   const unpublished = mods();
-  const pending = unpublished.mods.find((m) => !m.listed);
+  const pending = unpublished.mods.find((m) => !m.listed) || unpublished.mods[unpublished.mods.length - 1];
   pending.listed = true;
+  delete pending.repo;
   assert.ok(validateMods(unpublished).some((e) => /needs repo/.test(e)));
 });
 

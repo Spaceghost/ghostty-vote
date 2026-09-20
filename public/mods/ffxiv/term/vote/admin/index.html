@@ -13,9 +13,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
 <link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
 <link rel="stylesheet" href="/mods/ffxiv/term/gallery/gallery.css">
+<link rel="stylesheet" href="/mods/ffxiv/term/vote/admin/analytics.css">
 <!-- Static and empty on purpose: admin.js fetches the list from api/admin/voters, which answers
      only the accounts in ADMIN_ACCOUNTS. Not deferred, so the saved theme applies before first paint. -->
 <script src="/mods/ffxiv/term/vote/admin/admin.js"></script>
+<!-- The analytics and abuse panels; their data comes from api/admin/analytics, gated the same way. -->
+<script src="/mods/ffxiv/term/vote/admin/analytics.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -44,6 +47,28 @@
     <div class="prompt" id="almanac-summary" aria-live="polite">$ <b>almanac</b> --results &nbsp; loading…</div>
     <div id="almanac-suites"></div>
     <div id="almanac"></div>
+  </section>
+
+  <section class="queue" aria-labelledby="stats-h">
+    <h2 id="stats-h">Traffic</h2>
+    <div class="prompt" id="stats-summary" aria-live="polite">$ <b>analytics</b> &nbsp; loading…</div>
+    <div class="bar" role="toolbar" aria-label="Break the chart down by">
+      <button class="chip" type="button" data-stats="class" aria-pressed="true">By client</button>
+      <button class="chip" type="button" data-stats="bucket" aria-pressed="false">By link</button>
+    </div>
+    <div id="stats-chart"></div>
+    <div id="stats-links"></div>
+    <div class="panels" id="stats-panels"></div>
+    <p class="small">Daily aggregate counters only: date, which link, a coarse client class, whether it worked, and the country Cloudflare already attaches. No addresses, no User-Agent strings, no cookies, nothing per-visitor. Kept 400 days. <a href="/mods/ffxiv/term/vote/privacy/">What this site counts</a>.</p>
+  </section>
+
+  <section class="queue" aria-labelledby="abuse-h">
+    <h2 id="abuse-h">Refused and blocked</h2>
+    <div class="prompt" id="abuse-summary" aria-live="polite">$ <b>abuse</b> &nbsp; loading…</div>
+    <div id="abuse"></div>
+    <h3>Deny list</h3>
+    <div id="deny"></div>
+    <p class="small">Only requests that were refused appear here, by a keyed digest of the address that rotates every 7 days; the log is deleted after 30 days. A ban on a digest therefore expires with its week — for anything longer ban the network (AS) or add a WAF rule in the Cloudflare dashboard.</p>
   </section>
 
   <div class="bar" role="toolbar" aria-label="Filter voters" id="filters" hidden>

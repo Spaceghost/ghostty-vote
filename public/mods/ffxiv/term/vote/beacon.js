@@ -4,7 +4,7 @@
 // It sets and reads no cookie and no storage of any kind, sends nothing that identifies
 // you, runs on this site only, and never loads anything from anywhere else. The body is
 // two fields: this page's path, and the host of the page that linked here if your browser
-// offered one (the host alone — never the address, never a query string). The Worker adds
+// offered one (the host alone, never the address, never a query string). The Worker adds
 // them to a daily counter shared by everyone who opened the same page.
 //
 // If your browser says Do Not Track or Global Privacy Control, nothing is sent at all.

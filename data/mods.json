@@ -24,9 +24,15 @@
       "author": "Johnneylee Jack Rollins",
       "punchline": "Eorzea is a terminal multiplexer.",
       "description": "Quake-style dropdown, floating windows and terminals pinned in the world, connected to shells on your own machine through ghostty-agent. /term to toggle. Works with or without Umbra; with Umbra, the Ghostty toolbar widget shows its status and a popup terminal.",
-      "tags": ["terminal", "ghostty", "utility"],
+      "tags": [
+        "terminal",
+        "ghostty",
+        "utility"
+      ],
       "icon": "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/main/images/icon.png",
-      "images": ["https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/main/images/banner.png"],
+      "images": [
+        "https://raw.githubusercontent.com/Spaceghost/ghostty-dalamud/main/images/banner.png"
+      ],
       "needs": "ghostty-agent running on the machine the game runs on.",
       "build": "tools/build.sh, then tools/package.sh",
       "umbraWidget": "Umbra.Ghostty"
@@ -42,9 +48,18 @@
       "author": "Johnneylee Jack Rollins",
       "punchline": "Talk to a local AI model in game, with XivMcp's tools.",
       "description": "Connects a model running on your own PC (Ollama, LM Studio, llama.cpp or any OpenAI-compatible server) to the game through XivMcp. Setup wizard with GPU-aware model recommendations, an in-game chat with threads and streaming, and a benchmark you can share with the community leaderboard. No cloud, no Python. Requires the XivMcp plugin for game tools.",
-      "tags": ["ai", "llm", "local", "mcp", "chat", "utility"],
+      "tags": [
+        "ai",
+        "llm",
+        "local",
+        "mcp",
+        "chat",
+        "utility"
+      ],
       "icon": "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/main/images/icon.png",
-      "images": ["https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/main/images/banner.png"],
+      "images": [
+        "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/main/images/banner.png"
+      ],
       "needs": "A local model server (Ollama, LM Studio, llama.cpp or any OpenAI-compatible API), and XivMcp for game tools.",
       "build": "dotnet build dalamud/Almanac.Dalamud.slnx -c Release",
       "umbraWidget": null
@@ -52,15 +67,20 @@
     {
       "internalName": "XivMcp",
       "name": "XivMcp",
-      "listed": false,
-      "repo": null,
+      "listed": true,
+      "repo": "Spaceghost/xiv-mcp",
       "assemblyVersion": "0.1.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Model Context Protocol server for FINAL FANTASY XIV.",
       "description": "Exposes game state, game data and opt-in actions to MCP clients over loopback Streamable HTTP. Anything that changes your game is approved in game first. Optional Umbra toolbar widget.",
-      "tags": ["mcp", "ai", "api", "utility"],
-      "icon": null,
+      "tags": [
+        "mcp",
+        "ai",
+        "api",
+        "utility"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivmcp.png",
       "images": [],
       "needs": "An MCP client on the same machine (Claude Code, Codex, Almanac).",
       "build": "dotnet build XivMcp.slnx -c Release",
@@ -70,15 +90,20 @@
     {
       "internalName": "XivDesktop",
       "name": "XivDesktop",
-      "listed": false,
-      "repo": null,
+      "listed": true,
+      "repo": "Spaceghost/xiv-desktop",
       "assemblyVersion": "1.0.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Launch Linux desktop apps into the game world.",
       "description": "An app launcher for FINAL FANTASY XIV running under Wine on Linux. Lists the host's freedesktop applications and opens them as world panels through Ghostty's remote windows. Optional Umbra toolbar widget.",
-      "tags": ["launcher", "desktop", "linux", "utility"],
-      "icon": null,
+      "tags": [
+        "launcher",
+        "desktop",
+        "linux",
+        "utility"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivdesktop.png",
       "images": [],
       "needs": "Ghostty and ghostty-agent, and a Linux host running the game under Wine.",
       "build": "dotnet build XivDesktop.slnx -c Release",
