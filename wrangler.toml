@@ -66,3 +66,8 @@ id = "ad74181ad97d4d3692e235c94beab40d"   # ghostty-gallery
 GITHUB_CLIENT_ID = "Iv23liYsdX6oOuO47ulv"          # GitHub App ghostty-for-ffxiv-vote (no repository permissions)
 XIVAUTH_CLIENT_ID = "3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU"
 ADMIN_ACCOUNTS = "github:251370"                   # 'provider:user_id', comma-separated; github:251370 is Spaceghost
+
+# Keep the Worker's own log lines (sign-in refusals, provider errors) so a report of
+# "it had errors" can be looked up afterwards. Lines never carry codes, tokens or bodies.
+[observability]
+enabled = true

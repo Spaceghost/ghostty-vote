@@ -523,6 +523,7 @@
     'no-character': 'No character was shared, so nothing was linked. Pick a verified character on XIVAuth to link it.',
     refused: 'Start sign-in from the buttons on this page.',
     'bad-request': 'Sign-in failed. Please try again.',
+    'server': 'Sign-in worked, but the site could not start your session. Please try again in a minute.',
   };
 
   function authFragmentMessage() {

@@ -118,7 +118,12 @@ async function exchangeCode(fetcher, env, provider, url, code, verifier) {
   });
   // GitHub answers a bad code with 200 and {error}; only a token counts.
   const token = data && data.access_token;
-  if (typeof token !== 'string' || !token || token.length > 4096) throw new ProviderError('token', 'no access_token');
+  if (typeof token !== 'string' || !token || token.length > 4096) {
+    // The provider's own error word (bad_verification_code, redirect_uri_mismatch, ...) is
+    // safe to log and is the only thing that says why; never the code or the body.
+    const why = data && typeof data.error === 'string' && /^[a-z_]{1,64}$/.test(data.error) ? data.error : 'no access_token';
+    throw new ProviderError('token', why);
+  }
   return token;
 }
 
@@ -218,13 +223,19 @@ export async function finishAuth(request, env, url, provider, fetcher) {
   const state = await readState(request, env);
   const back = state ? safeReturnPath(state.r) : BASE + '/';
   const fail = (code) => redirect(pageUrl(url, back, 'auth-error=' + code), [clearStateCookie()]);
+  const note = (why) => console.warn(`ghostty-vote: ${provider} sign-in refused: ${why}`);
   if (!state || state.p !== provider || !configured(env, provider)) {
+    note(!configured(env, provider) ? 'not configured' : !state ? 'no state cookie (expired, blocked, or another browser)' : 'state is for the other provider');
     return fail(configured(env, provider) ? 'expired' : 'not-configured');
   }
-  if (url.searchParams.has('error')) return fail('denied'); // e.g. access_denied: the visitor said no
-  if (!stateMatches(state, url.searchParams.get('state'))) return fail('state');
+  if (url.searchParams.has('error')) { // e.g. access_denied: the visitor said no
+    const e = url.searchParams.get('error') || '';
+    note('provider returned ' + (/^[a-z_]{1,64}$/.test(e) ? e : 'an error'));
+    return fail('denied');
+  }
+  if (!stateMatches(state, url.searchParams.get('state'))) { note('state mismatch'); return fail('state'); }
   const code = url.searchParams.get('code');
-  if (!code || code.length > 512) return fail('bad-request');
+  if (!code || code.length > 512) { note('no usable code'); return fail('bad-request'); }
 
   let session = null;
   if (state.m === 'link') {
@@ -251,12 +262,26 @@ export async function finishAuth(request, env, url, provider, fetcher) {
   }
 
   const key = await accountKey(provider, userId);
-  const statements = [];
   const anon = voterToken(request.headers.get('cookie'));
-  if (anon) statements.push(...claimStatements(env.DB, await voterKey(anon), key));
-  if (statements.length) await env.DB.batch(statements);
+  if (anon) {
+    // Carrying an old anonymous ballot over is a courtesy; if it fails the visitor is
+    // still signed in, and the old ballot stays where it was for another try.
+    try {
+      const statements = claimStatements(env.DB, await voterKey(anon), key);
+      if (statements.length) await env.DB.batch(statements);
+    } catch (err) {
+      console.error(`ghostty-vote: ${provider} sign-in claim failed: ${String(err && err.message || err).slice(0, 200)}`);
+    }
+  }
 
-  const cookies = [clearStateCookie(), await sessionCookie(env, { p: provider, k: key })];
+  let signedIn;
+  try {
+    signedIn = await sessionCookie(env, { p: provider, k: key });
+  } catch (err) {
+    console.error(`ghostty-vote: ${provider} sign-in session failed: ${String(err && err.message || err).slice(0, 200)}`);
+    return fail('server');
+  }
+  const cookies = [clearStateCookie(), signedIn];
   if (request.headers.get('cookie')?.includes(COOKIE_NAME + '=')) cookies.push(clearVoterCookie());
   return redirect(pageUrl(url, back, 'signed-in'), cookies);
 }
