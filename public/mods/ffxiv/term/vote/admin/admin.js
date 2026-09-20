@@ -185,7 +185,7 @@
         el('img', { src: adminImage(s.id, thumb), alt: 'shot ' + s.id, loading: 'lazy', width: String(s.width | 0 || 16), height: String(s.height | 0 || 9) })));
     }
     const cap = el('figcaption', { text: [
-      s.status, (s.width | 0) + '\u00d7' + (s.height | 0), kb(s.bytes | 0), str(s.source),
+      s.status, (s.width | 0) + '\u00d7' + (s.height | 0), kb(s.bytes | 0), str(s.source) + (s.mod ? ' for ' + str(s.mod) : '') + (s.provider ? ' via ' + str(s.provider) : ''),
       s.credit ? 'credit: ' + str(s.credit) : 'no credit', s.uploader ? 'from ' + str(s.uploader) : '',
       'sent ' + when(s.created_at), s.reviewed_at ? 'reviewed ' + when(s.reviewed_at) : '',
     ].filter(Boolean).join(DOT) });

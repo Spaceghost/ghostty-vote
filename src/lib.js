@@ -63,6 +63,9 @@ export const API = Object.freeze({
   'auth/logout': 'POST',
   'auth/me': 'GET',
   'auth/character/forget': 'POST',
+  // a signed-in visitor's screenshot for one mod's minisite (src/gallery.js); under the vote
+  // API because that is where the session cookie is sent
+  'shots/upload': 'POST',
   'admin/voters': 'GET',
   'admin/gallery': 'GET',
   'admin/gallery/image': 'GET',

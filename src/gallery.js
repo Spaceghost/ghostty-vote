@@ -2,7 +2,9 @@
 // a moderation queue; only shots the owner approved are ever listed or served.
 //
 //   POST gallery/api/upload        raw PNG or JPEG body (<= 8 MiB), ?credit= optional
-//   GET  gallery/api/shots         the approved shots, newest first (cached 60 s)
+//   POST vote/api/shots/upload?mod= the same, from a minisite: a session is required, and the
+//                                  shot carries its mod and the account that sent it
+//   GET  gallery/api/shots[?mod=]  the approved shots, newest first (cached 60 s)
 //   GET  gallery/img/<id>          an approved image;  gallery/thumb/<id> its thumbnail
 //   GET  vote/api/admin/gallery    the queue and recent decisions      (ADMIN_ACCOUNTS)
 //   GET  vote/api/admin/gallery/image?id=[&thumb=1]  any shot, for review
@@ -17,6 +19,7 @@ import { isAdmin, readSession } from './session.js';
 import { signInRequired } from './auth.js';
 import { GALLERY_BASE, PRIVATE, cleanText, isSameOrigin, isShotId, json, randomToken, readJsonBody, sha256hex } from './lib.js';
 import { inspectImage } from './image.js';
+import { MOD_IDS, isModId } from './clients.js';
 
 export const GALLERY = Object.freeze({
   maxBytes: 8 * 1024 * 1024,
@@ -96,10 +99,21 @@ export function cleanCredit(raw) {
   return c ? c.slice(0, GALLERY.credit) : '';
 }
 
-const listKey = (url) => new Request(url.origin + GALLERY_BASE + '/api/shots');
+const listKey = (url, mod) => new Request(url.origin + GALLERY_BASE + '/api/shots' + (mod ? '?mod=' + mod : ''));
 
 // ---- POST gallery/api/upload -------------------------------------------------------------
-export async function postUpload(request, env, url) {
+// POST vote/api/shots/upload?mod=<id>[&credit=]: the minisites' "Add yours". Nothing is
+// accepted without a session, and the shot goes into the same moderation queue.
+export async function postMemberUpload(request, env, url) {
+  if (!isSameOrigin(request, url)) return fail(403, 'forbidden', 'Cross-site request refused.', PRIVATE);
+  const session = await readSession(request, env);
+  if (!session) return fail(401, 'sign_in_required', 'Sign in with GitHub or FFXIV to share a screenshot.', PRIVATE);
+  const mod = url.searchParams.get('mod');
+  if (!isModId(mod)) return fail(400, 'bad_mod', 'mod must be one of: ' + MOD_IDS.join(', ') + '.', PRIVATE);
+  return postUpload(request, env, url, { mod, provider: session.p, account: session.k });
+}
+
+export async function postUpload(request, env, url, member = null) {
   if (!isSameOrigin(request, url)) return fail(403, 'forbidden', 'Cross-site request refused.');
   const store = galleryStore(env);
   if (!store) return fail(503, 'gallery_closed', 'The gallery is not taking uploads right now.');
@@ -138,9 +152,10 @@ export async function postUpload(request, env, url) {
   try {
     await env.DB.batch([
       env.DB.prepare(
-        `INSERT INTO shots (id, status, content_type, bytes, width, height, digest, credit, source, uploader, created_at)
-         VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      ).bind(id, img.type, img.bytes.length, img.width, img.height, digest, credit, source, uploader, now),
+        `INSERT INTO shots (id, status, content_type, bytes, width, height, digest, credit, source, uploader, created_at, mod, provider, account)
+         VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ).bind(id, img.type, img.bytes.length, img.width, img.height, digest, credit, source, uploader, now,
+        member ? member.mod : null, member ? member.provider : '', member ? member.account : ''),
       env.DB.prepare('INSERT INTO upload_log (uploader, at) VALUES (?, ?)').bind(uploader, now),
       env.DB.prepare('DELETE FROM upload_log WHERE at <= ?').bind(now - GALLERY.dayMs),
     ]);
@@ -153,15 +168,18 @@ export async function postUpload(request, env, url) {
 
 // ---- GET gallery/api/shots ---------------------------------------------------------------
 export async function getShots(env, ctx, url, cache) {
-  const key = listKey(url);
+  // ?mod=<id>: one minisite's shots. Anything else is the whole gallery.
+  const asked = url.searchParams.get('mod');
+  const mod = isModId(asked) ? asked : null;
+  const key = listKey(url, mod);
   if (cache) {
     const hit = await cache.match(key);
     if (hit) return hit;
   }
   const { results } = await env.DB.prepare(
-    `SELECT id, width, height, credit, has_thumb, reviewed_at FROM shots
-     WHERE status = 'approved' ORDER BY reviewed_at DESC, id LIMIT ?`,
-  ).bind(GALLERY.listMax).all();
+    `SELECT id, width, height, credit, has_thumb, reviewed_at, mod FROM shots
+     WHERE status = 'approved' AND (?1 IS NULL OR mod = ?1) ORDER BY reviewed_at DESC, id LIMIT ?2`,
+  ).bind(mod, GALLERY.listMax).all();
   const shots = results.map((r) => ({
     id: r.id,
     src: GALLERY_BASE + '/img/' + r.id,
@@ -169,6 +187,7 @@ export async function getShots(env, ctx, url, cache) {
     width: r.width,
     height: r.height,
     credit: r.credit,
+    mod: r.mod || null,
     approved_at: r.reviewed_at,
   }));
   const res = json({ shots }, {
@@ -230,7 +249,7 @@ async function adminGate(request, env, url) {
 export async function getAdminGallery(request, env, url) {
   const gate = await adminGate(request, env, url);
   if (gate) return gate;
-  const cols = 'id, status, content_type, bytes, width, height, credit, source, uploader, has_thumb, created_at, reviewed_at';
+  const cols = 'id, status, content_type, bytes, width, height, credit, source, uploader, has_thumb, created_at, reviewed_at, mod, provider';
   const [pending, reviewed] = await env.DB.batch([
     env.DB.prepare(`SELECT ${cols} FROM shots WHERE status = 'pending' ORDER BY created_at, id`),
     env.DB.prepare(`SELECT ${cols} FROM shots WHERE status <> 'pending' ORDER BY reviewed_at DESC, id LIMIT 100`),
@@ -283,7 +302,7 @@ export async function postAdminReview(request, env, url, cache) {
     if (store) await Promise.all([store.delete(shotKey(id)), store.delete(thumbKey(id))]);
     await env.DB.prepare("UPDATE shots SET status = ?, uploader = '', has_thumb = 0, reviewed_at = ? WHERE id = ?").bind(status, now, id).run();
   }
-  if (cache) await cache.delete?.(listKey(url));
+  if (cache && cache.delete) await Promise.all([null, ...MOD_IDS].map((m) => cache.delete(listKey(url, m))));
   return json({ ok: true, id, status }, { headers: PRIVATE });
 }
 

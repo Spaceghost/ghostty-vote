@@ -22,7 +22,7 @@ test('route matches only the API paths', () => {
     'admin/almanac', 'admin/almanac/review', 'admin/almanac/suite',
     'admin/gallery', 'admin/gallery/image', 'admin/gallery/review', 'admin/gallery/thumb',
     'admin/voters', 'auth/character/forget', 'auth/github/callback', 'auth/github/start', 'auth/logout', 'auth/me',
-    'auth/xivauth/callback', 'auth/xivauth/link', 'auth/xivauth/start', 'mine', 'suggest', 'tallies', 'vote',
+    'auth/xivauth/callback', 'auth/xivauth/link', 'auth/xivauth/start', 'mine', 'shots/upload', 'suggest', 'tallies', 'vote',
   ]);
   // The page and the static files are assets, never Worker routes.
   for (const p of [BASE, BASE + '/', BASE + '/index.html', BASE + '/vote.js', BASE + '/ideas.json', BASE + '/version.json']) {

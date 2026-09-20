@@ -171,7 +171,7 @@ test('upload -> queue -> approve: only approved shots are listed and served', as
 
   const list = (await (await t.raw(G + 'api/shots')).json()).shots;
   assert.equal(list.length, 1);
-  assert.deepEqual(Object.keys(list[0]).sort(), ['approved_at', 'credit', 'height', 'id', 'src', 'thumb', 'width']);
+  assert.deepEqual(Object.keys(list[0]).sort(), ['approved_at', 'credit', 'height', 'id', 'mod', 'src', 'thumb', 'width']);
   assert.equal(list[0].src, G + 'img/' + up.id);
   assert.equal(list[0].thumb, G + 'thumb/' + up.id);
   res = await t.raw(list[0].src);
@@ -264,4 +264,44 @@ test('api/shots is cached and approving clears the cached list', async () => {
     method: 'POST', cookie: owner, body: JSON.stringify({ id: up.id, action: 'approve' }), headers: { 'content-type': 'application/json', origin: ORIGIN },
   });
   assert.equal((await (await t.raw(G + 'api/shots')).json()).shots.length, 1);
+});
+
+test('minisite upload: refused without a session, tagged with its mod and account, moderated, and listed per mod', async () => {
+  const t = gallerySetup();
+  const U = API + 'shots/upload';
+  const send = (query, opts = {}) => t.raw(U + query, { method: 'POST', body: png(800, 450, { seed: 7 }), headers: { 'content-type': 'image/png', 'cf-connecting-ip': '203.0.113.9', ...(opts.headers || {}) }, cookie: opts.cookie });
+  // no session: nothing is read, nothing is stored
+  let res = await send('?mod=xivmcp');
+  assert.equal(res.status, 401);
+  assert.equal((await res.json()).error, 'sign_in_required');
+  assert.equal(res.headers.get('cache-control'), 'private, no-store');
+  assert.equal(t.env.GALLERY_KV.store.size, 0);
+  const cookie = await t.signedIn('xivauth', '4242');
+  assert.equal((await send('?mod=xivmcp', { cookie, headers: { origin: 'https://evil.example' } })).status, 403);
+  for (const bad of ['', '?mod=', '?mod=nope', '?mod=XivMcp']) assert.equal((await send(bad, { cookie })).status, 400, bad);
+  assert.equal(t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM shots').get().n, 0);
+  assert.equal((await t.raw(U, { cookie })).status, 405);
+
+  res = await send('?mod=xivmcp&credit=Tataru', { cookie });
+  assert.equal(res.status, 201);
+  const up = await res.json();
+  const row = t.env.DB.raw.prepare('SELECT status, mod, provider, account, credit, source FROM shots WHERE id = ?').get(up.id);
+  assert.deepEqual({ ...row }, { status: 'pending', mod: 'xivmcp', provider: 'xivauth', account: row.account, credit: 'Tataru', source: 'web' });
+  assert.match(row.account, /^[0-9a-f]{64}$/);
+
+  // pending: on no list and not served
+  const list = async (q = '') => (await (await t.raw(G + 'api/shots' + q)).json()).shots;
+  assert.deepEqual(await list('?mod=xivmcp'), []);
+  assert.equal((await t.raw(G + 'img/' + up.id)).status, 404);
+  const owner = await t.signedIn('github', '251370');
+  const q = await (await t.raw(API + 'admin/gallery', { cookie: owner })).json();
+  assert.equal(q.pending[0].mod, 'xivmcp');
+  res = await t.raw(API + 'admin/gallery/review', { method: 'POST', cookie: owner, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: up.id, action: 'approve' }) });
+  assert.equal(res.status, 200);
+  // approval drops the cached per-mod list too
+  assert.deepEqual((await list('?mod=xivmcp')).map((s) => [s.id, s.mod]), [[up.id, 'xivmcp']]);
+  assert.deepEqual(await list('?mod=almanac'), []);
+  assert.deepEqual((await list()).map((s) => s.id), [up.id], 'the whole gallery still lists it');
+  assert.deepEqual((await list('?mod=nope')).map((s) => s.id), [up.id], 'an unknown mod is the whole gallery, never an SQL fragment');
+  assert.equal((await t.raw(G + 'img/' + up.id)).status, 200);
 });

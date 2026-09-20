@@ -16,7 +16,7 @@ import {
   getAdminAlmanac, getAggregate, postAdminAlmanacReview, postAdminAlmanacSuite, postResult,
 } from './almanac.js';
 import { getPluginMaster } from './plugins.js';
-import { getAdminGallery, getAdminImage, getPublicImage, getShots, postAdminReview, postAdminThumb, postUpload } from './gallery.js';
+import { getAdminGallery, getAdminImage, getPublicImage, getShots, postAdminReview, postAdminThumb, postMemberUpload, postUpload } from './gallery.js';
 
 const WRITES = { vote: [validateVote, postVote], suggest: [validateSuggestion, postSuggest] };
 
@@ -40,6 +40,7 @@ const HANDLERS = {
   'admin/gallery/review': (request, env, ctx, url, cache) => postAdminReview(request, env, url, cache),
   'admin/gallery/thumb': (request, env, ctx, url) => postAdminThumb(request, env, url),
   // the screenshot gallery (src/gallery.js), under /mods/ffxiv/term/gallery
+  'shots/upload': (request, env, ctx, url) => postMemberUpload(request, env, url),
   'gallery/upload': (request, env, ctx, url) => postUpload(request, env, url),
   'gallery/shots': (request, env, ctx, url, cache) => getShots(env, ctx, url, cache),
   'gallery/img': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, false),

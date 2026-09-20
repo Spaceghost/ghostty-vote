@@ -164,10 +164,14 @@ export async function readState(request, env, now = nowSeconds()) {
 export const stateMatches = (cookieState, queryState) => !!cookieState && constantTimeEqual(cookieState.s, queryState);
 
 // ---- redirects and PKCE -----------------------------------------------------------
-// Sign-in only ever returns to the vote page or its admin page on this site, keeping
+// Sign-in only ever returns to the vote page, its admin page or a mod minisite, keeping
 // nothing but a numeric ?since=. Anything else (other hosts, scheme-relative or
 // backslash tricks, API paths, encoded slashes) falls back to the vote page.
-const RETURNS = new Set([BASE + '/', BASE + '/admin/']);
+// The mod minisites too: their community screenshots section has the sign-in buttons.
+const RETURNS = new Set([
+  BASE + '/', BASE + '/admin/',
+  '/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/almanac/about/',
+]);
 export function safeReturnPath(raw) {
   const fallback = BASE + '/';
   if (typeof raw !== 'string' || raw.length > 256 || !raw.startsWith('/') || raw.startsWith('//')) return fallback;
