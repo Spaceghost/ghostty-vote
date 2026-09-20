@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>XivDesktop for FFXIV</title>
+<meta name="description" content="XivDesktop: your Linux desktop inside Final Fantasy XIV. A keyboard-first launcher, nine workspaces and a taskbar for application windows shown as panels in the game world, on top of Ghostty.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/xivdesktop/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="XivDesktop for FFXIV">
+<meta property="og:description" content="XivDesktop: your Linux desktop inside Final Fantasy XIV. A keyboard-first launcher, nine workspaces and a taskbar for application windows shown as panels in the game world, on top of Ghostty.">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/xivdesktop/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/xivdesktop-banner.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
+<!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
+     also fills the media slots from media/manifest.json and the community screenshots. -->
+<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body data-mod="xivdesktop" data-name="XivDesktop" data-media="/mods/ffxiv/xivdesktop/media/manifest.json">
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="sitebar">
+    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
+    <nav aria-label="Mods">
+      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/" aria-current="page">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero glass" aria-labelledby="title">
+      <div>
+        <div class="hero-id">
+          <img src="/mods/ffxiv/site/art/xivdesktop-icon.webp" alt="" width="192" height="192">
+          <div>
+            <p class="eyebrow">Dalamud plugin · Linux desktop</p>
+            <h1 id="title">XivDesktop</h1>
+          </div>
+        </div>
+        <p class="tagline">Your Linux desktop, inside the game</p>
+        <p class="lede">For the game running under Wine on <strong>Linux</strong>: a launcher, workspaces and a taskbar for your real desktop applications, opened as <strong>windows in the game world</strong>. It draws no windows itself; it is the desktop on top of Ghostty's world panels.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install</a>
+          <a class="btn" href="/mods/ffxiv/term/">Ghostty, which it needs</a>
+          <a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a>
+        </div>
+      </div>
+      <img class="hero-art" src="/mods/ffxiv/site/art/xivdesktop-banner.webp" alt="XivDesktop banner art" width="730" height="380" fetchpriority="high">
+    </section>
+    <div class="status" role="note">
+      <b>Honest status</b>
+      <p>The pure logic (app catalog, palette ranking, calculator, key chords, workspaces) has host-side tests, and the application scanner has been run against a real Linux host. <strong>Nothing has been observed in the game yet</strong>: not the palette, the key chords (including whether Wine delivers the Super key at all), launching against a running Ghostty, workspaces, notifications, or the Umbra widgets. It has test builds only.</p>
+    </div>
+
+    <section id="what" aria-labelledby="what-h">
+      <div class="sec-head"><h2 id="what-h">What it does</h2></div>
+      <div class="prose">
+        <p>Wine maps the Linux root to drive <code>Z:</code>, so the plugin reads your <code>.desktop</code> files and icons straight from the host. When you launch something, <code>ghostty-agent</code> starts it on the host inside a headless Wayland compositor, and Ghostty shows its window as a pet panel beside your character.</p>
+        <p>XivDesktop adds what a desktop has and a terminal command does not: an app catalog with icons, search, favourites and recents; a launcher palette; sway-style key chords; nine workspaces; open and close notifications; and IPC so other plugins and MCP tools can drive it.</p>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-h">
+      <div class="sec-head">
+        <h2 id="features-h">Features</h2>
+        <p>Everything below is built and its logic is host-tested; none of it has been observed in game yet.</p>
+      </div>
+      <div class="grid">
+      <article class="card glass">
+        <h3>Launcher palette</h3>
+        <p><kbd>Super</kbd>+<kbd>D</kbd> or <code>/desktop</code>: one query box over apps, open panels, actions, commands and a calculator, with fuzzy matching and prefixes (<code>a:</code> <code>w:</code> <code>=</code> <code>&gt;</code>). Fully usable without a mouse.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>App grid</h3>
+        <p><code>/desktop apps</code>: an icon grid of the host's applications with search, favourites and recents.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Nine workspaces</h3>
+        <p>Sway style. Every window panel belongs to one; <kbd>Super</kbd>+<kbd>1</kbd>…<kbd>9</kbd> switches and hides the others, <kbd>Super</kbd>+<kbd>Shift</kbd>+number moves a panel.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Panel actions</h3>
+        <p>From the palette: focus, pet or pin, dock to the HUD, minimise, close and reorder, each with a key.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Taskbar and Apps widgets</h3>
+        <p>Two optional <a href="https://github.com/una-xiv/umbra" rel="noopener">Umbra</a> toolbar widgets: an app menu, and a taskbar of the open window panels with the workspace number.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Notifications</h3>
+        <p>A Dalamud notification when a window opens or closes.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>IPC for plugins and MCP</h3>
+        <p><code>XivDesktop.v1.*</code> gates to list windows, launch apps, switch workspaces and search the palette, meant for XivMcp tools.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Keeps the game cursor</h3>
+        <p>It never sets an ImGui cursor of its own, and asks Dalamud to leave the game's cursor alone over its windows.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      </div>
+    </section>
+
+    <section id="screens" aria-labelledby="media-h">
+      <div class="sec-head">
+        <h2 id="media-h">Screenshots and clips</h2>
+        <p>Planned shots. Empty frames are placeholders for screenshots and clips that will be captured in game.</p>
+      </div>
+      <div id="media"><p class="empty">Loading the shot list…</p></div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="sec-head">
+        <h2 id="install-h">Install</h2>
+        <p>Two ways, and both are kept on purpose: one click from the plugin repository, or build it from source and load it as a dev plugin.</p>
+      </div>
+      <div class="paths">
+        <div class="path glass">
+          <h3>One click</h3>
+          <p class="small">Add the repository once; every mod here installs and updates like any other plugin.</p>
+          <div class="repo-url">
+            <code id="repo-url">https://spacegho.st/mods/ffxiv/plugins.json</code>
+            <button class="chip" id="copy" type="button">copy</button>
+          </div>
+          <ol>
+            <li>In game, type <code>/xlsettings</code> → the <b>Experimental</b> tab.</li>
+            <li>Under <b>Custom Plugin Repositories</b>, paste the URL into the empty row, press <b>+</b>, and leave its checkbox ticked.</li>
+            <li><b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivDesktop</b> → <b>Install</b>.</li>
+          </ol>
+          <p class="note">XivDesktop has <b>test builds only</b> so far, and Dalamud hides a testing-only plugin unless you ask: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>. It needs Ghostty too.</p>
+          <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
+        </div>
+        <div class="path glass">
+          <h3>Build it yourself</h3>
+          <p class="small">The dev plugin path: exactly the code in your checkout, no repository, no auto-update. It is how the author runs it, and the honest way to read the code before you trust it.</p>
+          <pre><code>git clone https://github.com/Spaceghost/xivdesktop-dalamud
+cd xivdesktop-dalamud
+tools/install-dev.sh        # or: dotnet build XivDesktop.slnx -c Release</code></pre>
+          <ol>
+          <li>Needs the <b>.NET 10 SDK</b> and Dalamud's reference assemblies, which an XIVLauncher install already has. Rebuild after every Dalamud update.</li>
+          <li><code>tools/install-dev.sh</code> builds Release, stages it outside the checkout, and prints the Wine path. It never edits Dalamud's configuration.</li>
+            <li>In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Dev Plugin Locations</b> → add the path of the built <code>XivDesktop.dll</code> (under Wine, a <code>Z:\…</code> path) → <b>+</b> → <b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>Dev Tools</b> → <b>Installed Dev Plugins</b> → enable <b>XivDesktop</b>. Dev plugins are added disabled.</li>
+            <li>Rebuilt while the game is running? Press the reload arrow on its entry. No relaunch.</li>
+          </ol>
+          <p class="small">If you later switch to the one-click install, disable the dev plugin first so the two copies cannot fight over the same name. The <a href="https://github.com/Spaceghost/xivdesktop-dalamud#readme" rel="noopener">README</a> has the details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="requirements" aria-labelledby="req-h">
+      <div class="sec-head"><h2 id="req-h">Requirements</h2></div>
+      <ul class="plain prose">
+        <li>A <strong>Linux</strong> host running the game through XIVLauncher.Core and Wine, with Dalamud (API level 15).</li>
+        <li><a href="/mods/ffxiv/term/">Ghostty</a>, loaded, with <code>ghostty-agent</code> running with <code>--windows wayland</code>. Without it the launcher still lists apps, and launching is disabled.</li>
+        <li>Optional: <a href="https://github.com/una-xiv/umbra" rel="noopener">Umbra</a> for the Apps and Windows toolbar widgets.</li>
+      </ul>
+    </section>
+
+    <section id="community" aria-labelledby="community-h">
+      <div class="sec-head">
+        <h2 id="community-h">Community screenshots</h2>
+        <p>Screenshots of XivDesktop shared by players. Every one is reviewed by the site owner before it is shown here.</p>
+      </div>
+      <div id="shots" aria-live="polite"><p class="empty">Loading…</p></div>
+      <div class="add glass">
+        <h3>Add yours</h3>
+        <p class="state" id="account-note" role="status"></p>
+        <div id="signed-out">
+          <p>Sharing a screenshot needs a sign-in, so that everything sent to this site comes from an account.</p>
+          <div class="cta">
+            <a class="btn primary" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/xivdesktop/">Sign in with GitHub</a>
+            <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/xivdesktop/">Sign in with FFXIV</a>
+          </div>
+          <p class="small">Signing in with FFXIV needs an XIVAuth account and shares no character.</p>
+        </div>
+        <div id="signed-in" hidden>
+          <form id="upload">
+            <div class="row">
+              <label for="u-file">Screenshot (PNG or JPEG, at most 8 MB)
+                <input id="u-file" name="file" type="file" accept="image/png,image/jpeg" required>
+              </label>
+              <label for="u-credit">Credit (optional, shown with the shot)
+                <input id="u-credit" name="credit" type="text" maxlength="60" autocomplete="off" placeholder="Character name, world">
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="u-send" type="submit">Share screenshot</button>
+              <button class="btn" id="signout" type="button">Sign out</button>
+            </div>
+            <p class="state" id="u-state" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <p class="small">Hide your own name and chat first, and never share a terminal showing tokens or private paths. Metadata is stripped from the image before it is stored. Your upload is linked to your GitHub or XIVAuth account id, which the site owner can see; the public sees only the image and the credit you typed. To have a shot removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+      </div>
+    </section>
+
+    <section id="links" aria-labelledby="links-h">
+      <div class="sec-head"><h2 id="links-h">Links</h2></div>
+      <ul class="linklist">
+        <li><a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud/releases" rel="noopener">Releases</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud/commits/master" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="/mods/ffxiv/term/">Ghostty</a></li>
+        <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> XivDesktop reads your application list from your own disk and talks only to Ghostty on the same machine. It sends nothing anywhere. A desktop window can show private things: look before you share a shot.</p>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
+    <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
+  </footer>
+</div>
+</body>
+</html>

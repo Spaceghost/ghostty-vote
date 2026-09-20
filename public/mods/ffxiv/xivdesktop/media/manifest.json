@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "mod": "xivdesktop",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "palette",
+      "title": "Super+D",
+      "kind": "gif + screenshot",
+      "caption": "The launcher palette opening over the game, a fuzzy query narrowing to an app, Enter launching it.",
+      "files": []
+    },
+    {
+      "id": "app-in-world",
+      "title": "A Browser in Limsa",
+      "kind": "video",
+      "caption": "A desktop application opens as a pet window beside the character, then is pinned to a wall.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "app-grid",
+      "title": "Everything Installed",
+      "kind": "screenshot",
+      "caption": "The app grid with icons, favourites and recents.",
+      "files": []
+    },
+    {
+      "id": "workspaces",
+      "title": "Nine Desks",
+      "kind": "gif",
+      "caption": "Switching workspaces with Super+number: one set of panels hides, another appears.",
+      "files": []
+    },
+    {
+      "id": "taskbar",
+      "title": "The Taskbar",
+      "kind": "screenshot",
+      "caption": "The Umbra Windows widget: workspace number and a strip of open panels, with its right-click menu.",
+      "files": []
+    },
+    {
+      "id": "calculator",
+      "title": "Quick Maths",
+      "kind": "screenshot",
+      "caption": "The palette answering arithmetic with a Calc row.",
+      "files": []
+    },
+    {
+      "id": "settings",
+      "title": "Keybinds and Workspaces",
+      "kind": "screenshot",
+      "caption": "The settings window: general, keybinds, windows and workspaces.",
+      "files": []
+    }
+  ]
+}

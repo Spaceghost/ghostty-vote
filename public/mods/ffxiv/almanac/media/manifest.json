@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "mod": "almanac",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "wizard-gpu",
+      "title": "It Reads Your GPU",
+      "kind": "screenshot",
+      "caption": "The setup wizard on the GPU step: detected card, VRAM, and the budget left beside the game.",
+      "files": []
+    },
+    {
+      "id": "wizard-models",
+      "title": "Models That Fit",
+      "kind": "screenshot",
+      "caption": "Recommended models for the VRAM budget, each with its tool-calling status.",
+      "files": []
+    },
+    {
+      "id": "chat-stream",
+      "title": "Ask the Almanac",
+      "kind": "video",
+      "caption": "A question about tonight's weather at Costa del Sol: tool calls appear, the answer streams in.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "chat-threads",
+      "title": "Threads and Branches",
+      "kind": "screenshot",
+      "caption": "The chat window with its thread list and a branch taken from an earlier message.",
+      "files": []
+    },
+    {
+      "id": "approval",
+      "title": "Still Asks First",
+      "kind": "screenshot",
+      "caption": "The model wants to place a map flag or teleport; XivMcp's approval prompt appears in game.",
+      "files": []
+    },
+    {
+      "id": "benchmark-run",
+      "title": "Benchmark Night",
+      "kind": "gif",
+      "caption": "The benchmark running the suite against a local model, task by task, ending in a score.",
+      "files": []
+    },
+    {
+      "id": "share-confirm",
+      "title": "Exactly What Is Sent",
+      "kind": "screenshot",
+      "caption": "The Share dialog showing the JSON a submission contains, before anything leaves the PC.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FFXIV mods by Spaceghost</title>
+<meta name="description" content="Four open-source Dalamud plugins for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game) and Almanac (local AI for FFXIV).">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FFXIV mods by Spaceghost">
+<meta property="og:description" content="Four open-source Dalamud plugins for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game) and Almanac (local AI for FFXIV).">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
+<!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
+     also fills the media slots from media/manifest.json and the community screenshots. -->
+<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="sitebar">
+    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
+    <nav aria-label="Mods">
+      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero glass" aria-labelledby="title">
+      <div>
+        <p class="eyebrow">Dalamud plugins · open source</p>
+        <h1 id="title">Mods for Final Fantasy XIV</h1>
+        <p class="tagline">Eorzea is a terminal multiplexer</p>
+        <p class="lede">Four plugins by <strong>Johnneylee Jack Rollins</strong> that bring your own computer into the game: a real terminal, your desktop's windows, an MCP server for AI clients, and a local AI that lives on your GPU. Everything is open source, built in public, and runs on your machine.</p>
+        <div class="cta">
+          <a class="btn primary" href="/mods/ffxiv/plugins/">Install from the plugin repository</a>
+          <a class="btn" href="https://github.com/Spaceghost" rel="noopener">Source on GitHub</a>
+        </div>
+      </div>
+      <img class="hero-art" src="/mods/ffxiv/site/art/ghostty-banner.webp" alt="Ghostty for FFXIV: terminal windows floating around an aetheryte crystal over a night sea" width="730" height="380" fetchpriority="high">
+    </section>
+    <div class="status" role="note">
+      <b>Honest status</b>
+      <p>These are early. Most of what these pages describe is built and covered by tests that run outside the game, and much of it has <strong>not yet been verified in game</strong>. Each mod's page says where it stands. In-game screenshots and clips are still to be captured; their slots are marked.</p>
+    </div>
+
+    <section id="mods" aria-labelledby="mods-h">
+      <div class="sec-head"><h2 id="mods-h">The mods</h2></div>
+      <div class="mods">
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/ghostty-banner.webp" alt="Ghostty for FFXIV: terminal windows floating around an aetheryte crystal over a night sea, with a small ghost" width="730" height="380" decoding="async">
+        <div class="in">
+          <div class="id">
+            <img src="/mods/ffxiv/site/art/ghostty-icon.webp" alt="" width="192" height="192">
+            <h2><a href="/mods/ffxiv/term/">Ghostty</a></h2>
+          </div>
+          <p class="tagline">Eorzea is a terminal multiplexer</p>
+          <p>A real terminal in the game world: a glass drop-down, floating windows, screens pinned to walls or following you as pets, full screen, themes, and shells on your own machine.</p>
+          <p><span class="tag unverified">experimental preview</span></p>
+          <p class="links"><a href="/mods/ffxiv/term/">About</a> <a href="/mods/ffxiv/term/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/">Gallery</a> <a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a></p>
+        </div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/xivmcp-banner.webp" alt="XivMcp banner art" width="730" height="380" decoding="async">
+        <div class="in">
+          <div class="id">
+            <img src="/mods/ffxiv/site/art/xivmcp-icon.webp" alt="" width="192" height="192">
+            <h2><a href="/mods/ffxiv/xivmcp/">XivMcp</a></h2>
+          </div>
+          <p class="tagline">An MCP server inside FFXIV</p>
+          <p>A Model Context Protocol server inside the game. AI clients read game state and data over loopback; anything that changes your game waits for your approval in game.</p>
+          <p><span class="tag unverified">not yet observed in game · test builds</span></p>
+          <p class="links"><a href="/mods/ffxiv/xivmcp/">About</a> <a href="https://github.com/Spaceghost/xivmcp-dalamud" rel="noopener">Source</a></p>
+        </div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/xivdesktop-banner.webp" alt="XivDesktop banner art" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in">
+          <div class="id">
+            <img src="/mods/ffxiv/site/art/xivdesktop-icon.webp" alt="" width="192" height="192">
+            <h2><a href="/mods/ffxiv/xivdesktop/">XivDesktop</a></h2>
+          </div>
+          <p class="tagline">Your Linux desktop, inside the game</p>
+          <p>Your Linux desktop inside the game: a keyboard-first launcher, nine workspaces and a taskbar for real application windows shown as panels in the world, on top of Ghostty.</p>
+          <p><span class="tag unverified">not yet observed in game · test builds</span></p>
+          <p class="links"><a href="/mods/ffxiv/xivdesktop/">About</a> <a href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a></p>
+        </div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/almanac-banner.webp" alt="Almanac banner art" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in">
+          <div class="id">
+            <img src="/mods/ffxiv/site/art/almanac-icon.webp" alt="" width="192" height="192">
+            <h2><a href="/mods/ffxiv/almanac/about/">Almanac</a></h2>
+          </div>
+          <p class="tagline">Local AI for FFXIV, on your own GPU</p>
+          <p>Local AI for FFXIV: a setup wizard that fits a model to your GPU, an in-game chat with a model on your own PC using XivMcp's tools, and a benchmark that feeds a public leaderboard.</p>
+          <p><span class="tag unverified">released · not yet verified in game</span></p>
+          <p class="links"><a href="/mods/ffxiv/almanac/about/">About</a> <a href="/mods/ffxiv/almanac/">Leaderboard</a> <a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a></p>
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section id="together" aria-labelledby="together-h">
+      <div class="sec-head">
+        <h2 id="together-h">How they fit together</h2>
+      </div>
+      <div class="prose">
+        <p>Each plugin works alone, and they talk to each other through Dalamud IPC when they are installed side by side. <strong>Ghostty</strong> puts terminals and, on Linux, desktop windows into the world as panels. <strong>XivDesktop</strong> sits on top of it with a launcher, workspaces and a taskbar. <strong>XivMcp</strong> exposes the game to AI clients, with an in-game approval for anything that changes your game. <strong>Almanac</strong> runs a local model and uses XivMcp's tools to answer questions about your game.</p>
+      </div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="sec-head">
+        <h2 id="install-h">Install</h2>
+        <p>One repository for all of them, or build any of them yourself as a dev plugin. Both paths are kept on purpose.</p>
+      </div>
+      <div class="repo-url">
+        <code id="repo-url">https://spacegho.st/mods/ffxiv/plugins.json</code>
+        <button class="chip" id="copy" type="button">copy</button>
+      </div>
+      <p class="prose">In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Custom Plugin Repositories</b> → paste, <b>+</b>, <b>Save and Close</b>. The <a href="/mods/ffxiv/plugins/">plugin repository page</a> walks through it, explains test builds, and covers the build-it-yourself path for every mod.</p>
+    </section>
+
+    <section id="more" aria-labelledby="more-h">
+      <div class="sec-head"><h2 id="more-h">Take part</h2></div>
+      <ul class="linklist">
+        <li><a class="btn" href="/mods/ffxiv/term/vote/">Vote on what Ghostty does next</a></li>
+        <li><a class="btn" href="/mods/ffxiv/term/gallery/">Screenshot gallery</a></li>
+        <li><a class="btn" href="/mods/ffxiv/almanac/">Local model leaderboard</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
+    <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
+  </footer>
+</div>
+</body>
+</html>

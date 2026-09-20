@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "mod": "xivmcp",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "status-window",
+      "title": "The Server at a Glance",
+      "kind": "screenshot",
+      "caption": "The /xivmcp window on the Status tab: endpoint, sessions, masked token and client snippets.",
+      "files": []
+    },
+    {
+      "id": "approval-prompt",
+      "title": "Ask Me First",
+      "kind": "screenshot + gif",
+      "caption": "An AI client asks to teleport; the in-game confirmation shows the tool and its arguments, and the player allows it.",
+      "files": []
+    },
+    {
+      "id": "agent-board",
+      "title": "What My Agents Are Doing",
+      "kind": "gif",
+      "caption": "The Agents tab while a client posts progress, ending in a done notification.",
+      "files": []
+    },
+    {
+      "id": "tools-tab",
+      "title": "Every Tool and Its Tier",
+      "kind": "screenshot",
+      "caption": "The Tools tab: tools by category, with tier and availability.",
+      "files": []
+    },
+    {
+      "id": "claude-code-session",
+      "title": "Claude Code Meets Eorzea",
+      "kind": "video",
+      "caption": "A terminal beside the game: a client asks where an item drops, reads the weather forecast and places a map flag.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "permissions",
+      "title": "Off Until You Say So",
+      "kind": "screenshot",
+      "caption": "Settings, Permissions: Action and Chat tiers off by default, confirmation on.",
+      "files": []
+    },
+    {
+      "id": "umbra-widget",
+      "title": "In the Toolbar",
+      "kind": "screenshot",
+      "caption": "The Umbra widget popup with server status and the agent board.",
+      "files": []
+    }
+  ]
+}

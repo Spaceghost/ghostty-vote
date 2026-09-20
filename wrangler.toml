@@ -15,7 +15,17 @@ routes = [
   # The Dalamud plugin repository and the page explaining how to add it. The listing is
   # assembled by the Worker from each plugin repository's own release assets (src/plugins.js);
   # the page, and the committed fallback listing, are static assets.
-  { pattern = "spacegho.st/mods/ffxiv/plugins*", zone_name = "spacegho.st" }
+  { pattern = "spacegho.st/mods/ffxiv/plugins*", zone_name = "spacegho.st" },
+  # The mods hub (/mods/ffxiv/) and the minisites: Ghostty at term/, XivMcp, XivDesktop
+  # (Almanac's is under almanac/about/, covered above). All static assets.
+  { pattern = "spacegho.st/mods/ffxiv", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/site/*", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/term", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/term/", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/term/media/*", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/xivmcp*", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/xivdesktop*", zone_name = "spacegho.st" }
 ]
 
 # Regenerates public/mods/ffxiv/term/vote/{ideas,version}.json and seed/seed.sql

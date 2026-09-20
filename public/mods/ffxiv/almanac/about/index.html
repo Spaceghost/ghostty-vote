@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Almanac for FFXIV</title>
+<meta name="description" content="Almanac: local AI for Final Fantasy XIV. A setup wizard that fits a model to your GPU, an in-game chat with a model running on your own PC, and a community benchmark that feeds a public leaderboard.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/almanac/about/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Almanac for FFXIV">
+<meta property="og:description" content="Almanac: local AI for Final Fantasy XIV. A setup wizard that fits a model to your GPU, an in-game chat with a model running on your own PC, and a community benchmark that feeds a public leaderboard.">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/almanac/about/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/site/art/almanac-banner.webp">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
+<!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
+     also fills the media slots from media/manifest.json and the community screenshots. -->
+<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body data-mod="almanac" data-name="Almanac" data-media="/mods/ffxiv/almanac/media/manifest.json">
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="sitebar">
+    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
+    <nav aria-label="Mods">
+      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/" aria-current="page">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero glass" aria-labelledby="title">
+      <div>
+        <div class="hero-id">
+          <img src="/mods/ffxiv/site/art/almanac-icon.webp" alt="" width="192" height="192">
+          <div>
+            <p class="eyebrow">Dalamud plugin · local AI</p>
+            <h1 id="title">Almanac</h1>
+          </div>
+        </div>
+        <p class="tagline">Local AI for FFXIV, on your own GPU</p>
+        <p class="lede">An <strong>in-game chat with a model running on your own PC</strong>: Ollama, LM Studio, llama.cpp, or anything with an OpenAI-compatible API. A wizard fits a model to your GPU, XivMcp gives it the game's tools, and a shared benchmark tells everyone which local models are worth their VRAM. No cloud, no Python.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install</a>
+          <a class="btn" href="/mods/ffxiv/almanac/">Model leaderboard</a>
+          <a class="btn" href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a>
+        </div>
+      </div>
+      <img class="hero-art" src="/mods/ffxiv/site/art/almanac-banner.webp" alt="Almanac banner art" width="730" height="380" fetchpriority="high">
+    </section>
+    <div class="status" role="note">
+      <b>Honest status</b>
+      <p>Almanac has a stable release in the plugin repository. Its core logic (model client, MCP client, agent loop, benchmark scorer, setup detection, SQLite store) is unit-tested with fakes. <strong>The plugin has not yet been verified in a running game</strong>: the windows, GPU detection through DXGI on Windows and Wine, SQLite inside Dalamud, the XivMcp connection and live benchmark mode are all still to be observed.</p>
+    </div>
+
+    <section id="what" aria-labelledby="what-h">
+      <div class="sec-head"><h2 id="what-h">What it does</h2></div>
+      <div class="prose">
+        <p>Almanac connects a language model that runs on <em>your</em> machine to the game. You ask a question in game, the model decides which of <a href="/mods/ffxiv/xivmcp/">XivMcp</a>'s tools to call (where am I, what is the weather, what does this recipe need), and the answer streams back into the chat window. Anything that would change your game still goes through XivMcp's in-game approval.</p>
+        <p>Because local models vary wildly, Almanac includes a fixed benchmark of FFXIV tasks. Players who choose to share their results build the <a href="/mods/ffxiv/almanac/">community leaderboard</a>, and the wizard's recommendations come from it.</p>
+        <p>The same repository also holds the Almanac engine, a headless local AI tool runner for Linux machines. Players do not need it.</p>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-h">
+      <div class="sec-head">
+        <h2 id="features-h">Features</h2>
+        <p>Built and unit-tested outside the game; not yet verified in game.</p>
+      </div>
+      <div class="grid">
+      <article class="card glass">
+        <h3>Setup wizard</h3>
+        <p><code>/almanac setup</code> finds model servers on their usual local ports, reads your GPU and VRAM, subtracts what the game needs when both share the card, and recommends models that fit.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>In-game chat</h3>
+        <p><code>/almanac</code> or <code>/almanac &lt;question&gt;</code>: threads kept in SQLite, follow-ups, branching from any message, streaming replies.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Game tools through XivMcp</h3>
+        <p>The agent loop runs in the plugin against your model with a small, standard or full set of XivMcp's tools. XivMcp hands Almanac its own client token over Dalamud IPC, so nothing is copied by hand.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Tool-calling check</h3>
+        <p>Every model shows whether it calls tools natively, through a prompted fallback, or is unknown until you press <b>Test tool calling</b>.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Benchmark</h3>
+        <p><code>/almanac bench</code> runs the <code>ffxiv-core</code> suite with mock game data or live through XivMcp: tool-call validity, answer quality, tokens per second, time to first token and peak VRAM.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Opt-in sharing</h3>
+        <p>Results stay on your PC until you press <b>Share</b> and confirm the exact JSON that will be sent.</p>
+      </article>
+      <article class="card glass">
+        <h3>Leaderboard</h3>
+        <p>Shared results become per-VRAM-tier recommendations on the <a href="/mods/ffxiv/almanac/">public leaderboard</a>, which the wizard reads.</p>
+        <span class="tag ok">released</span>
+      </article>
+      <article class="card glass">
+        <h3>IPC for other plugins</h3>
+        <p><code>Almanac.Ask</code> lets another plugin open the chat with a question.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      </div>
+    </section>
+
+    <section id="screens" aria-labelledby="media-h">
+      <div class="sec-head">
+        <h2 id="media-h">Screenshots and clips</h2>
+        <p>Planned shots. Empty frames are placeholders for screenshots and clips that will be captured in game.</p>
+      </div>
+      <div id="media"><p class="empty">Loading the shot list…</p></div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="sec-head">
+        <h2 id="install-h">Install</h2>
+        <p>Two ways, and both are kept on purpose: one click from the plugin repository, or build it from source and load it as a dev plugin.</p>
+      </div>
+      <div class="paths">
+        <div class="path glass">
+          <h3>One click</h3>
+          <p class="small">Add the repository once; every mod here installs and updates like any other plugin.</p>
+          <div class="repo-url">
+            <code id="repo-url">https://spacegho.st/mods/ffxiv/plugins.json</code>
+            <button class="chip" id="copy" type="button">copy</button>
+          </div>
+          <ol>
+            <li>In game, type <code>/xlsettings</code> → the <b>Experimental</b> tab.</li>
+            <li>Under <b>Custom Plugin Repositories</b>, paste the URL into the empty row, press <b>+</b>, and leave its checkbox ticked.</li>
+            <li><b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>Almanac</b> → <b>Install</b>.</li>
+          </ol>
+          <p class="note">Almanac has a stable release, so it shows under <b>All Plugins</b> straight away. For in-game tools it also needs XivMcp, which has test builds only: tick <b>Get plugin testing builds</b> to see it.</p>
+          <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
+        </div>
+        <div class="path glass">
+          <h3>Build it yourself</h3>
+          <p class="small">The dev plugin path: exactly the code in your checkout, no repository, no auto-update. It is how the author runs it, and the honest way to read the code before you trust it.</p>
+          <pre><code>git clone https://github.com/Spaceghost/almanac-dalamud
+cd almanac-dalamud
+dotnet build dalamud/Almanac.Dalamud.slnx -c Release</code></pre>
+          <ol>
+          <li>Needs the <b>.NET 10 SDK</b> and Dalamud's reference assemblies, which an XIVLauncher install already has; on a machine without them, <code>dalamud/tools/fetch-dalamud.sh</code> downloads the public distribution. Works from a Windows checkout too.</li>
+          <li>The plugin lands outside the checkout, in <code>../almanac-dalamud-build/artifacts/bin/Almanac.Plugin/release/</code>. Point Dalamud at that folder, not at a copy of the DLL alone.</li>
+            <li>In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Dev Plugin Locations</b> → add the path of the built <code>Almanac.dll</code> (under Wine, a <code>Z:\…</code> path) → <b>+</b> → <b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>Dev Tools</b> → <b>Installed Dev Plugins</b> → enable <b>Almanac</b>. Dev plugins are added disabled.</li>
+            <li>Rebuilt while the game is running? Press the reload arrow on its entry. No relaunch.</li>
+          </ol>
+          <p class="small">If you later switch to the one-click install, disable the dev plugin first so the two copies cannot fight over the same name. The <a href="https://github.com/Spaceghost/almanac-dalamud#readme" rel="noopener">README</a> has the details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="requirements" aria-labelledby="req-h">
+      <div class="sec-head"><h2 id="req-h">Requirements</h2></div>
+      <ul class="plain prose">
+        <li>Final Fantasy XIV with <a href="https://goatcorp.github.io/" rel="noopener">XIVLauncher</a> and Dalamud (API level 15), on Windows, or on Linux through XIVLauncher.Core and Wine.</li>
+        <li>A local model server on your PC: Ollama, LM Studio, llama.cpp, KoboldCpp, vLLM, or any OpenAI-compatible URL. A GPU with enough free VRAM for the model beside the game; the wizard works out what fits.</li>
+        <li><a href="/mods/ffxiv/xivmcp/">XivMcp</a> for in-game tools. Without it the chat still works, with no game access.</li>
+      </ul>
+    </section>
+
+    <section id="community" aria-labelledby="community-h">
+      <div class="sec-head">
+        <h2 id="community-h">Community screenshots</h2>
+        <p>Screenshots of Almanac shared by players. Every one is reviewed by the site owner before it is shown here.</p>
+      </div>
+      <div id="shots" aria-live="polite"><p class="empty">Loading…</p></div>
+      <div class="add glass">
+        <h3>Add yours</h3>
+        <p class="state" id="account-note" role="status"></p>
+        <div id="signed-out">
+          <p>Sharing a screenshot needs a sign-in, so that everything sent to this site comes from an account.</p>
+          <div class="cta">
+            <a class="btn primary" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/almanac/about/">Sign in with GitHub</a>
+            <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/almanac/about/">Sign in with FFXIV</a>
+          </div>
+          <p class="small">Signing in with FFXIV needs an XIVAuth account and shares no character.</p>
+        </div>
+        <div id="signed-in" hidden>
+          <form id="upload">
+            <div class="row">
+              <label for="u-file">Screenshot (PNG or JPEG, at most 8 MB)
+                <input id="u-file" name="file" type="file" accept="image/png,image/jpeg" required>
+              </label>
+              <label for="u-credit">Credit (optional, shown with the shot)
+                <input id="u-credit" name="credit" type="text" maxlength="60" autocomplete="off" placeholder="Character name, world">
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="u-send" type="submit">Share screenshot</button>
+              <button class="btn" id="signout" type="button">Sign out</button>
+            </div>
+            <p class="state" id="u-state" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <p class="small">Hide your own name and chat first, and never share a terminal showing tokens or private paths. Metadata is stripped from the image before it is stored. Your upload is linked to your GitHub or XIVAuth account id, which the site owner can see; the public sees only the image and the credit you typed. To have a shot removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+      </div>
+    </section>
+
+    <section id="links" aria-labelledby="links-h">
+      <div class="sec-head"><h2 id="links-h">Links</h2></div>
+      <ul class="linklist">
+        <li><a class="btn" href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/almanac-dalamud/releases" rel="noopener">Releases</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/almanac-dalamud/blob/master/CHANGELOG.md" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="/mods/ffxiv/almanac/">Model leaderboard</a></li>
+        <li><a class="btn" href="/mods/ffxiv/almanac/schema/results.v1.json">Results schema</a></li>
+        <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> Your chats go to the model server you chose, on your own machine, and stay in a SQLite file on your PC. The only thing Almanac fetches from this site is the public model recommendations. A benchmark result is sent only when you press Share and confirm it: GPU model, VRAM, rounded RAM, OS family, backend, model and scores, with no names, paths or addresses.</p>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
+    <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
+  </footer>
+</div>
+</body>
+</html>

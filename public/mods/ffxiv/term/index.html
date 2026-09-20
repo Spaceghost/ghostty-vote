@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ghostty for FFXIV</title>
+<meta name="description" content="Ghostty for FFXIV: a real terminal inside Final Fantasy XIV. A glass drop-down, floating windows, and screens pinned in the world or following you as pets, connected to shells on your own machine.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/term/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ghostty for FFXIV">
+<meta property="og:description" content="Ghostty for FFXIV: a real terminal inside Final Fantasy XIV. A glass drop-down, floating windows, and screens pinned in the world or following you as pets, connected to shells on your own machine.">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/term/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
+<!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
+     also fills the media slots from media/manifest.json and the community screenshots. -->
+<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body data-mod="ghostty" data-name="Ghostty" data-media="/mods/ffxiv/term/media/manifest.json">
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="sitebar">
+    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
+    <nav aria-label="Mods">
+      <a class="chip" href="/mods/ffxiv/term/" aria-current="page">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero glass" aria-labelledby="title">
+      <div>
+        <div class="hero-id">
+          <img src="/mods/ffxiv/site/art/ghostty-icon.webp" alt="" width="192" height="192">
+          <div>
+            <p class="eyebrow">Dalamud plugin · terminal</p>
+            <h1 id="title">Ghostty</h1>
+          </div>
+        </div>
+        <p class="tagline">Eorzea is a terminal multiplexer</p>
+        <p class="lede">A <strong>real terminal</strong> inside Final Fantasy XIV. Drop it down over the game, float it as a window, pin it to a wall in Limsa, or let it follow you as a pet. The shells are your own, on your own machine.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install</a>
+          <a class="btn" href="/mods/ffxiv/term/vote/">Vote on features</a>
+          <a class="btn" href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a>
+        </div>
+      </div>
+      <img class="hero-art" src="/mods/ffxiv/site/art/ghostty-banner.webp" alt="Ghostty for FFXIV: terminal windows floating around an aetheryte crystal over a night sea, with a small ghost" width="730" height="380" fetchpriority="high">
+    </section>
+    <div class="status" role="note">
+      <b>Honest status</b>
+      <p><strong>Experimental developer preview.</strong> An independent project, not an official Ghostty project, and not in the official Dalamud plugin list. World placement, animation, lighting and occlusion are implemented but still need validation in game; Windows (ConPTY), macOS and controller support are not certified by the Linux host tests. The in-game screenshots and clips below have not been captured yet.</p>
+    </div>
+
+    <section id="what" aria-labelledby="what-h">
+      <div class="sec-head"><h2 id="what-h">What it does</h2></div>
+      <div class="prose">
+        <p>Ghostty draws a full terminal emulator inside the game, using <a href="https://github.com/ghostty-org/ghostty" rel="noopener">libghostty-vt</a> for the terminal state and Dalamud's ImGui draw lists for rendering. It is a real VT: run a shell, <code>tmux</code>, <code>htop</code>, <code>nvim</code>, or <code>ssh</code> somewhere else.</p>
+        <p>The plugin never opens a shell on its own. Under Wine on Linux or macOS it connects to <code>ghostty-agent</code>, a small separate process <em>you</em> start on the same machine, which hosts the sessions and keeps them alive while the game restarts. On native Windows it is designed to use a local ConPTY instead.</p>
+        <p><code>/term</code> toggles it; <code>/tomestone</code> and <code>/tome</code> are aliases. Everything about how it looks and behaves is Lua you can override.</p>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-h">
+      <div class="sec-head">
+        <h2 id="features-h">Features</h2>
+        <p>Built and covered by host-side tests unless a card says otherwise. Host tests do not prove in-game behaviour, so the tags say what is still unverified.</p>
+      </div>
+      <div class="grid">
+      <article class="card glass">
+        <h3>Glass drop-down</h3>
+        <p>A Quake-style terminal that slides down over the game with <kbd>Ctrl</kbd>+<kbd>`</kbd>, with tabs, zoom, selection and copy and paste.</p>
+      </article>
+      <article class="card glass">
+        <h3>Floating windows</h3>
+        <p><code>/term window</code> opens terminals as ordinary in-game windows, each with its own profile: a POSIX shell through the agent, optional tmux, PowerShell or cmd.</p>
+      </article>
+      <article class="card glass">
+        <h3>Pins in the world</h3>
+        <p><code>/term pin here</code> places a screen where you stand; <kbd>Alt</kbd>+drag carries it, <kbd>Shift</kbd> snaps it flat against a surface, and orbit pins circle your character.</p>
+        <span class="tag unverified">needs validation in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Pets</h3>
+        <p><code>/term pet</code> makes a screen that follows you around, trails behind while you run, and settles when you stop.</p>
+        <span class="tag unverified">needs validation in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Full screen</h3>
+        <p>Double-click a world screen and it flies to the centre of your view; again to send it back to where it lives.</p>
+        <span class="tag unverified">needs validation in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Lives in the world</h3>
+        <p>Backlight, time-of-day and weather tint, occlusion behind scenery, and a derez when combat starts. Screen shadows are experimental, off by default, and depend on a game function that a patch can break.</p>
+        <span class="tag unverified">experimental</span>
+      </article>
+      <article class="card glass">
+        <h3>Themes and Lua config</h3>
+        <p><code>/term config</code> for settings; copy <code>init.lua</code> or <code>keymap.lua</code> into the plugin config folder to override anything. <code>/term reload</code> applies it live.</p>
+      </article>
+      <article class="card glass">
+        <h3>Visual bell</h3>
+        <p>Five bell styles ripple from your character when a terminal rings. <code>/term bell demo</code> plays them all.</p>
+      </article>
+      <article class="card glass">
+        <h3>In-game AI: /term ask</h3>
+        <p>Ask a question from the chat box and a pet terminal opens with the answer streaming in, from your own local assistant through Almanac and XivMcp.</p>
+        <span class="tag unverified">in development</span>
+      </article>
+      <article class="card glass">
+        <h3>Desktop windows in the world</h3>
+        <p>On Linux, the agent can run a headless Wayland compositor and show real application windows as world panels. XivDesktop builds a launcher on top of it.</p>
+        <span class="tag unverified">in development</span>
+      </article>
+      <article class="card glass">
+        <h3>Screenshot sharing</h3>
+        <p>A showcase mode (<code>/term showcase</code>) for clean shots, and a moderated <a href="/mods/ffxiv/term/gallery/">gallery</a> to share them.</p>
+      </article>
+      <article class="card glass">
+        <h3>Controller and toolbar</h3>
+        <p>Tap, hold and double-tap gestures on a controller button; a server info bar entry; and an optional <a href="https://github.com/una-xiv/umbra" rel="noopener">Umbra</a> toolbar widget listing every terminal. The DualSense Create-button option is unverified under Wine.</p>
+        <span class="tag unverified">partly unverified</span>
+      </article>
+      </div>
+    </section>
+
+    <section id="screens" aria-labelledby="media-h">
+      <div class="sec-head">
+        <h2 id="media-h">Screenshots and clips</h2>
+        <p>The shot list is planned: each slot below names a shot that will be captured in game. Empty frames are placeholders, not broken images.</p>
+      </div>
+      <div id="video"></div>
+      <div id="media"><p class="empty">Loading the shot list…</p></div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="sec-head">
+        <h2 id="install-h">Install</h2>
+        <p>Two ways, and both are kept on purpose: one click from the plugin repository, or build it from source and load it as a dev plugin.</p>
+      </div>
+      <div class="paths">
+        <div class="path glass">
+          <h3>One click</h3>
+          <p class="small">Add the repository once; every mod here installs and updates like any other plugin.</p>
+          <div class="repo-url">
+            <code id="repo-url">https://spacegho.st/mods/ffxiv/plugins.json</code>
+            <button class="chip" id="copy" type="button">copy</button>
+          </div>
+          <ol>
+            <li>In game, type <code>/xlsettings</code> → the <b>Experimental</b> tab.</li>
+            <li>Under <b>Custom Plugin Repositories</b>, paste the URL into the empty row, press <b>+</b>, and leave its checkbox ticked.</li>
+            <li><b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>Ghostty</b> → <b>Install</b>.</li>
+          </ol>
+          <p class="note">If <b>Ghostty</b> is not in the installer list yet, it has not cut its first release into the repository; it appears by itself the day it does. Until then, build it yourself. You still need <code>ghostty-agent</code> running for a POSIX shell.</p>
+          <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
+        </div>
+        <div class="path glass">
+          <h3>Build it yourself</h3>
+          <p class="small">The dev plugin path: exactly the code in your checkout, no repository, no auto-update. It is how the author runs it, and the honest way to read the code before you trust it.</p>
+          <pre><code>git clone https://github.com/Spaceghost/ghostty-dalamud
+cd ghostty-dalamud
+tools/fetch-vendor.sh
+tools/build.sh
+build/dist/ghostty-agent --listen 127.0.0.1:7777 &amp;
+tools/install-dev.sh</code></pre>
+          <ol>
+          <li>The complete build needs <b>Linux</b>: Git, Bash, a C compiler, Make, Python 3.10+, curl, and the Zig and .NET SDK versions named in <code>toolchain.env</code>. Dependencies are fetched at pinned revisions and verified.</li>
+          <li><code>tools/install-dev.sh</code> stages the plugin and prints the Wine <code>Z:</code> path to add. The loadable plugin is the whole <code>build/dist/GhosttyDalamud/</code> folder: keep the DLLs, manifest and <code>lua/</code> together.</li>
+            <li>In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Dev Plugin Locations</b> → add the path of the built <code>GhosttyDalamud.dll</code> (under Wine, a <code>Z:\…</code> path) → <b>+</b> → <b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>Dev Tools</b> → <b>Installed Dev Plugins</b> → enable <b>Ghostty</b>. Dev plugins are added disabled.</li>
+            <li>Rebuilt while the game is running? Press the reload arrow on its entry. No relaunch.</li>
+          </ol>
+          <p class="small">If you later switch to the one-click install, disable the dev plugin first so the two copies cannot fight over the same name. The <a href="https://github.com/Spaceghost/ghostty-dalamud#readme" rel="noopener">README</a> has the details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="requirements" aria-labelledby="req-h">
+      <div class="sec-head"><h2 id="req-h">Requirements</h2></div>
+      <ul class="plain prose">
+        <li>Final Fantasy XIV with <a href="https://goatcorp.github.io/" rel="noopener">XIVLauncher</a> and Dalamud (API level 15).</li>
+        <li>Linux or macOS under Wine: <code>ghostty-agent</code> running on the same machine. The agent stream is <strong>not encrypted</strong>; keep it on loopback (the default) or behind an <code>ssh -L</code> tunnel.</li>
+        <li>Native Windows: designed to use a local ConPTY with no agent. Not yet validated on Windows.</li>
+        <li>Optional: <a href="https://github.com/una-xiv/umbra" rel="noopener">Umbra</a> for the toolbar widget. The plugin does not need it.</li>
+      </ul>
+    </section>
+
+    <section id="community" aria-labelledby="community-h">
+      <div class="sec-head">
+        <h2 id="community-h">Community screenshots</h2>
+        <p>Screenshots of Ghostty shared by players. Every one is reviewed by the site owner before it is shown here.</p>
+      </div>
+      <div id="shots" aria-live="polite"><p class="empty">Loading…</p></div>
+      <div class="add glass">
+        <h3>Add yours</h3>
+        <p class="state" id="account-note" role="status"></p>
+        <div id="signed-out">
+          <p>Sharing a screenshot needs a sign-in, so that everything sent to this site comes from an account.</p>
+          <div class="cta">
+            <a class="btn primary" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/term/">Sign in with GitHub</a>
+            <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/term/">Sign in with FFXIV</a>
+          </div>
+          <p class="small">Signing in with FFXIV needs an XIVAuth account and shares no character.</p>
+        </div>
+        <div id="signed-in" hidden>
+          <form id="upload">
+            <div class="row">
+              <label for="u-file">Screenshot (PNG or JPEG, at most 8 MB)
+                <input id="u-file" name="file" type="file" accept="image/png,image/jpeg" required>
+              </label>
+              <label for="u-credit">Credit (optional, shown with the shot)
+                <input id="u-credit" name="credit" type="text" maxlength="60" autocomplete="off" placeholder="Character name, world">
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="u-send" type="submit">Share screenshot</button>
+              <button class="btn" id="signout" type="button">Sign out</button>
+            </div>
+            <p class="state" id="u-state" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <p class="small">Hide your own name and chat first, and never share a terminal showing tokens or private paths. Metadata is stripped from the image before it is stored. Your upload is linked to your GitHub or XIVAuth account id, which the site owner can see; the public sees only the image and the credit you typed. To have a shot removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+      </div>
+    </section>
+
+    <section id="links" aria-labelledby="links-h">
+      <div class="sec-head"><h2 id="links-h">Links</h2></div>
+      <ul class="linklist">
+        <li><a class="btn" href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/ghostty-dalamud/releases" rel="noopener">Releases</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/ghostty-dalamud/commits/master" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="/mods/ffxiv/term/vote/">Vote on features</a></li>
+        <li><a class="btn" href="/mods/ffxiv/term/gallery/">Screenshot gallery</a></li>
+        <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> Ghostty runs on your machine and talks only to the agent you started. It does not fetch anything in the background; its vote link opens this site in your browser, and a screenshot is sent here only when you choose to share it. A terminal can show private things: look before you share a shot.</p>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
+    <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
+  </footer>
+</div>
+</body>
+</html>

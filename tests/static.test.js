@@ -17,6 +17,10 @@ function walk(dir, prefix = '') {
   });
 }
 
+// A captured screenshot or clip: anything in a mod's media/ folder except its manifest.
+const MEDIA_DIRS = { ghostty: 'mods/ffxiv/term/media/', xivmcp: 'mods/ffxiv/xivmcp/media/', xivdesktop: 'mods/ffxiv/xivdesktop/media/', almanac: 'mods/ffxiv/almanac/media/' };
+const isMediaFile = (f) => Object.values(MEDIA_DIRS).some((d) => f.startsWith(d) && f !== d + 'manifest.json');
+
 test('committed ideas.json, version.json and seed.sql match data/catalogue.json', () => {
   for (const [path, body] of Object.entries(buildOutputs(catalogue(), buildSeedSql))) {
     assert.equal(read(path), body, `${path} is stale; run node scripts/build.js`);
@@ -62,13 +66,18 @@ test('version.json lets a client count new ideas statically', () => {
 test('public/ holds only the site, at its real URL paths', () => {
   assert.equal(BASE, '/mods/ffxiv/term/vote/');
   assert.equal(PUBLIC_URL, 'https://spacegho.st/mods/ffxiv/term/vote/');
-  assert.deepEqual(walk('public/').sort(), [
+  // Screenshots and clips dropped into a mod's media/ folder are not listed here: the
+  // minisite test below holds them to their manifest instead (docs/MEDIA.md).
+  assert.deepEqual(walk('public/').filter((f) => !isMediaFile(f)).sort(), [
     '_headers',
+    'mods/ffxiv/almanac/about/index.html',
     'mods/ffxiv/almanac/almanac.css',
     'mods/ffxiv/almanac/almanac.js',
     'mods/ffxiv/almanac/index.html',
+    'mods/ffxiv/almanac/media/manifest.json',
     'mods/ffxiv/almanac/schema/recommendations.v1.json',
     'mods/ffxiv/almanac/schema/results.v1.json',
+    'mods/ffxiv/index.html',
     'mods/ffxiv/plugins.json',
     'mods/ffxiv/plugins/icons/ghostty-banner.png',
     'mods/ffxiv/plugins/icons/ghostty.png',
@@ -79,9 +88,21 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/plugins/index.html',
     'mods/ffxiv/plugins/plugins.css',
     'mods/ffxiv/plugins/plugins.js',
+    'mods/ffxiv/site/art/almanac-banner.webp',
+    'mods/ffxiv/site/art/almanac-icon.webp',
+    'mods/ffxiv/site/art/ghostty-banner.webp',
+    'mods/ffxiv/site/art/ghostty-icon.webp',
+    'mods/ffxiv/site/art/xivdesktop-banner.webp',
+    'mods/ffxiv/site/art/xivdesktop-icon.webp',
+    'mods/ffxiv/site/art/xivmcp-banner.webp',
+    'mods/ffxiv/site/art/xivmcp-icon.webp',
+    'mods/ffxiv/site/site.css',
+    'mods/ffxiv/site/site.js',
     'mods/ffxiv/term/gallery/gallery.css',
     'mods/ffxiv/term/gallery/gallery.js',
     'mods/ffxiv/term/gallery/index.html',
+    'mods/ffxiv/term/index.html',
+    'mods/ffxiv/term/media/manifest.json',
     'mods/ffxiv/term/vote/admin/admin.js',
     'mods/ffxiv/term/vote/admin/analytics.css',
     'mods/ffxiv/term/vote/admin/analytics.js',
@@ -94,6 +115,10 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/term/vote/version.json',
     'mods/ffxiv/term/vote/vote.css',
     'mods/ffxiv/term/vote/vote.js',
+    'mods/ffxiv/xivdesktop/index.html',
+    'mods/ffxiv/xivdesktop/media/manifest.json',
+    'mods/ffxiv/xivmcp/index.html',
+    'mods/ffxiv/xivmcp/media/manifest.json',
   ]);
 });
 
@@ -248,4 +273,111 @@ test('the published results schema matches the shared copy and the generated Wor
   // ALMANAC_SHARED_SCHEMA: the benchmark suite's copy of the schema, when it is checked out beside this one
   const shared = process.env.ALMANAC_SHARED_SCHEMA;
   if (shared && existsSync(shared)) assert.deepEqual(JSON.parse(readFileSync(shared, 'utf8')), published, 'shared schema changed: copy it into public/mods/ffxiv/almanac/schema/');
+});
+
+// ---- the mods hub and the four minisites -------------------------------------------------
+const MINISITES = {
+  ghostty: 'mods/ffxiv/term/index.html', xivmcp: 'mods/ffxiv/xivmcp/index.html',
+  xivdesktop: 'mods/ffxiv/xivdesktop/index.html', almanac: 'mods/ffxiv/almanac/about/index.html',
+};
+
+test('hub and minisites: static, shared stylesheet and script, no third-party requests, honest and credited', () => {
+  const files = walk('public/');
+  const js = read('public/mods/ffxiv/site/site.js');
+  const css = read('public/mods/ffxiv/site/site.css');
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) assert.ok(!js.includes(sink), sink);
+  assert.ok(!/[^\t\n\x20-\x7e]/.test(js), 'site.js is plain ASCII');
+  assert.ok(!/https?:\/\//.test(css) && !/@import/.test(css), 'site.css fetches nothing from elsewhere');
+  assert.ok(/prefers-color-scheme: light/.test(css) && /data-theme="light"/.test(css) && /prefers-reduced-motion/.test(css) && /:focus-visible/.test(css));
+  // Uploads go only to the signed-in endpoint, with the session cookie; never to the anonymous one.
+  assert.ok(js.includes("'shots/upload?mod='") && !js.includes("api/upload"));
+  const pages = { hub: 'mods/ffxiv/index.html', ...MINISITES };
+  for (const [id, path] of Object.entries(pages)) {
+    const html = read('public/' + path);
+    assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html), path + ' has no inline code');
+    assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/site/site.js', '/mods/ffxiv/term/vote/beacon.js'], path);
+    assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((m) => m[1]), ['/mods/ffxiv/site/site.css'], path + ' uses the one shared stylesheet');
+    assert.ok(!/fonts\.googleapis|fonts\.gstatic/.test(html), path + ' uses system fonts');
+    for (const ref of html.matchAll(/\s(?:src|href)="(\/mods\/[^"]+)"/g)) {
+      if (ref[1].startsWith('/mods/ffxiv/term/vote/api/auth/')) continue; // Worker routes, not files
+      const p = ref[1].slice(1).split('#')[0];
+      assert.ok(files.includes(p + (p.endsWith('/') ? 'index.html' : '')), path + ': ' + ref[1] + ' exists in public/');
+    }
+    for (const img of html.matchAll(/<img [^>]*>/g)) assert.ok(/ alt="/.test(img[0]) && / width="\d+"/.test(img[0]) && / height="\d+"/.test(img[0]), path + ': ' + img[0]);
+    assert.ok(html.includes('Johnneylee Jack Rollins') && html.includes('https://github.com/Spaceghost'), path + ' credits the author');
+    assert.ok(html.includes('https://spacegho.st/mods/ffxiv/plugins.json') && html.includes('href="/mods/ffxiv/plugins/"'), path + ' names the repository');
+    assert.ok(/name="viewport"/.test(html) && html.includes('id="main"') && html.includes('class="skip"'));
+    assert.ok(html.includes('href="/mods/ffxiv/term/vote/privacy/"'), path + ' links what the site counts');
+    assert.ok(/not yet been (?:verified|observed)|Nothing has been observed|need validation in game/.test(html), path + ' says what is unverified');
+    if (id === 'hub') {
+      for (const href of ['/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/almanac/about/', '/mods/ffxiv/almanac/', '/mods/ffxiv/term/vote/', '/mods/ffxiv/term/gallery/']) {
+        assert.ok(html.includes(`href="${href}"`), 'hub links ' + href);
+      }
+      continue;
+    }
+    assert.ok(html.includes(`<body data-mod="${id}"`) && html.includes(`data-media="/${MEDIA_DIRS[id]}manifest.json"`), path);
+    for (const needle of ['Dev Plugin Locations', 'Custom Plugin Repositories', 'id="install"', 'id="requirements"', 'id="screens"', 'id="community"', 'id="media"', 'id="shots"']) assert.ok(html.includes(needle), path + ': ' + needle);
+    // The upload control is hidden until site.js has seen a session; signed-out visitors get the two sign-in links.
+    assert.match(html, /<div id="signed-in" hidden>\s*<form id="upload">/);
+    const back = '/' + path.replace(/index\.html$/, '');
+    assert.ok(html.includes(`href="/mods/ffxiv/term/vote/api/auth/github/start?return=${back}"`) && html.includes(`href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=${back}"`), path + ' sign-in links');
+    assert.ok(html.includes('Your upload is linked to your GitHub or XIVAuth account id, which the site owner can see'), path);
+    assert.ok(!/anonym/i.test(html), path + ' makes no anonymity claim');
+  }
+  assert.ok(read('public/mods/ffxiv/almanac/index.html').includes('href="/mods/ffxiv/almanac/about/"'), 'the leaderboard links its minisite');
+});
+
+test('media manifests: every slot is named, every listed file exists beside the manifest, and nothing unlisted is published', () => {
+  const files = walk('public/');
+  const NAME = /^[a-z0-9][a-z0-9._-]{0,80}\.(webp|avif|jpg|jpeg|png|mp4|webm)$/;
+  for (const [id, dir] of Object.entries(MEDIA_DIRS)) {
+    const m = JSON.parse(read('public/' + dir + 'manifest.json'));
+    assert.equal(m.version, 1);
+    assert.equal(m.mod, id);
+    assert.ok(Array.isArray(m.slots) && m.slots.length >= 5, dir);
+    const listed = new Set();
+    const check = (f, where) => {
+      for (const name of [f.src, f.poster, ...(f.sizes || []).map((s) => s.src)].filter((n) => n !== undefined && n !== null)) {
+        assert.match(name, NAME, where + ': ' + name);
+        assert.ok(files.includes(dir + name), where + ': ' + name + ' is not in public/' + dir);
+        listed.add(dir + name);
+      }
+      assert.ok(f.type === 'image' || f.type === 'video', where + ': type');
+      assert.ok(Number.isInteger(f.width) && Number.isInteger(f.height) && f.width > 0 && f.height > 0, where + ': width and height keep the layout from jumping');
+      if (f.type === 'image') assert.ok(typeof f.alt === 'string' && f.alt.length > 0, where + ': alt');
+    };
+    const ids = m.slots.map((s) => s.id);
+    assert.equal(new Set(ids).size, ids.length, dir + ' slot ids are unique');
+    for (const s of m.slots) {
+      assert.match(s.id, /^[a-z0-9-]+$/);
+      assert.ok(s.title && s.kind && s.caption && Array.isArray(s.files), dir + s.id);
+      s.files.forEach((f) => check(f, dir + s.id));
+    }
+    if (m.video && m.video.file) check(m.video.file, dir + 'video');
+    for (const f of files.filter((x) => x.startsWith(dir) && x !== dir + 'manifest.json')) {
+      assert.ok(listed.has(f), f + ' is not listed in its manifest');
+      assert.ok(statSync(new URL('public/' + f, root)).size <= 25 * 1024 * 1024, f + ' is over the 25 MiB static asset limit');
+    }
+  }
+  // Ghostty's slots are the planned shot list, in order.
+  const ghostty = JSON.parse(read('public/mods/ffxiv/term/media/manifest.json'));
+  assert.equal(ghostty.slots[0].id, 'hero-costa-night');
+  assert.ok(ghostty.slots.length === 16 && ghostty.video.cuts.length === 8);
+});
+
+test('_headers and routes cover the hub and minisites without stacking a second CSP on the older pages', () => {
+  const blocks = read('public/_headers').split(/\n(?=\/)/);
+  for (const path of ['/mods/ffxiv/', '/mods/ffxiv/site/*', '/mods/ffxiv/term/', '/mods/ffxiv/term/media/*', '/mods/ffxiv/xivmcp/*', '/mods/ffxiv/xivdesktop/*']) {
+    const block = blocks.find((b) => b.startsWith(path + '\n'));
+    assert.ok(block, path);
+    const csp = block.match(/^\s+Content-Security-Policy: (.+)$/m)[1].split(';').map((d) => d.trim());
+    for (const d of ["default-src 'none'", "script-src 'self'", "style-src 'self'", "connect-src 'self'", "img-src 'self' data:", "media-src 'self'", "frame-ancestors 'none'", "base-uri 'none'"]) assert.ok(csp.includes(d), path + ' ' + d);
+    assert.ok(!/unsafe-inline|nonce-|https:/.test(csp.join(';')), path);
+  }
+  assert.ok(!blocks.some((b) => /^\/mods\/ffxiv\/\*\n|^\/mods\/ffxiv\/term\/\*\n|^\/\*\n/.test(b)), 'no rule broad enough to reach the vote, gallery or plugins pages');
+  assert.match(blocks.find((b) => b.startsWith('/mods/ffxiv/almanac/*\n')), /media-src 'self'/);
+  const toml = read('wrangler.toml');
+  for (const pattern of ['spacegho.st/mods/ffxiv', 'spacegho.st/mods/ffxiv/', 'spacegho.st/mods/ffxiv/site/*', 'spacegho.st/mods/ffxiv/term', 'spacegho.st/mods/ffxiv/term/', 'spacegho.st/mods/ffxiv/term/media/*', 'spacegho.st/mods/ffxiv/xivmcp*', 'spacegho.st/mods/ffxiv/xivdesktop*']) {
+    assert.ok(toml.includes(`{ pattern = "${pattern}", zone_name = "spacegho.st" }`), pattern);
+  }
 });

@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "mod": "ghostty",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "hero-costa-night",
+      "title": "A Terminal Under the Stars",
+      "kind": "video + screenshot",
+      "caption": "Slow 20 s orbit from the showcase camera: screens glow against the night sea and light your face. Then a still from shot 1.",
+      "where": "Costa del Sol, the beach below the villa, Eastern La Noscea.",
+      "files": []
+    },
+    {
+      "id": "dropdown-limsa",
+      "title": "The Drop from Above",
+      "kind": "gif + screenshot",
+      "caption": "The glass dropdown sliding down, switching tabs with the icon bar, closing again. A still with the tab bar in focus.",
+      "where": "Aftcastle, facing the harbour, Limsa Lominsa Upper Decks.",
+      "files": []
+    },
+    {
+      "id": "wench-pets-night",
+      "title": "Last Call at the Drowning Wench",
+      "kind": "screenshot",
+      "caption": "Over-the-shoulder still: pets glowing among the lanterns. A second still mid bell ripple (/term bell aura).",
+      "where": "The Drowning Wench terrace, lanterns behind you, Limsa Lominsa Upper Decks.",
+      "files": []
+    },
+    {
+      "id": "arcanist-tomestone",
+      "title": "The Arcanist's Tome",
+      "kind": "gif",
+      "caption": "Character draws the glowing device, taps while you type, puts it away on close.",
+      "where": "Arcanists' Guild, by the reading tables, Limsa Lominsa Lower Decks.",
+      "files": []
+    },
+    {
+      "id": "drydocks-drag",
+      "title": "Dockside Construction",
+      "kind": "video",
+      "caption": "Pick up a screen, carry it through the air, snap it onto the dock wall, resize to fit. 25 s.",
+      "where": "Moraby Drydocks, the pier beside the aetheryte, Lower La Noscea.",
+      "files": []
+    },
+    {
+      "id": "summerford-walkup",
+      "title": "Golden Hour at Summerford",
+      "kind": "gif",
+      "caption": "Run down the path with pets trailing and settling, then click the pinned screen: the character walks up and it floats out to meet you.",
+      "where": "Summerford Farms, the path between the fields, Middle La Noscea.",
+      "files": []
+    },
+    {
+      "id": "grotto-depth",
+      "title": "Light in the Grotto",
+      "kind": "screenshot + gif",
+      "caption": "Walk behind the pillar so the screen hides behind the rock and your character stays in front; the screen's light on the cave wall.",
+      "where": "Seasong Grotto, inside the cave mouth, Middle La Noscea.",
+      "files": []
+    },
+    {
+      "id": "aleport-orbit",
+      "title": "Circling Aleport",
+      "kind": "video",
+      "caption": "Two screens orbiting you at sunset while the camera pulls back. 15 s.",
+      "where": "The cliffs above Aleport, sea behind, Western La Noscea.",
+      "files": []
+    },
+    {
+      "id": "rain-derez",
+      "title": "Storm Warning",
+      "kind": "gif",
+      "caption": "Screens tinted by the rain; pull a mob and the screens derez in scanlines, then return when combat ends.",
+      "where": "Near the Moraby Bay coast, low-level mobs, Lower La Noscea.",
+      "files": []
+    },
+    {
+      "id": "fullscreen-fly",
+      "title": "Into the Screen",
+      "kind": "gif",
+      "caption": "Double-click the screen: it flies to the centre of the view; double-click again to send it back.",
+      "where": "Anywhere with a pinned screen at eye height, Limsa Lominsa Upper Decks.",
+      "files": []
+    },
+    {
+      "id": "mist-office",
+      "title": "A Home Office in Mist",
+      "kind": "screenshot",
+      "caption": "A still of a wall of terminals at night; a second with shadows on if they render.",
+      "where": "A quiet plot's garden wall (after the quest Where the Heart Is (Mist)), Mist.",
+      "files": []
+    },
+    {
+      "id": "bell-presets",
+      "title": "Five Bells",
+      "kind": "gif",
+      "caption": "All five bell styles rippling from your character in turn, captions included.",
+      "where": "Moraby Drydocks plaza at night, Lower La Noscea.",
+      "files": []
+    },
+    {
+      "id": "taskbar-infobar",
+      "title": "Every Terminal at a Glance",
+      "kind": "screenshot",
+      "caption": "Crop of the toolbar with the popup listing every terminal.",
+      "where": "Aetheryte Plaza (HUD visible), Limsa Lominsa Lower Decks.",
+      "files": []
+    },
+    {
+      "id": "settings-tour",
+      "title": "Make It Yours",
+      "kind": "screenshot",
+      "caption": "One still per tab, same window size.",
+      "files": []
+    },
+    {
+      "id": "assistant-ask",
+      "title": "Ask the Almanac",
+      "kind": "gif",
+      "caption": "A pet terminal opens with the question, the answer streams in, the agent board shows progress.",
+      "where": "Aftcastle bench, Limsa Lominsa Upper Decks.",
+      "files": []
+    },
+    {
+      "id": "controller",
+      "title": "Couch Mode",
+      "kind": "gif",
+      "caption": "Tap Create to open, hold to step through terminals, double-tap to step back, with a controller overlay if possible.",
+      "files": []
+    }
+  ],
+  "video": {
+    "title": "Ghostty for FFXIV: the tour",
+    "length": "about 75 s, 1080p60, music optional, no voice",
+    "caption": "The homepage video, cut from the clips below.",
+    "cuts": [
+      {
+        "t": "0-8 s",
+        "quest": "hero-costa-night",
+        "note": "Open on the night beach, screens glowing. Title: Ghostty for FFXIV."
+      },
+      {
+        "t": "8-18 s",
+        "quest": "dropdown-limsa",
+        "note": "Ctrl+` drops the glass terminal over Limsa. Caption: Eorzea is a terminal multiplexer."
+      },
+      {
+        "t": "18-30 s",
+        "quest": "drydocks-drag",
+        "note": "Carry a screen and snap it to the dock. Caption: put screens anywhere."
+      },
+      {
+        "t": "30-40 s",
+        "quest": "summerford-walkup",
+        "note": "Pets trail you; click one and walk up to it."
+      },
+      {
+        "t": "40-48 s",
+        "quest": "arcanist-tomestone",
+        "note": "Your character works a glowing device while you type."
+      },
+      {
+        "t": "48-56 s",
+        "quest": "aleport-orbit",
+        "note": "Orbiting screens at sunset."
+      },
+      {
+        "t": "56-66 s",
+        "quest": "assistant-ask",
+        "note": "Ask your local assistant from inside the game."
+      },
+      {
+        "t": "66-75 s",
+        "quest": "hero-costa-night",
+        "note": "Pull back to the beach. End card: the source repository and the vote link."
+      }
+    ],
+    "file": null
+  }
+}
