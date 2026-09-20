@@ -38,8 +38,10 @@
       const entry = byName.get(article.dataset.plugin);
       const slot = article.querySelector('[data-ver]');
       if (!slot) continue;
+      const unreleased = article.querySelector('[data-unreleased]');
+      if (unreleased) unreleased.hidden = !!entry;
       if (!entry) { slot.textContent = ''; continue; }
-      slot.textContent = 'v' + entry.AssemblyVersion.replace(/\.0$/, '');
+      slot.textContent = (entry.IsTestingExclusive ? 'test build v' : 'v') + entry.AssemblyVersion.replace(/\.0$/, '');
       slot.title = entry.TestingAssemblyVersion ? 'testing: v' + entry.TestingAssemblyVersion.replace(/\.0$/, '') : '';
     }
   }

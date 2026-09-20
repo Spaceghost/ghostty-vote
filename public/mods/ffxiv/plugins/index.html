@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FFXIV mods: plugin repository</title>
-<meta name="description" content="Add this Dalamud plugin repository in XIVLauncher to install Ghostty and Almanac for Final Fantasy XIV in one click, or build them yourself as dev plugins.">
+<meta name="description" content="Add this Dalamud plugin repository in XIVLauncher to install Ghostty, Almanac, XivMcp and XivDesktop for Final Fantasy XIV in one click, or build them yourself as dev plugins.">
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -57,6 +57,7 @@
       <p class="punch">Eorzea is a terminal multiplexer.</p>
       <p>A real terminal inside the game: a Quake-style dropdown, floating windows, and terminals pinned to panels in the world. It talks to shells on your own machine through <code>ghostty-agent</code>, which you run yourself — the plugin never opens a shell on its own. <code>/term</code> toggles it. With <a href="https://github.com/una-xiv/umbra" rel="noopener">Umbra</a> installed, its toolbar widget shows the agent's status and a popup terminal.</p>
       <p class="needs"><b>Needs:</b> <code>ghostty-agent</code> running on the machine the game runs on.</p>
+      <p class="note" data-unreleased>Ghostty has not cut its first release into this repository yet, so the installer does not show it. It appears here by itself the day it does; until then, <a href="#build">build it yourself</a>.</p>
       <p class="links"><a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/term/vote/">Vote on what it does next</a></p>
     </article>
 
@@ -68,20 +69,22 @@
       <p class="links"><a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/almanac-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/almanac/">Leaderboard</a></p>
     </article>
 
-    <article class="mod pending" id="xivmcp" data-plugin="XivMcp">
-      <h3>XivMcp <span class="chip pending-chip">not in the repository yet</span></h3>
+    <article class="mod" id="xivmcp" data-plugin="XivMcp">
+      <h3>XivMcp <span class="ver" data-ver>—</span> <span class="chip pending-chip">test builds only</span></h3>
       <p class="punch">Model Context Protocol server for Final Fantasy XIV.</p>
       <p>Exposes game state, game data and opt-in actions to MCP clients — Claude Code, Codex, Almanac — over a loopback HTTP server. Anything that would change your game is approved in game first, one prompt at a time. It has an Umbra toolbar widget too.</p>
       <p class="needs"><b>Needs:</b> an MCP client on the same machine.</p>
-      <p class="note">Its repository is not public yet, so there is nothing for the installer to download. <a href="#build">Build it yourself</a> in the meantime; it will appear in the list above, with no action on your side, the day it is published.</p>
+      <p class="note">It has no stable release yet, only test builds, and Dalamud hides a testing-only plugin unless you ask for them: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>. Or <a href="#build">build it yourself</a>.</p>
+      <p class="links"><a href="https://github.com/Spaceghost/xiv-mcp" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xiv-mcp/releases" rel="noopener">Releases</a></p>
     </article>
 
-    <article class="mod pending" id="xivdesktop" data-plugin="XivDesktop">
-      <h3>XivDesktop <span class="chip pending-chip">not in the repository yet</span></h3>
+    <article class="mod" id="xivdesktop" data-plugin="XivDesktop">
+      <h3>XivDesktop <span class="ver" data-ver>—</span> <span class="chip pending-chip">test builds only</span></h3>
       <p class="punch">Launch Linux desktop apps into the game world.</p>
       <p>For the game running under Wine on Linux: lists the host's applications and opens them as panels in the world, through Ghostty's remote windows. An app launcher for Eorzea.</p>
       <p class="needs"><b>Needs:</b> Ghostty and <code>ghostty-agent</code>, on a Linux host.</p>
-      <p class="note">Its repository is not public yet either. Same as above: <a href="#build">build it yourself</a> today, and it joins the repository when it is published.</p>
+      <p class="note">It has no stable release yet, only test builds, and Dalamud hides a testing-only plugin unless you ask for them: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>. Or <a href="#build">build it yourself</a>.</p>
+      <p class="links"><a href="https://github.com/Spaceghost/xiv-desktop" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xiv-desktop/releases" rel="noopener">Releases</a></p>
     </article>
   </section>
 
