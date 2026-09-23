@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>XivArcade for FFXIV</title>
-<meta name="description" content="XivArcade: your own classic games inside Final Fantasy XIV. A library for game files you own, started in RetroArch on the Linux host and shown as panels in the game world, with every save kept in step across your machines. Bring your own games; nothing is downloaded.">
+<meta name="description" content="XivArcade: your own classic games inside Final Fantasy XIV. A library for game files you own, started in RetroArch on the Linux host and shown as panels in the game world, with every save kept in step across your machines. Bring your own games; none are downloaded.">
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
 <meta name="author" content="Johnneylee Jack Rollins">
 <link rel="canonical" href="https://spacegho.st/mods/ffxiv/xivarcade/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="XivArcade for FFXIV">
-<meta property="og:description" content="XivArcade: your own classic games inside Final Fantasy XIV. A library for game files you own, started in RetroArch on the Linux host and shown as panels in the game world, with every save kept in step across your machines. Bring your own games; nothing is downloaded.">
+<meta property="og:description" content="XivArcade: your own classic games inside Final Fantasy XIV. A library for game files you own, started in RetroArch on the Linux host and shown as panels in the game world, with every save kept in step across your machines. Bring your own games; none are downloaded.">
 <meta property="og:url" content="https://spacegho.st/mods/ffxiv/xivarcade/">
 <meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/xivarcade-banner.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -47,7 +47,7 @@
           </div>
         </div>
         <p class="tagline">Your own classics, in the world, saves in step</p>
-        <p class="lede">For the game running under Wine on <strong>Linux</strong>: <code>/arcade</code> lists the classic games <strong>you own and put in a folder</strong>, Final Fantasy first, starts them in RetroArch on your desktop and shows them as <strong>panels in the game world</strong>. Every save and save state is kept in step across your machines. It downloads no games, BIOS files or artwork.</p>
+        <p class="lede">For the game running under Wine on <strong>Linux</strong>: <code>/arcade</code> lists the classic games <strong>you own and put in a folder</strong>, Final Fantasy first, starts them in RetroArch on your desktop and shows them as <strong>panels in the game world</strong>. Every save and save state is kept in step across your machines. It downloads no games or BIOS files, and no cover art unless you turn that on.</p>
         <div class="cta">
           <a class="btn primary" href="#install">Install</a>
           <a class="btn" href="/mods/ffxiv/term/">Ghostty, for panels</a>
@@ -58,15 +58,14 @@
     </section>
     <div class="status" role="note">
       <b>Honest status</b>
-      <p>The logic has host-side tests, all run on empty placeholder files: finding which console a file is for, reading a LaunchBox library, multi-disc playlists, name matching, the emulator command for each core, the save-sync rules and the IPC payloads. The host helper's first run has been run on a real Linux machine. <strong>Nothing has been observed in the game yet</strong>: not the window, a game as a panel, a real emulator, the controller, or saves syncing between two machines. There is no release yet.</p>
+      <p>The logic has host-side tests, all run on empty placeholder files: finding which console a file is for, reading a LaunchBox library, multi-disc playlists, name matching, the emulator command for each core, the save-sync rules and the IPC payloads. The host helper's first run has been run on a real Linux machine. <strong>Nothing has been observed in the game yet</strong>: not the window, a game as a panel, a real emulator, the controller, or saves syncing between two machines. It has a stable release (v0.2.0).</p>
     </div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
       <div class="prose">
-        <p><strong>Bring your own games.</strong> XivArcade never downloads, links to or helps find ROMs, disc images, BIOS files or artwork. It only reads folders you point it at. Use your own dumps of games you own.</p>
+        <p><strong>Bring your own games.</strong> XivArcade never downloads, links to or helps find ROMs, disc images or BIOS files. It only reads folders you point it at. Use your own dumps of games you own. Cover art is your own too, unless you turn on the optional cover fetch below.</p>
         <p>The plugin holds no game logic. It carries a small helper (Python, standard library only), writes it to your Linux home, and reads the state that helper writes. The helper indexes your folders into SQLite, builds the RetroArch command for the right core, and guards your saves: it checks them before a game starts and sends them on when you close it. It also runs on its own, without the game.</p>
-      </div>
       </div>
     </section>
 
@@ -77,8 +76,8 @@
       </div>
       <div class="grid">
       <article class="card glass">
-        <h3>A library that fills itself in</h3>
-        <p><code>/arcade</code>: your games by console, search as you type, arrows and <kbd>Enter</kbd> to play. New files appear while the window is open.</p>
+        <h3>A wall of your own covers</h3>
+        <p><code>/arcade</code>: your covers in a grid, Final Fantasy first, then a shelf per console. Type to filter, arrows or the D-pad to move, <kbd>Enter</kbd> to play, <kbd>Tab</kbd> to change shelf. A game with no picture gets a drawn cover in its console's box shape.</p>
         <span class="tag unverified">unverified in game</span>
       </article>
       <article class="card glass">
@@ -88,7 +87,17 @@
       </article>
       <article class="card glass">
         <h3>The Final Fantasy shelf</h3>
-        <p>Titles, consoles and years as plain text, no artwork. An entry lights up when a matching file of yours appears; everything else lands below it, by console.</p>
+        <p>The 26 Final Fantasy titles as drawn covers, dimmed until a matching file of yours appears; everything else lands below them, by console.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Cover art, only if you ask</h3>
+        <p>Off by default. Turned on (<code>/arcade art on</code>), the helper asks RetroArch's public thumbnail set for covers of games already in your library, sending only the console's and the game's name. Your own pictures always win.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>The right emulator, and your BIOS checked</h3>
+        <p>PlayStation 2 in standalone PCSX2 or the LRPS2 core, PlayStation in DuckStation or a core, chosen per console or per game with <code>/arcade emulator</code>. <code>/arcade bios</code> names the exact file, size and MD5 and checks your own dump.</p>
         <span class="tag unverified">unverified in game</span>
       </article>
       <article class="card glass">
@@ -151,7 +160,7 @@
             <li><b>Save and Close</b>.</li>
             <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivArcade</b> → <b>Install</b>.</li>
           </ol>
-          <p class="note">XivArcade has <b>no release yet</b>, so it is not in the repository's listing. Until it has been verified in game, build it yourself.</p>
+          <p class="note">XivArcade has a stable release, so it shows under <b>All Plugins</b> straight away. Nothing in it has been verified in game yet.</p>
           <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
         </div>
         <div class="path glass">
@@ -176,11 +185,11 @@ tools/install-dev.sh        # or: dotnet build XivArcade.slnx -c Release</code><
       <div class="sec-head"><h2 id="req-h">Requirements</h2></div>
       <ul class="plain prose">
         <li>A <strong>Linux</strong> host running the game through XIVLauncher.Core and Wine, with Dalamud (API level 15), and Python 3.9 or newer.</li>
-        <li><strong>RetroArch</strong> and a core for each console you play. The window shows the one install line and names the cores. PlayStation cores want a BIOS dumped from your own console.</li>
+        <li><strong>RetroArch</strong> and a core for each console you play. The window shows the one install line and names the cores. PlayStation 2 always needs a BIOS dumped from your own console; PlayStation games can start without one on PCSX ReARMed, with lower compatibility.</li>
         <li><strong>Your own game files.</strong> None are provided, linked or located.</li>
         <li>Optional: <a href="/mods/ffxiv/term/">Ghostty</a> with <code>ghostty-agent</code> running with <code>--windows wayland</code>, for games as panels in the world.</li>
         <li>Optional: <a href="https://syncthing.net/" rel="noopener">Syncthing</a> on each machine, for save sync.</li>
-        <li>Known limit: a controller is read by both RetroArch and the game, so your character reacts while you play in a panel.</li>
+        <li>Controller: while a game's panel has the focus, XivArcade keeps the gamepad from also reaching your character, with a banner while it does. Hold Start+Select, press <kbd>Esc</kbd> or type <code>/arcade pad off</code> to take it back. Not yet seen in game.</li>
       </ul>
     </section>
 
@@ -227,7 +236,7 @@ tools/install-dev.sh        # or: dotnet build XivArcade.slnx -c Release</code><
       <ul class="linklist">
         <li><a class="btn" href="https://github.com/Spaceghost/xivarcade-dalamud" rel="noopener">Source</a></li>
         <li><a class="btn" href="https://github.com/Spaceghost/xivarcade-dalamud/releases" rel="noopener">Releases</a></li>
-        <li><a class="btn" href="https://github.com/Spaceghost/xivarcade-dalamud/commits/master" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivarcade-dalamud/blob/master/CHANGELOG.md" rel="noopener">Changelog</a></li>
         <li><a class="btn" href="/mods/ffxiv/term/">Ghostty</a></li>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
@@ -235,7 +244,7 @@ tools/install-dev.sh        # or: dotnet build XivArcade.slnx -c Release</code><
   </main>
 
   <footer>
-    <p class="small"><strong>Privacy.</strong> XivArcade reads the folders you chose on your own disk and talks only to Ghostty and Syncthing on the same machine. It sends nothing anywhere; your saves travel only between your own devices, through Syncthing.</p>
+    <p class="small"><strong>Privacy.</strong> XivArcade reads the folders you chose on your own disk and talks only to Ghostty and Syncthing on the same machine; your saves travel only between your own devices, through Syncthing. The one exception is the cover fetch, off unless you turn it on: it sends a console's and a game's name to <code>thumbnails.libretro.com</code> over HTTPS.</p>
     <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
     <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
   </footer>
