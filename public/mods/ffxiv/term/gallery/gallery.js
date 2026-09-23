@@ -1,4 +1,5 @@
-// Ghostty for FFXIV gallery: lists the approved screenshots from GET api/shots and, for a
+// The FFXIV mods gallery: lists the approved screenshots from GET api/shots (every mod's;
+// ?mod=<id> on the page shows one mod's, untagged shots being Ghostty's) and, for a
 // signed-in visitor, sends a picked file to the vote API's gallery/upload (where the session
 // cookie reaches); it waits for review before it is ever shown. Signed out, the form gives
 // way to the two sign-in buttons.
@@ -13,6 +14,10 @@
   const THEME_KEY = 'ghostty-vote:theme'; // shared with the vote page
   const MAX_BYTES = 8 * 1024 * 1024;
   const DOT = ' \u00b7 ';
+  const MODS = { ghostty: 'Ghostty', xivmcp: 'XivMcp', xivdesktop: 'XivDesktop', xivarcade: 'XivArcade', xivwayfinder: 'XivWayfinder', xivlantern: 'XivLantern', almanac: 'Almanac' };
+  const want = new URLSearchParams(location.search).get('mod');
+  const MOD = want && Object.hasOwn(MODS, want) ? want : ''; // '' is every mod
+  const modOf = (s) => (typeof s.mod === 'string' && Object.hasOwn(MODS, s.mod) ? s.mod : 'ghostty');
 
   const get = (k) => { try { return window.localStorage.getItem(k); } catch (e) { return null; } };
   const set = (k, v) => { try { if (v) window.localStorage.setItem(k, v); else window.localStorage.removeItem(k); } catch (e) {} };
@@ -54,7 +59,7 @@
     if (!ownPath(s.src)) return null;
     const w = Number(s.width) || 16;
     const h = Number(s.height) || 9;
-    const img = el('img', { src: ownPath(s.thumb) ? s.thumb : s.src, alt: 'Screenshot of Ghostty in FFXIV' + (s.credit ? ' by ' + str(s.credit) : ''), loading: 'lazy', decoding: 'async', width: String(w), height: String(h) });
+    const img = el('img', { src: ownPath(s.thumb) ? s.thumb : s.src, alt: 'Screenshot of ' + MODS[modOf(s)] + ' in FFXIV' + (s.credit ? ' by ' + str(s.credit) : ''), loading: 'lazy', decoding: 'async', width: String(w), height: String(h) });
     const cap = el('figcaption');
     if (s.credit) cap.append(el('b', { text: str(s.credit) }), DOT);
     cap.append(day(s.approved_at));
@@ -138,10 +143,11 @@
       $('#shots').replaceChildren(el('p', { class: 'empty', text: 'The gallery could not be loaded.' }));
       return;
     }
-    summary(shots.length + (shots.length === 1 ? ' screenshot' : ' screenshots'));
+    const shown = MOD ? shots.filter((s) => modOf(s) === MOD) : shots;
+    summary(shown.length + (shown.length === 1 ? ' screenshot' : ' screenshots') + (MOD ? ' of ' + MODS[MOD] : ''));
     const grid = el('div', { class: 'shots' });
-    for (const s of shots) { const c = shotCard(s); if (c) grid.append(c); }
-    $('#shots').replaceChildren(shots.length ? grid : el('p', { class: 'empty', text: 'No screenshots yet. Be the first to share one!' }));
+    for (const s of shown) { const c = shotCard(s); if (c) grid.append(c); }
+    $('#shots').replaceChildren(shown.length ? grid : el('p', { class: 'empty', text: 'No screenshots' + (MOD ? ' of ' + MODS[MOD] : '') + ' yet. Be the first to share one!' }));
   }
 
   // me: the answer of api/auth/me, or null when signed out (or when it cannot be asked).
@@ -181,7 +187,10 @@
     let res = null;
     let data = null;
     try {
-      res = await fetch(VOTE_API + 'gallery/upload' + (credit ? '?credit=' + encodeURIComponent(credit) : ''), {
+      const q = new URLSearchParams();
+      if (credit) q.set('credit', credit);
+      if (MOD) q.set('mod', MOD); // tagged with the mod the page is showing
+      res = await fetch(VOTE_API + 'gallery/upload' + (q.toString() ? '?' + q : ''), {
         method: 'POST', credentials: 'same-origin', headers: { 'content-type': file.type }, body: file,
       });
       data = await res.json().catch(() => null);
@@ -194,6 +203,10 @@
   }
 
   function start() {
+    for (const a of document.querySelectorAll('#mod-filter a')) {
+      if (a.dataset.mod === MOD) a.setAttribute('aria-current', 'page');
+    }
+    if (MOD) { document.title = MODS[MOD] + ' screenshots \u00b7 FFXIV Mods Gallery'; $('#u-send').textContent = 'Share a ' + MODS[MOD] + ' screenshot'; }
     $('#theme').addEventListener('click', () => {
       const cur = document.documentElement.dataset.theme || '';
       const next = cur === '' ? 'dark' : cur === 'dark' ? 'light' : '';

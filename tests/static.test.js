@@ -295,6 +295,11 @@ test('gallery page: static, no inline code, images only from its own approved pa
   const html = read('public/mods/ffxiv/term/gallery/index.html');
   const js = read('public/mods/ffxiv/term/gallery/gallery.js');
   assert.ok(!/<script(?![^>]*\ssrc=)/i.test(html) && !/<style|\sstyle=|\son[a-z]+=|nonce/i.test(html));
+  // every mod with a vote can be picked, on the page and in the script
+  for (const mod of Object.keys(VOTE_MODS)) {
+    assert.ok(html.includes(`data-mod="${mod}"`), `the gallery filters to ${mod}`);
+    assert.ok(new RegExp(`\\b${mod}: '`).test(js), `gallery.js names ${mod}`);
+  }
   assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]),
     ['/mods/ffxiv/term/gallery/gallery.js', '/mods/ffxiv/term/vote/beacon.js']);
   const files = walk('public/');
@@ -397,7 +402,7 @@ test('hub and minisites: static, shared stylesheet and script, no third-party re
     assert.ok(!/fonts\.googleapis|fonts\.gstatic/.test(html), path + ' uses system fonts');
     for (const ref of html.matchAll(/\s(?:src|href)="(\/mods\/[^"]+)"/g)) {
       if (ref[1].startsWith('/mods/ffxiv/term/vote/api/auth/')) continue; // Worker routes, not files
-      const p = ref[1].slice(1).split('#')[0];
+      const p = ref[1].slice(1).split('#')[0].split('?')[0];
       assert.ok(files.includes(p + (p.endsWith('/') ? 'index.html' : '')), path + ': ' + ref[1] + ' exists in public/');
     }
     for (const img of html.matchAll(/<img [^>]*>/g)) assert.ok(/ alt="/.test(img[0]) && / width="\d+"/.test(img[0]) && / height="\d+"/.test(img[0]), path + ': ' + img[0]);

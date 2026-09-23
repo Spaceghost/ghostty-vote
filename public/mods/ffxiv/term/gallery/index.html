@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ghostty FFXIV Gallery</title>
-<meta name="description" content="Screenshots of the Ghostty for FFXIV terminal plugin, shared by players.">
+<title>FFXIV Mods Gallery</title>
+<meta name="description" content="Screenshots of Ghostty, XivMcp, XivDesktop, XivArcade, XivWayfinder, XivLantern and Almanac in Final Fantasy XIV, shared by players.">
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -21,22 +21,37 @@
 <div class="wrap">
   <header>
     <div class="topline">
-      <span class="eyebrow">ghostty for ffxiv · gallery</span>
+      <span class="eyebrow">ffxiv mods · gallery</span>
       <span class="row">
+        <a class="chip" href="/mods/ffxiv/">All mods</a>
         <a class="chip" href="/mods/ffxiv/term/vote/">Vote on features</a>
         <a class="chip" href="/mods/ffxiv/almanac/">Almanac models</a>
         <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
       </span>
     </div>
-    <h1>Terminals in <span class="glyph">Eorzea</span></h1>
-    <p class="lede"><strong>Ghostty for FFXIV</strong> puts a real Ghostty terminal inside Final Fantasy XIV, made by <strong>Johnneylee Jack Rollins</strong> (<a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>). These screenshots were shared by players.</p>
+    <nav class="mods" aria-label="Screenshots of one mod">
+      <span class="eyebrow">show</span>
+      <span class="row" id="mod-filter">
+        <a class="chip" href="/mods/ffxiv/term/gallery/" data-mod="">All</a>
+        <a class="chip" href="?mod=ghostty" data-mod="ghostty">Ghostty</a>
+        <a class="chip" href="?mod=xivmcp" data-mod="xivmcp">XivMcp</a>
+        <a class="chip" href="?mod=xivdesktop" data-mod="xivdesktop">XivDesktop</a>
+        <a class="chip" href="?mod=xivarcade" data-mod="xivarcade">XivArcade</a>
+        <a class="chip" href="?mod=xivwayfinder" data-mod="xivwayfinder">XivWayfinder</a>
+        <a class="chip" href="?mod=xivlantern" data-mod="xivlantern">XivLantern</a>
+        <a class="chip" href="?mod=almanac" data-mod="almanac">Almanac</a>
+      </span>
+    </nav>
+    <h1>Screenshots from <span class="glyph">Eorzea</span></h1>
+    <p class="lede">Players' screenshots of the FFXIV mods by <strong>Johnneylee Jack Rollins</strong> (<a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>): Ghostty, XivMcp, XivDesktop, XivArcade, XivWayfinder, XivLantern and Almanac. Pick a mod above to see only its screenshots.</p>
     <div class="prompt" id="summary" aria-live="polite">$ <b>ls</b> gallery/ &nbsp; loading…</div>
   </header>
 
   <section class="share" aria-labelledby="share-h">
     <div class="cat-head">
       <h2 id="share-h">Share yours</h2>
-      <p><strong>In game:</strong> with a Ghostty terminal on screen, take a normal screenshot with the game's screenshot key. The plugin asks <em>Share to the Ghostty gallery?</em>; click <strong>Share</strong>. <code>/term share</code> offers your latest screenshot at any time. The first time, Ghostty (0.3.0 or newer) shows a short code and opens <a href="/mods/ffxiv/term/vote/apps/">the connected apps page</a>, where you sign in and approve it.</p>
+      <p><strong>From a mod's page:</strong> every mod's page has an <em>Add yours</em> box that tags the screenshot with that mod. <strong>Here:</strong> pick a mod above first, and your upload is tagged with it.</p>
+      <p><strong>Ghostty, in game:</strong> with a Ghostty terminal on screen, take a normal screenshot with the game's screenshot key. The plugin asks <em>Share to the Ghostty gallery?</em>; click <strong>Share</strong>. <code>/term share</code> offers your latest screenshot at any time. The first time, Ghostty (0.3.0 or newer) shows a short code and opens <a href="/mods/ffxiv/term/vote/apps/">the connected apps page</a>, where you sign in and approve it.</p>
     </div>
     <div id="signin" class="signin" hidden>
       <p><strong>Sign in to share a screenshot.</strong> Everything new on this site comes from a signed-in GitHub or XIVAuth account.</p>
