@@ -165,6 +165,32 @@
       "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivWayfinder.slnx -c Release)",
       "umbraWidget": null,
       "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+    },
+    {
+      "internalName": "XivLantern",
+      "name": "XivLantern",
+      "listed": false,
+      "repo": null,
+      "assemblyVersion": "0.1.0.0",
+      "dalamudApiLevel": 15,
+      "author": "Johnneylee Jack Rollins",
+      "punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
+      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
+      "tags": [
+        "social",
+        "chat",
+        "friends",
+        "p2p",
+        "privacy"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivlantern.png",
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivlantern-banner.png"
+      ],
+      "needs": "Nothing beyond Dalamud (API 15); the network layer ships inside the plugin as lantern.dll. Friends running XivLantern too.",
+      "build": "tools/build-native.sh (cargo and mingw-w64), then dotnet build src/XivLantern.Plugin/XivLantern.Plugin.csproj -c Release and tools/package.sh",
+      "umbraWidget": null,
+      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
     }
   ]
 }

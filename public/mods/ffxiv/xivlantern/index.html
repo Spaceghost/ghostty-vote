@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>XivLantern for FFXIV</title>
+<meta name="description" content="XivLantern: friends light a lantern to say they are here. A friend list with presence, 1:1 chat and channels of your own inside Final Fantasy XIV, peer to peer over iroh, with an opt-in channel for the author's signed announcements. Off until you turn it on; nothing from the game is sent.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/xivlantern/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="XivLantern for FFXIV">
+<meta property="og:description" content="XivLantern: friends light a lantern to say they are here. A friend list with presence, 1:1 chat and channels of your own inside Final Fantasy XIV, peer to peer over iroh, with an opt-in channel for the author's signed announcements. Off until you turn it on; nothing from the game is sent.">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/xivlantern/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/xivlantern-banner.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
+<!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
+     also fills the media slots from media/manifest.json and the community screenshots. -->
+<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body data-mod="xivlantern" data-name="XivLantern" data-media="/mods/ffxiv/xivlantern/media/manifest.json">
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="sitebar">
+    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
+    <nav aria-label="Mods">
+      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
+      <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
+      <a class="chip" href="/mods/ffxiv/xivlantern/" aria-current="page">XivLantern</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero glass" aria-labelledby="title">
+      <div>
+        <div class="hero-id">
+          <img src="/mods/ffxiv/site/art/xivlantern-icon.webp" alt="" width="192" height="192">
+          <div>
+            <p class="eyebrow">Dalamud plugin · friends and chat · peer to peer</p>
+            <h1 id="title">XivLantern</h1>
+          </div>
+        </div>
+        <p class="tagline">Light a lantern for your friends</p>
+        <p class="lede">Friends light a lantern to say they are here. <code>/lantern</code> is <strong>a friend list of your own</strong>, with presence and a note you type, <strong>1:1 chat</strong> that waits for a friend who is offline, and <strong>channels</strong> you make and invite friends into. It runs <strong>peer to peer over <a href="https://www.iroh.computer/" rel="noopener">iroh</a></strong>: there is no Lantern server. It is <strong>off until you turn it on</strong>, and nothing from the game is ever sent.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install</a>
+          <a class="btn" href="#privacy">Who sees what</a>
+          <a class="btn" href="https://github.com/Spaceghost/xivlantern-dalamud" rel="noopener">Source</a>
+        </div>
+      </div>
+      <img class="hero-art" src="/mods/ffxiv/site/art/xivlantern-banner.webp" alt="XivLantern banner art" width="730" height="380" fetchpriority="high">
+    </section>
+    <div class="status" role="note">
+      <b>Honest status</b>
+      <p>Everything is tested on a Linux host: the network layer, its C interface, the C# binding and the plugin's logic. The Windows build of the network layer passed its selftest and talked to a native node under a stock Wine 11 in a container. The plugin builds against Dalamud 15 but has never been loaded by it. <strong>Nothing has been observed in the game yet</strong>, not even <code>/lantern selftest</code>, which is the next proof. The author channel has no author key configured yet, and says so. There is no release yet.</p>
+    </div>
+
+    <section id="what" aria-labelledby="what-h">
+      <div class="sec-head"><h2 id="what-h">What it does</h2></div>
+      <div class="prose">
+        <p><strong>A separate chat that draws in game.</strong> XivLantern never reads or sends your character's name, world, location or chat, never bridges in-game chat, and never automates or sends a game action. Your friends see the name you type; a test fails the build if the plugin ever asks the game who you are.</p>
+        <p>The plugin is a thin window over a Rust network layer, <code>lantern.dll</code>, that it carries with it. Friendship is keyed on each node's id, every message is signed by its sender, and nothing is ever accepted for you.</p>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-h">
+      <div class="sec-head">
+        <h2 id="features-h">Features</h2>
+        <p>Everything below is built and host-tested; none of it has been observed in game yet.</p>
+      </div>
+      <div class="grid">
+      <article class="card glass">
+        <h3>Friends by invite</h3>
+        <p>Make a one-time invite and send it privately; whoever uses it first becomes your friend, on both sides. Invites expire, and you see who redeemed yours.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Whose lantern is lit</h3>
+        <p>Presence: online, away, busy or invisible, and a note you type. A server info bar entry shows your unread count.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>1:1 chat that waits</h3>
+        <p>A message to a friend who is offline goes out when they are next online, and you see when it arrives.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Channels</h3>
+        <p>Make a channel for your static or FC and invite friends in. Anyone holding a channel's ticket can join and read it, so keep tickets out of public places.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>The author channel, opt in</h3>
+        <p>Announcements from the mod's author, signed with a key that never leaves the author's machine and checked before they are shown. Nobody else can post there. You can write back for support, and get an answer.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Safety first</h3>
+        <p>Block anyone (they are not told), mute a friend or channel, per-person rate limits that drop floods before they are shown, size limits on every message, and no auto-accept.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Toasts, quietly</h3>
+        <p>Toasts for new messages, following your mutes; channel and online toasts are off by default.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>A selftest</h3>
+        <p><code>/lantern selftest</code> checks, inside the game, that the connection works directly and through a relay, and prints what it found. With Lantern off it uses a throwaway node.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>IPC for other plugins</h3>
+        <p><code>XivLantern.v1.GetStatus</code>, <code>GetFriends</code>, <code>SendToFriend</code>, <code>OpenChat</code> and a <code>MessageReceived</code> event. Reading and sending are each refused until you allow them.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      </div>
+    </section>
+
+    <section id="privacy" aria-labelledby="privacy-h">
+      <div class="sec-head">
+        <h2 id="privacy-h">Who sees what</h2>
+        <p>Nothing connects until you turn XivLantern on, and its first screen says all of this before you do.</p>
+      </div>
+      <ul class="plain prose">
+        <li><strong>Your friends</strong> see your node id, the name and status you type, what you send them, and your IP addresses.</li>
+        <li><strong>Channel members</strong> see your node id and everything posted there. Messages are signed, not secret from members.</li>
+        <li><strong>The relays.</strong> By default, n0's iroh relays help friends find each other: they see your IP address and when you are online, and forward encrypted traffic they cannot read. You choose: n0's relays, a relay URL you or your FC run, or <b>relays off</b>, which contacts no third party at all and works on a LAN or with open ports.</li>
+        <li><strong>The author channel</strong>, if you join it, shows your node id (and on direct paths, your IP address) to the members it connects you through.</li>
+        <li><strong>Nothing from the game</strong>: not your character's name, world, location or chat.</li>
+      </ul>
+      <p class="small">Third-party plugins are against the FFXIV terms of service. XivLantern keeps its exposure small: it never automates a game action and never sends game packets.</p>
+    </section>
+
+    <section id="screens" aria-labelledby="media-h">
+      <div class="sec-head">
+        <h2 id="media-h">Screenshots and clips</h2>
+        <p>Planned shots. Empty frames are placeholders for screenshots and clips that will be captured in game.</p>
+      </div>
+      <div id="media"><p class="empty">Loading the shot list…</p></div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="sec-head">
+        <h2 id="install-h">Install</h2>
+        <p>Two ways, and both are kept on purpose: one click from the plugin repository, or build it from source and load it as a dev plugin.</p>
+      </div>
+      <div class="paths">
+        <div class="path glass">
+          <h3>One click</h3>
+          <p class="small">Add the repository once; every mod here installs and updates like any other plugin.</p>
+          <div class="repo-url">
+            <code id="repo-url">https://spacegho.st/mods/ffxiv/plugins.json</code>
+            <button class="chip" id="copy" type="button">copy</button>
+          </div>
+          <ol>
+            <li>In game, type <code>/xlsettings</code> → the <b>Experimental</b> tab.</li>
+            <li>Under <b>Custom Plugin Repositories</b>, paste the URL into the empty row, press <b>+</b>, and leave its checkbox ticked.</li>
+            <li><b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivLantern</b> → <b>Install</b>.</li>
+          </ol>
+          <p class="note">XivLantern has <b>no release yet</b>, so it is not in the repository's listing. Until it has been verified in game, build it yourself.</p>
+          <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
+        </div>
+        <div class="path glass">
+          <h3>Build it yourself</h3>
+          <p class="small">The dev plugin path: exactly the code in your checkout, no repository, no auto-update. It is how the author runs it, and the honest way to read the code before you trust it.</p>
+          <pre><code>git clone https://github.com/Spaceghost/xivlantern-dalamud
+cd xivlantern-dalamud
+tools/build-native.sh       # lantern.dll, with cargo and mingw-w64
+tools/fetch-dalamud.sh && export DALAMUD_HOME=$PWD/.dalamud
+dotnet build src/XivLantern.Plugin/XivLantern.Plugin.csproj -c Release
+tools/package.sh            # latest.zip</code></pre>
+          <ol>
+          <li>Needs <b>Rust</b> with the <code>x86_64-pc-windows-gnu</code> target and mingw-w64, and the <b>.NET 10 SDK</b>. The author builds in a container, never on the machine the game runs on.</li>
+          <li>Unpack <code>latest.zip</code> into a folder of its own.</li>
+            <li>In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Dev Plugin Locations</b> → add the path of that folder's <code>XivLantern.dll</code> (under Wine, a <code>Z:\…</code> path) → <b>+</b> → <b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>Dev Tools</b> → <b>Installed Dev Plugins</b> → enable <b>XivLantern</b>. Dev plugins are added disabled.</li>
+            <li>Then <code>/lantern selftest</code>, and please report what it prints.</li>
+          </ol>
+          <p class="small">If you later switch to the one-click install, disable the dev plugin first so the two copies cannot fight over the same name. The <a href="https://github.com/Spaceghost/xivlantern-dalamud#readme" rel="noopener">README</a> has the details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="requirements" aria-labelledby="req-h">
+      <div class="sec-head"><h2 id="req-h">Requirements</h2></div>
+      <ul class="plain prose">
+        <li><strong>FFXIV with Dalamud</strong> (API level 15), on Windows or Linux under Wine. The network layer ships inside the plugin.</li>
+        <li><strong>Friends running XivLantern too.</strong> It talks only to other XivLantern nodes.</li>
+        <li>Optional: your own iroh relay, or relays off on a LAN or with open ports.</li>
+        <li>Known limits: a message goes to one device of a friend, not all of them; channels keep no history for late joiners; and anyone holding a channel's ticket can read it.</li>
+      </ul>
+    </section>
+
+    <section id="community" aria-labelledby="community-h">
+      <div class="sec-head">
+        <h2 id="community-h">Community screenshots</h2>
+        <p>Screenshots of XivLantern shared by players. Every one is reviewed by the site owner before it is shown here.</p>
+      </div>
+      <div id="shots" aria-live="polite"><p class="empty">Loading…</p></div>
+      <div class="add glass">
+        <h3>Add yours</h3>
+        <p class="state" id="account-note" role="status"></p>
+        <div id="signed-out">
+          <p>Sharing a screenshot needs a sign-in, so that everything sent to this site comes from an account.</p>
+          <div class="cta">
+            <a class="btn primary" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/xivlantern/">Sign in with GitHub</a>
+            <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/xivlantern/">Sign in with FFXIV</a>
+          </div>
+          <p class="small">Signing in with FFXIV needs an XIVAuth account and shares no character.</p>
+        </div>
+        <div id="signed-in" hidden>
+          <form id="upload">
+            <div class="row">
+              <label for="u-file">Screenshot (PNG or JPEG, at most 8 MB)
+                <input id="u-file" name="file" type="file" accept="image/png,image/jpeg" required>
+              </label>
+              <label for="u-credit">Credit (optional, shown with the shot)
+                <input id="u-credit" name="credit" type="text" maxlength="60" autocomplete="off" placeholder="Character name, world">
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="u-send" type="submit">Share screenshot</button>
+              <button class="btn" id="signout" type="button">Sign out</button>
+            </div>
+            <p class="state" id="u-state" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <p class="small">Hide your own name and chat first, and never share a terminal showing tokens or private paths. Metadata is stripped from the image before it is stored. Your upload is linked to your GitHub or XIVAuth account id, which the site owner can see; the public sees only the image and the credit you typed. To have a shot removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+      </div>
+    </section>
+
+    <section id="links" aria-labelledby="links-h">
+      <div class="sec-head"><h2 id="links-h">Links</h2></div>
+      <ul class="linklist">
+        <li><a class="btn" href="https://github.com/Spaceghost/xivlantern-dalamud" rel="noopener">Source</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivlantern-dalamud/releases" rel="noopener">Releases</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivlantern-dalamud/commits/master" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="https://www.iroh.computer/" rel="noopener">iroh</a></li>
+        <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> XivLantern connects to nothing until you turn it on. Then it talks to your friends' nodes and, unless you turn relays off, to the iroh relay you chose, which sees your IP address and when you are online but not what you say. It reads and sends nothing from the game. Your keys and messages stay in the plugin's own folder on your machine.</p>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
+    <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
+  </footer>
+</div>
+</body>
+</html>
