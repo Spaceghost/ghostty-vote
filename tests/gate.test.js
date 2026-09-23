@@ -181,7 +181,7 @@ test('per-account limits hold across addresses, beside the per-address ones', as
 
 test('gallery mod tag: only a published mod id, stored and listed', async () => {
   const t = gateSetup();
-  assert.deepEqual(MOD_IDS, ['ghostty', 'almanac', 'xivmcp', 'xivdesktop', 'xivarcade']);
+  assert.deepEqual(MOD_IDS, ['ghostty', 'almanac', 'xivmcp', 'xivdesktop', 'xivarcade', 'xivwayfinder']);
   const cookie = await t.signedIn();
   let res = await t.raw(WEB_UPLOAD + '?mod=evil', { body: png(), cookie, headers: { 'content-type': 'image/png' } });
   assert.equal(res.status, 400);

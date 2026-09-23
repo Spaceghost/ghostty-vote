@@ -140,6 +140,32 @@ export default {
       "build": "dotnet build XivArcade.slnx -c Release",
       "umbraWidget": null,
       "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+    },
+    {
+      "internalName": "XivWayfinder",
+      "name": "XivWayfinder",
+      "listed": false,
+      "repo": null,
+      "assemblyVersion": "0.1.0.0",
+      "dalamudApiLevel": 15,
+      "author": "Johnneylee Jack Rollins",
+      "punchline": "A softly glowing bead and the classic pointing glove show which way to go.",
+      "description": "XivWayfinder points the way in FINAL FANTASY XIV: a softly pulsing bead floats a couple of yalms ahead of you in the direction to go, and the game's own white pointing glove points there too, sliding to the edge of the screen when the way is behind you. It follows, in order, a target you set with /wayfinder X Y or another plugin sets over IPC, your map flag, and your tracked quest's next step; in another zone it names the nearest aetheryte instead. With vnavmesh installed it points along the walkable path. It only points and never moves your character.",
+      "tags": [
+        "navigation",
+        "quest",
+        "flag",
+        "overlay",
+        "utility"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivwayfinder.png",
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivwayfinder-banner.png"
+      ],
+      "needs": "Nothing beyond Dalamud (API 15), on Windows or Linux under Wine. vnavmesh is optional, for walkable paths.",
+      "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivWayfinder.slnx -c Release)",
+      "umbraWidget": null,
+      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
     }
   ]
 };

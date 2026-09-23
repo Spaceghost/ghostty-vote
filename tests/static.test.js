@@ -18,7 +18,7 @@ function walk(dir, prefix = '') {
 }
 
 // A captured screenshot or clip: anything in a mod's media/ folder except its manifest.
-const MEDIA_DIRS = { ghostty: 'mods/ffxiv/term/media/', xivmcp: 'mods/ffxiv/xivmcp/media/', xivdesktop: 'mods/ffxiv/xivdesktop/media/', xivarcade: 'mods/ffxiv/xivarcade/media/', almanac: 'mods/ffxiv/almanac/media/' };
+const MEDIA_DIRS = { ghostty: 'mods/ffxiv/term/media/', xivmcp: 'mods/ffxiv/xivmcp/media/', xivdesktop: 'mods/ffxiv/xivdesktop/media/', xivarcade: 'mods/ffxiv/xivarcade/media/', xivwayfinder: 'mods/ffxiv/xivwayfinder/media/', almanac: 'mods/ffxiv/almanac/media/' };
 const isMediaFile = (f) => Object.values(MEDIA_DIRS).some((d) => f.startsWith(d) && f !== d + 'manifest.json');
 
 test('committed ideas.json, version.json and seed.sql match data/catalogue.json', () => {
@@ -87,6 +87,8 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/plugins/icons/xivdesktop.png',
     'mods/ffxiv/plugins/icons/xivmcp-banner.png',
     'mods/ffxiv/plugins/icons/xivmcp.png',
+    'mods/ffxiv/plugins/icons/xivwayfinder-banner.png',
+    'mods/ffxiv/plugins/icons/xivwayfinder.png',
     'mods/ffxiv/plugins/index.html',
     'mods/ffxiv/plugins/plugins.css',
     'mods/ffxiv/plugins/plugins.js',
@@ -100,6 +102,8 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/site/art/xivdesktop-icon.webp',
     'mods/ffxiv/site/art/xivmcp-banner.webp',
     'mods/ffxiv/site/art/xivmcp-icon.webp',
+    'mods/ffxiv/site/art/xivwayfinder-banner.webp',
+    'mods/ffxiv/site/art/xivwayfinder-icon.webp',
     'mods/ffxiv/site/site.css',
     'mods/ffxiv/site/site.js',
     'mods/ffxiv/term/gallery/gallery.css',
@@ -128,6 +132,8 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/xivdesktop/media/manifest.json',
     'mods/ffxiv/xivmcp/index.html',
     'mods/ffxiv/xivmcp/media/manifest.json',
+    'mods/ffxiv/xivwayfinder/index.html',
+    'mods/ffxiv/xivwayfinder/media/manifest.json',
   ]);
 });
 
@@ -315,10 +321,10 @@ test('the published results schema matches the shared copy and the generated Wor
   if (shared && existsSync(shared)) assert.deepEqual(JSON.parse(readFileSync(shared, 'utf8')), published, 'shared schema changed: copy it into public/mods/ffxiv/almanac/schema/');
 });
 
-// ---- the mods hub and the five minisites -------------------------------------------------
+// ---- the mods hub and the six minisites -------------------------------------------------
 const MINISITES = {
   ghostty: 'mods/ffxiv/term/index.html', xivmcp: 'mods/ffxiv/xivmcp/index.html',
-  xivdesktop: 'mods/ffxiv/xivdesktop/index.html', xivarcade: 'mods/ffxiv/xivarcade/index.html', almanac: 'mods/ffxiv/almanac/about/index.html',
+  xivdesktop: 'mods/ffxiv/xivdesktop/index.html', xivarcade: 'mods/ffxiv/xivarcade/index.html', xivwayfinder: 'mods/ffxiv/xivwayfinder/index.html', almanac: 'mods/ffxiv/almanac/about/index.html',
 };
 
 test('hub and minisites: static, shared stylesheet and script, no third-party requests, honest and credited', () => {
@@ -350,7 +356,7 @@ test('hub and minisites: static, shared stylesheet and script, no third-party re
     assert.ok(html.includes('href="/mods/ffxiv/term/vote/privacy/"'), path + ' links what the site counts');
     assert.ok(/not yet been (?:verified|observed)|Nothing has been observed|need validation in game/.test(html), path + ' says what is unverified');
     if (id === 'hub') {
-      for (const href of ['/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/almanac/about/', '/mods/ffxiv/almanac/', '/mods/ffxiv/term/vote/', '/mods/ffxiv/term/gallery/']) {
+      for (const href of ['/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/almanac/about/', '/mods/ffxiv/almanac/', '/mods/ffxiv/term/vote/', '/mods/ffxiv/term/gallery/']) {
         assert.ok(html.includes(`href="${href}"`), 'hub links ' + href);
       }
       continue;
