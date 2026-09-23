@@ -15,7 +15,7 @@ the dry run only, one pinned wrangler fetched through `npx`.
 | --- | --- | --- | --- | --- |
 | push to any branch, pull request, manual | `.github/workflows/ci.yml` | `hosted` | `tools/ci/run.sh all` | artifact `ghostty-vote-public-<sha>` = `public/` (kept 14 days) |
 | the same, but never a fork pull request, and only with `CI_SELF_HOSTED=true` | `.github/workflows/ci.yml` | `self-hosted` | node probe, then `tools/ci/run.sh all` | artifact `ghostty-vote-public-self-hosted-<sha>` (kept 14 days) |
-| push to `main`, manual; never forks | `.github/workflows/deploy.yml` | `deploy` | `tools/ci/run.sh check test build`, then `wrangler deploy` through the `cloudflare` environment | the live Worker and `public/` on `spacegho.st` |
+| push to `master`, manual; never forks | `.github/workflows/deploy.yml` | `deploy` | `tools/ci/run.sh check test build`, then `wrangler deploy` through the `cloudflare` environment | the live Worker and `public/` on `spacegho.st` |
 
 Changes that touch only Markdown or `docs/` start nothing. A newer push to the
 same branch or pull request cancels the older CI run; a deploy is never
@@ -161,12 +161,12 @@ is missing, and nothing is deployed.
 R=Spaceghost/ghostty-vote
 ID="$(gh api users/Spaceghost --jq .id)"
 
-# the environment, with yourself as required reviewer and main as the only branch
+# the environment, with yourself as required reviewer and master as the only branch
 gh api -X PUT "repos/$R/environments/cloudflare" --input - <<EOF
 {"reviewers":[{"type":"User","id":$ID}],
  "deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}
 EOF
-gh api -X POST "repos/$R/environments/cloudflare/deployment-branch-policies" -f name=main
+gh api -X POST "repos/$R/environments/cloudflare/deployment-branch-policies" -f name=master
 
 # the token, straight from the password manager into GitHub; never through a file
 op read 'op://VAULT/ITEM/credential' |
