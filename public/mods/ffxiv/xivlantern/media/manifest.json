@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "mod": "xivlantern",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "first-screen",
+      "title": "Who Sees What",
+      "kind": "screenshot",
+      "caption": "The first screen, before anything connects: who can see what, and the choice of relays.",
+      "files": []
+    },
+    {
+      "id": "invite",
+      "title": "A Lantern Lit",
+      "kind": "gif",
+      "caption": "Making a one-time invite, a friend using it, and their lantern lighting up in the friend list.",
+      "files": []
+    },
+    {
+      "id": "chat",
+      "title": "A Message That Waits",
+      "kind": "screenshot",
+      "caption": "1:1 chat with a friend who was offline: the message marked delivered once they came back.",
+      "files": []
+    },
+    {
+      "id": "channel",
+      "title": "The Static's Channel",
+      "kind": "video",
+      "caption": "A channel made for a static, friends invited in, and talk while the party waits in Limsa.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "author",
+      "title": "Signed by the Author",
+      "kind": "screenshot",
+      "caption": "An announcement in the author channel, marked verified, and the box to write back.",
+      "files": []
+    },
+    {
+      "id": "selftest",
+      "title": "Selftest",
+      "kind": "screenshot",
+      "caption": "/lantern selftest in chat: the node id, the direct path and the relay path it found.",
+      "files": []
+    }
+  ]
+}

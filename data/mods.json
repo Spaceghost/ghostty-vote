@@ -17,9 +17,9 @@
       "internalName": "GhosttyDalamud",
       "name": "Ghostty",
       "listed": true,
-      "released": false,
+      "released": true,
       "repo": "Spaceghost/ghostty-dalamud",
-      "assemblyVersion": "0.2.0.0",
+      "assemblyVersion": "0.3.0.2",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Eorzea is a terminal multiplexer.",
@@ -43,7 +43,7 @@
       "listed": true,
       "released": true,
       "repo": "Spaceghost/almanac-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.2.0.2",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Talk to a local AI model in game, with XivMcp's tools.",
@@ -69,7 +69,7 @@
       "name": "XivMcp",
       "listed": true,
       "repo": "Spaceghost/xivmcp-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.1.0.4",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Model Context Protocol server for FINAL FANTASY XIV.",
@@ -87,14 +87,14 @@
       "needs": "An MCP client on the same machine (Claude Code, Codex, Almanac).",
       "build": "dotnet build XivMcp.slnx -c Release",
       "umbraWidget": "Umbra.XivMcp",
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "released": true
     },
     {
       "internalName": "XivDesktop",
       "name": "XivDesktop",
       "listed": true,
       "repo": "Spaceghost/xivdesktop-dalamud",
-      "assemblyVersion": "1.0.0.0",
+      "assemblyVersion": "1.0.1.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Launch Linux desktop apps into the game world.",
@@ -112,14 +112,14 @@
       "needs": "Ghostty and ghostty-agent, and a Linux host running the game under Wine.",
       "build": "dotnet build XivDesktop.slnx -c Release",
       "umbraWidget": null,
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "released": true
     },
     {
       "internalName": "XivArcade",
       "name": "XivArcade",
       "listed": true,
       "repo": "Spaceghost/xivarcade-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.2.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Your own classic games as game panels, with saves kept in step across your machines.",
@@ -138,7 +138,61 @@
       "needs": "A Linux host running the game under Wine, RetroArch, and your own game files. Ghostty for panels and Syncthing for save sync are optional.",
       "build": "dotnet build XivArcade.slnx -c Release",
       "umbraWidget": null,
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "released": true
+    },
+    {
+      "internalName": "XivWayfinder",
+      "name": "XivWayfinder",
+      "listed": true,
+      "repo": "Spaceghost/xivwayfinder-dalamud",
+      "assemblyVersion": "0.1.0.0",
+      "dalamudApiLevel": 15,
+      "author": "Johnneylee Jack Rollins",
+      "punchline": "A softly glowing bead and the classic pointing glove show which way to go.",
+      "description": "XivWayfinder points the way in FINAL FANTASY XIV: a softly pulsing bead floats a couple of yalms ahead of you in the direction to go, and the game's own white pointing glove points there too, sliding to the edge of the screen when the way is behind you. It follows, in order, a target you set with /wayfinder X Y or another plugin sets over IPC, your map flag, and your tracked quest's next step; in another zone it names the nearest aetheryte instead. With vnavmesh installed it points along the walkable path. It only points and never moves your character.",
+      "tags": [
+        "navigation",
+        "quest",
+        "flag",
+        "overlay",
+        "utility"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivwayfinder.png",
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivwayfinder-banner.png"
+      ],
+      "needs": "Nothing beyond Dalamud (API 15), on Windows or Linux under Wine. vnavmesh is optional, for walkable paths.",
+      "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivWayfinder.slnx -c Release)",
+      "umbraWidget": null,
+      "pending": "No release yet. Build it yourself in the meantime.",
+      "released": false
+    },
+    {
+      "internalName": "XivLantern",
+      "name": "XivLantern",
+      "listed": true,
+      "repo": "Spaceghost/xivlantern-dalamud",
+      "assemblyVersion": "0.1.0.1",
+      "dalamudApiLevel": 15,
+      "author": "Johnneylee Jack Rollins",
+      "punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
+      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
+      "tags": [
+        "social",
+        "chat",
+        "friends",
+        "p2p",
+        "privacy"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivlantern.png",
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivlantern-banner.png"
+      ],
+      "needs": "Nothing beyond Dalamud (API 15); the network layer ships inside the plugin as lantern.dll. Friends running XivLantern too.",
+      "build": "tools/build-native.sh (cargo and mingw-w64), then dotnet build src/XivLantern.Plugin/XivLantern.Plugin.csproj -c Release and tools/package.sh",
+      "umbraWidget": null,
+      "pending": "Only testing builds so far: turn on Get plugin testing builds in /xlsettings to see it.",
+      "released": false
     }
   ]
 }

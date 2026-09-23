@@ -1,9 +1,33 @@
 [
   {
     "Author": "Johnneylee Jack Rollins",
+    "Name": "Ghostty",
+    "InternalName": "GhosttyDalamud",
+    "AssemblyVersion": "0.3.0.2",
+    "Punchline": "Eorzea is a terminal multiplexer.",
+    "Description": "Quake-style dropdown, floating windows and terminals pinned in the world, connected to shells on your own machine through ghostty-agent. /term to toggle. Works with or without Umbra; with Umbra, the Ghostty toolbar widget shows its status and a popup terminal.",
+    "Tags": [
+      "terminal",
+      "ghostty",
+      "utility"
+    ],
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "RepoUrl": "https://github.com/Spaceghost/ghostty-dalamud",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/ghostty.png",
+    "ImageUrls": [
+      "https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/Spaceghost/ghostty-dalamud/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Spaceghost/ghostty-dalamud/releases/latest/download/latest.zip",
+    "IsTestingExclusive": false,
+    "LastUpdate": 0
+  },
+  {
+    "Author": "Johnneylee Jack Rollins",
     "Name": "Almanac",
     "InternalName": "Almanac",
-    "AssemblyVersion": "0.1.0.0",
+    "AssemblyVersion": "0.2.0.2",
     "Punchline": "Talk to a local AI model in game, with XivMcp's tools.",
     "Description": "Connects a model running on your own PC (Ollama, LM Studio, llama.cpp or any OpenAI-compatible server) to the game through XivMcp. Setup wizard with GPU-aware model recommendations, an in-game chat with threads and streaming, and a benchmark you can share with the community leaderboard. No cloud, no Python. Requires the XivMcp plugin for game tools.",
     "Tags": [
@@ -23,6 +47,82 @@
     ],
     "DownloadLinkInstall": "https://github.com/Spaceghost/almanac-dalamud/releases/latest/download/latest.zip",
     "DownloadLinkUpdate": "https://github.com/Spaceghost/almanac-dalamud/releases/latest/download/latest.zip",
+    "IsTestingExclusive": false,
+    "LastUpdate": 0
+  },
+  {
+    "Author": "Johnneylee Jack Rollins",
+    "Name": "XivMcp",
+    "InternalName": "XivMcp",
+    "AssemblyVersion": "0.1.0.4",
+    "Punchline": "Model Context Protocol server for FINAL FANTASY XIV.",
+    "Description": "Exposes game state, game data and opt-in actions to MCP clients over loopback Streamable HTTP. Anything that changes your game is approved in game first. Optional Umbra toolbar widget.",
+    "Tags": [
+      "mcp",
+      "ai",
+      "api",
+      "utility"
+    ],
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "RepoUrl": "https://github.com/Spaceghost/xivmcp-dalamud",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/xivmcp.png",
+    "ImageUrls": [
+      "https://spacegho.st/mods/ffxiv/plugins/icons/xivmcp-banner.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/Spaceghost/xivmcp-dalamud/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Spaceghost/xivmcp-dalamud/releases/latest/download/latest.zip",
+    "IsTestingExclusive": false,
+    "LastUpdate": 0
+  },
+  {
+    "Author": "Johnneylee Jack Rollins",
+    "Name": "XivDesktop",
+    "InternalName": "XivDesktop",
+    "AssemblyVersion": "1.0.1.0",
+    "Punchline": "Launch Linux desktop apps into the game world.",
+    "Description": "An app launcher for FINAL FANTASY XIV running under Wine on Linux. Lists the host's freedesktop applications and opens them as world panels through Ghostty's remote windows. Optional Umbra toolbar widget.",
+    "Tags": [
+      "launcher",
+      "desktop",
+      "linux",
+      "utility"
+    ],
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "RepoUrl": "https://github.com/Spaceghost/xivdesktop-dalamud",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/xivdesktop.png",
+    "ImageUrls": [
+      "https://spacegho.st/mods/ffxiv/plugins/icons/xivdesktop-banner.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/Spaceghost/xivdesktop-dalamud/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Spaceghost/xivdesktop-dalamud/releases/latest/download/latest.zip",
+    "IsTestingExclusive": false,
+    "LastUpdate": 0
+  },
+  {
+    "Author": "Johnneylee Jack Rollins",
+    "Name": "XivArcade",
+    "InternalName": "XivArcade",
+    "AssemblyVersion": "0.2.0.0",
+    "Punchline": "Your own classic games as game panels, with saves kept in step across your machines.",
+    "Description": "A library for the classic games you own, for FINAL FANTASY XIV running under Wine on Linux. /arcade lists the game files in folders you choose, starts them in RetroArch on the Linux host, and shows them as world panels through Ghostty when it is installed. Every save and save state lives in one folder that Syncthing copies between your machines. It downloads no games, BIOS files or artwork.",
+    "Tags": [
+      "emulation",
+      "retroarch",
+      "linux",
+      "saves",
+      "utility"
+    ],
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "RepoUrl": "https://github.com/Spaceghost/xivarcade-dalamud",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/xivarcade.png",
+    "ImageUrls": [
+      "https://spacegho.st/mods/ffxiv/plugins/icons/xivarcade-banner.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/Spaceghost/xivarcade-dalamud/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Spaceghost/xivarcade-dalamud/releases/latest/download/latest.zip",
     "IsTestingExclusive": false,
     "LastUpdate": 0
   }

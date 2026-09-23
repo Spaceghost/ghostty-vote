@@ -30,6 +30,9 @@
       <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
       <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
       <a class="chip" href="/mods/ffxiv/xivdesktop/" aria-current="page">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
+      <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
+      <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
       <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
@@ -57,7 +60,7 @@
     </section>
     <div class="status" role="note">
       <b>Honest status</b>
-      <p>The pure logic (app catalog, palette ranking, calculator, key chords, workspaces) has host-side tests, and the application scanner has been run against a real Linux host. <strong>Nothing has been observed in the game yet</strong>: not the palette, the key chords (including whether Wine delivers the Super key at all), launching against a running Ghostty, workspaces, notifications, or the Umbra widgets. It has test builds only.</p>
+      <p>The pure logic (app catalog, palette ranking, calculator, key chords, workspaces) has host-side tests, and the application scanner has been run against a real Linux host. <strong>Nothing has been observed in the game yet</strong>: not the palette, the key chords (including whether Wine delivers the Super key at all), launching against a running Ghostty, workspaces, notifications, or the Umbra widgets. It has a stable release (v1.0.1) and a newer test build.</p>
     </div>
 
     <section id="what" aria-labelledby="what-h">
@@ -144,7 +147,7 @@
             <li><b>Save and Close</b>.</li>
             <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivDesktop</b> → <b>Install</b>.</li>
           </ol>
-          <p class="note">XivDesktop has <b>test builds only</b> so far, and Dalamud hides a testing-only plugin unless you ask: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>. It needs Ghostty too.</p>
+          <p class="note">XivDesktop has a stable release, so it shows under <b>All Plugins</b> straight away. For the newer test build ahead of the next release, tick <b>Get plugin testing builds</b> in the same tab, then <b>Receive plugin testing versions</b> on its entry. It needs Ghostty too.</p>
           <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
         </div>
         <div class="path glass">
@@ -217,7 +220,7 @@ tools/install-dev.sh        # or: dotnet build XivDesktop.slnx -c Release</code>
       <ul class="linklist">
         <li><a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a></li>
         <li><a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud/releases" rel="noopener">Releases</a></li>
-        <li><a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud/commits/master" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivdesktop-dalamud/blob/master/CHANGELOG.md" rel="noopener">Changelog</a></li>
         <li><a class="btn" href="/mods/ffxiv/term/">Ghostty</a></li>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>

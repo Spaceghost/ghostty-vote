@@ -194,7 +194,7 @@ test('return paths: only the vote page (or its admin page) on this site', () => 
   };
   for (const [raw, want] of Object.entries(ok)) assert.equal(safeReturnPath(raw), want, raw);
   // the mod minisites hold sign-in buttons too; nothing near them is accepted
-  for (const mini of ['/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/almanac/about/']) assert.equal(safeReturnPath(mini), mini);
+  for (const mini of ['/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/almanac/about/']) assert.equal(safeReturnPath(mini), mini);
   for (const near of ['/mods/ffxiv/', '/mods/ffxiv/term', '/mods/ffxiv/term/gallery/x', '/mods/ffxiv/almanac/', '/mods/ffxiv/xivmcp/x', '/mods/ffxiv/plugins/']) assert.equal(safeReturnPath(near), page, near);
   for (const raw of [
     'https://evil.example/', '//evil.example/', '///evil.example/', '/\\evil.example/', '\\\\evil.example',

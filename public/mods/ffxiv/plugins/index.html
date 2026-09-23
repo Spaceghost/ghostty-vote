@@ -4,9 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FFXIV mods: plugin repository</title>
-<meta name="description" content="Add this Dalamud plugin repository in XIVLauncher to install Ghostty, Almanac, XivMcp and XivDesktop for Final Fantasy XIV in one click, or build them yourself as dev plugins.">
+<meta name="description" content="Add this Dalamud plugin repository in XIVLauncher to install Ghostty, Almanac, XivMcp, XivDesktop, XivArcade and XivLantern for Final Fantasy XIV in one click, or build them yourself as dev plugins.">
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/plugins/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FFXIV mods: plugin repository">
+<meta property="og:description" content="Add this Dalamud plugin repository in XIVLauncher to install Ghostty, Almanac, XivMcp, XivDesktop, XivArcade and XivLantern for Final Fantasy XIV in one click, or build them yourself as dev plugins.">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/plugins/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +30,7 @@
     <div class="topline">
       <span class="eyebrow">ffxiv mods · dalamud plugin repository</span>
       <span class="row">
+        <a class="chip" href="/mods/ffxiv/">All mods</a>
         <a class="chip" href="/mods/ffxiv/term/vote/">Ghostty vote</a>
         <a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a>
         <a class="chip" href="/mods/ffxiv/almanac/">Model leaderboard</a>
@@ -57,8 +65,7 @@
       <p class="punch">Eorzea is a terminal multiplexer.</p>
       <p>A real terminal inside the game: a Quake-style dropdown, floating windows, and terminals pinned to panels in the world. It talks to shells on your own machine through <code>ghostty-agent</code>, which you run yourself — the plugin never opens a shell on its own. <code>/term</code> toggles it. With <a href="https://github.com/una-xiv/umbra" rel="noopener">Umbra</a> installed, its toolbar widget shows the agent's status and a popup terminal.</p>
       <p class="needs"><b>Needs:</b> <code>ghostty-agent</code> running on the machine the game runs on.</p>
-      <p class="note" data-unreleased>Ghostty has not cut its first release into this repository yet, so the installer does not show it. It appears here by itself the day it does; until then, <a href="#build">build it yourself</a>.</p>
-      <p class="links"><a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/term/vote/">Vote on what it does next</a></p>
+      <p class="links"><a href="/mods/ffxiv/term/">About</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/term/vote/">Vote on what it does next</a></p>
     </article>
 
     <article class="mod" id="almanac" data-plugin="Almanac">
@@ -66,34 +73,53 @@
       <p class="punch">Talk to a local AI model in game, with XivMcp's tools.</p>
       <p>An in-game chat with a model running on <em>your</em> PC — Ollama, LM Studio, llama.cpp, anything with an OpenAI-compatible API. It sets itself up with a wizard that reads your GPU and recommends models that fit its memory, keeps threads in SQLite, streams replies, and can run a shared benchmark whose results feed the <a href="/mods/ffxiv/almanac/">community model leaderboard</a>. Nothing is sent to a cloud, and there is no Python to install.</p>
       <p class="needs"><b>Needs:</b> a local model server, and <b>XivMcp</b> for in-game tools (below).</p>
-      <p class="links"><a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/almanac-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/almanac/">Leaderboard</a></p>
+      <p class="links"><a href="/mods/ffxiv/almanac/about/">About</a> · <a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/almanac-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/almanac/">Leaderboard</a></p>
     </article>
 
     <article class="mod" id="xivmcp" data-plugin="XivMcp">
-      <h3>XivMcp <span class="ver" data-ver>—</span> <span class="chip pending-chip">test builds only</span></h3>
+      <h3>XivMcp <span class="ver" data-ver>—</span></h3>
       <p class="punch">Model Context Protocol server for Final Fantasy XIV.</p>
       <p>Exposes game state, game data and opt-in actions to MCP clients — Claude Code, Codex, Almanac — over a loopback HTTP server. Anything that would change your game is approved in game first, one prompt at a time. It has an Umbra toolbar widget too.</p>
       <p class="needs"><b>Needs:</b> an MCP client on the same machine.</p>
-      <p class="note">It has no stable release yet, only test builds, and Dalamud hides a testing-only plugin unless you ask for them: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>. Or <a href="#build">build it yourself</a>.</p>
-      <p class="links"><a href="https://github.com/Spaceghost/xivmcp-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivmcp-dalamud/releases" rel="noopener">Releases</a></p>
+      <p class="note">It has a stable release, so it shows under <b>All Plugins</b> straight away. A newer test build is there too, for those who <a href="#testing-h">opt in</a>.</p>
+      <p class="links"><a href="/mods/ffxiv/xivmcp/">About</a> · <a href="https://github.com/Spaceghost/xivmcp-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivmcp-dalamud/releases" rel="noopener">Releases</a></p>
     </article>
 
     <article class="mod" id="xivdesktop" data-plugin="XivDesktop">
-      <h3>XivDesktop <span class="ver" data-ver>—</span> <span class="chip pending-chip">test builds only</span></h3>
+      <h3>XivDesktop <span class="ver" data-ver>—</span></h3>
       <p class="punch">Launch Linux desktop apps into the game world.</p>
       <p>For the game running under Wine on Linux: lists the host's applications and opens them as panels in the world, through Ghostty's remote windows. An app launcher for Eorzea.</p>
       <p class="needs"><b>Needs:</b> Ghostty and <code>ghostty-agent</code>, on a Linux host.</p>
-      <p class="note">It has no stable release yet, only test builds, and Dalamud hides a testing-only plugin unless you ask for them: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>. Or <a href="#build">build it yourself</a>.</p>
-      <p class="links"><a href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivdesktop-dalamud/releases" rel="noopener">Releases</a></p>
+      <p class="note">It has a stable release, so it shows under <b>All Plugins</b> straight away. A newer test build is there too, for those who <a href="#testing-h">opt in</a>.</p>
+      <p class="links"><a href="/mods/ffxiv/xivdesktop/">About</a> · <a href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivdesktop-dalamud/releases" rel="noopener">Releases</a></p>
     </article>
+
+    <article class="mod" id="xivarcade" data-plugin="XivArcade">
+      <h3>XivArcade <span class="ver" data-ver>—</span></h3>
+      <p class="punch">Your own classic games as game panels, with saves kept in step across your machines.</p>
+      <p>For the game running under Wine on Linux: <code>/arcade</code> is a wall of the classic games you own, Final Fantasy first, started in RetroArch (or PCSX2 and DuckStation) on the host and shown as panels in the world through Ghostty. Every save lives in one folder that Syncthing copies between your machines. It downloads no games or BIOS files, and cover art only if you turn that on.</p>
+      <p class="needs"><b>Needs:</b> a Linux host, RetroArch and your own game files. Ghostty for panels and Syncthing for save sync are optional.</p>
+      <p class="links"><a href="/mods/ffxiv/xivarcade/">About</a> · <a href="https://github.com/Spaceghost/xivarcade-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivarcade-dalamud/releases" rel="noopener">Releases</a></p>
+    </article>
+
+    <article class="mod" id="xivlantern" data-plugin="XivLantern">
+      <h3>XivLantern <span class="ver" data-ver>—</span> <span class="chip pending-chip">test builds only</span></h3>
+      <p class="punch">Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.</p>
+      <p>Friends by one-time invite, presence and a note you type, 1:1 chat that waits for a friend who is offline, and channels you make, peer to peer over iroh with no Lantern server. An opt-in channel carries the author's signed announcements. Off until you turn it on; nothing from the game is read or sent. With the default relays, n0's relay servers see your IP address and when you are online; "relays off" contacts no third party.</p>
+      <p class="needs"><b>Needs:</b> friends running XivLantern too.</p>
+      <p class="note">It has test builds only, and Dalamud hides a testing-only plugin unless you ask for them: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b> once its first test build is published. Or build it yourself.</p>
+      <p class="links"><a href="/mods/ffxiv/xivlantern/">About</a> · <a href="https://github.com/Spaceghost/xivlantern-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivlantern-dalamud/releases" rel="noopener">Releases</a></p>
+    </article>
+
+    <p class="small">One more is on its way and not in the listing yet, because its repository is not public: <a href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>. Its page says how to build it.</p>
   </section>
 
   <section aria-labelledby="testing-h">
     <h2 id="testing-h">Test builds, if you want them early</h2>
     <p>Each plugin has a <b>testing</b> channel: the newest build, cut before a release, for friends who do not mind a rough edge. Opt in per plugin — nothing opts you in globally.</p>
     <ol class="steps">
-      <li><code>/xlplugins</code> → find the plugin → its <b>settings</b> (the gear on its entry).</li>
-      <li>Tick <b>Receive plugin testing versions</b>, then update the plugin.</li>
+      <li><code>/xlsettings</code> → <b>Experimental</b> → tick <b>Get plugin testing builds</b>, <b>Save and Close</b>.</li>
+      <li><code>/xlplugins</code> → right-click the plugin's entry → tick <b>Receive plugin testing versions</b>, then update the plugin.</li>
     </ol>
     <p class="small">A testing build is whatever the author last pushed a <code>-test</code> tag for. It is built by the same workflow, from a tagged commit, and it can be worse than the release. Untick the box and reinstall to go back.</p>
   </section>
@@ -103,7 +129,7 @@
     <p>Nothing here needs this page or this repository. Every plugin builds from its source checkout with the .NET SDK, and XIVLauncher loads it straight from your build folder — this is how the author runs them, and it is the honest way to read the code before you trust it.</p>
     <ol class="steps">
       <li><b>Install the .NET 10 SDK</b> and clone the plugin's repository.</li>
-      <li><b>Build it.</b> Ghostty: <code>tools/build.sh</code>. Almanac: <code>dotnet build dalamud/Almanac.Dalamud.slnx -c Release</code>. XivMcp and XivDesktop: <code>dotnet build &lt;name&gt;.slnx -c Release</code>. Each README says where the output lands, and each build needs Dalamud's reference assemblies — an XIVLauncher install already has them (Linux <code>~/.xlcore/dalamud/Hooks/dev/</code>, Windows <code>%APPDATA%\XIVLauncher\addon\Hooks\dev\</code>).</li>
+      <li><b>Build it.</b> Ghostty: <code>tools/build.sh</code>. Almanac: <code>dotnet build dalamud/Almanac.Dalamud.slnx -c Release</code>. XivMcp, XivDesktop and XivArcade: <code>dotnet build &lt;name&gt;.slnx -c Release</code>. Each README says where the output lands, and each build needs Dalamud's reference assemblies — an XIVLauncher install already has them (Linux <code>~/.xlcore/dalamud/Hooks/dev/</code>, Windows <code>%APPDATA%\XIVLauncher\addon\Hooks\dev\</code>).</li>
       <li>In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Dev Plugin Locations</b> → add the folder holding the built <code>&lt;Name&gt;.dll</code> and its <code>&lt;Name&gt;.json</code> (under Wine, as a <code>Z:\…</code> path) → <b>+</b> → <b>Save and Close</b>.</li>
       <li><code>/xlplugins</code> → <b>Dev Tools</b> → <b>Installed Dev Plugins</b> → enable it.</li>
       <li>Rebuilt while the game is running? Press the reload arrow on its entry in that same list. No relaunch.</li>
@@ -117,7 +143,7 @@
   </section>
 
   <footer>
-    <p class="small">The listing at <a href="/mods/ffxiv/plugins.json">/mods/ffxiv/plugins.json</a> is assembled from each plugin's own GitHub releases, so it follows a release within minutes and points only at builds that exist. Source for this page and the listing: <a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">the Ghostty repository</a>. Final Fantasy XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
+    <p class="small">The listing at <a href="/mods/ffxiv/plugins.json">/mods/ffxiv/plugins.json</a> is assembled from each plugin's own GitHub releases, so it follows a release within minutes and points only at builds that exist. The source for this page and the listing is not public yet; each plugin's own source is linked above. Final Fantasy XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
   </footer>
 </div>
 </body>

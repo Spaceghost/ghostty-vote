@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "mod": "xivwayfinder",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "test-target",
+      "title": "Twenty Yalms Ahead",
+      "kind": "screenshot",
+      "caption": "/wayfinder test in an open field: the bead dim and close, the glove above it pointing on, the distance under it.",
+      "files": []
+    },
+    {
+      "id": "turn-around",
+      "title": "The Glove Swings Round",
+      "kind": "gif",
+      "caption": "Turning the character away: the bead brightens and the glove slides to the screen edge, pointing back, with its little tap.",
+      "files": []
+    },
+    {
+      "id": "flag",
+      "title": "To the Flag",
+      "kind": "video",
+      "caption": "A map flag placed across a zone, then the walk to it with the trail on, ending in the arrival ring.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "quest",
+      "title": "The Next Step",
+      "kind": "screenshot",
+      "caption": "A tracked quest with its marker on the map, and the pointer following it with no flag set.",
+      "files": []
+    },
+    {
+      "id": "aetheryte",
+      "title": "Teleport To",
+      "kind": "screenshot",
+      "caption": "A flag in another zone: no arrow, only the note naming the aetheryte nearest it.",
+      "files": []
+    },
+    {
+      "id": "vnavmesh",
+      "title": "Around the Wall",
+      "kind": "gif",
+      "caption": "With vnavmesh installed, the pointer aiming at the walkable path's next corner instead of through a wall.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>XivWayfinder for FFXIV</title>
+<meta name="description" content="XivWayfinder: which way to go in Final Fantasy XIV, softly. A pulsing bead a couple of yalms ahead of you and the game's own pointing glove show the way to your target, your map flag or your quest's next step, along vnavmesh's walkable path when it is installed. It only points; it never moves your character.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/xivwayfinder/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="XivWayfinder for FFXIV">
+<meta property="og:description" content="XivWayfinder: which way to go in Final Fantasy XIV, softly. A pulsing bead a couple of yalms ahead of you and the game's own pointing glove show the way to your target, your map flag or your quest's next step, along vnavmesh's walkable path when it is installed. It only points; it never moves your character.">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/xivwayfinder/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/xivwayfinder-banner.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
+<!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
+     also fills the media slots from media/manifest.json and the community screenshots. -->
+<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body data-mod="xivwayfinder" data-name="XivWayfinder" data-media="/mods/ffxiv/xivwayfinder/media/manifest.json">
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="sitebar">
+    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
+    <nav aria-label="Mods">
+      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
+      <a class="chip" href="/mods/ffxiv/xivwayfinder/" aria-current="page">XivWayfinder</a>
+      <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero glass" aria-labelledby="title">
+      <div>
+        <div class="hero-id">
+          <img src="/mods/ffxiv/site/art/xivwayfinder-icon.webp" alt="" width="192" height="192">
+          <div>
+            <p class="eyebrow">Dalamud plugin · navigation · pointing only</p>
+            <h1 id="title">XivWayfinder</h1>
+          </div>
+        </div>
+        <p class="tagline">Which way to go, softly</p>
+        <p class="lede">A <strong>softly pulsing bead</strong> floats a couple of yalms ahead of your character in the direction you need to head, and the game's own <strong>white pointing glove</strong> points there too, sliding to the edge of the screen when the way lies behind you. It follows a target you set, <strong>your map flag</strong> or <strong>your quest's next step</strong>, and with vnavmesh installed it points along the walkable path instead of through walls. It <strong>never moves your character</strong>.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install</a>
+          <a class="btn" href="#proving">Prove it in game</a>
+          <a class="btn" href="https://github.com/Spaceghost/xivwayfinder-dalamud" rel="noopener">Source</a>
+        </div>
+      </div>
+      <img class="hero-art" src="/mods/ffxiv/site/art/xivwayfinder-banner.webp" alt="XivWayfinder banner art" width="730" height="380" fetchpriority="high">
+    </section>
+    <div class="status" role="note">
+      <b>Honest status</b>
+      <p>Host tests cover the direction and angle maths, the screen-edge clamping, the glove's placement and mirroring, the target priority, the pulse and tap timing, the command and IPC parsing and the state JSON. <strong>Nothing has been observed in the game yet</strong>: not the drawing, not the flag, quest and aetheryte reads, not vnavmesh. What this page describes is implemented intent. There is no release yet.</p>
+    </div>
+
+    <section id="what" aria-labelledby="what-h">
+      <div class="sec-head"><h2 id="what-h">What it does</h2></div>
+      <div class="prose">
+        <p><strong>Pointing only.</strong> XivWayfinder never moves, turns or teleports your character, never presses a key, and never asks vnavmesh to move you. It asks vnavmesh for paths and nothing else.</p>
+        <p>It follows, in order and each one switchable: a target you or another plugin set (<code>/wayfinder 11.2 14.5</code>, or over IPC), your map flag, and your tracked quest's next step where the game gives it a place. When the target is in another zone it does not point: it names the aetheryte to teleport to, attuned ones first.</p>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-h">
+      <div class="sec-head">
+        <h2 id="features-h">Features</h2>
+        <p>Everything below is built and its logic is host-tested; none of it has been observed in game yet.</p>
+      </div>
+      <div class="grid">
+      <article class="card glass">
+        <h3>The bead</h3>
+        <p>Floats 1.5 to 3 yalms ahead at chest height, bobbing and breathing. Dim while you face the right way, brighter as you turn away, so a glance says whether you are on course.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>The glove</h3>
+        <p>The classic white pointing hand, read at run time from your own game files (<code>ui/uld/Cursor.tex</code>), never shipped. Off screen it slides to the edge and points out, with a little tap. Without that texture it draws an original glove of its own.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Your flag, your quest</h3>
+        <p>The map flag, then the tracked quest's next step: the map's own quest markers first, else the quest's to-do locations. Steps with no place (a duty, a cutscene) are skipped.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Coordinates, pasted</h3>
+        <p><code>/wayfinder 11.2 14.5</code>, <code>(11.2, 14.5)</code>, <code>X: 11.2 Y: 14.5</code>, or with a zone name: <code>21.5 22.1 central shroud</code>. Reaching it clears it.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Another zone</h3>
+        <p>A small note above your character: <b>Teleport to</b> the aetheryte nearest the target, attuned ones first. XivWayfinder never teleports you.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Around walls, with vnavmesh</h3>
+        <p>With <a href="https://github.com/awgil/ffxiv_navmesh" rel="noopener">vnavmesh</a> installed it points at the walkable path's next corner, and the trail follows the path. Until a path arrives, a straight line.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Trail, distance, arrival</h3>
+        <p>An optional dotted trail of small beads, the distance in yalms on hover or always, and a breathing ring when you arrive.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Steps aside</h3>
+        <p>Hidden in cutscenes, zone changes, group pose and with the UI hidden; in combat and duties too, unless you say otherwise.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>IPC for other plugins</h3>
+        <p><code>XivWayfinder.v1.SetTarget</code>, <code>SetMapTarget</code>, <code>Clear</code> and <code>GetState</code>, for Ghostty's coordinate links and XivMcp to call. No other plugin calls them yet.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      </div>
+    </section>
+
+    <section id="proving" aria-labelledby="proving-h">
+      <div class="sec-head">
+        <h2 id="proving-h">Proving it in game</h2>
+        <p>None of this has been done yet. <code>/wayfinder test</code> exists so that it can be, anywhere.</p>
+      </div>
+      <ol class="prose">
+        <li>In an open field, <code>/wayfinder test</code>: the bead 2.2 yalms ahead, dim, the glove above it pointing forward; <code>/wayfinder status</code> says about 20 yalms.</li>
+        <li>Turn around: the bead brightens and the glove swings to point back past you, or moves to the screen edge.</li>
+        <li>Walk to it: the distance counts down, the ring appears, and the target is cleared.</li>
+        <li>Place a map flag, then track a quest with a marker and clear the flag: the pointer follows each. A flag in another zone names an aetheryte there.</li>
+        <li>With vnavmesh, stand behind a wall from a flag: the pointer aims around it.</li>
+      </ol>
+      <p class="small">Please report what you see, with <code>/wayfinder status</code> and <code>/xllog</code> lines for anything that looks wrong.</p>
+    </section>
+
+    <section id="screens" aria-labelledby="media-h">
+      <div class="sec-head">
+        <h2 id="media-h">Screenshots and clips</h2>
+        <p>Planned shots. Empty frames are placeholders for screenshots and clips that will be captured in game.</p>
+      </div>
+      <div id="media"><p class="empty">Loading the shot list…</p></div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="sec-head">
+        <h2 id="install-h">Install</h2>
+        <p>Two ways, and both are kept on purpose: one click from the plugin repository, or build it from source and load it as a dev plugin.</p>
+      </div>
+      <div class="paths">
+        <div class="path glass">
+          <h3>One click</h3>
+          <p class="small">Add the repository once; every mod here installs and updates like any other plugin.</p>
+          <div class="repo-url">
+            <code id="repo-url">https://spacegho.st/mods/ffxiv/plugins.json</code>
+            <button class="chip" id="copy" type="button">copy</button>
+          </div>
+          <ol>
+            <li>In game, type <code>/xlsettings</code> → the <b>Experimental</b> tab.</li>
+            <li>Under <b>Custom Plugin Repositories</b>, paste the URL into the empty row, press <b>+</b>, and leave its checkbox ticked.</li>
+            <li><b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivWayfinder</b> → <b>Install</b>.</li>
+          </ol>
+          <p class="note">XivWayfinder has <b>no release yet</b>, so it is not in the repository's listing. Until it has been verified in game, build it yourself.</p>
+          <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
+        </div>
+        <div class="path glass">
+          <h3>Build it yourself</h3>
+          <p class="small">The dev plugin path: exactly the code in your checkout, no repository, no auto-update. It is how the author runs it, and the honest way to read the code before you trust it.</p>
+          <pre><code>git clone https://github.com/Spaceghost/xivwayfinder-dalamud
+cd xivwayfinder-dalamud
+tools/fetch-dalamud.sh && tools/install-dev.sh</code></pre>
+          <ol>
+          <li>Needs the <b>.NET 10 SDK</b>. <code>tools/fetch-dalamud.sh</code> fetches Dalamud's reference assemblies. Rebuild after every Dalamud update.</li>
+          <li><code>tools/install-dev.sh</code> builds Release, stages it outside the checkout, and prints the path (a <code>Z:\…</code> path under Wine). It never edits Dalamud's configuration.</li>
+            <li>In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Dev Plugin Locations</b> → add the path of the built <code>XivWayfinder.dll</code> → <b>+</b> → <b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>Dev Tools</b> → <b>Installed Dev Plugins</b> → enable <b>XivWayfinder</b>. Dev plugins are added disabled.</li>
+            <li>Rebuilt while the game is running? Press the reload arrow on its entry. No relaunch.</li>
+          </ol>
+          <p class="small">If you later switch to the one-click install, disable the dev plugin first so the two copies cannot fight over the same name. The <a href="https://github.com/Spaceghost/xivwayfinder-dalamud#readme" rel="noopener">README</a> has the details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="requirements" aria-labelledby="req-h">
+      <div class="sec-head"><h2 id="req-h">Requirements</h2></div>
+      <ul class="plain prose">
+        <li><strong>FFXIV with Dalamud</strong> (API level 15). Windows and Linux under Wine alike; nothing in it is platform-specific.</li>
+        <li>Optional: <a href="https://github.com/awgil/ffxiv_navmesh" rel="noopener">vnavmesh</a>, for walkable paths instead of straight lines.</li>
+        <li>Known limits: a quest step with no place in the game's data (a duty, a cutscene, an item to hand in anywhere) is skipped, and which quest markers the map offers depends on what it has loaded.</li>
+      </ul>
+    </section>
+
+    <section id="community" aria-labelledby="community-h">
+      <div class="sec-head">
+        <h2 id="community-h">Community screenshots</h2>
+        <p>Screenshots of XivWayfinder shared by players. Every one is reviewed by the site owner before it is shown here.</p>
+      </div>
+      <div id="shots" aria-live="polite"><p class="empty">Loading…</p></div>
+      <div class="add glass">
+        <h3>Add yours</h3>
+        <p class="state" id="account-note" role="status"></p>
+        <div id="signed-out">
+          <p>Sharing a screenshot needs a sign-in, so that everything sent to this site comes from an account.</p>
+          <div class="cta">
+            <a class="btn primary" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/xivwayfinder/">Sign in with GitHub</a>
+            <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/xivwayfinder/">Sign in with FFXIV</a>
+          </div>
+          <p class="small">Signing in with FFXIV needs an XIVAuth account and shares no character.</p>
+        </div>
+        <div id="signed-in" hidden>
+          <form id="upload">
+            <div class="row">
+              <label for="u-file">Screenshot (PNG or JPEG, at most 8 MB)
+                <input id="u-file" name="file" type="file" accept="image/png,image/jpeg" required>
+              </label>
+              <label for="u-credit">Credit (optional, shown with the shot)
+                <input id="u-credit" name="credit" type="text" maxlength="60" autocomplete="off" placeholder="Character name, world">
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="u-send" type="submit">Share screenshot</button>
+              <button class="btn" id="signout" type="button">Sign out</button>
+            </div>
+            <p class="state" id="u-state" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <p class="small">Hide your own name and chat first, and never share a terminal showing tokens or private paths. Metadata is stripped from the image before it is stored. Your upload is linked to your GitHub or XIVAuth account id, which the site owner can see; the public sees only the image and the credit you typed. To have a shot removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+      </div>
+    </section>
+
+    <section id="links" aria-labelledby="links-h">
+      <div class="sec-head"><h2 id="links-h">Links</h2></div>
+      <ul class="linklist">
+        <li><a class="btn" href="https://github.com/Spaceghost/xivwayfinder-dalamud" rel="noopener">Source</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivwayfinder-dalamud/releases" rel="noopener">Releases</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivwayfinder-dalamud/blob/master/CHANGELOG.md" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> XivWayfinder talks to nothing on the network and writes nothing but its own settings. It reads the game's own UI files for the glove, the game's sheets for zones, maps and aetherytes, and your journal, flag and map markers from game memory; it changes none of them.</p>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
+    <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
+  </footer>
+</div>
+</body>
+</html>

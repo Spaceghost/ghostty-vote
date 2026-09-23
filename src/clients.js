@@ -13,7 +13,7 @@ export const CLIENTS = Object.freeze({
   almanac: Object.freeze({ name: 'Almanac', scopes: Object.freeze(['almanac:submit']), min_version: '0.2.0' }),
 });
 
-// ghostty | almanac | xivmcp | xivdesktop | xivarcade: the internalName in data/mods.json, lower-cased,
+// ghostty | almanac | xivmcp | xivdesktop | xivarcade | xivwayfinder | xivlantern: the internalName in data/mods.json, lower-cased,
 // without a trailing "dalamud".
 export const MOD_IDS = Object.freeze(mods.mods.map((m) => m.internalName.toLowerCase().replace(/dalamud$/, '')));
 export const isModId = (id) => typeof id === 'string' && MOD_IDS.includes(id);
