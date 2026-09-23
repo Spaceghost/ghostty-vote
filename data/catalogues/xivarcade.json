@@ -1,0 +1,292 @@
+{
+  "mod": "xivarcade",
+  "version": 1,
+  "categories": [
+    {
+      "name": "Gold Saucer at Home",
+      "tagline": "The cabinet itself: where your games live in the world and how they share a screen with Eorzea.",
+      "ideas": [
+        {
+          "id": "arcade-duty-pop-pause",
+          "title": "Duty Pop Pause",
+          "pitch": "When the Duty Finder pops, your arcade game saves a state and pauses, and it offers to resume when you are back.",
+          "experience": "You are halfway through the Magitek Armor ride in FF6 when the roulette pops. The panel freezes on the frame, a small 'state saved' tag appears, and the pad is already back with FFXIV. Forty minutes later the duty ends and a chat line asks if you want to pick up in Narshe.",
+          "in_world": true,
+          "audience": "players who queue while they play something else, roulette grinders",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "Add network_cmd_enable and a fixed network_cmd_port to system_cfg_text in tools/xiv-arcade, so every RetroArch launch accepts local UDP commands. PadCaptureService already watches ICondition for combat and cutscenes; add a DutyPop reason to the PadRelease enum, raised from ConditionFlag.WaitingForDuty or an IAddonLifecycle PostSetup on ContentsFinderConfirm. On it, ArcadeService asks the helper (new 'pause' verb) to send SAVE_STATE then PAUSE_TOGGLE, checked with GET_STATUS first so a paused game is not unpaused. On leaving the duty, the resume offer is a chat link, never automatic.",
+          "risks": "It must only watch the pop, never click Commence; that line is absolute. PAUSE_TOGGLE is a toggle, so a lost reply can leave the game running. Standalone PCSX2 and DuckStation have no equivalent command channel, so they get the pad release only. The UDP port is open on localhost to anything on the machine. None of the underlying pad or panel path has been seen in game yet.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-bgm-duck",
+          "title": "Hush the Orchestrion",
+          "pitch": "While an arcade panel has the focus, FFXIV's music fades down so the chiptune is the only soundtrack, and it fades back when you look away.",
+          "experience": "You focus the Chrono Trigger panel in your apartment and the Mist housing theme slides to a whisper. Click back into the game and it swells again over two seconds. Combat or a cutscene brings it back at once.",
+          "in_world": true,
+          "audience": "everyone who has heard two soundtracks fight",
+          "wow": 6,
+          "feasibility": "ready",
+          "effort": "hours",
+          "how": "PadCaptureService already decides five times a second, from GhosttyWire.FocusGet, whether the arcade panel has the focus. Feed the same signal to a small AudioDuck service that reads SoundBgm through Dalamud's IGameConfig once, lowers it in steps on the framework tick, and restores the remembered value on focus loss, every PadRelease reason and Dispose. A Configuration flag (on by default) and a /arcade duck toggle.",
+          "risks": "IGameConfig writes land in the player's real config, so a crash mid-duck leaves the music quiet on next launch; store the original in the plugin config and restore it on load. Players who already muted BGM must not have it turned back up. Focus detection depends on ghostty-dalamud and is not yet seen in game.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-housing-cabinet",
+          "title": "The Cabinet in the Corner",
+          "pitch": "Give a game a fixed spot in your house or apartment, so it always opens on the same wall or furniture instead of wherever the panel lands.",
+          "experience": "Final Fantasy Tactics always opens on the wall beside your war table, sized like a small cabinet. Walk up, press Play on the wall, and the Ivalice title screen appears where it did yesterday. In a different ward it opens as a normal panel, as before.",
+          "in_world": true,
+          "audience": "housing decorators, retro collectors, roleplayers",
+          "wow": 8,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "Today ArcadeService.Play hands one shell line to HostLauncher.RunInCompositor, which sends window.open with only a run field, then finds the panel through window.list. Add an optional placement to GhosttyWire.OpenRun (anchor position, heading, size, territory and house id), stored per game in Configuration and captured with '/arcade cabinet here' from the player's own position. ghostty-dalamud needs a matching window.open parameter or a window.place call; its own furniture-anchor idea covers the house-id side.",
+          "risks": "It depends on a ghostty-dalamud IPC change that does not exist yet. Housing layout and territory ids shift with patches, and panels have no depth test, so a cabinet can show through walls. The panel path has not been observed in game at all.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-crt-glass",
+          "title": "CRT Glass and Bezels",
+          "pitch": "Per-console scanline shaders and a cabinet bezel on the panel, chosen once and kept out of your own RetroArch settings.",
+          "experience": "The SNES shelf gets soft scanlines and a slight curve, the Game Boy a green-tinted LCD grid, the PS2 stays clean. In the dusk light of your island, the panel looks like a set that has been running since 1994.",
+          "in_world": true,
+          "audience": "retro purists, streamers, screenshot takers",
+          "wow": 6,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "system_cfg_text already appends per-console overrides at launch without touching retroarch.cfg. Add video_shader_enable and a video_shader path, plus input_overlay for a bezel, from a per-console choice in config.json set by '/arcade look <console> <preset|off>'. The helper only points at shader presets already on disk (RetroArch's own slang shaders), and the window lists what it found.",
+          "risks": "Shaders cost GPU time inside the agent's headless compositor on top of FFXIV. Flatpak RetroArch sees only paths passed with --filesystem, so shader folders need adding to launch_argv. Standalone emulators are left out. Bezels shipped with the plugin would need their own licence check, so it starts with none.",
+          "tos_safe": true,
+          "added_version": 1
+        }
+      ]
+    },
+    {
+      "name": "Save Crystals",
+      "tagline": "Your battery saves and states, kept safe, visible and easy to go back to on any machine.",
+      "ideas": [
+        {
+          "id": "arcade-save-timeline",
+          "title": "Save Timeline",
+          "pitch": "A history strip for each game showing every pre-launch backup and synced version, with one button to go back.",
+          "experience": "You overwrote the only save before the point of no return. Open the game's details, press History, and a strip of dated saves slides out: last night on the desktop, Tuesday on the laptop. Pick Tuesday, confirm, and the current save is backed up before the old one takes its place.",
+          "in_world": false,
+          "audience": "everyone who has saved over the wrong slot",
+          "wow": 7,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "backup_saves already keeps the last 10 copies under backups/<game>/<time>/, and Syncthing keeps .stversions in the synced tree. A new helper verb 'history <game>' lists both into state.json, and 'restore <game> <stamp>' runs settle() first, then backup_saves on the current files, then copies through the same never-lose rules as copy_if_newer, forced for this one explicit choice. ArcadeWindow's details strip gets a History button next to Play.",
+          "risks": "Restoring while another machine is playing just creates a conflict, so it must refuse while sync says Syncing or the game is running. Standalone memory cards hold many games at once, so restoring one card rolls back every game on it; the window has to say so. Staggered versioning names are Syncthing's own format and may change.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-state-slots",
+          "title": "Save State Snapshots",
+          "pitch": "See your save states as screenshots in the details strip and start a game straight into the one you pick.",
+          "experience": "Under Final Fantasy IX you see four small frames: Alexandria, the Iifa Tree, a boss you keep dying to, the last autosave. Click the boss frame and the game opens right before the fight, on whichever machine you are on.",
+          "in_world": false,
+          "audience": "players juggling several states, speedrun practice",
+          "wow": 7,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "Turn on savestate_thumbnail_enable in system_cfg_text so RetroArch writes a PNG beside each state in states/<console>/, which already syncs. The helper lists states per game into state.json; ArcadeWindow loads the PNGs through the same background CoverCache thumbnails used for covers. A launch takes an optional slot and launch_argv passes RetroArch's entry-slot option.",
+          "risks": "The entry-slot flag needs a recent RetroArch and must be checked against the Flatpak version before relying on it. State files are core-specific, so a state from Snes9x will not load in bsnes; show the core with each frame. PCSX2 and DuckStation keep states in their own formats and come later.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-conflict-picker",
+          "title": "Pick the Winning Save",
+          "pitch": "When two machines changed the same save, show both side by side and let you choose, instead of renaming files by hand.",
+          "experience": "A gold banner: 'Chrono Trigger: both saves kept'. Open it and you see the desktop's save from 21:14 next to the laptop's from 22:40, each with its state thumbnail and play time. The newer one is live; one click makes the other live and keeps both.",
+          "in_world": false,
+          "audience": "multi-machine players, couples sharing a library",
+          "wow": 6,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "resolve_conflicts already writes the conflicts table (live, kept_as, both mtimes) and names the loser 'name (older save, device ..., date).srm'. Expose unresolved rows through ArcadeSync.Conflicts in state.json with sizes and device names, add a 'swap <conflict id>' helper verb that exchanges the two names after a backup_saves call, and draw the pair in ArcadeWindow under the sync status.",
+          "risks": "Newer is not always better, which is the point, but players can still choose wrong; the swap must be reversible and itself recorded. Modification times differ across machines with bad clocks. Needs the sync path tested between two real machines, which has not happened yet.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-handheld-bridge",
+          "title": "Handheld Bridge",
+          "pitch": "Setup profiles that make a Steam Deck or an Android RetroArch share the same synced save tree, so you can continue on the sofa.",
+          "experience": "You stop FF Tactics at your desk, pick up the Deck, and the same chapter is waiting in RetroArch there. Back at the desk, /arcade last picks up the Deck's save, and the status line said 'Syncing...' until it had fully arrived.",
+          "in_world": false,
+          "audience": "Steam Deck owners, Android handheld players",
+          "wow": 7,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "The synced tree is already device-neutral: game_id is a hash of system and title, and system_cfg_text turns off per-core sorting. Add 'xiv-arcade sync-setup --profile deck|android' that prints the matching RetroArch overrides for that device (savefile_directory, savestate_directory, the sort flags) and the Syncthing folder path, like syncthing_folder_commands does today. The plugin shows it as an extra step in the first-run list.",
+          "risks": "Android scoped storage and Syncthing forks make folder paths awkward. EmuDeck and similar setups sort saves per core and may overwrite the overrides. The handheld has no settle gate, so a game started there while saves arrive can still create a conflict.",
+          "tos_safe": true,
+          "added_version": 1
+        }
+      ]
+    },
+    {
+      "name": "The Cartridge Shelf",
+      "tagline": "The cover wall as a collection you can sort, annotate and be proud of, still bring-your-own.",
+      "ideas": [
+        {
+          "id": "arcade-play-journal",
+          "title": "Play Journal",
+          "pitch": "Hours and sessions per game, from the play history the helper already records, shown on each cover and in a weekly chat line.",
+          "experience": "Selecting Final Fantasy VI shows '41 h over 23 sessions, last Tuesday'. On Sunday a chat line says you spent 6 hours in the arcade this week, mostly in Ivalice. /arcade journal lists your top ten.",
+          "in_world": false,
+          "audience": "completionists, stat lovers, backlog keepers",
+          "wow": 5,
+          "feasibility": "ready",
+          "effort": "hours",
+          "how": "The plays table in arcade.db already stores game_id, core, started and ended for every launch. build_state adds total seconds and session count per game to state.json; ArcadeGame gains two fields; ArcadeWindow's details strip prints them next to last played. A 'journal' verb in ArcadeCommands prints the summary to chat.",
+          "risks": "arcade.db is per machine, so hours played on the laptop are missing on the desktop unless a small per-machine journal file is put into the synced tree and merged. A crashed emulator leaves ended empty, so sessions need a sensible cap.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-crystal-pilgrimage",
+          "title": "Crystal Pilgrimage",
+          "pitch": "Mark games finished and the Final Fantasy shelf gains a crystal for each one, a quiet record of working through the series.",
+          "experience": "You finish Final Fantasy V and mark it done. Its cover gets a small crystal on the spine and a line across the top of the shelf fills in: 9 of 26. Hover it to see when you finished each one and how long it took.",
+          "in_world": false,
+          "audience": "Final Fantasy fans, series marathoners",
+          "wow": 6,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "The 26-title shelf is already built from ArcadeShelfEntry and ArcadeGame.Ff keys. Add a finished flag with a date per game id, written by '/arcade finished <name>' and a button in the details strip, and kept in a small JSON file inside the synced tree so every machine agrees. CoverLayout draws the crystal mark on both picture and drawn covers; hours come from the play journal when present.",
+          "risks": "Marking is manual on purpose; reading emulator memory to detect an ending would be fragile and is not wanted. The synced file can conflict like any save and needs merge-by-union rules.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-custom-shelves",
+          "title": "Shelves of Your Own",
+          "pitch": "Make your own shelves, such as Backlog, Couch co-op or Comfort games, and put favourites at the top of the wall.",
+          "experience": "Tab cycles past the Final Fantasy shelf to 'Rainy day' and 'Two players', which you made yourself. A star on a cover lifts it to the front of every shelf it belongs to.",
+          "in_world": false,
+          "audience": "large-library owners, LaunchBox refugees",
+          "wow": 5,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "ArcadeWindow already builds its Section list and CoverGrid per console. Add named shelves and favourites, keyed by the stable game_id, in a shelves file in the synced tree; the helper includes them in state.json and the window adds them as sections after the Final Fantasy shelf. Commands: '/arcade shelf <name> add|remove <game>' and a right-click menu on a cover. LaunchBox playlists could be read as starting shelves.",
+          "risks": "More shelves make Tab and L1/R1 navigation slower, so empty shelves should hide. game_id is title-based, so renaming a file to a different title drops it from its shelves.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-screenshot-covers",
+          "title": "Covers from Your Own Screenshots",
+          "pitch": "Take a screenshot in the emulator and use it as that game's cover, a bring-your-own picture with no download involved.",
+          "experience": "Your homebrew and fan-translated games all have drawn covers. On the title screen you press the screenshot button, then in the window choose 'Use last screenshot as cover', and the drawn cover is replaced by the title screen, cropped to the console's box shape.",
+          "in_world": false,
+          "audience": "players with obscure, homebrew or translated games, people who keep cover fetch off",
+          "wow": 5,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "Point RetroArch's screenshot_directory at a per-console folder under the helper's data directory from system_cfg_text. A helper verb 'cover-from-shot <game>' copies the newest screenshot into the art tree as the game's own picture, ranked after the player's covers and before fetched ones in find_boxart. CoverLayout already fits pictures to each console's box aspect without stretching.",
+          "risks": "The games folder is never written to, so these must live outside it and not in covers/. Screenshots of wide or odd-resolution games crop badly; a crop preview may be needed. Standalone emulators use their own screenshot folders.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-dat-verify",
+          "title": "Verified Dump Badges",
+          "pitch": "Check your files against a No-Intro or Redump DAT you supply and mark good dumps, bad dumps and their canonical names.",
+          "experience": "A small check appears on most covers. One PlayStation game shows 'bad dump: track 2 differs', which explains the crash you had last month. Cover matching improves too, because every verified game now carries its exact canonical name.",
+          "in_world": false,
+          "audience": "archivists, collectors, anyone debugging a game that will not boot",
+          "wow": 5,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "The player drops Logiqx XML DAT files into a dats/ folder; nothing is downloaded. The helper hashes files in the background (SHA-1 and CRC32, cached in the games table by size and mtime), matches them, and puts the verdict and canonical name into state.json. art_candidates tries the canonical name first. Uses the same content-check approach as check_bios_file.",
+          "risks": "Hashing a PS2 library takes a long time and must be resumable and throttled. CHD and CSO are compressed, so their hashes do not match Redump without chdman or decompression; say 'not checkable' rather than guess. DAT files have their own licensing and must never be bundled.",
+          "tos_safe": true,
+          "added_version": 1
+        }
+      ]
+    },
+    {
+      "name": "Arcade Linkshells",
+      "tagline": "XivArcade talking to the other mods in the family, each link optional and local.",
+      "ideas": [
+        {
+          "id": "arcade-lantern-netplay",
+          "title": "Link Cable over Lantern",
+          "pitch": "Invite a friend from XivLantern to a RetroArch netplay session of a game you both own, with the connection details passed privately between you.",
+          "experience": "You and your static both have Secret of Mana. In your Lantern channel you press 'Play together'. Their chat shows an invite with the cover. They accept, and a second controller joins on your panel while you both stand in the FC house.",
+          "in_world": true,
+          "audience": "friend groups, statics, couch co-op fans who now live apart",
+          "wow": 9,
+          "feasibility": "stretch",
+          "effort": "weeks",
+          "how": "The helper's launch_argv gains RetroArch's host and connect netplay modes. XivArcade offers a new IPC call beside XivArcade.v1.Search and Launch that builds an invite: game_id, core name and version, content CRC and a tailnet or LAN address, never the file. XivLantern carries it peer to peer, and the receiving XivArcade checks that the same game_id with the same CRC is in its own library before offering Join.",
+          "risks": "The hard line holds: no game file, disc or BIOS ever travels, and a CRC mismatch refuses. NAT traversal is hard without Tailscale or a relay. Netplay needs identical core versions and breaks with standalone emulators. Needs a Lantern IPC hook that does not exist yet, and RetroArch netplay latency inside a headless compositor is unknown.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-umbra-widget",
+          "title": "Now Playing Widget",
+          "pitch": "An Umbra toolbar widget showing the running game and save-sync state, with one click to resume the last game.",
+          "experience": "Your toolbar shows a small cartridge icon and 'FF VI, saves in sync'. When the other machine is still sending saves it turns amber and reads 'Syncing...'. Click it and a popup lists your last five games with Resume buttons.",
+          "in_world": false,
+          "audience": "Umbra users, anyone who closes the Arcade window",
+          "wow": 5,
+          "feasibility": "ready",
+          "effort": "days",
+          "how": "Follow the pattern ghostty-dalamud uses for its Umbra.Ghostty widget, without an assembly reference. ArcadeService.State already carries PlayingTitle, Sync.Code and the play history, so the widget reads them through a new XivArcade.v1.Status IPC call and launches through the existing XivArcade.v1.Launch.",
+          "risks": "Umbra's widget API changes between versions, and XivArcade must keep working with Umbra missing. The status call must be cheap, because toolbars poll often.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-almanac-names",
+          "title": "Ask the Local Model for a Name",
+          "pitch": "When cover matching fails, ask your own local model through Almanac for the game's canonical name, and keep the answer only if it really exists in the console's list.",
+          "experience": "Forty files named like 'ff5_rpge_v1.1' have drawn covers. You press 'Ask Almanac' and one by one the covers fill in, each with a small note: 'matched by name suggestion'. The two it could not place stay drawn.",
+          "in_world": false,
+          "audience": "players with messy file names who turned cover fetch on",
+          "wow": 6,
+          "feasibility": "research",
+          "effort": "weeks",
+          "how": "This is the TODO already written in docs/ARCADE.md. The helper writes unmatched names and their console's cached Named_Boxarts list to state.json; the plugin sends each to Almanac.Ask with a narrow prompt; the answer goes back through a new helper verb and art_match accepts it only if it is exactly one entry in that list. XivMcp stays out of it, as the doc says.",
+          "risks": "Needs a request and response bridge between the in-game IPC and the host helper, which is why it was left out. Small local models invent names; the exact-list check makes that safe but may leave most games unmatched. Slow on modest GPUs, so it must run in the background and be cancellable.",
+          "tos_safe": true,
+          "added_version": 1
+        },
+        {
+          "id": "arcade-almanac-hints",
+          "title": "Stuck? Ask the Scholar",
+          "pitch": "A spoiler-careful hint button for the game you are playing, answered by your local model through Almanac, with nothing leaving your machine.",
+          "experience": "You have walked around the Phantom Forest for ten minutes. You open the details strip, type 'where is the train', choose 'nudge, no spoilers', and get two lines back in the Almanac chat. It says it is not sure when it is not sure.",
+          "in_world": false,
+          "audience": "first-time players of old games, families",
+          "wow": 5,
+          "feasibility": "stretch",
+          "effort": "days",
+          "how": "ArcadeWindow's details strip gets a Hint box that calls Almanac's IPC with the game's title, console and year from ArcadeGame plus the player's own question and a spoiler level. XivArcade sends nothing else: no emulator memory, no screenshots. The reply opens in Almanac's own chat window.",
+          "risks": "Local models know little about most 1990s games and will invent walkthrough steps; the answer needs a clear 'model guess' label. Depends on Almanac being installed and a model loaded. Adds one more optional cross-plugin IPC to test.",
+          "tos_safe": true,
+          "added_version": 1
+        }
+      ]
+    }
+  ],
+  "top_picks": [
+    "arcade-duty-pop-pause",
+    "arcade-save-timeline",
+    "arcade-lantern-netplay",
+    "arcade-housing-cabinet",
+    "arcade-bgm-duck"
+  ]
+}

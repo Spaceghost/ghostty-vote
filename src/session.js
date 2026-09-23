@@ -10,7 +10,7 @@
 // A session also carries `iat`, the sign-in time. Renewal copies it, so a session can be
 // renewed for at most SESSION_MAX_AGE_S after sign-in (ADMIN_SESSION_MAX_AGE_S for an
 // ADMIN_ACCOUNTS entry); after that it counts as expired and the voter signs in again.
-import { BASE, base64url, cookie, fromBase64url, parseCookies, randomToken, sha256hex, utf8 } from './lib.js';
+import { BASE, VOTE_MODS, base64url, cookie, fromBase64url, parseCookies, randomToken, sha256hex, utf8 } from './lib.js';
 
 export const TOKEN_VERSION = 'v1';
 export const SESSION_COOKIE = '__Secure-ghostty_session';
@@ -173,6 +173,8 @@ const RETURNS = new Set([
   BASE + '/', BASE + '/admin/', BASE + '/apps/', '/mods/ffxiv/term/gallery/',
   // the mod minisites: their community screenshots section has the sign-in buttons
   '/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/almanac/about/',
+  // every mod's vote page
+  ...Object.values(VOTE_MODS),
 ]);
 const USER_CODE_RE = /^[A-Z]{4}-[A-Z]{4}$/;
 export function safeReturnPath(raw) {

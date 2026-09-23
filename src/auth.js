@@ -354,12 +354,12 @@ export async function getAdminVoters(request, env, url) {
        FROM votes GROUP BY voter`,
     ),
     env.DB.prepare(
-      `SELECT votes.voter, votes.idea_id, ideas.title, votes.vote, votes.note, votes.updated_at
+      `SELECT votes.voter, votes.idea_id, ideas.title, ideas.mod, votes.vote, votes.note, votes.updated_at
        FROM votes JOIN ideas ON ideas.id = votes.idea_id
        WHERE votes.note <> '' ORDER BY votes.updated_at DESC`,
     ),
     env.DB.prepare(
-      'SELECT id, voter, title, detail, status, created_at FROM suggestions ORDER BY created_at DESC, id DESC LIMIT ?',
+      'SELECT id, voter, title, detail, status, created_at, mod FROM suggestions ORDER BY created_at DESC, id DESC LIMIT ?',
     ).bind(LIMITS.adminSuggestions),
     env.DB.prepare('SELECT voter, lodestone_id, name, world, portrait_url, first_seen, last_seen FROM characters'),
   ]);
@@ -379,11 +379,11 @@ export async function getAdminVoters(request, env, url) {
     seen(v, r.last_active);
   }
   for (const r of notes.results) {
-    voter(r.voter).notes.push({ idea_id: r.idea_id, title: r.title, vote: r.vote || null, note: r.note, updated_at: r.updated_at });
+    voter(r.voter).notes.push({ idea_id: r.idea_id, title: r.title, mod: r.mod, vote: r.vote || null, note: r.note, updated_at: r.updated_at });
   }
   for (const r of suggestions.results) {
     const v = voter(r.voter);
-    v.suggestions.push({ id: r.id, title: r.title, detail: r.detail, status: r.status, created_at: r.created_at });
+    v.suggestions.push({ id: r.id, title: r.title, detail: r.detail, status: r.status, created_at: r.created_at, mod: r.mod });
     seen(v, r.created_at);
   }
   for (const r of characters.results) {

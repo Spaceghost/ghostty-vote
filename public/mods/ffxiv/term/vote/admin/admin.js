@@ -9,6 +9,8 @@
   'use strict';
   const BASE = '/mods/ffxiv/term/vote/';
   const DOT = ' \u00b7 ';
+  // which mod's vote a note or suggestion came from; Ghostty's is the original, so it goes unmarked
+  const modTag = (m) => (m && m !== 'ghostty' ? '[' + str(m) + '] ' : '');
   const LODESTONE_ID = /^\d{1,20}$/;
   const state = { data: null, filter: 'all' };
 
@@ -73,7 +75,7 @@
       const d = el('details', { open: notes.length <= 3 });
       d.append(el('summary', { text: notes.length + (notes.length === 1 ? ' note' : ' notes') }));
       for (const n of notes) {
-        d.append(el('span', { class: 'k', text: str(n.title) + (n.vote ? DOT + n.vote : '') }), el('p', { text: str(n.note) }));
+        d.append(el('span', { class: 'k', text: modTag(n.mod) + str(n.title) + (n.vote ? DOT + n.vote : '') }), el('p', { text: str(n.note) }));
       }
       a.append(d);
     }
@@ -82,7 +84,7 @@
       const d = el('details', { open: sugg.length <= 2 });
       d.append(el('summary', { text: sugg.length + (sugg.length === 1 ? ' suggestion' : ' suggestions') }));
       for (const s of sugg) {
-        d.append(el('span', { class: 'k', text: str(s.title) + DOT + str(s.status) + DOT + when(s.created_at) }));
+        d.append(el('span', { class: 'k', text: modTag(s.mod) + str(s.title) + DOT + str(s.status) + DOT + when(s.created_at) }));
         if (s.detail) d.append(el('p', { text: str(s.detail) }));
       }
       a.append(d);

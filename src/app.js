@@ -14,7 +14,7 @@ import {
   postDeviceLookup, postDeviceToken, postTokenRevoke,
 } from './device.js';
 import {
-  API_PREFIX, LIMITS, PRIVATE, isSameOrigin, json, readJsonBody, route, validateSuggestion, validateVote,
+  API_PREFIX, LIMITS, PRIVATE, isSameOrigin, json, readJsonBody, route, validateSuggestion, validateVote, voteMod,
 } from './lib.js';
 import { readSession } from './session.js';
 import {
@@ -95,15 +95,19 @@ export async function handle(request, env, ctx, cache = globalThis.caches?.defau
   }
 }
 
-// GET api/tallies -> {idea_id: {want, maybe, skip}} for every open idea.
+// GET api/tallies[?mod=] -> {idea_id: {want, maybe, skip}} for every open idea of one
+// mod's vote (Ghostty's when no mod is named).
 async function getTallies(env, ctx, url, cache) {
-  // One cache key regardless of query string, so cache-busting parameters cannot force D1 reads.
-  const key = new Request(url.origin + API_PREFIX + 'tallies');
+  const mod = voteMod(url.searchParams.get('mod'));
+  if (mod === null) return json({ error: 'unknown_mod', message: 'No vote for that mod.' }, { status: 404 });
+  // One cache key per mod regardless of the rest of the query string, so cache-busting
+  // parameters cannot force D1 reads.
+  const key = new Request(url.origin + API_PREFIX + 'tallies?mod=' + mod);
   if (cache) {
     const hit = await cache.match(key);
     if (hit) return hit;
   }
-  const { results } = await env.DB.prepare('SELECT id, want, maybe, skip FROM ideas WHERE retired = 0').all();
+  const { results } = await env.DB.prepare('SELECT id, want, maybe, skip FROM ideas WHERE retired = 0 AND mod = ?').bind(mod).all();
   const tallies = {};
   for (const { id, want, maybe, skip } of results) tallies[id] = { want, maybe, skip };
   const res = json(tallies, { headers: { 'cache-control': `public, max-age=${LIMITS.tallyTtlSeconds}` } });
@@ -115,23 +119,29 @@ async function getTallies(env, ctx, url, cache) {
   return res;
 }
 
-// GET api/mine -> the signed-in voter's own ballot and newest suggestions, so the page
+// GET api/mine[?mod=] -> the signed-in voter's own ballot and newest suggestions for one
+// mod's vote, so the page
 // can show them again on any load. Private to the session: never cached (not even by
 // the browser) and never read from or written to the tallies cache.
 async function getMine(request, env, url) {
   if (!isSameOrigin(request, url)) {
     return json({ error: 'forbidden', message: 'Cross-site request refused.' }, { status: 403, headers: PRIVATE });
   }
+  const mod = voteMod(url.searchParams.get('mod'));
+  if (mod === null) return json({ error: 'unknown_mod', message: 'No vote for that mod.' }, { status: 404, headers: PRIVATE });
   const mine = { signed_in: false, votes: {}, suggestions: [] };
   const session = await readSession(request, env);
   if (!session) return json(mine, { headers: PRIVATE }); // no session, no ballot: D1 is not asked
   mine.signed_in = true;
   const voter = session.k;
   const [votes, suggestions] = await env.DB.batch([
-    env.DB.prepare('SELECT idea_id, vote, note, updated_at FROM votes WHERE voter = ?').bind(voter),
     env.DB.prepare(
-      'SELECT id, title, detail, created_at FROM suggestions WHERE voter = ? ORDER BY created_at DESC, id DESC LIMIT ?',
-    ).bind(voter, LIMITS.mySuggestions),
+      `SELECT votes.idea_id, votes.vote, votes.note, votes.updated_at
+       FROM votes JOIN ideas ON ideas.id = votes.idea_id WHERE votes.voter = ? AND ideas.mod = ?`,
+    ).bind(voter, mod),
+    env.DB.prepare(
+      'SELECT id, title, detail, created_at FROM suggestions WHERE voter = ? AND mod = ? ORDER BY created_at DESC, id DESC LIMIT ?',
+    ).bind(voter, mod, LIMITS.mySuggestions),
   ]);
   for (const { idea_id: ideaId, vote, note, updated_at: updatedAt } of votes.results) {
     mine.votes[ideaId] = { vote: vote || null, note, updated_at: updatedAt };
@@ -211,7 +221,7 @@ async function postVote(env, { p: provider, k: voter }, { idea_id: ideaId, vote,
   });
 }
 
-async function postSuggest(env, { p: provider, k: voter }, { title, detail }, now) {
+async function postSuggest(env, { p: provider, k: voter }, { title, detail, mod }, now) {
   const since = now - LIMITS.dayMs;
   const pre = await env.DB.prepare(
     `SELECT ${WINDOW_SQL},
@@ -231,8 +241,8 @@ async function postSuggest(env, { p: provider, k: voter }, { title, detail }, no
   const results = await env.DB.batch([
     ...logWrite(env, voter, now),
     env.DB.prepare(
-      'INSERT INTO suggestions (voter, title, detail, created_at, provider) VALUES (?, ?, ?, ?, ?) RETURNING id, title, detail, created_at',
-    ).bind(voter, title, detail, now, provider),
+      'INSERT INTO suggestions (voter, title, detail, created_at, provider, mod) VALUES (?, ?, ?, ?, ?, ?) RETURNING id, title, detail, created_at',
+    ).bind(voter, title, detail, now, provider, mod),
   ]);
   return json({ ok: true, suggestion: results[2].results[0] }, { status: 201 });
 }

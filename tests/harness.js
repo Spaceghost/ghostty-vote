@@ -14,9 +14,24 @@ export const MIGRATIONS = [
   read('migrations/0003_note_only_votes.sql'), read('migrations/0004_sign_in.sql'),
   read('migrations/0005_gallery.sql'), read('migrations/0006_almanac.sql'),
   read('migrations/0007_analytics.sql'), read('migrations/0008_account_gate.sql'),
-  read('migrations/0009_shot_votes.sql'),
+  read('migrations/0009_shot_votes.sql'), read('migrations/0010_mod_votes.sql'),
 ];
 export const SEED = read('seed/seed.sql');
+// Ghostty's catalogue in the shape the database had before 0010 (no mod column), for the
+// tests that apply an older migration to a database seeded at that time.
+export const LEGACY_SEED = (() => {
+  const cat = JSON.parse(read('data/catalogue.json'));
+  const q = (v) => "'" + String(v).replaceAll("'", "''") + "'";
+  const out = [`INSERT INTO catalogue (id, version) VALUES (1, ${cat.version});`];
+  let n = 0;
+  cat.categories.forEach((c, ci) => {
+    out.push(`INSERT INTO categories (name, tagline, sort_order) VALUES (${q(c.name)}, ${q(c.tagline || '')}, ${ci});`);
+    for (const i of c.ideas) {
+      out.push(`INSERT INTO ideas (id, category, title, wow, sort_order, added_version) VALUES (${q(i.id)}, ${q(c.name)}, ${q(i.title)}, ${i.wow}, ${n++}, ${i.added_version});`);
+    }
+  });
+  return out.join('\n');
+})();
 export const ORIGIN = 'https://spacegho.st';
 export const API = BASE + '/api/';
 export const SECRETS = Object.freeze({

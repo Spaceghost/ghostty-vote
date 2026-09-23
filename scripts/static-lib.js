@@ -1,10 +1,13 @@
-// Turns data/catalogue.json into the static files the page and the plugin read:
+// Turns each mod's catalogue into the static files its vote page and plugin read:
 // ideas.json (the catalogue, no tallies) and version.json (a cheap poll). Pure; no I/O.
-import { validateCatalogue } from './seed-lib.js';
+import { catalogueMod, validateCatalogue } from './seed-lib.js';
+import { VOTE_MODS } from '../src/lib.js';
 
+// Ghostty's vote, the original; every other mod's is at VOTE_MODS[mod].
 export const BASE = '/mods/ffxiv/term/vote/';
 export const PUBLIC_URL = 'https://spacegho.st' + BASE;
 export const STATIC_DIR = 'public' + BASE;
+const pageOf = (cat) => VOTE_MODS[catalogueMod(cat)];
 
 function checked(cat) {
   const errors = validateCatalogue(cat);
@@ -50,16 +53,21 @@ export function buildVersion(cat) {
       ideas++;
     }
   }
-  return { version: cat.version, ideas, added, url: PUBLIC_URL };
+  return { version: cat.version, ideas, added, url: 'https://spacegho.st' + pageOf(cat) };
 }
 
 export const serialize = (value) => JSON.stringify(value) + '\n';
 
-// Relative path (from the repo root) -> file contents, for everything generated.
-export function buildOutputs(cat, buildSeedSql) {
-  return {
-    [STATIC_DIR + 'ideas.json']: serialize(buildIdeas(cat)),
-    [STATIC_DIR + 'version.json']: serialize(buildVersion(cat)),
-    'seed/seed.sql': buildSeedSql(cat),
-  };
+// Relative path (from the repo root) -> file contents, for everything generated: each
+// mod's ideas.json and version.json beside its vote page, and one seed for them all.
+export function buildOutputs(cats, buildSeedSqlAll) {
+  const list = Array.isArray(cats) ? cats : [cats];
+  const out = {};
+  for (const cat of list) {
+    const dir = 'public' + pageOf(cat);
+    out[dir + 'ideas.json'] = serialize(buildIdeas(cat));
+    out[dir + 'version.json'] = serialize(buildVersion(cat));
+  }
+  out['seed/seed.sql'] = buildSeedSqlAll(list);
+  return out;
 }

@@ -1,19 +1,25 @@
 #!/usr/bin/env node
 // Usage: node scripts/build.js [--check]
-// Generates public/mods/ffxiv/term/vote/{ideas,version}.json and seed/seed.sql from
-// data/catalogue.json, src/almanac-schema.js from the published results schema, and
+// Generates each mod's vote/{ideas,version}.json and seed/seed.sql from data/catalogue.json
+// (Ghostty's) and data/catalogues/*.json (every other mod's), src/almanac-schema.js from the published results schema, and
 // public/mods/ffxiv/plugins.json + src/mods-data.js from data/mods.json. --check writes nothing and fails if any output is stale.
 // No dependencies; wrangler runs this as the [build] command before deploy.
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildSeedSql } from './seed-lib.js';
+import { buildSeedSqlAll } from './seed-lib.js';
 import { buildOutputs } from './static-lib.js';
 import { STATIC_PLUGINS, buildPluginMaster } from './plugins-lib.js';
+import { buildVotePages } from './vote-page-lib.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const catalogue = JSON.parse(readFileSync(root + 'data/catalogue.json', 'utf8'));
-const outputs = buildOutputs(catalogue, buildSeedSql);
+// Ghostty's catalogue first, then every other mod's, in name order so the seed is stable.
+const others = readdirSync(root + 'data/catalogues').filter((f) => f.endsWith('.json')).sort()
+  .map((f) => JSON.parse(readFileSync(root + 'data/catalogues/' + f, 'utf8')));
+const outputs = buildOutputs([catalogue, ...others], buildSeedSqlAll);
+// Every mod's vote page, from one template and data/vote-pages.json.
+Object.assign(outputs, buildVotePages(JSON.parse(readFileSync(root + 'data/vote-pages.json', 'utf8'))));
 // The Almanac leaderboard's submission schema: the Worker validates against the same file
 // the site publishes at /mods/ffxiv/almanac/schema/results.v1.json.
 const resultsSchema = JSON.parse(readFileSync(root + 'public/mods/ffxiv/almanac/schema/results.v1.json', 'utf8'));
@@ -42,4 +48,4 @@ for (const [path, body] of Object.entries(outputs)) {
   }
 }
 if (stale) process.exit(1);
-console.log(`catalogue version ${catalogue.version}: ${check ? "outputs are current" : "build done"}`);
+console.log(`${1 + others.length} vote catalogues (ghostty v${catalogue.version}): ${check ? "outputs are current" : "build done"}`);

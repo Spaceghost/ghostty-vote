@@ -6,6 +6,26 @@
 
 export const BASE = '/mods/ffxiv/term/vote';
 export const API_PREFIX = BASE + '/api/';
+
+// Every mod with a feature vote, and the page it is at. The API stays under BASE for all
+// of them, because the sign-in cookie's Path is BASE: a mod's vote page calls
+// BASE/api/tallies?mod=xivmcp and so on. Ghostty's is the original, and the default
+// wherever a request names no mod.
+export const VOTE_MODS = Object.freeze({
+  ghostty: '/mods/ffxiv/term/vote/',
+  xivmcp: '/mods/ffxiv/xivmcp/vote/',
+  xivdesktop: '/mods/ffxiv/xivdesktop/vote/',
+  xivarcade: '/mods/ffxiv/xivarcade/vote/',
+  xivwayfinder: '/mods/ffxiv/xivwayfinder/vote/',
+  xivlantern: '/mods/ffxiv/xivlantern/vote/',
+  almanac: '/mods/ffxiv/almanac/vote/',
+});
+export const DEFAULT_VOTE_MOD = 'ghostty';
+// ?mod= on a request: a known mod, the default when absent, null when it names no vote.
+export function voteMod(raw) {
+  if (raw === null || raw === undefined || raw === '') return DEFAULT_VOTE_MOD;
+  return Object.hasOwn(VOTE_MODS, raw) ? raw : null;
+}
 // The screenshot gallery sits beside the vote; its admin endpoints live under the vote's
 // api/admin/ so the owner's session cookie (Path=/mods/ffxiv/term/vote) reaches them.
 export const GALLERY_BASE = '/mods/ffxiv/term/gallery';
@@ -272,7 +292,9 @@ export function validateSuggestion(body) {
     if (detail === null) return fail(400, 'bad_detail', 'detail must be a string.');
     if (detail.length > LIMITS.detail) return fail(400, 'detail_too_long', `detail must be at most ${LIMITS.detail} characters.`);
   }
-  return { ok: true, value: { title, detail } };
+  const mod = voteMod(body.mod);
+  if (mod === null) return fail(400, 'unknown_mod', 'No vote for that mod.');
+  return { ok: true, value: { title, detail, mod } };
 }
 
 // Responses that depend on who is asking: never stored by a browser or a cache.

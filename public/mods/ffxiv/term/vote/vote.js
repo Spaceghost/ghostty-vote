@@ -1,4 +1,7 @@
-// Ghostty for FFXIV vote page. A static asset: the catalogue comes from ideas.json,
+// The feature vote page, shared by every mod: <html data-mod data-page> says whose vote
+// it is and where its ideas.json lives (Ghostty's when absent). The API is always under
+// /mods/ffxiv/term/vote/api/, where the sign-in cookie reaches, with ?mod= naming the vote.
+// A static asset: the catalogue comes from ideas.json,
 // tallies from GET api/tallies (edge-cached for a minute), who is signed in from
 // GET api/auth/me, and the signed-in voter's own ballot from GET api/mine, painted
 // first from localStorage. Changes go to POST api/vote and api/suggest through the
@@ -8,12 +11,18 @@
   'use strict';
   const BASE = '/mods/ffxiv/term/vote/';
   const B = window.GhosttyBallot;
+  const root = document.documentElement;
+  const MOD = /^[a-z]{1,24}$/.test(root.dataset.mod || '') ? root.dataset.mod : 'ghostty';
+  const PAGE = /^\/mods\/ffxiv\/[a-z/]{1,40}\/$/.test(root.dataset.page || '') ? root.dataset.page : BASE;
+  const Q = '?mod=' + MOD;
+  // Ghostty's keys predate the other mods' votes and stay as they were; the theme is shared.
+  const NS = MOD === 'ghostty' ? 'ghostty-vote:' : 'ghostty-vote:' + MOD + ':';
   const KEY = {
     theme: 'ghostty-vote:theme',
-    seen: 'ghostty-vote:seen-version',
-    since: 'ghostty-vote:session-since',
-    votes: 'ghostty-vote:votes',
-    suggestions: 'ghostty-vote:suggestions',
+    seen: NS + 'seen-version',
+    since: NS + 'session-since',
+    votes: NS + 'votes',
+    suggestions: NS + 'suggestions',
   };
 
   function storage(kind) { try { return window[kind]; } catch (e) { return null; } }
@@ -72,7 +81,7 @@
   }
 
   async function request(path, init) {
-    const res = await fetch(BASE + path, { headers: { accept: 'application/json' }, ...init });
+    const res = await fetch((path === 'ideas.json' ? PAGE : BASE) + path, { headers: { accept: 'application/json' }, ...init });
     let data = null;
     try { data = await res.json(); } catch (e) {}
     if (!res.ok) {
@@ -485,7 +494,7 @@
     const since = state.writeSeq;
     let data = null;
     try {
-      data = await request('api/mine', { credentials: 'same-origin', cache: 'no-store' });
+      data = await request('api/mine' + Q, { credentials: 'same-origin', cache: 'no-store' });
     } catch (e) {
       data = null;
     } finally {
@@ -709,7 +718,7 @@
       sSend.disabled = true;
       sState.textContent = 'Sending' + ELLIPSIS;
       try {
-        const r = await post('suggest', { title, detail });
+        const r = await post('suggest', { title, detail, mod: MOD });
         const s = r.suggestion || {};
         const saved = { title: s.title || title, detail: s.detail ?? detail, created_at: s.created_at || Date.now() };
         if (Number.isInteger(s.id)) { saved.id = s.id; state.sentIds.add(s.id); }
@@ -757,7 +766,7 @@
       // The catalogue is a static file; tallies are the only server read, and the page works without them.
       const [data, tallies] = await Promise.all([
         request('ideas.json', { credentials: 'omit' }),
-        request('api/tallies', { credentials: 'omit' }).catch(() => null),
+        request('api/tallies' + Q, { credentials: 'omit' }).catch(() => null),
       ]);
       state.talliesOk = !!(tallies && typeof tallies === 'object');
       state.version = data.version;

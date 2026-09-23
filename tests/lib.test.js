@@ -132,7 +132,10 @@ test('limits: a busy ballot session fits the write window', () => {
 });
 
 test('validateSuggestion', () => {
-  assert.deepEqual(validateSuggestion({ title: ' Split\nflap ', detail: 'd' }).value, { title: 'Split flap', detail: 'd' });
+  assert.deepEqual(validateSuggestion({ title: ' Split\nflap ', detail: 'd' }).value, { title: 'Split flap', detail: 'd', mod: 'ghostty' });
+  assert.equal(validateSuggestion({ title: 'fine', mod: 'xivmcp' }).value.mod, 'xivmcp');
+  assert.equal(validateSuggestion({ title: 'fine', mod: 'nope' }).error, 'unknown_mod');
+  assert.equal(validateSuggestion({ title: 'fine', mod: '__proto__' }).error, 'unknown_mod');
   assert.equal(validateSuggestion({ title: 'ab' }).error, 'bad_title');
   assert.equal(validateSuggestion({}).error, 'bad_title');
   assert.ok(validateSuggestion({ title: 't'.repeat(80) }).ok);

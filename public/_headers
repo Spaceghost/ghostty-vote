@@ -145,3 +145,66 @@
 # Icons and banners: content changes mean a new file name.
 /mods/ffxiv/site/art/*
   Cache-Control: public, max-age=604800
+
+# Every other mod's vote page: the same page, scripts and CSP as Ghostty's above. Each sits
+# under its minisite's own rule, so that rule's CSP is detached first ("! "), never stacked.
+# ideas.json and version.json may be polled by the mod's plugin, like Ghostty's.
+/mods/ffxiv/xivmcp/vote/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+/mods/ffxiv/xivmcp/vote/version.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivmcp/vote/ideas.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivdesktop/vote/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+/mods/ffxiv/xivdesktop/vote/version.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivdesktop/vote/ideas.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivarcade/vote/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+/mods/ffxiv/xivarcade/vote/version.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivarcade/vote/ideas.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivwayfinder/vote/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+/mods/ffxiv/xivwayfinder/vote/version.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivwayfinder/vote/ideas.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivlantern/vote/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+/mods/ffxiv/xivlantern/vote/version.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/xivlantern/vote/ideas.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/almanac/vote/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+/mods/ffxiv/almanac/vote/version.json
+  Access-Control-Allow-Origin: *
+
+/mods/ffxiv/almanac/vote/ideas.json
+  Access-Control-Allow-Origin: *

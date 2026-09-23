@@ -179,6 +179,10 @@ a.btn { display: inline-block; text-decoration: none; }
 .portrait.blank { display: block; }
 .voter .small { margin: 2px 0 0; font-size: 13px; }
 a.chip { text-decoration: none; display: inline-flex; align-items: center; }
+/* every mod's vote, the current one lit */
+nav.mods { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 10px 0 4px; }
+nav.mods .row { display: flex; flex-wrap: wrap; gap: 6px; }
+a.chip[aria-current="page"] { color: var(--on-accent); background: var(--gold); border-color: var(--gold); }
 
 footer { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; max-width: 72ch; }
 footer p { margin: 0; }

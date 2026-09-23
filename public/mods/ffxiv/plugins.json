@@ -41,9 +41,9 @@
     "ApplicableVersion": "any",
     "DalamudApiLevel": 15,
     "RepoUrl": "https://github.com/Spaceghost/almanac-dalamud",
-    "IconUrl": "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/icon.png",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/almanac.png",
     "ImageUrls": [
-      "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/banner.png"
+      "https://spacegho.st/mods/ffxiv/plugins/icons/almanac-banner.png"
     ],
     "DownloadLinkInstall": "https://github.com/Spaceghost/almanac-dalamud/releases/latest/download/latest.zip",
     "DownloadLinkUpdate": "https://github.com/Spaceghost/almanac-dalamud/releases/latest/download/latest.zip",

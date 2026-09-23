@@ -56,9 +56,9 @@
         "chat",
         "utility"
       ],
-      "icon": "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/icon.png",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/almanac.png",
       "images": [
-        "https://raw.githubusercontent.com/Spaceghost/almanac-dalamud/master/images/banner.png"
+        "https://spacegho.st/mods/ffxiv/plugins/icons/almanac-banner.png"
       ],
       "needs": "A local model server (Ollama, LM Studio, llama.cpp or any OpenAI-compatible API), and XivMcp for game tools.",
       "build": "dotnet build dalamud/Almanac.Dalamud.slnx -c Release",

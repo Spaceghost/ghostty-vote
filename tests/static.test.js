@@ -3,12 +3,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { buildSeedSql } from '../scripts/seed-lib.js';
+import { buildSeedSqlAll, validateCatalogues } from '../scripts/seed-lib.js';
 import { BASE, PUBLIC_URL, STATIC_DIR, buildIdeas, buildOutputs, buildVersion } from '../scripts/static-lib.js';
+import { buildVotePages } from '../scripts/vote-page-lib.js';
+import { VOTE_MODS } from '../src/lib.js';
 
 const root = new URL('../', import.meta.url);
 const read = (p) => readFileSync(new URL(p, root), 'utf8');
 const catalogue = () => JSON.parse(read('data/catalogue.json'));
+// Ghostty's catalogue first, then every other mod's by file name, as scripts/build.js reads them.
+const catalogues = () => [catalogue(), ...readdirSync(new URL('data/catalogues/', root)).filter((f) => f.endsWith('.json')).sort()
+  .map((f) => JSON.parse(read('data/catalogues/' + f)))];
 
 function walk(dir, prefix = '') {
   return readdirSync(new URL(dir, root)).flatMap((name) => {
@@ -21,10 +26,30 @@ function walk(dir, prefix = '') {
 const MEDIA_DIRS = { ghostty: 'mods/ffxiv/term/media/', xivmcp: 'mods/ffxiv/xivmcp/media/', xivdesktop: 'mods/ffxiv/xivdesktop/media/', xivarcade: 'mods/ffxiv/xivarcade/media/', xivwayfinder: 'mods/ffxiv/xivwayfinder/media/', xivlantern: 'mods/ffxiv/xivlantern/media/', almanac: 'mods/ffxiv/almanac/media/' };
 const isMediaFile = (f) => Object.values(MEDIA_DIRS).some((d) => f.startsWith(d) && f !== d + 'manifest.json');
 
-test('committed ideas.json, version.json and seed.sql match data/catalogue.json', () => {
-  for (const [path, body] of Object.entries(buildOutputs(catalogue(), buildSeedSql))) {
+test('committed ideas.json, version.json, vote pages and seed.sql match the catalogues', () => {
+  const outputs = { ...buildOutputs(catalogues(), buildSeedSqlAll), ...buildVotePages(JSON.parse(read('data/vote-pages.json'))) };
+  for (const [path, body] of Object.entries(outputs)) {
     assert.equal(read(path), body, `${path} is stale; run node scripts/build.js`);
   }
+});
+
+test('every mod has a vote: one catalogue each, ids and category names apart, each page wired to its mod', () => {
+  const cats = catalogues();
+  assert.deepEqual(validateCatalogues(cats), []);
+  assert.deepEqual(cats.map((c) => c.mod || 'ghostty').sort(), Object.keys(VOTE_MODS).sort(), 'a catalogue for every vote page');
+  for (const [mod, page] of Object.entries(VOTE_MODS)) {
+    const html = read('public' + page + 'index.html');
+    assert.ok(html.includes(`<html lang="en" data-mod="${mod}" data-page="${page}">`), mod);
+    // the API stays where the session cookie reaches, whichever mod's page calls it
+    assert.ok(html.includes('href="/mods/ffxiv/term/vote/api/auth/github/start"'), mod);
+    for (const m of Object.values(VOTE_MODS)) assert.ok(html.includes(`href="${m}"`), `${mod} links every vote`);
+    const version = JSON.parse(read('public' + page + 'version.json'));
+    assert.equal(version.url, 'https://spacegho.st' + page);
+  }
+  // a second mod's catalogue may not reuse an id or category name: votes are keyed by them
+  const clash = structuredClone(cats[1]);
+  clash.categories[0].ideas[0].id = cats[0].categories[0].ideas[0].id;
+  assert.match(validateCatalogues([cats[0], clash]).join('\n'), /is also ghostty's/);
 });
 
 test('ideas.json carries the catalogue and no tallies', () => {
@@ -77,8 +102,13 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/almanac/media/manifest.json',
     'mods/ffxiv/almanac/schema/recommendations.v1.json',
     'mods/ffxiv/almanac/schema/results.v1.json',
+    'mods/ffxiv/almanac/vote/ideas.json',
+    'mods/ffxiv/almanac/vote/index.html',
+    'mods/ffxiv/almanac/vote/version.json',
     'mods/ffxiv/index.html',
     'mods/ffxiv/plugins.json',
+    'mods/ffxiv/plugins/icons/almanac-banner.png',
+    'mods/ffxiv/plugins/icons/almanac.png',
     'mods/ffxiv/plugins/icons/ghostty-banner.png',
     'mods/ffxiv/plugins/icons/ghostty.png',
     'mods/ffxiv/plugins/icons/xivarcade-banner.png',
@@ -132,14 +162,29 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/term/vote/vote.js',
     'mods/ffxiv/xivarcade/index.html',
     'mods/ffxiv/xivarcade/media/manifest.json',
+    'mods/ffxiv/xivarcade/vote/ideas.json',
+    'mods/ffxiv/xivarcade/vote/index.html',
+    'mods/ffxiv/xivarcade/vote/version.json',
     'mods/ffxiv/xivdesktop/index.html',
     'mods/ffxiv/xivdesktop/media/manifest.json',
+    'mods/ffxiv/xivdesktop/vote/ideas.json',
+    'mods/ffxiv/xivdesktop/vote/index.html',
+    'mods/ffxiv/xivdesktop/vote/version.json',
     'mods/ffxiv/xivlantern/index.html',
     'mods/ffxiv/xivlantern/media/manifest.json',
+    'mods/ffxiv/xivlantern/vote/ideas.json',
+    'mods/ffxiv/xivlantern/vote/index.html',
+    'mods/ffxiv/xivlantern/vote/version.json',
     'mods/ffxiv/xivmcp/index.html',
     'mods/ffxiv/xivmcp/media/manifest.json',
+    'mods/ffxiv/xivmcp/vote/ideas.json',
+    'mods/ffxiv/xivmcp/vote/index.html',
+    'mods/ffxiv/xivmcp/vote/version.json',
     'mods/ffxiv/xivwayfinder/index.html',
     'mods/ffxiv/xivwayfinder/media/manifest.json',
+    'mods/ffxiv/xivwayfinder/vote/ideas.json',
+    'mods/ffxiv/xivwayfinder/vote/index.html',
+    'mods/ffxiv/xivwayfinder/vote/version.json',
   ]);
 });
 

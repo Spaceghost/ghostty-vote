@@ -23,6 +23,9 @@ test('bucketOf matches on path prefixes, not a list of files', () => {
   assert.equal(bucketOf('/mods/ffxiv/plugins/changelog/'), 'plugins-page');
   assert.equal(bucketOf('/mods/ffxiv/almanac/recommendations.json'), 'almanac-recs');
   assert.equal(bucketOf('/mods/ffxiv/almanac/leaderboard.json'), 'almanac-board');
+  assert.equal(bucketOf('/mods/ffxiv/xivmcp/vote/'), 'vote-page');
+  assert.equal(bucketOf('/mods/ffxiv/almanac/vote/'), 'vote-page');
+  assert.equal(bucketOf('/mods/ffxiv/term/vote/api/admin/voters'), 'admin');
   assert.equal(bucketOf('/mods/ffxiv/almanac/api/results'), 'almanac-api');
   assert.equal(bucketOf('/mods/ffxiv/term/gallery/api/shots'), 'gallery-shots');
   assert.equal(bucketOf('/mods/ffxiv/term/gallery/thumb/aaaaaaaaaaaaaaaaaaaaaa'), 'gallery-image');

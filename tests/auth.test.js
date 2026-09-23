@@ -11,7 +11,7 @@ import {
 } from '../src/session.js';
 import { createD1 } from './d1-shim.js';
 import {
-  API, MIGRATIONS, ORIGIN, SECRETS, SEED, allTallies, jsonResponse, keyOfCookie, scriptedFetch, setCookies, setup, sha256hex,
+  API, LEGACY_SEED, MIGRATIONS, ORIGIN, SECRETS, SEED, allTallies, jsonResponse, keyOfCookie, scriptedFetch, setCookies, setup, sha256hex,
   talliesMatchVotes,
 } from './harness.js';
 
@@ -341,7 +341,7 @@ test('claim: signing in moves the anonymous ballot onto the account, account row
   const token = 'T'.repeat(43);
   const anon = await voterKey(token);
   const account = sha256hex('github:251370');
-  const [a, b, c, d] = db.prepare('SELECT id FROM ideas ORDER BY sort_order LIMIT 4').all().map((r) => r.id);
+  const [a, b, c, d] = db.prepare("SELECT id FROM ideas WHERE mod = 'ghostty' ORDER BY sort_order LIMIT 4").all().map((r) => r.id);
   const insert = db.prepare('INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at) VALUES (?, ?, ?, ?, 1, ?)');
   insert.run(anon, a, 'want', 'anon note on a', 10);
   insert.run(anon, b, 'skip', 'anon note on b', 11);
@@ -402,7 +402,7 @@ test('claim merge: where both rows exist, the account row keeps its vote and not
   const token = 'M'.repeat(43);
   const anon = await voterKey(token);
   const account = sha256hex('github:251370');
-  const ids = db.prepare('SELECT id FROM ideas ORDER BY sort_order LIMIT 6').all().map((r) => r.id);
+  const ids = db.prepare("SELECT id FROM ideas WHERE mod = 'ghostty' ORDER BY sort_order LIMIT 6").all().map((r) => r.id);
   const insert = db.prepare('INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at) VALUES (?, ?, ?, ?, 1, ?)');
   const cases = [
     // [account vote, account note, anon vote, anon note] -> [vote, note]
@@ -572,7 +572,7 @@ test('admin/voters: owner only, never cached, with characters, counts, notes and
   await signIn(t, 'xivauth', { mode: 'link', cookie: player });
   const owner = await t.signedIn('github', '251370');
   const quiet = await t.signedIn('github', '31337');
-  const [a, b] = db.prepare('SELECT id FROM ideas ORDER BY sort_order LIMIT 2').all().map((r) => r.id);
+  const [a, b] = db.prepare("SELECT id FROM ideas WHERE mod = 'ghostty' ORDER BY sort_order LIMIT 2").all().map((r) => r.id);
   await t.vote({ idea_id: a, vote: 'want', note: 'take my gil' }, { cookie: player });
   await t.vote({ idea_id: b, vote: 'skip' }, { cookie: player });
   await t.call(API + 'suggest', { method: 'POST', body: { title: 'Chocobo CI', detail: 'kweh' }, cookie: player });
@@ -612,7 +612,7 @@ test('admin/voters: owner only, never cached, with characters, counts, notes and
 });
 
 test('migration 0004 is additive and safe to re-run on a database with 0001-0003 and votes', () => {
-  const db = createD1(MIGRATIONS[0], MIGRATIONS[1], MIGRATIONS[2], SEED).raw;
+  const db = createD1(MIGRATIONS[0], MIGRATIONS[1], MIGRATIONS[2], LEGACY_SEED).raw;
   db.exec("INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at) VALUES ('v', 'ops-weather', 'want', 'n', 1, 1)");
   const schemaBefore = db.prepare("SELECT type, name, sql FROM sqlite_master ORDER BY name").all().map((r) => ({ ...r }));
   const tallies = allTallies(db);

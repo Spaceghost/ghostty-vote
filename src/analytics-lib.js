@@ -72,6 +72,8 @@ const BUCKETS = [
   [/^\/mods\/ffxiv\/almanac\/leaderboard\.json$/, 'almanac-board'],
   [/^\/mods\/ffxiv\/almanac\/api\//, 'almanac-api'],
   [/^\/mods\/ffxiv\/almanac\/schema\//, 'almanac-schema'],
+  // every other mod's vote page (Ghostty's is under term/vote below)
+  [/^\/mods\/ffxiv\/(?!term\/)[a-z]+\/vote(?:\/|$)/, 'vote-page'],
   [/^\/mods\/ffxiv\/almanac(?:\/|$)/, 'almanac-page'],
   [/^\/mods\/ffxiv\/term\/gallery\/api\/shots$/, 'gallery-shots'],
   [/^\/mods\/ffxiv\/term\/gallery\/api\/upload$/, 'gallery-upload'],

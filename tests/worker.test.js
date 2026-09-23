@@ -5,7 +5,7 @@ import worker from '../src/worker.js';
 import { BASE, LIMITS } from '../src/lib.js';
 import { buildSeedSql } from '../scripts/seed-lib.js';
 import { createD1 } from './d1-shim.js';
-import { API, MIGRATIONS, ORIGIN, SEED, allTallies, keyOfCookie, read, setup, sha256hex, talliesMatchVotes } from './harness.js';
+import { API, LEGACY_SEED, MIGRATIONS, ORIGIN, SEED, allTallies, keyOfCookie, read, setup, sha256hex, talliesMatchVotes } from './harness.js';
 
 const OPEN_IDEAS = JSON.parse(read('data/catalogue.json')).categories.reduce((n, c) => n + c.ideas.length, 0);
 
@@ -43,7 +43,7 @@ test('tallies: counts per open idea, one D1 read, then served from the cache', a
     assert.deepEqual(await res.json(), tallies);
   }
   assert.equal(env.DB.stats.calls, 1, 'a burst costs one D1 read');
-  assert.deepEqual([...cache.store.keys()], [ORIGIN + API + 'tallies']);
+  assert.deepEqual([...cache.store.keys()], [ORIGIN + API + 'tallies?mod=ghostty']);
   assert.equal(res.headers.get('set-cookie'), null);
 
   // Without a cache (e.g. local tests) it still answers, just uncached.
@@ -219,13 +219,46 @@ test('mine: without a session, the empty ballot and no D1 access', async () => {
   assert.equal(env.DB.stats.calls, calls, 'cross-site reads are refused before D1');
 });
 
+test('every mod has its own vote: tallies, ballot and suggestions are kept apart by ?mod=', async () => {
+  const { env, vote, call, cache, signedIn } = setup();
+  const db = env.DB.raw;
+  const cookie = await signedIn();
+  const [mcp] = db.prepare("SELECT id FROM ideas WHERE mod = 'xivmcp' ORDER BY sort_order LIMIT 1").all().map((r) => r.id);
+  assert.ok(mcp, 'the seed carries the other mods\' ideas');
+  assert.equal((await vote({ idea_id: mcp, vote: 'want', note: 'please' }, { cookie })).status, 200);
+  assert.equal((await vote({ idea_id: 'ops-weather', vote: 'maybe' }, { cookie })).status, 200);
+
+  const ghostty = await (await call(API + 'tallies')).json();
+  const xivmcp = await (await call(API + 'tallies?mod=xivmcp')).json();
+  assert.equal(ghostty[mcp], undefined, 'Ghostty\'s tallies are Ghostty\'s alone');
+  assert.deepEqual(xivmcp[mcp], { want: 1, maybe: 0, skip: 0 });
+  assert.equal(xivmcp['ops-weather'], undefined);
+  assert.equal(Object.keys(xivmcp).length, db.prepare("SELECT COUNT(*) AS n FROM ideas WHERE mod = 'xivmcp' AND retired = 0").get().n);
+  assert.deepEqual([...cache.store.keys()].sort(), [ORIGIN + API + 'tallies?mod=ghostty', ORIGIN + API + 'tallies?mod=xivmcp']);
+  assert.equal((await call(API + 'tallies?mod=nope')).status, 404);
+  assert.equal((await call(API + 'tallies?mod=__proto__')).status, 404);
+
+  const suggest = (body) => call(API + 'suggest', { method: 'POST', body, cookie });
+  assert.equal((await suggest({ title: 'an mcp idea', mod: 'xivmcp' })).status, 201);
+  assert.equal((await suggest({ title: 'a terminal idea' })).status, 201);
+  assert.equal((await suggest({ title: 'nowhere', mod: 'nope' })).status, 400);
+  const mine = async (q) => (await call(API + 'mine' + q, { cookie })).json();
+  const m1 = await mine('?mod=xivmcp');
+  assert.deepEqual(Object.keys(m1.votes), [mcp]);
+  assert.deepEqual(m1.suggestions.map((x) => x.title), ['an mcp idea']);
+  const m2 = await mine('');
+  assert.deepEqual(Object.keys(m2.votes), ['ops-weather']);
+  assert.deepEqual(m2.suggestions.map((x) => x.title), ['a terminal idea']);
+  assert.equal((await call(API + 'mine?mod=nope', { cookie })).status, 404);
+});
+
 test('mine: the voter\'s own ballot and newest suggestions, in one D1 batch, never cached', async () => {
   const { env, mine, vote, call, cache, signedIn } = setup();
   const db = env.DB.raw;
   const cookie = await signedIn();
   let res = await vote({ idea_id: 'ops-weather', vote: 'want', note: 'yes' }, { cookie });
   await vote({ idea_id: 'ops-weather', vote: 'skip' }); // another voter
-  const ids = db.prepare("SELECT id FROM ideas WHERE id <> 'ops-weather' ORDER BY sort_order LIMIT 3").all().map((r) => r.id);
+  const ids = db.prepare("SELECT id FROM ideas WHERE id <> 'ops-weather' AND mod = 'ghostty' ORDER BY sort_order LIMIT 3").all().map((r) => r.id);
   assert.equal((await vote({ idea_id: ids[1], note: 'another voter\'s note' })).status, 200);
   await vote({ idea_id: ids[1], note: 'just a note' }, { cookie });
   await vote({ idea_id: ids[2], vote: 'maybe' }, { cookie });
@@ -246,7 +279,7 @@ test('mine: the voter\'s own ballot and newest suggestions, in one D1 batch, nev
   assert.equal(res.headers.get('cache-control'), 'private, no-store');
   assert.equal(res.headers.get('vary'), 'Cookie');
   assert.equal(res.headers.get('set-cookie'), null);
-  assert.deepEqual([...cache.store.keys()], [ORIGIN + API + 'tallies'], 'mine is never put in the cache');
+  assert.deepEqual([...cache.store.keys()], [ORIGIN + API + 'tallies?mod=ghostty'], 'mine is never put in the cache');
   const body = await res.json();
 
   assert.deepEqual(Object.keys(body).sort(), ['signed_in', 'suggestions', 'votes']);
@@ -314,7 +347,7 @@ test('suggestions are stored, limited per voter, and cost two queries', async ()
 });
 
 test('migration 0002 drops the D1-hosted page and is safe to re-run on the live schema', () => {
-  const db = createD1(MIGRATIONS[0], SEED).raw;
+  const db = createD1(MIGRATIONS[0], LEGACY_SEED).raw;
   db.exec("CREATE TABLE site_assets (name TEXT PRIMARY KEY, body TEXT NOT NULL); INSERT INTO site_assets VALUES ('page.html', 'x')");
   db.exec("INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at) VALUES ('v', 'ops-weather', 'want', '', 1, 1)");
   db.exec(MIGRATIONS[1]);
@@ -327,7 +360,7 @@ test('migration 0002 drops the D1-hosted page and is safe to re-run on the live 
 });
 
 test('migration 0003 on a database with votes: tallies exact, note-only rows allowed, bad votes refused', () => {
-  const db = createD1(MIGRATIONS[0], MIGRATIONS[1], SEED).raw;
+  const db = createD1(MIGRATIONS[0], MIGRATIONS[1], LEGACY_SEED).raw;
   const [a, b, c] = db.prepare('SELECT id FROM ideas ORDER BY sort_order LIMIT 3').all().map((r) => r.id);
   const insert = db.prepare('INSERT INTO votes (voter, idea_id, vote, note, created_at, updated_at) VALUES (?, ?, ?, ?, 1, 2)');
   assert.throws(() => insert.run('v1', a, '', 'note only'), /CHECK/, 'before 0003 a vote is required');
