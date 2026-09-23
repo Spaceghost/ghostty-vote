@@ -40,10 +40,18 @@
       "files": []
     },
     {
-      "id": "vnavmesh",
-      "title": "Around the Wall",
+      "id": "minion-glove",
+      "title": "The Wind-up Cursor Points",
       "kind": "gif",
-      "caption": "With vnavmesh installed, the pointer aiming at the walkable path's next corner instead of through a wall.",
+      "caption": "/wayfinder minion: the Wind-up Cursor model floating beside the bead, turning to point along the way and tilting up a slope.",
+      "files": []
+    },
+    {
+      "id": "path-trail",
+      "title": "Along the Path, Not the Crow",
+      "kind": "video",
+      "caption": "With vnavmesh, the trail's beads laid along the walkable route around a wall, dropping away behind as the character walks it.",
+      "wide": true,
       "files": []
     }
   ]

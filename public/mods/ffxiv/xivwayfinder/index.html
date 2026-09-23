@@ -62,7 +62,7 @@
     </section>
     <div class="status" role="note">
       <b>Honest status</b>
-      <p>Host tests cover the direction and angle maths, the screen-edge clamping, the glove's placement and mirroring, the target priority, the pulse and tap timing, the command and IPC parsing and the state JSON. <strong>Nothing has been observed in the game yet</strong>: not the drawing, not the flag, quest and aetheryte reads, not vnavmesh. What this page describes is implemented intent. There is no release yet.</p>
+      <p>Host tests cover the direction and angle maths, the screen-edge clamping, the glove's placement and mirroring, the target priority, the pulse and tap timing, the command and IPC parsing and the state JSON. <strong>Nothing has been observed in the game yet</strong>: not the drawing, not the flag, quest and aetheryte reads, not vnavmesh. What this page describes is implemented intent. Test builds are out; none of it has been seen working in game yet.</p>
     </div>
 
     <section id="what" aria-labelledby="what-h">
@@ -90,6 +90,11 @@
         <span class="tag unverified">unverified in game</span>
       </article>
       <article class="card glass">
+        <h3>The minion glove</h3>
+        <p><code>/wayfinder minion</code>: the Wind-up Cursor minion's own 3D model, found in your game data by name, floats beside the bead and points along the way, tilting on slopes. It is a model only you see: never a summoned minion, nothing shipped, nothing sent. Not the default.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
         <h3>Your flag, your quest</h3>
         <p>The map flag, then the tracked quest's next step: the map's own quest markers first, else the quest's to-do locations. Steps with no place (a duty, a cutscene) are skipped.</p>
         <span class="tag unverified">unverified in game</span>
@@ -105,13 +110,13 @@
         <span class="tag unverified">unverified in game</span>
       </article>
       <article class="card glass">
-        <h3>Around walls, with vnavmesh</h3>
-        <p>With <a href="https://github.com/awgil/ffxiv_navmesh" rel="noopener">vnavmesh</a> installed it points at the walkable path's next corner, and the trail follows the path. Until a path arrives, a straight line.</p>
+        <h3>The path, highlighted</h3>
+        <p>With <a href="https://github.com/awgil/ffxiv_navmesh" rel="noopener">vnavmesh</a> installed the trail lays its beads and a soft line along the walkable route ahead, not as the crow flies, and the glove points at the path's next stretch. Without a path it is a straight line and says so.</p>
         <span class="tag unverified">unverified in game</span>
       </article>
       <article class="card glass">
         <h3>Trail, distance, arrival</h3>
-        <p>An optional dotted trail of small beads, the distance in yalms on hover or always, and a breathing ring when you arrive.</p>
+        <p>The trail (on by default), the distance in yalms on hover or always, and a breathing ring when you arrive.</p>
         <span class="tag unverified">unverified in game</span>
       </article>
       <article class="card glass">
@@ -169,7 +174,7 @@
             <li><b>Save and Close</b>.</li>
             <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivWayfinder</b> → <b>Install</b>.</li>
           </ol>
-          <p class="note">XivWayfinder has <b>no release yet</b>, so it is not in the repository's listing. Until it has been verified in game, build it yourself.</p>
+          <p class="note">XivWayfinder has <b>test builds only</b>, and Dalamud hides a testing-only plugin unless you ask: in the same tab, tick <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>. Nothing in it has been seen working in game yet.</p>
           <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
         </div>
         <div class="path glass">
