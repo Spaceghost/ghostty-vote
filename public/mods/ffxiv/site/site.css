@@ -1,4 +1,4 @@
-/* The FFXIV mods hub and the four minisites. One stylesheet for all of them: ink
+/* The FFXIV mods hub and the minisites. One stylesheet for all of them: ink
    background, gold accent, aether highlights and the glass panels of the plugin UI.
    System fonts only; nothing is fetched from another origin. No inline styles anywhere
    (CSP style-src 'self'). */
@@ -110,6 +110,9 @@ p { margin: 0 0 12px; }
 @media (min-width: 860px) { .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); } }
 .hero-id { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
 .hero-id img { width: 72px; height: 72px; border-radius: 18px; flex: none; }
+/* On a phone the icon goes above the name, so a mod's one-word name is never split mid-word. */
+@media (max-width: 480px) { .hero-id { flex-direction: column; align-items: flex-start; } }
+@media (max-width: 340px) { .hero-id h1 { font-size: 32px; } .mods .modcard h2 { font-size: 24px; } }
 .eyebrow { font: 600 12px/1.3 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--aether); margin: 0 0 4px; }
 h1 { font-size: clamp(38px, 7vw, 64px); line-height: 1.02; color: var(--gold-2); }
 .tagline { font: 500 clamp(15px, 2.2vw, 18px)/1.4 var(--mono); color: var(--aether); margin: 0 0 14px; }
