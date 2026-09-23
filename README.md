@@ -1,8 +1,10 @@
 # ghostty-vote
 
-Public feature vote and screenshot gallery for the **Ghostty for FFXIV** plugin by
-Johnneylee Jack Rollins ([github.com/Spaceghost](https://github.com/Spaceghost)), at
-`https://spacegho.st/mods/ffxiv/term/vote/` and `https://spacegho.st/mods/ffxiv/term/gallery/`
+Public feature votes for every FFXIV mod by Johnneylee Jack Rollins
+([github.com/Spaceghost](https://github.com/Spaceghost)): Ghostty's at
+`https://spacegho.st/mods/ffxiv/term/vote/` and each other mod's at
+`https://spacegho.st/mods/ffxiv/<mod>/vote/` (see [Every mod's vote](#every-mods-vote)); the
+mods hub and minisites under `https://spacegho.st/mods/ffxiv/`; the screenshot gallery at `https://spacegho.st/mods/ffxiv/term/gallery/`
 (see [Gallery](#gallery)), and the community model leaderboard for **Almanac**, the open-source
 local AI companion for FFXIV, at `https://spacegho.st/mods/ffxiv/almanac/` (see
 [Almanac leaderboard](#almanac-leaderboard)).
@@ -140,9 +142,9 @@ Worker:
 | Method | Path | Notes |
 | --- | --- | --- |
 | POST | `/api/vote` | Needs a session (else 401 `sign_in_required`). `{idea_id, vote?, note?}` → `{ok, idea_id, vote: string\|null, note, tally, updated_at}`. `vote`: `"want"\|"maybe"\|"skip"` sets it, `null` or `""` clears it, leaving it out keeps it. `note` (up to 280): a string sets it (`""` clears it), leaving it out or `null` keeps it. At least one of the two is required. Clearing a vote keeps the note; a row left with neither is deleted |
-| POST | `/api/suggest` | Needs a session. `{title (3-80 chars), detail? (up to 600)}` → `201 {ok, suggestion: {id, title, detail, created_at}}` |
-| GET | `/api/tallies` | `{idea_id: {want, maybe, skip}}` for every open idea. `Cache-Control: public, max-age=60`, also stored in the Cache API under one key (query strings are ignored). Sent without credentials |
-| GET | `/api/mine` | The signed-in voter's own ballot: `{signed_in, votes: {idea_id: {vote: string\|null, note, updated_at}}, suggestions: [{id, title, detail, created_at}]}` (the newest 50 suggestions). `Cache-Control: private, no-store`, `Vary: Cookie`, never put in the Cache API. Without a valid session it returns `{signed_in: false, votes: {}, suggestions: []}` without querying D1; with one, it is one D1 batch. A cross-site request gets a 403 |
+| POST | `/api/suggest` | Needs a session. `{title (3-80 chars), detail? (up to 600), mod? (a vote's mod id, default ghostty)}` → `201 {ok, suggestion: {id, title, detail, created_at}}` |
+| GET | `/api/tallies[?mod=]` | `{idea_id: {want, maybe, skip}}` for every open idea of that mod's vote (Ghostty's without `?mod=`; an unknown mod is 404). `Cache-Control: public, max-age=60`, also stored in the Cache API under one key per mod (any other query string is ignored). Sent without credentials |
+| GET | `/api/mine[?mod=]` | The signed-in voter's own ballot for that mod's vote: `{signed_in, votes: {idea_id: {vote: string\|null, note, updated_at}}, suggestions: [{id, title, detail, created_at}]}` (the newest 50 suggestions). `Cache-Control: private, no-store`, `Vary: Cookie`, never put in the Cache API. Without a valid session it returns `{signed_in: false, votes: {}, suggestions: []}` without querying D1; with one, it is one D1 batch. A cross-site request gets a 403 |
 | GET | `/api/auth/github/start`, `/api/auth/xivauth/start` | Navigations. `?return=` may name the vote page (keeping a numeric `?since=`) or `/admin/`; anything else returns to the vote page. Sets the state cookie and redirects (303) to the provider. A cross-site start is refused |
 | GET | `/api/auth/xivauth/link` | Like start, for any signed-in voter (GitHub or FFXIV): asks XIVAuth for the `character` scope only and attaches that character to the signed-in account |
 | GET | `/api/auth/github/callback`, `/api/auth/xivauth/callback` | The registered callback URLs. Checks the state, exchanges the code (with the PKCE verifier), reads the account id (or, for a link, the character), claims an old anonymous ballot, sets the session and redirects to the page with `#signed-in`, `#character-linked` or `#auth-error=<code>` |
@@ -520,6 +522,22 @@ D1. Either run `npx wrangler login` once (it opens a browser), or export `CLOUDF
 (with those permissions) and `CLOUDFLARE_ACCOUNT_ID`. The route only fires if `spacegho.st` has a
 proxied (orange-cloud) DNS record. Array values for `run_worker_first` need Wrangler 4.20 or later.
 
+### Gallery votes and every mod's vote (migrations 0009 and 0010)
+
+Both add columns, so each must be applied exactly once, in this order, before the Worker that
+reads them is deployed; the seed goes after 0010 because it writes the `mod` column. Take a
+Time Travel bookmark first.
+
+```sh
+npx wrangler d1 time-travel info ghostty-vote
+npx wrangler d1 execute ghostty-vote --remote --file migrations/0009_shot_votes.sql
+npx wrangler d1 execute ghostty-vote --remote --file migrations/0010_mod_votes.sql
+npx wrangler d1 execute ghostty-vote --remote --file seed/seed.sql
+npx wrangler deploy
+curl -s 'https://spacegho.st/mods/ffxiv/term/vote/api/tallies?mod=xivlantern' | head -c 200
+curl -sI https://spacegho.st/mods/ffxiv/xivmcp/vote/ | grep -ci content-security-policy   # 1, not 2
+```
+
 ### The account gate (migration 0008)
 
 Unlike the earlier files, 0008 adds columns and must be applied exactly once. Deploying the
@@ -691,6 +709,32 @@ For a local preview, apply the migrations and seed with `--local` instead of `--
 cookies are `__Secure-` and `Secure`, so a browser may refuse to store them over plain
 `http://localhost`, and the providers only redirect to the registered `https://spacegho.st`
 callbacks, so sign-in cannot complete locally. Put local secrets in `.dev.vars` (ignored by git).
+
+## Every mod's vote
+
+Each mod has the same vote page: Ghostty at `term/vote/`, and `xivmcp/vote/`, `xivdesktop/vote/`,
+`xivarcade/vote/`, `xivwayfinder/vote/`, `xivlantern/vote/` and `almanac/vote/`. The mod ids and
+paths are `VOTE_MODS` in `src/lib.js`.
+
+- **Ideas:** Ghostty's are `data/catalogue.json`, as before; every other mod's are
+  `data/catalogues/<mod>.json` (the same shape plus `"mod"`). Idea ids and category names are
+  unique across all of them (ids carry a prefix: `mcp-`, `desk-`, `arcade-`, `way-`, `lantern-`,
+  `almanac-`), because votes, notes and tallies are keyed by the id alone.
+- **Pages:** `scripts/build.js` writes every `<mod>/vote/index.html` from one template
+  (`scripts/vote-page-lib.js`) and the words in `data/vote-pages.json`, beside that mod's
+  `ideas.json` and `version.json`. `vote.js`, `ballot.js` and `vote.css` are Ghostty's, shared;
+  `<html data-mod data-page>` tells the script whose vote it is. Local storage keeps a ballot per
+  mod (Ghostty's keeps its old keys).
+- **API:** always under `term/vote/api/`, because the session cookie's `Path` is the vote's, with
+  `?mod=` on `tallies` and `mine` and `mod` in a suggestion. One sign-in covers every vote.
+- **D1:** migration 0010 adds `mod` to `ideas`, `categories` and `suggestions` (existing rows are
+  Ghostty's). One `seed/seed.sql` carries every catalogue; each mod's retirement step only touches
+  its own ideas. The single `catalogue` row stays Ghostty's version.
+- **Headers:** each `<mod>/vote/*` sits under its minisite's `_headers` rule, so its rule detaches
+  that CSP (`! Content-Security-Policy`) and sets the vote page's own. Checked under `wrangler dev`.
+- **Admin:** the voter list tags notes and suggestions from other mods' votes with `[mod]`.
+
+To add ideas to a mod's vote, follow [Adding ideas later](#adding-ideas-later) with that mod's file.
 
 ## Adding ideas later
 
