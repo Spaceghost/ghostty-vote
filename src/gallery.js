@@ -35,6 +35,14 @@ export const GALLERY = Object.freeze({
   perAccountPerDay: 20,
   perDay: 200,          // every uploader together; KV's free tier allows 1,000 writes a day
   pendingMax: 300,      // the queue refuses more until the owner catches up
+  // What the approved images together may occupy. R2's free tier is 10 GB-month, so the
+  // budget sits below it; an upload that takes the gallery over drops the lowest-voted
+  // shots until it is under again (see evictOverBudget).
+  budgetBytes: 9 * 1024 * 1024 * 1024,
+  // A shot cannot be dropped for this long after approval, so every shot gets a fair
+  // run at being voted on before its score is allowed to decide anything.
+  graceMs: 14 * 24 * 60 * 60 * 1000,
+  evictMax: 50,         // images dropped in one pass, so a single upload cannot stall
   listMax: 500,
   listTtlSeconds: 60,
   hourMs: 60 * 60 * 1000,
@@ -42,6 +50,7 @@ export const GALLERY = Object.freeze({
 });
 
 const ACTIONS = Object.freeze(['approve', 'approve_anon', 'reject', 'remove']);
+const SHOT_VOTES = Object.freeze(['keep', 'pass']);
 
 // ---- storage ---------------------------------------------------------------------------
 export function galleryStore(env) {
@@ -177,6 +186,96 @@ export async function postUpload(request, env, url) {
 }
 
 // ---- GET gallery/api/shots ---------------------------------------------------------------
+// GET vote/api/gallery/mine -> {votes: {shot_id: 'keep'|'pass'}} for the signed-in
+// viewer, so the grid can show which way they already voted. Never cached.
+export async function getMyShotVotes(request, env, url) {
+  const session = await readSession(request, env, url);
+  if (!session) return json({ signed_in: false, votes: {} }, { headers: PRIVATE });
+  const { results } = await env.DB.prepare(
+    'SELECT shot_id, vote FROM shot_votes WHERE voter = ?',
+  ).bind(session.k).all();
+  const votes = {};
+  for (const r of results) votes[r.shot_id] = r.vote;
+  return json({ signed_in: true, votes }, { headers: PRIVATE });
+}
+
+// ---- the budget, and the votes that decide it -----------------------------------------
+
+// Approved images together, in bytes. An evicted shot keeps its row and thumbnail but
+// no longer holds an image, so it is not counted.
+async function approvedBytes(env) {
+  const row = await env.DB.prepare("SELECT COALESCE(SUM(bytes), 0) AS n FROM shots WHERE status = 'approved'").first();
+  return row ? Number(row.n) : 0;
+}
+
+// Drop the lowest-voted approved shots until the gallery is inside its budget again.
+// A shot is safe while it is inside its grace period, so a newcomer with no votes yet is
+// never the one to go. Score is keeps - passes; among equals the older shot goes first.
+// The row and the thumbnail stay: the gallery can still show what it used to hold, and
+// the digest still catches a re-upload of the same picture.
+//
+// Returns the ids dropped. Nothing is dropped when there is no store to drop from.
+export async function evictOverBudget(env, now = Date.now()) {
+  const store = galleryStore(env);
+  if (!store) return [];
+  let total = await approvedBytes(env);
+  if (total <= GALLERY.budgetBytes) return [];
+  const { results } = await env.DB.prepare(
+    `SELECT id, bytes FROM shots
+     WHERE status = 'approved' AND reviewed_at > 0 AND reviewed_at <= ?1
+     ORDER BY (keeps - passes) ASC, reviewed_at ASC, id ASC LIMIT ?2`,
+  ).bind(now - GALLERY.graceMs, GALLERY.evictMax).all();
+  const dropped = [];
+  for (const r of results) {
+    if (total <= GALLERY.budgetBytes) break;
+    await store.delete(shotKey(r.id)).catch(() => {});
+    await env.DB.prepare("UPDATE shots SET status = 'evicted', bytes = 0 WHERE id = ?").bind(r.id).run();
+    total -= Number(r.bytes);
+    dropped.push(r.id);
+  }
+  return dropped;
+}
+
+// POST vote/api/gallery/vote {id, vote: keep|pass|null} -> the shot's tally.
+// A ballot is a person's, like a vote on an idea: the session only, never an app token.
+export async function postShotVote(request, env, url) {
+  if (!isSameOrigin(request, url)) return fail(403, 'forbidden', 'Cross-site request refused.', PRIVATE);
+  const auth = await authorize(request, env, url, null);
+  if (!auth.ok) return auth.response;
+  const body = await readJsonBody(request);
+  if (!body.ok) return fail(body.status, body.error, body.message, PRIVATE);
+  const { id, vote } = body.value;
+  if (!isShotId(id)) return fail(400, 'bad_id', 'id is missing or malformed.', PRIVATE);
+  if (vote !== null && vote !== undefined && !SHOT_VOTES.includes(vote)) {
+    return fail(400, 'bad_vote', 'vote must be keep, pass or null.', PRIVATE);
+  }
+  const { p: provider, k: voter } = auth.account;
+  const now = Date.now();
+  const row = await env.DB.prepare("SELECT status FROM shots WHERE id = ?").bind(id).first();
+  if (!row || (row.status !== 'approved' && row.status !== 'evicted')) {
+    return fail(404, 'unknown_shot', 'No such shot.', PRIVATE);
+  }
+  // null takes the vote back; the row goes with it, and the triggers keep the tally right.
+  const results = await env.DB.batch(
+    vote
+      ? [
+        env.DB.prepare(
+          `INSERT INTO shot_votes (voter, shot_id, vote, provider, created_at, updated_at)
+           VALUES (?1, ?2, ?3, ?4, ?5, ?5)
+           ON CONFLICT (voter, shot_id) DO UPDATE SET
+             vote = ?3, provider = ?4, updated_at = excluded.updated_at`,
+        ).bind(voter, id, vote, provider, now),
+        env.DB.prepare('SELECT keeps, passes FROM shots WHERE id = ?').bind(id),
+      ]
+      : [
+        env.DB.prepare('DELETE FROM shot_votes WHERE voter = ? AND shot_id = ?').bind(voter, id),
+        env.DB.prepare('SELECT keeps, passes FROM shots WHERE id = ?').bind(id),
+      ],
+  );
+  const tally = results[1].results[0] || { keeps: 0, passes: 0 };
+  return json({ ok: true, id, vote: vote || null, keeps: tally.keeps, passes: tally.passes }, { headers: PRIVATE });
+}
+
 export async function getShots(env, ctx, url, cache) {
   // ?mod=<id>: one minisite's shots. Anything else is the whole gallery.
   const asked = url.searchParams.get('mod');
@@ -187,7 +286,7 @@ export async function getShots(env, ctx, url, cache) {
     if (hit) return hit;
   }
   const { results } = await env.DB.prepare(
-    `SELECT id, width, height, credit, has_thumb, reviewed_at, mod FROM shots
+    `SELECT id, width, height, credit, has_thumb, reviewed_at, mod, keeps, passes FROM shots
      WHERE status = 'approved' AND (?1 IS NULL OR mod = ?1) ORDER BY reviewed_at DESC, id LIMIT ?2`,
   ).bind(mod, GALLERY.listMax).all();
   const shots = results.map((r) => ({
@@ -199,6 +298,8 @@ export async function getShots(env, ctx, url, cache) {
     credit: r.credit,
     mod: r.mod || null,
     approved_at: r.reviewed_at,
+    keeps: r.keeps,
+    passes: r.passes,
   }));
   const res = json({ shots }, {
     headers: { 'cache-control': `public, max-age=${GALLERY.listTtlSeconds}`, 'access-control-allow-origin': '*' },
@@ -307,6 +408,7 @@ export async function postAdminReview(request, env, url, cache) {
     await env.DB.prepare(
       `UPDATE shots SET status = 'approved', uploader = '', reviewed_at = ?, credit = CASE WHEN ? THEN '' ELSE credit END WHERE id = ?`,
     ).bind(now, action === 'approve_anon' ? 1 : 0, id).run();
+    await evictOverBudget(env, now);
   } else {
     status = action === 'reject' ? 'rejected' : 'removed';
     const store = galleryStore(env);

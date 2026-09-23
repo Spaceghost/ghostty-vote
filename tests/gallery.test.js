@@ -134,7 +134,8 @@ test('upload -> queue -> approve: only approved shots are listed and served', as
 
   const list = (await (await t.raw(G + 'api/shots')).json()).shots;
   assert.equal(list.length, 1);
-  assert.deepEqual(Object.keys(list[0]).sort(), ['approved_at', 'credit', 'height', 'id', 'mod', 'src', 'thumb', 'width']);
+  assert.deepEqual(Object.keys(list[0]).sort(),
+    ['approved_at', 'credit', 'height', 'id', 'keeps', 'mod', 'passes', 'src', 'thumb', 'width']);
   assert.equal(list[0].src, G + 'img/' + up.id);
   assert.equal(list[0].thumb, G + 'thumb/' + up.id);
   res = await t.raw(list[0].src);
@@ -267,4 +268,111 @@ test('minisite upload: refused without a session, tagged with its mod and accoun
   assert.deepEqual((await list()).map((s) => s.id), [up.id], 'the whole gallery still lists it');
   assert.deepEqual((await list('?mod=nope')).map((s) => s.id), [up.id], 'an unknown mod is the whole gallery, never an SQL fragment');
   assert.equal((await t.raw(G + 'img/' + up.id)).status, 200);
+});
+
+// ---- votes decide what stays -----------------------------------------------------------
+// Full-resolution shots are kept only while the gallery has room. A keep-or-pass vote per
+// account ranks them, and an approval that takes the total over budget drops the worst
+// ranked shots that are past their grace period: the image goes, the row and thumb stay.
+test('keep/pass votes: one per account, changeable, withdrawable, and counted on the shot', async () => {
+  const t = gallerySetup();
+  const up = await (await t.upload(png())).json();
+  const owner = await t.signedIn('github', '251370');
+  const approve = () => t.raw(API + 'admin/gallery/review', {
+    method: 'POST', cookie: owner, body: JSON.stringify({ id: up.id, action: 'approve' }),
+    headers: { 'content-type': 'application/json', origin: ORIGIN },
+  });
+  assert.equal((await approve()).status, 200);
+
+  const castAs = (cookie, vote, id = up.id) => t.raw(API + 'gallery/vote', {
+    method: 'POST', cookie, body: JSON.stringify({ id, vote }),
+    headers: { 'content-type': 'application/json', origin: ORIGIN, 'sec-fetch-site': 'same-origin' },
+  });
+  const tally = () => ({ ...t.env.DB.raw.prepare('SELECT keeps, passes FROM shots WHERE id = ?').get(up.id) });
+
+  // signing in is required; a cross-site post is refused
+  assert.equal((await castAs(undefined, 'keep')).status, 401);
+  assert.equal((await t.raw(API + 'gallery/vote', {
+    method: 'POST', cookie: await t.signedIn(), body: JSON.stringify({ id: up.id, vote: 'keep' }),
+    headers: { 'content-type': 'application/json', origin: 'https://elsewhere.example' },
+  })).status, 403);
+
+  const a = await t.signedIn(), b = await t.signedIn();
+  assert.deepEqual(await (await castAs(a, 'keep')).json(), { ok: true, id: up.id, vote: 'keep', keeps: 1, passes: 0 });
+  assert.deepEqual(tally(), { keeps: 1, passes: 0 });
+
+  // the same account voting again replaces its vote rather than adding one
+  await castAs(a, 'keep');
+  assert.deepEqual(tally(), { keeps: 1, passes: 0 }, 'one vote per account');
+  await castAs(a, 'pass');
+  assert.deepEqual(tally(), { keeps: 0, passes: 1 }, 'changing sides moves the tally');
+
+  await castAs(b, 'keep');
+  assert.deepEqual(tally(), { keeps: 1, passes: 1 });
+
+  // null takes a vote back
+  assert.deepEqual(await (await castAs(a, null)).json(), { ok: true, id: up.id, vote: null, keeps: 1, passes: 0 });
+  assert.deepEqual(tally(), { keeps: 1, passes: 0 });
+
+  // the viewer's own votes, and the public tally on the listing
+  const mine = await (await t.raw(API + 'gallery/mine', { cookie: b })).json();
+  assert.deepEqual(mine, { signed_in: true, votes: { [up.id]: 'keep' } });
+  assert.deepEqual(await (await t.raw(API + 'gallery/mine')).json(), { signed_in: false, votes: {} });
+  const listed = (await (await t.raw(G + 'api/shots')).json()).shots[0];
+  assert.deepEqual([listed.keeps, listed.passes], [1, 0]);
+
+  // a shot nobody uploaded, and a vote nobody offers
+  assert.equal((await castAs(b, 'keep', 'Z'.repeat(22))).status, 404);
+  assert.equal((await castAs(b, 'maybe')).status, 400);
+});
+
+test('over budget: the lowest-voted shots past their grace period lose their image', async () => {
+  const t = gallerySetup();
+  const { evictOverBudget, GALLERY } = await import('../src/gallery.js');
+  const owner = await t.signedIn('github', '251370');
+  const day = 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  // four approved shots, each claiming half the budget, so the gallery holds twice what
+  // it may and exactly two of them have to go before it is inside the budget again
+  const ids = [];
+  for (let i = 0; i < 4; i++) {
+    const up = await (await t.upload(png(1920, 1080 + i), { as: 'uploader-' + i })).json();
+    await t.raw(API + 'admin/gallery/review', {
+      method: 'POST', cookie: owner, body: JSON.stringify({ id: up.id, action: 'approve' }),
+      headers: { 'content-type': 'application/json', origin: ORIGIN },
+    });
+    ids.push(up.id);
+  }
+  const [worst, middling, best, newcomer] = ids;
+  const set = (id, keeps, passes, reviewedAt) => t.env.DB.raw
+    .prepare('UPDATE shots SET keeps = ?, passes = ?, bytes = ?, reviewed_at = ? WHERE id = ?')
+    .run(keeps, passes, GALLERY.budgetBytes / 2, reviewedAt, id);
+  set(worst, 0, 5, now - 60 * day);
+  set(middling, 3, 1, now - 60 * day);
+  set(best, 40, 0, now - 60 * day);
+  set(newcomer, 0, 0, now - 1 * day); // inside the grace period: safe whatever its score
+
+  const store = t.env.GALLERY_KV.store;
+  for (const id of ids) assert.ok(store.get('shots/' + id), id + ' stored to begin with');
+
+  const dropped = await evictOverBudget(t.env, now);
+  assert.deepEqual(dropped, [worst, middling], 'worst score first, then the next');
+
+  const status = (id) => t.env.DB.raw.prepare('SELECT status, bytes, has_thumb FROM shots WHERE id = ?').get(id);
+  assert.equal(status(worst).status, 'evicted');
+  assert.equal(status(worst).bytes, 0, 'an evicted shot stops counting toward the budget');
+  assert.equal(status(middling).status, 'evicted');
+  assert.equal(status(best).status, 'approved', 'the most-kept shot stays');
+  assert.equal(status(newcomer).status, 'approved', 'inside its grace period, so never a candidate');
+  assert.ok(!store.get('shots/' + worst), 'the image is gone');
+  assert.ok(store.get('shots/' + best), 'the kept image is untouched');
+
+  // the row survives, so the gallery still knows the shot existed and the digest still
+  // catches a re-upload; only approved shots are listed
+  const listed = (await (await t.raw(G + 'api/shots')).json()).shots.map((s) => s.id).sort();
+  assert.deepEqual(listed, [best, newcomer].sort());
+
+  // under budget again: nothing more is dropped
+  assert.deepEqual(await evictOverBudget(t.env, now), []);
 });

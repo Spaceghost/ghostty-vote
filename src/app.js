@@ -21,7 +21,7 @@ import {
   getAdminAlmanac, getAggregate, postAdminAlmanacReview, postAdminAlmanacSuite, postResult,
 } from './almanac.js';
 import { getPluginMaster } from './plugins.js';
-import { getAdminGallery, getAdminImage, getPublicImage, getShots, postAdminReview, postAdminThumb, postMemberUpload, postUpload } from './gallery.js';
+import { getAdminGallery, getAdminImage, getMyShotVotes, getPublicImage, getShots, postAdminReview, postAdminThumb, postMemberUpload, postShotVote, postUpload } from './gallery.js';
 
 const WRITES = { vote: [validateVote, postVote], suggest: [validateSuggestion, postSuggest] };
 
@@ -48,6 +48,10 @@ const HANDLERS = {
   'shots/upload': (request, env, ctx, url) => postMemberUpload(request, env, url),
   'gallery/upload': (request, env, ctx, url) => postUpload(request, env, url),
   'gallery/shots': (request, env, ctx, url, cache) => getShots(env, ctx, url, cache),
+  // one keep-or-pass vote per account per shot; the lowest-voted are what the gallery
+  // drops when it runs out of room (src/gallery.js, evictOverBudget)
+  'gallery/vote': (request, env, ctx, url) => postShotVote(request, env, url),
+  'gallery/mine': (request, env, ctx, url) => getMyShotVotes(request, env, url),
   'gallery/img': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, false),
   'gallery/thumb': (request, env, ctx, url, cache, fetcher, r) => getPublicImage(env, r.id, true),
   // the device link, connected apps and account moderation (src/device.js)

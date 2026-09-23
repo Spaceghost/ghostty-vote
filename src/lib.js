@@ -77,6 +77,9 @@ export const API = Object.freeze({
   // Browser writes that need the session cookie live here, because the cookie's Path is
   // the vote's: the gallery page and the mod pages upload through this one.
   'gallery/upload': 'POST',
+  // keep-or-pass on a shot, and the viewer's own votes: same reason, the session cookie
+  'gallery/vote': 'POST',
+  'gallery/mine': 'GET',
   // the device link, connected apps and account moderation (src/device.js)
   'device/code': 'POST',
   'device/token': 'POST',

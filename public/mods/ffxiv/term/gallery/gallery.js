@@ -2,6 +2,9 @@
 // signed-in visitor, sends a picked file to the vote API's gallery/upload (where the session
 // cookie reaches); it waits for review before it is ever shown. Signed out, the form gives
 // way to the two sign-in buttons.
+// A signed-in visitor also votes keep or pass on each shot. The gallery keeps the
+// full-resolution images only while it has room for them, and the lowest-voted are the
+// ones it drops, so these votes decide what stays.
 // Rendered through textContent and attributes only.
 (function () {
   'use strict';
@@ -15,6 +18,10 @@
   const set = (k, v) => { try { if (v) window.localStorage.setItem(k, v); else window.localStorage.removeItem(k); } catch (e) {} };
   const saved = get(THEME_KEY);
   if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+
+  // shot id -> 'keep' | 'pass', the signed-in viewer's own votes
+  let myVotes = Object.create(null);
+  let canVote = false;
 
   const $ = (s) => document.querySelector(s);
   function el(tag, attrs, ...kids) {
@@ -51,7 +58,72 @@
     const cap = el('figcaption');
     if (s.credit) cap.append(el('b', { text: str(s.credit) }), DOT);
     cap.append(day(s.approved_at));
-    return el('figure', { class: 'shot' }, el('a', { href: s.src, target: '_blank', rel: 'noopener' }, img), cap);
+    return el('figure', { class: 'shot' },
+      el('a', { href: s.src, target: '_blank', rel: 'noopener' }, img), cap, voteRow(s));
+  }
+
+  // keep / pass, with the tally. Signed out it is shown but not clickable, so the counts
+  // still read as part of the gallery.
+  function voteRow(s) {
+    const id = str(s.id);
+    const row = el('div', { class: 'votes' });
+    const counts = el('span', { class: 'tally' });
+    const paint = (keeps, passes) => {
+      counts.textContent = keeps + ' keep' + DOT + passes + ' pass';
+      for (const b of row.querySelectorAll('button')) {
+        b.setAttribute('aria-pressed', myVotes[id] === b.dataset.vote ? 'true' : 'false');
+      }
+    };
+    for (const kind of ['keep', 'pass']) {
+      const b = el('button', {
+        type: 'button', class: 'vote', 'data-vote': kind, text: kind,
+        title: canVote ? 'Vote to ' + kind + ' this screenshot' : 'Sign in to vote',
+        disabled: !canVote,
+      });
+      b.addEventListener('click', async () => {
+        // clicking the side you already picked takes the vote back
+        const want = myVotes[id] === kind ? null : kind;
+        for (const x of row.querySelectorAll('button')) x.disabled = true;
+        const r = await castVote(id, want);
+        for (const x of row.querySelectorAll('button')) x.disabled = false;
+        if (!r) return;
+        if (want) myVotes[id] = want; else delete myVotes[id];
+        paint(r.keeps, r.passes);
+      });
+      row.append(b);
+    }
+    row.append(counts);
+    paint(Number(s.keeps) || 0, Number(s.passes) || 0);
+    return row;
+  }
+
+  // POST the vote; null takes it back. Returns the new tally, or null when it did not go.
+  async function castVote(id, vote) {
+    try {
+      const res = await fetch(VOTE_API + 'gallery/vote', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: id, vote: vote }),
+      });
+      if (res.status === 401) { canVote = false; signedIn(null); return null; }
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || !data.ok) return null;
+      return { keeps: Number(data.keeps) || 0, passes: Number(data.passes) || 0 };
+    } catch (e) { return null; }
+  }
+
+  // the viewer's own votes, so each card opens showing which way they went
+  async function loadMyVotes() {
+    try {
+      const res = await fetch(VOTE_API + 'gallery/mine', { credentials: 'same-origin', cache: 'no-store', headers: { accept: 'application/json' } });
+      if (!res.ok) return;
+      const data = await res.json();
+      canVote = !!(data && data.signed_in);
+      myVotes = Object.create(null);
+      for (const [id, v] of Object.entries((data && data.votes) || {})) {
+        if (v === 'keep' || v === 'pass') myVotes[id] = v;
+      }
+    } catch (e) {}
   }
 
   async function load() {
@@ -131,7 +203,7 @@
     applyTheme(document.documentElement.dataset.theme || '');
     $('#upload').addEventListener('submit', upload);
     whoAmI();
-    load();
+    loadMyVotes().then(load);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();

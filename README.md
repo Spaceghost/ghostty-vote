@@ -102,6 +102,7 @@ Objects, and sessions are signed cookies.
 | `migrations/0003_note_only_votes.sql` | Rebuilds `votes` so a row can hold a note without a vote (`vote = ''`), then recounts the tallies |
 | `migrations/0004_sign_in.sql` | Adds the `characters` table (additive, `IF NOT EXISTS`) |
 | `migrations/0005_gallery.sql` | Adds the gallery's `shots` and `upload_log` tables (additive, `IF NOT EXISTS`) |
+| `migrations/0009_shot_votes.sql` | Adds `shots.keeps`/`shots.passes`, the `shot_votes` table and its triggers (additive) |
 | `src/gallery.js` | The gallery: upload, approved list and images, the owner's queue |
 | `src/account.js` | The account gate: a session or a linked app's Bearer token (scope, expiry, revocation, bans) and the machine-readable 401 |
 | `src/device.js`, `src/clients.js` | The device link, connected apps, the owner's accounts/tokens/bans; the apps that may link and their scopes |
@@ -193,7 +194,9 @@ image request checks the shot's status in D1 first.
 | Method | Path | Notes |
 | --- | --- | --- |
 | POST | `/mods/ffxiv/term/gallery/api/upload` | Raw PNG or JPEG body (`Content-Type` is not trusted; the bytes decide), at most 8 MiB. `?credit=` optional (60 characters, cleaned like notes). `201 {ok, id, status: "pending", message}`; a byte-identical shot answers `200 {…, duplicate: true}`. A cross-site browser `Origin` gets 403. Needs a Bearer token with `gallery:upload` (recorded as from the plugin) or a session (web); `?mod=` optionally tags the shot with a mod id (`ghostty`, `almanac`, `xivmcp`, `xivdesktop`), and the list carries `mod` so a mod's page can filter. The same handler answers `POST /mods/ffxiv/term/vote/api/gallery/upload` (the gallery page) and `POST /mods/ffxiv/term/vote/api/shots/upload?mod=` (a minisite; the mod is required), where the session cookie (Path = the vote) reaches: browsers upload there |
-| GET | `/mods/ffxiv/term/gallery/api/shots` | `{shots: [{id, src, thumb, width, height, credit, approved_at}]}`, approved only, newest 500. Cached 60 s in the Cache API (cleared in the approving location) and by browsers |
+| GET | `/mods/ffxiv/term/gallery/api/shots` | `{shots: [{id, src, thumb, width, height, credit, approved_at, keeps, passes}]}`, approved only, newest 500. Cached 60 s in the Cache API (cleared in the approving location) and by browsers |
+| POST | `/mods/ffxiv/term/vote/api/gallery/vote` | JSON `{id, vote}` where vote is `keep`, `pass` or `null` (takes it back): `{ok, id, vote, keeps, passes}`. Session only, never an app token; a cross-site `Origin` gets 403. One vote per account per shot; voting again replaces it. See [What stays](#what-stays) |
+| GET | `/mods/ffxiv/term/vote/api/gallery/mine` | `{signed_in, votes: {shot_id: "keep"\|"pass"}}` for the signed-in viewer, `private, no-store`, so each card opens showing which way they voted |
 | GET | `/mods/ffxiv/term/gallery/img/<id>`, `/thumb/<id>` | An approved image or its thumbnail; 404 for anything else. `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; sandbox`, cached a day |
 | GET | `/mods/ffxiv/term/vote/api/admin/gallery` | Owner only (401/403 like `admin/voters`): `{pending[], reviewed[] (newest 100), store}` |
 | GET | `/mods/ffxiv/term/vote/api/admin/gallery/image?id=…[&thumb=1]` | Owner only: any stored shot, `private, no-store` |
@@ -219,6 +222,19 @@ most 300 shots waiting for review (after that uploads get 429 `gallery_full` unt
 catches up). One D1 read decides before the body is read, so a refused upload costs no
 storage. The free plan's single WAF rate-limiting rule is spent on `api/auth/*`, so these
 limits are the Worker's own.
+
+<a id="what-stays"></a>
+**What stays.** The gallery keeps full-resolution images only while it has room for them, and
+the votes decide which ones that is. A signed-in visitor votes `keep` or `pass` on each shot
+(`shot_votes`, one row per account per shot, triggers keeping `shots.keeps` and `shots.passes`
+in step the same way idea votes keep their tallies). When an approval takes the approved
+images over `GALLERY.budgetBytes` (9 GB, under R2's free 10 GB-month), `evictOverBudget` drops
+shots in score order — `keeps - passes` ascending, oldest first among equals — until the
+gallery is inside its budget again, at most 50 in one pass. A shot is never a candidate
+within `GALLERY.graceMs` (14 days) of approval, so a newcomer with no votes yet is never the
+one to go. Eviction deletes the image object only: the row goes to status `evicted` with
+`bytes = 0` and keeps its thumbnail, so the gallery still knows the shot existed and its
+digest still catches a re-upload. Nothing about this has run against a real bucket yet.
 
 **Storage.** Images live under `shots/<id>` and `thumbs/<id>` in a KV namespace bound as
 `GALLERY_KV` (free plan: 1 GB, 1,000 writes and 100,000 reads a day, 25 MiB a value; an upload

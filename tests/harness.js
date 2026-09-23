@@ -14,6 +14,7 @@ export const MIGRATIONS = [
   read('migrations/0003_note_only_votes.sql'), read('migrations/0004_sign_in.sql'),
   read('migrations/0005_gallery.sql'), read('migrations/0006_almanac.sql'),
   read('migrations/0007_analytics.sql'), read('migrations/0008_account_gate.sql'),
+  read('migrations/0009_shot_votes.sql'),
 ];
 export const SEED = read('seed/seed.sql');
 export const ORIGIN = 'https://spacegho.st';
