@@ -170,8 +170,8 @@ export default {
     {
       "internalName": "XivLantern",
       "name": "XivLantern",
-      "listed": false,
-      "repo": null,
+      "listed": true,
+      "repo": "Spaceghost/xivlantern-dalamud",
       "assemblyVersion": "0.1.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
