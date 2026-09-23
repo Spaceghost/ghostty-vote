@@ -57,14 +57,14 @@
     </section>
     <div class="status" role="note">
       <b>Honest status</b>
-      <p>The plugin builds against Dalamud API 15, and the MCP runtime and the logic that needs no game (approval service, chat rules, IPC payloads, map maths) have host-side tests. <strong>The plugin has not yet been observed running in the game</strong>: treat the in-game behaviour described here as the design, not as verified results. It has test builds only, no stable release.</p>
+      <p>The plugin builds against Dalamud API 15, and the MCP runtime and the logic that needs no game (approval service, chat rules, IPC payloads, map maths) have host-side tests. <strong>The plugin has not yet been observed running in the game</strong>: treat the in-game behaviour described here as the design, not as verified results. It has a stable release (v0.1.0) and a newer test build.</p>
     </div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
       <div class="prose">
         <p><a href="https://modelcontextprotocol.io" rel="noopener">MCP</a> is the protocol AI clients use to call tools. XivMcp is an MCP server that lives inside the game client as a Dalamud plugin and listens on loopback (<code>http://127.0.0.1:41800/mcp</code>), protected by a bearer token it generates on first load. Under Wine, loopback inside the game is the host's loopback, so a client on the same machine connects directly.</p>
-        <p>It offers 56 tools, 9 resources and 6 prompts: searching game data (items, recipes, quests, duties, actions, any Excel sheet), reading your character, inventory, party, location, weather forecast and chat, and local-only effects such as map flags, toasts and an in-game board where agents post what they are doing.</p>
+        <p>The v0.1.0 release offers 86 tools, 14 resources and templates and 6 prompts (the v0.1.1 test build: 155, 19 and 10): searching game data (items, recipes, quests, duties, actions, any Excel sheet), reading your character, inventory, party, location, weather forecast and chat, and local-only effects such as map flags, toasts and an in-game board where agents post what they are doing.</p>
         <p>Combat rotations, movement and input automation of any kind are out of scope, by design.</p>
       </div>
     </section>
@@ -143,7 +143,7 @@
             <li><b>Save and Close</b>.</li>
             <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivMcp</b> → <b>Install</b>.</li>
           </ol>
-          <p class="note">XivMcp has <b>test builds only</b> so far, and Dalamud hides a testing-only plugin unless you ask: <code>/xlsettings</code> → <b>Experimental</b> → <b>Get plugin testing builds</b>, then it appears under <b>All Plugins</b>.</p>
+          <p class="note">XivMcp has a stable release, so it shows under <b>All Plugins</b> straight away. For the newer test build ahead of the next release, tick <b>Get plugin testing builds</b> in the same tab, then <b>Receive plugin testing versions</b> on its entry.</p>
           <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
         </div>
         <div class="path glass">
@@ -216,7 +216,7 @@ tools/install-dev.sh        # or: dotnet build XivMcp.slnx -c Release</code></pr
       <ul class="linklist">
         <li><a class="btn" href="https://github.com/Spaceghost/xivmcp-dalamud" rel="noopener">Source</a></li>
         <li><a class="btn" href="https://github.com/Spaceghost/xivmcp-dalamud/releases" rel="noopener">Releases</a></li>
-        <li><a class="btn" href="https://github.com/Spaceghost/xivmcp-dalamud/commits/master" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivmcp-dalamud/blob/master/CHANGELOG.md" rel="noopener">Changelog</a></li>
         <li><a class="btn" href="https://github.com/Spaceghost/xivmcp-dalamud#tool-catalog" rel="noopener">Tool catalog</a></li>
         <li><a class="btn" href="/mods/ffxiv/almanac/about/">Almanac, a client for it</a></li>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
