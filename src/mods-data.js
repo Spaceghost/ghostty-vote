@@ -144,8 +144,8 @@ export default {
     {
       "internalName": "XivWayfinder",
       "name": "XivWayfinder",
-      "listed": false,
-      "repo": null,
+      "listed": true,
+      "repo": "Spaceghost/xivwayfinder-dalamud",
       "assemblyVersion": "0.1.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
