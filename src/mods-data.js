@@ -18,9 +18,9 @@ export default {
       "internalName": "GhosttyDalamud",
       "name": "Ghostty",
       "listed": true,
-      "released": false,
+      "released": true,
       "repo": "Spaceghost/ghostty-dalamud",
-      "assemblyVersion": "0.2.0.0",
+      "assemblyVersion": "0.3.0.2",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Eorzea is a terminal multiplexer.",
@@ -44,7 +44,7 @@ export default {
       "listed": true,
       "released": true,
       "repo": "Spaceghost/almanac-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.2.0.2",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Talk to a local AI model in game, with XivMcp's tools.",
@@ -70,7 +70,7 @@ export default {
       "name": "XivMcp",
       "listed": true,
       "repo": "Spaceghost/xivmcp-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.1.0.4",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Model Context Protocol server for FINAL FANTASY XIV.",
@@ -88,14 +88,14 @@ export default {
       "needs": "An MCP client on the same machine (Claude Code, Codex, Almanac).",
       "build": "dotnet build XivMcp.slnx -c Release",
       "umbraWidget": "Umbra.XivMcp",
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "released": true
     },
     {
       "internalName": "XivDesktop",
       "name": "XivDesktop",
       "listed": true,
       "repo": "Spaceghost/xivdesktop-dalamud",
-      "assemblyVersion": "1.0.0.0",
+      "assemblyVersion": "1.0.1.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Launch Linux desktop apps into the game world.",
@@ -113,14 +113,14 @@ export default {
       "needs": "Ghostty and ghostty-agent, and a Linux host running the game under Wine.",
       "build": "dotnet build XivDesktop.slnx -c Release",
       "umbraWidget": null,
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "released": true
     },
     {
       "internalName": "XivArcade",
       "name": "XivArcade",
       "listed": true,
       "repo": "Spaceghost/xivarcade-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.2.0.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Your own classic games as game panels, with saves kept in step across your machines.",
@@ -139,7 +139,7 @@ export default {
       "needs": "A Linux host running the game under Wine, RetroArch, and your own game files. Ghostty for panels and Syncthing for save sync are optional.",
       "build": "dotnet build XivArcade.slnx -c Release",
       "umbraWidget": null,
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "released": true
     },
     {
       "internalName": "XivWayfinder",
@@ -165,14 +165,15 @@ export default {
       "needs": "Nothing beyond Dalamud (API 15), on Windows or Linux under Wine. vnavmesh is optional, for walkable paths.",
       "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivWayfinder.slnx -c Release)",
       "umbraWidget": null,
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "pending": "No release yet. Build it yourself in the meantime.",
+      "released": false
     },
     {
       "internalName": "XivLantern",
       "name": "XivLantern",
       "listed": true,
       "repo": "Spaceghost/xivlantern-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.1.0.1",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
@@ -191,7 +192,8 @@ export default {
       "needs": "Nothing beyond Dalamud (API 15); the network layer ships inside the plugin as lantern.dll. Friends running XivLantern too.",
       "build": "tools/build-native.sh (cargo and mingw-w64), then dotnet build src/XivLantern.Plugin/XivLantern.Plugin.csproj -c Release and tools/package.sh",
       "umbraWidget": null,
-      "pending": "The repository is not public yet, so there is nothing for the installer to download. Build it yourself in the meantime."
+      "pending": "Only testing builds so far: turn on Get plugin testing builds in /xlsettings to see it.",
+      "released": false
     }
   ]
 };
