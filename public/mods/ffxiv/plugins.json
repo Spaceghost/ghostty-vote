@@ -27,7 +27,7 @@
     "Author": "Johnneylee Jack Rollins",
     "Name": "Almanac",
     "InternalName": "Almanac",
-    "AssemblyVersion": "0.2.0.2",
+    "AssemblyVersion": "0.2.1.5",
     "Punchline": "Talk to a local AI model in game, with XivMcp's tools.",
     "Description": "Connects a model running on your own PC (Ollama, LM Studio, llama.cpp or any OpenAI-compatible server) to the game through XivMcp. Setup wizard with GPU-aware model recommendations, an in-game chat with threads and streaming, and a benchmark you can share with the community leaderboard. No cloud, no Python. Requires the XivMcp plugin for game tools.",
     "Tags": [
@@ -54,7 +54,7 @@
     "Author": "Johnneylee Jack Rollins",
     "Name": "XivMcp",
     "InternalName": "XivMcp",
-    "AssemblyVersion": "0.1.0.4",
+    "AssemblyVersion": "0.1.1.4",
     "Punchline": "Model Context Protocol server for FINAL FANTASY XIV.",
     "Description": "Exposes game state, game data and opt-in actions to MCP clients over loopback Streamable HTTP. Anything that changes your game is approved in game first. Optional Umbra toolbar widget.",
     "Tags": [
@@ -79,7 +79,7 @@
     "Author": "Johnneylee Jack Rollins",
     "Name": "XivDesktop",
     "InternalName": "XivDesktop",
-    "AssemblyVersion": "1.0.1.0",
+    "AssemblyVersion": "1.0.2.4",
     "Punchline": "Launch Linux desktop apps into the game world.",
     "Description": "An app launcher for FINAL FANTASY XIV running under Wine on Linux. Lists the host's freedesktop applications and opens them as world panels through Ghostty's remote windows. Optional Umbra toolbar widget.",
     "Tags": [
@@ -123,6 +123,58 @@
     ],
     "DownloadLinkInstall": "https://github.com/Spaceghost/xivarcade-dalamud/releases/latest/download/latest.zip",
     "DownloadLinkUpdate": "https://github.com/Spaceghost/xivarcade-dalamud/releases/latest/download/latest.zip",
+    "IsTestingExclusive": false,
+    "LastUpdate": 0
+  },
+  {
+    "Author": "Johnneylee Jack Rollins",
+    "Name": "XivWayfinder",
+    "InternalName": "XivWayfinder",
+    "AssemblyVersion": "0.1.0.2",
+    "Punchline": "A softly glowing bead and the classic pointing glove show which way to go.",
+    "Description": "XivWayfinder points the way in FINAL FANTASY XIV: a softly pulsing bead floats a couple of yalms ahead of you in the direction to go, and the game's own white pointing glove points there too, sliding to the edge of the screen when the way is behind you. It follows, in order, a target you set with /wayfinder X Y or another plugin sets over IPC, your map flag, and your tracked quest's next step; in another zone it names the nearest aetheryte instead. With vnavmesh installed it points along the walkable path. It only points and never moves your character.",
+    "Tags": [
+      "navigation",
+      "quest",
+      "flag",
+      "overlay",
+      "utility"
+    ],
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "RepoUrl": "https://github.com/Spaceghost/xivwayfinder-dalamud",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/xivwayfinder.png",
+    "ImageUrls": [
+      "https://spacegho.st/mods/ffxiv/plugins/icons/xivwayfinder-banner.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/latest/download/latest.zip",
+    "IsTestingExclusive": false,
+    "LastUpdate": 0
+  },
+  {
+    "Author": "Johnneylee Jack Rollins",
+    "Name": "XivLantern",
+    "InternalName": "XivLantern",
+    "AssemblyVersion": "0.1.0.3",
+    "Punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
+    "Description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
+    "Tags": [
+      "social",
+      "chat",
+      "friends",
+      "p2p",
+      "privacy"
+    ],
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "RepoUrl": "https://github.com/Spaceghost/xivlantern-dalamud",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/xivlantern.png",
+    "ImageUrls": [
+      "https://spacegho.st/mods/ffxiv/plugins/icons/xivlantern-banner.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/Spaceghost/xivlantern-dalamud/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Spaceghost/xivlantern-dalamud/releases/latest/download/latest.zip",
     "IsTestingExclusive": false,
     "LastUpdate": 0
   }

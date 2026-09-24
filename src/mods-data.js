@@ -44,7 +44,7 @@ export default {
       "listed": true,
       "released": true,
       "repo": "Spaceghost/almanac-dalamud",
-      "assemblyVersion": "0.2.0.2",
+      "assemblyVersion": "0.2.1.5",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Talk to a local AI model in game, with XivMcp's tools.",
@@ -70,7 +70,7 @@ export default {
       "name": "XivMcp",
       "listed": true,
       "repo": "Spaceghost/xivmcp-dalamud",
-      "assemblyVersion": "0.1.0.4",
+      "assemblyVersion": "0.1.1.4",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Model Context Protocol server for FINAL FANTASY XIV.",
@@ -95,7 +95,7 @@ export default {
       "name": "XivDesktop",
       "listed": true,
       "repo": "Spaceghost/xivdesktop-dalamud",
-      "assemblyVersion": "1.0.1.0",
+      "assemblyVersion": "1.0.2.4",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Launch Linux desktop apps into the game world.",
@@ -146,7 +146,7 @@ export default {
       "name": "XivWayfinder",
       "listed": true,
       "repo": "Spaceghost/xivwayfinder-dalamud",
-      "assemblyVersion": "0.1.0.0",
+      "assemblyVersion": "0.1.0.2",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "A softly glowing bead and the classic pointing glove show which way to go.",
@@ -166,14 +166,14 @@ export default {
       "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivWayfinder.slnx -c Release)",
       "umbraWidget": null,
       "pending": "No release yet. Build it yourself in the meantime.",
-      "released": false
+      "released": true
     },
     {
       "internalName": "XivLantern",
       "name": "XivLantern",
       "listed": true,
       "repo": "Spaceghost/xivlantern-dalamud",
-      "assemblyVersion": "0.1.0.1",
+      "assemblyVersion": "0.1.0.3",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
@@ -193,7 +193,7 @@ export default {
       "build": "tools/build-native.sh (cargo and mingw-w64), then dotnet build src/XivLantern.Plugin/XivLantern.Plugin.csproj -c Release and tools/package.sh",
       "umbraWidget": null,
       "pending": "Only testing builds so far: turn on Get plugin testing builds in /xlsettings to see it.",
-      "released": false
+      "released": true
     }
   ]
 };
