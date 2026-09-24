@@ -97,8 +97,7 @@ whole run is plain node, takes seconds, and touches nothing outside the checkout
 and the npm cache.
 
 There is **no** `CI_LOCAL_REMOTE`. Running the stages on a separate build host
-would mean getting this checkout over there first, and with no git remote (see
-below) that is a copy step, a container and a node install to keep current --
+would mean getting this checkout over there first: a copy step, a container and a node install to keep current --
 all to move a few seconds of `node --test`. It was left out rather than
 half-implemented; run it here, or point `CI_RUNS_ON` at a self-hosted runner and
 let GitHub do it.
@@ -210,7 +209,8 @@ Not verified, because it can only be verified on GitHub:
   failure path nor a real `wrangler deploy` from Actions nor the 200 check has
   been run. The site's live deployments so far were made by hand (README.md,
   "Deploy").
-* **There is no git remote.** At the time of writing `git remote -v` in this
-  checkout is empty, so nothing here has been pushed and no GitHub repository,
-  environment, secret or variable has been created. Every `gh` command above is
-  for the owner to run after the remote exists.
+* **The repository is private and CI has not run.** It is at
+  github.com/Spaceghost/ghostty-vote (since 2026-09-23). Its first push started no
+  job: GitHub reported that an Actions budget prevented it. No environment,
+  secret or variable has been created yet; every `gh` command above is still for
+  the owner to run.
