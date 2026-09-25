@@ -119,6 +119,8 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/plugins/icons/xivlantern.png',
     'mods/ffxiv/plugins/icons/xivmcp-banner.png',
     'mods/ffxiv/plugins/icons/xivmcp.png',
+    'mods/ffxiv/plugins/icons/xivpiano-banner.png',
+    'mods/ffxiv/plugins/icons/xivpiano.png',
     'mods/ffxiv/plugins/icons/xivwayfinder-banner.png',
     'mods/ffxiv/plugins/icons/xivwayfinder.png',
     'mods/ffxiv/plugins/index.html',

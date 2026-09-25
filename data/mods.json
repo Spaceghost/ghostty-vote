@@ -193,6 +193,33 @@
       "umbraWidget": null,
       "pending": "Only testing builds so far: turn on Get plugin testing builds in /xlsettings to see it.",
       "released": true
+    },
+    {
+      "internalName": "XivPiano",
+      "name": "XivPiano",
+      "listed": true,
+      "repo": "Spaceghost/xivpiano-dalamud",
+      "assemblyVersion": "0.1.0.0",
+      "dalamudApiLevel": 15,
+      "author": "Johnneylee Jack Rollins",
+      "punchline": "Your Pandora stations inside FFXIV: play, skip, thumbs, new stations.",
+      "description": "XivPiano is a Pandora radio player inside FINAL FANTASY XIV, in the tradition of pianobar and Pithos. Sign in with your Pandora account and play your stations, skip, thumbs up or down, shelve a song you are tired of, bookmark it, ask why it was picked, and make new stations from an artist, a song or a genre. The song shows in the server info bar; /piano next and friends work from chat and macros, and other plugins can control it over IPC. It can mute the game's music while it plays and pause itself during cutscenes. Pandora is only available in the United States. Not affiliated with Pandora or Sirius XM.",
+      "tags": [
+        "music",
+        "radio",
+        "pandora",
+        "audio",
+        "utility"
+      ],
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivpiano.png",
+      "images": [
+        "https://spacegho.st/mods/ffxiv/plugins/icons/xivpiano-banner.png"
+      ],
+      "needs": "Dalamud (API 15), on Windows or Linux under Wine, and a Pandora account in the United States.",
+      "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivPiano.slnx -c Release)",
+      "umbraWidget": null,
+      "pending": "No release yet. Build it yourself in the meantime.",
+      "released": false
     }
   ]
 }
