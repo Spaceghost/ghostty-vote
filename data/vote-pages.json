@@ -6,7 +6,7 @@
     "field is text and is escaped. The ideas themselves are data/catalogue.json (Ghostty)",
     "and data/catalogues/<mod>.json; the page paths are src/lib.js VOTE_MODS."
   ],
-  "order": ["ghostty", "xivmcp", "xivdesktop", "xivarcade", "xivwayfinder", "xivlantern", "almanac"],
+  "order": ["ghostty", "xivmcp", "xivdesktop", "xivarcade", "xivwayfinder", "xivlantern", "xivpiano", "almanac"],
   "pages": {
     "ghostty": {
       "name": "Ghostty",
@@ -98,6 +98,21 @@
       "banner": "/mods/ffxiv/plugins/icons/xivlantern-banner.png",
       "suggest_title": "Share a waymark layout with my static's channel",
       "suggest_detail": "Describe the moment you'd want with your friends."
+    },
+    "xivpiano": {
+      "name": "XivPiano",
+      "title": "XivPiano Vote",
+      "description": "Vote on what XivPiano, the Pandora radio player inside Final Fantasy XIV, should do next.",
+      "eyebrow": "xivpiano · community vote",
+      "h1_before": "What should the radio ",
+      "h1_glyph": "play",
+      "h1_after": " next?",
+      "lede_html": "<strong>XivPiano</strong> plays your Pandora stations inside Final Fantasy XIV, in the tradition of pianobar, Pithos and Elpis: thumbs up and down, tired of it, why this song, and new stations from a search. It has not been heard playing in game yet. Made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next, each checked against how it works and against Pandora's terms: it streams, it never keeps a song. Pandora serves the United States only, and XivPiano is not affiliated with Pandora.",
+      "about": "/mods/ffxiv/xivpiano/",
+      "links": [],
+      "banner": "/mods/ffxiv/plugins/icons/xivpiano-banner.png",
+      "suggest_title": "Switch to my battle station when a duty starts",
+      "suggest_detail": "When would you want the music to change, and what should it do?"
     },
     "almanac": {
       "name": "Almanac",

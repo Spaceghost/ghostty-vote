@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "mod": "xivpiano",
+  "about": "docs/MEDIA.md describes this file. Put each file beside it and list it under its slot.",
+  "slots": [
+    {
+      "id": "now-playing",
+      "title": "Now Playing",
+      "kind": "screenshot",
+      "caption": "The XivPiano window with a station playing: album art, title, artist and album, the progress bar and the bitrate, the station list on the left.",
+      "files": []
+    },
+    {
+      "id": "server-info-bar",
+      "title": "In the Server Info Bar",
+      "kind": "screenshot",
+      "caption": "The song's title in the server info bar at the top right, with its tooltip open: the artist, and click to open, right-click to pause.",
+      "files": []
+    },
+    {
+      "id": "thumbs",
+      "title": "Thumbs, Tired and Why",
+      "kind": "gif",
+      "caption": "Thumbs up turning green, then why this song? answered in Pandora's words under the controls, then tired of it skipping to the next song.",
+      "files": []
+    },
+    {
+      "id": "new-station",
+      "title": "A Station From a Search",
+      "kind": "video",
+      "caption": "Typing an artist into New station, picking a result, and the new station tuning in and starting its first song.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "cutscene",
+      "title": "Quiet for the Cutscene",
+      "kind": "video",
+      "caption": "A song playing over a zone with the game's music muted; a cutscene starts and the song pauses, then resumes when the cutscene ends and the game's music setting is as it was.",
+      "wide": true,
+      "files": []
+    },
+    {
+      "id": "macro",
+      "title": "/piano From a Macro",
+      "kind": "screenshot",
+      "caption": "A macro with /piano next and /piano love on a hotbar, and the song announced in chat after it changes.",
+      "files": []
+    }
+  ]
+}

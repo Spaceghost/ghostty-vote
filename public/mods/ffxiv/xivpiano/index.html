@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>XivPiano for FFXIV</title>
+<meta name="description" content="XivPiano: your Pandora stations inside Final Fantasy XIV, after pianobar, Pithos and Elpis. Play, skip, thumbs up and down, tired of it, why this song, and new stations from a search. It mutes the game's music while a song plays and pauses for cutscenes. Pandora serves the United States only; not affiliated with Pandora.">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Johnneylee Jack Rollins">
+<link rel="canonical" href="https://spacegho.st/mods/ffxiv/xivpiano/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="XivPiano for FFXIV">
+<meta property="og:description" content="XivPiano: your Pandora stations inside Final Fantasy XIV, after pianobar, Pithos and Elpis. Play, skip, thumbs up and down, tired of it, why this song, and new stations from a search. It mutes the game's music while a song plays and pauses for cutscenes. Pandora serves the United States only; not affiliated with Pandora.">
+<meta property="og:url" content="https://spacegho.st/mods/ffxiv/xivpiano/">
+<meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/xivpiano-banner.png">
+<link rel="icon" type="image/webp" href="/mods/ffxiv/site/art/xivpiano-icon-2.webp">
+<link rel="apple-touch-icon" href="/mods/ffxiv/plugins/icons/xivpiano.png">
+<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
+<!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
+     also fills the media slots from media/manifest.json and the community screenshots. -->
+<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
+</head>
+<body data-mod="xivpiano" data-name="XivPiano" data-media="/mods/ffxiv/xivpiano/media/manifest.json">
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="sitebar">
+    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
+    <nav aria-label="Mods">
+      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
+      <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
+      <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
+      <a class="chip" href="/mods/ffxiv/xivpiano/" aria-current="page">XivPiano</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero glass" aria-labelledby="title">
+      <div>
+        <div class="hero-id">
+          <img src="/mods/ffxiv/site/art/xivpiano-icon-2.webp" alt="" width="192" height="192">
+          <div>
+            <p class="eyebrow">Dalamud plugin · music · Pandora radio</p>
+            <h1 id="title">XivPiano</h1>
+          </div>
+        </div>
+        <p class="tagline">Your Pandora stations, in Eorzea</p>
+        <p class="lede">A <strong>Pandora radio player</strong> inside the game, in the tradition of <a href="https://github.com/PromyLOPh/pianobar" rel="noopener">pianobar</a>, <a href="https://github.com/pithos/pithos" rel="noopener">Pithos</a> and <a href="https://github.com/adammhaile/Elpis" rel="noopener">Elpis</a>: sign in, pick a station, and it plays while you do everything else. <strong>Thumbs up and down</strong> teach the station, <strong>tired of it</strong> shelves a song for a month, <strong>why this song?</strong> answers in Pandora's own words, and a search makes a <strong>new station</strong> from any artist, song or genre. It <strong>mutes the game's music</strong> while a song plays and puts it back as it was.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install</a>
+          <a class="btn" href="#proving">Prove it in game</a>
+          <a class="btn" href="/mods/ffxiv/xivpiano/vote/">Vote on features</a>
+          <a class="btn" href="https://github.com/Spaceghost/xivpiano-dalamud" rel="noopener">Source</a>
+        </div>
+      </div>
+      <img class="hero-art" src="/mods/ffxiv/site/art/xivpiano-banner-2.webp" alt="XivPiano: a glowing music note sounding over a small piano keyboard, under a night sky" width="730" height="380" fetchpriority="high">
+    </section>
+    <div class="status" role="note">
+      <b>Honest status</b>
+      <p>Host tests cover the Blowfish cipher against its published test vectors, Pandora's request wrapping, the login sequence, playlists, feedback, search and the radio queue (skipping expired and broken links, refilling before it runs dry) against a fake Pandora, and the partner login has been checked against Pandora itself. <strong>Nothing has been observed in the game yet</strong>: no song has been heard playing there, and the window, the server info bar, the music muting and the cutscene pause are implemented intent. There is <strong>no release yet</strong>; for now it is build it yourself.</p>
+    </div>
+
+    <section id="what" aria-labelledby="what-h">
+      <div class="sec-head"><h2 id="what-h">What it does</h2></div>
+      <div class="prose">
+        <p><strong>Pandora, and only Pandora.</strong> XivPiano signs in with your own Pandora account and streams your own stations, the way pianobar, Pithos and pydora talk to Pandora's JSON API. It streams; it never saves a song to keep. Ads in a playlist are left out, as those clients do.</p>
+        <p><strong>United States only.</strong> Pandora serves the US and nowhere else, and you need a Pandora account (free, Plus or Premium). XivPiano is not affiliated with Pandora or Sirius XM.</p>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-h">
+      <div class="sec-head">
+        <h2 id="features-h">Features</h2>
+        <p>Everything below is built and its Pandora side is host-tested; none of it has been heard or seen in game yet.</p>
+      </div>
+      <div class="grid">
+      <article class="card glass">
+        <h3>Your stations</h3>
+        <p>Your station list with a filter, and <b>Shuffle</b> (Pandora's QuickMix) where your account has it. Pick one and it tunes in; the next song is fetched before the queue runs dry.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Now playing</h3>
+        <p>Album art, title, artist and album, a progress bar, the station and the stream's bitrate, with a volume slider on top of the song's own replay gain.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Thumbs, tired, bookmark</h3>
+        <p>Play and pause, next song, <b>thumbs up</b>, <b>thumbs down</b> (never on this station again, and skipped), <b>tired of it</b> (not for a month, on any station), and <b>bookmark</b> the song, or the artist with a right-click.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Why this song?</h3>
+        <p>Pandora's own reasons for picking the song, in its words: the musical traits it matched.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>New stations</h3>
+        <p>From a search (an artist, a song or a genre), or from the song or the artist that is playing. The new station joins your list and tunes in.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Plus and Premium at 192 kbit/s</h3>
+        <p>A paid account streams 192 kbit/s MP3 (free accounts 128): asked for through the Android client like Elpis, and through the Pandora One client like Pithos when Android does not offer it. <i>Settings</i> can hold it at 128 to save data.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>In the server info bar</h3>
+        <p>The song's title at the top of the screen. Click opens XivPiano, right-click pauses. It can also say each new song in chat.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Plays nicely with the game</h3>
+        <p>Mutes the game's background music while a song plays and puts the setting back as it was; pauses during cutscenes and resumes after. Both can be turned off.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Chat commands and macros</h3>
+        <p><code>/piano</code> opens it; <code>/piano play</code>, <code>pause</code>, <code>next</code>, <code>love</code>, <code>ban</code>, <code>tired</code>, <code>stop</code> and <code>/piano station &lt;name&gt;</code> work in chat and in macros.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>IPC for other plugins</h3>
+        <p><code>XivPiano.NowPlaying</code> returns the song as JSON; <code>XivPiano.Control</code> takes <code>play</code>, <code>pause</code>, <code>toggle</code>, <code>next</code>, <code>love</code>, <code>ban</code>, <code>tired</code> and <code>stop</code>. No other plugin calls them yet.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      <article class="card glass">
+        <h3>Stays signed in, if you want</h3>
+        <p>The password is encrypted for your Windows (or Wine) user with DPAPI before it is saved, never kept in the clear, and XivPiano can sign in and resume your last station when the game starts.</p>
+        <span class="tag unverified">unverified in game</span>
+      </article>
+      </div>
+    </section>
+
+    <section id="proving" aria-labelledby="proving-h">
+      <div class="sec-head">
+        <h2 id="proving-h">Proving it in game</h2>
+        <p>None of this has been done yet. Each step is something a player in the US with a Pandora account can check in a few minutes.</p>
+      </div>
+      <ol class="prose">
+        <li><code>/piano</code>, sign in: your stations appear, and the account line shows your plan, the client in use and the bitrate.</li>
+        <li>Pick a station: a song plays through the game's audio device, the game's music goes quiet, and the progress bar moves.</li>
+        <li>Thumbs up, then <b>why this song?</b>: the thumb turns green and Pandora's reasons appear. Thumbs down or <b>tired of it</b>: the next song starts.</li>
+        <li>The server info bar shows the title; right-click pauses and the game's music comes back.</li>
+        <li>Watch a cutscene: the song pauses, and resumes when it ends.</li>
+        <li>Search an artist under <b>New station</b>: the new station tunes in. <code>/piano next</code> in a macro skips.</li>
+      </ol>
+      <p class="small">Please report what you hear and see, with the <code>/xllog</code> lines for anything that goes wrong. Leave your email and password out of anything you paste.</p>
+    </section>
+
+    <section id="screens" aria-labelledby="media-h">
+      <div class="sec-head">
+        <h2 id="media-h">Screenshots and clips</h2>
+        <p>Planned shots. Empty frames are placeholders for screenshots and clips that will be captured in game.</p>
+      </div>
+      <div id="media"><p class="empty">Loading the shot list…</p></div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="sec-head">
+        <h2 id="install-h">Install</h2>
+        <p>Two ways, and both are kept on purpose: one click from the plugin repository, or build it from source and load it as a dev plugin.</p>
+      </div>
+      <div class="paths">
+        <div class="path glass">
+          <h3>One click</h3>
+          <p class="small">Add the repository once; every mod here installs and updates like any other plugin.</p>
+          <div class="repo-url">
+            <code id="repo-url">https://spacegho.st/mods/ffxiv/plugins.json</code>
+            <button class="chip" id="copy" type="button">copy</button>
+          </div>
+          <ol>
+            <li>In game, type <code>/xlsettings</code> → the <b>Experimental</b> tab.</li>
+            <li>Under <b>Custom Plugin Repositories</b>, paste the URL into the empty row, press <b>+</b>, and leave its checkbox ticked.</li>
+            <li><b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivPiano</b> → <b>Install</b>.</li>
+          </ol>
+          <p class="note">XivPiano has <b>no release yet</b>, so it does not show under <b>All Plugins</b> until it has one. Build it yourself in the meantime; the changelog will say when it is released and which parts have been heard working in game.</p>
+          <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
+        </div>
+        <div class="path glass">
+          <h3>Build it yourself</h3>
+          <p class="small">The dev plugin path: exactly the code in your checkout, no repository, no auto-update. It is how the author runs it, and the honest way to read the code before you trust it with your Pandora password.</p>
+          <pre><code>git clone https://github.com/Spaceghost/xivpiano-dalamud
+cd xivpiano-dalamud
+tools/fetch-dalamud.sh && tools/install-dev.sh</code></pre>
+          <ol>
+          <li>Needs the <b>.NET 10 SDK</b>. <code>tools/fetch-dalamud.sh</code> fetches Dalamud's reference assemblies. Rebuild after every Dalamud update.</li>
+          <li><code>tools/install-dev.sh</code> builds Release, stages it outside the checkout, and prints the path (a <code>Z:\…</code> path under Wine). It never edits Dalamud's configuration.</li>
+            <li>In game: <code>/xlsettings</code> → <b>Experimental</b> → <b>Dev Plugin Locations</b> → add the path of the built <code>XivPiano.dll</code> → <b>+</b> → <b>Save and Close</b>.</li>
+            <li><code>/xlplugins</code> → <b>Dev Tools</b> → <b>Installed Dev Plugins</b> → enable <b>XivPiano</b>. Dev plugins are added disabled.</li>
+            <li>Rebuilt while the game is running? Press the reload arrow on its entry. No relaunch.</li>
+          </ol>
+          <p class="small">If you later switch to the one-click install, disable the dev plugin first so the two copies cannot fight over the same name. The <a href="https://github.com/Spaceghost/xivpiano-dalamud#readme" rel="noopener">README</a> has the details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="requirements" aria-labelledby="req-h">
+      <div class="sec-head"><h2 id="req-h">Requirements</h2></div>
+      <ul class="plain prose">
+        <li><strong>FFXIV with Dalamud</strong> (API level 15), on Windows or on Linux under Wine. Songs are MP3, decoded in managed code (NLayer) and played through winmm (NAudio), so nothing depends on Windows codecs.</li>
+        <li><strong>A Pandora account</strong> (free, Plus or Premium), <strong>in the United States</strong>. Pandora refuses other countries, and says so.</li>
+        <li>Known limits: Pandora's audio links expire about an hour after a playlist is fetched, so queued songs older than that are skipped and fresh ones fetched. Pandora's API is unofficial: if Pandora changes it, XivPiano needs an update, as pianobar and Pithos do.</li>
+      </ul>
+    </section>
+
+    <section id="community" aria-labelledby="community-h">
+      <div class="sec-head">
+        <h2 id="community-h">Community screenshots</h2>
+        <p>Screenshots of XivPiano shared by players. Every one is reviewed by the site owner before it is shown here. Every mod's are in <a href="/mods/ffxiv/term/gallery/?mod=xivpiano">the gallery</a>, and what XivPiano should do next is <a href="/mods/ffxiv/xivpiano/vote/">up for a vote</a>.</p>
+      </div>
+      <div id="shots" aria-live="polite"><p class="empty">Loading…</p></div>
+      <div class="add glass">
+        <h3>Add yours</h3>
+        <p class="state" id="account-note" role="status"></p>
+        <div id="signed-out">
+          <p>Sharing a screenshot needs a sign-in, so that everything sent to this site comes from an account.</p>
+          <div class="cta">
+            <a class="btn primary" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start?return=/mods/ffxiv/xivpiano/">Sign in with GitHub</a>
+            <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start?return=/mods/ffxiv/xivpiano/">Sign in with FFXIV</a>
+          </div>
+          <p class="small">Signing in with FFXIV needs an XIVAuth account and shares no character.</p>
+        </div>
+        <div id="signed-in" hidden>
+          <form id="upload">
+            <div class="row">
+              <label for="u-file">Screenshot (PNG or JPEG, at most 8 MB)
+                <input id="u-file" name="file" type="file" accept="image/png,image/jpeg" required>
+              </label>
+              <label for="u-credit">Credit (optional, shown with the shot)
+                <input id="u-credit" name="credit" type="text" maxlength="60" autocomplete="off" placeholder="Character name, world">
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="u-send" type="submit">Share screenshot</button>
+              <button class="btn" id="signout" type="button">Sign out</button>
+            </div>
+            <p class="state" id="u-state" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <p class="small">Hide your own name and chat first, and never share a terminal showing tokens or private paths. Metadata is stripped from the image before it is stored. Your upload is linked to your GitHub or XIVAuth account id, which the site owner can see; the public sees only the image and the credit you typed. To have a shot removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+      </div>
+    </section>
+
+    <section id="links" aria-labelledby="links-h">
+      <div class="sec-head"><h2 id="links-h">Links</h2></div>
+      <ul class="linklist">
+        <li><a class="btn" href="https://github.com/Spaceghost/xivpiano-dalamud" rel="noopener">Source</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivpiano-dalamud/releases" rel="noopener">Releases</a></li>
+        <li><a class="btn" href="https://github.com/Spaceghost/xivpiano-dalamud/blob/master/CHANGELOG.md" rel="noopener">Changelog</a></li>
+        <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="small"><strong>Privacy.</strong> XivPiano talks to Pandora and nothing else: your email and password go to Pandora's own servers to sign in, and songs and album art come from Pandora's links. The password is saved only if you ask, encrypted with DPAPI for your Windows (or Wine) user. It reads the game's music setting to put it back as it was, and whether a cutscene is playing; it reads nothing else from the game and sends nothing from it.</p>
+    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
+    <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX. Pandora is a trademark of Pandora Media, LLC, a Sirius XM company; XivPiano is not affiliated with or endorsed by Pandora or Sirius XM.</p>
+  </footer>
+</div>
+</body>
+</html>

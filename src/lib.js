@@ -18,6 +18,7 @@ export const VOTE_MODS = Object.freeze({
   xivarcade: '/mods/ffxiv/xivarcade/vote/',
   xivwayfinder: '/mods/ffxiv/xivwayfinder/vote/',
   xivlantern: '/mods/ffxiv/xivlantern/vote/',
+  xivpiano: '/mods/ffxiv/xivpiano/vote/',
   almanac: '/mods/ffxiv/almanac/vote/',
 });
 export const DEFAULT_VOTE_MOD = 'ghostty';

@@ -14,7 +14,7 @@
   const THEME_KEY = 'ghostty-vote:theme'; // shared with the vote page
   const MAX_BYTES = 8 * 1024 * 1024;
   const DOT = ' \u00b7 ';
-  const MODS = { ghostty: 'Ghostty', xivmcp: 'XivMcp', xivdesktop: 'XivDesktop', xivarcade: 'XivArcade', xivwayfinder: 'XivWayfinder', xivlantern: 'XivLantern', almanac: 'Almanac' };
+  const MODS = { ghostty: 'Ghostty', xivmcp: 'XivMcp', xivdesktop: 'XivDesktop', xivarcade: 'XivArcade', xivwayfinder: 'XivWayfinder', xivlantern: 'XivLantern', xivpiano: 'XivPiano', almanac: 'Almanac' };
   const want = new URLSearchParams(location.search).get('mod');
   const MOD = want && Object.hasOwn(MODS, want) ? want : ''; // '' is every mod
   const modOf = (s) => (typeof s.mod === 'string' && Object.hasOwn(MODS, s.mod) ? s.mod : 'ghostty');
