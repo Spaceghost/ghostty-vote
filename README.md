@@ -195,7 +195,7 @@ image request checks the shot's status in D1 first.
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| POST | `/mods/ffxiv/term/gallery/api/upload` | Raw PNG or JPEG body (`Content-Type` is not trusted; the bytes decide), at most 8 MiB. `?credit=` optional (60 characters, cleaned like notes). `201 {ok, id, status: "pending", message}`; a byte-identical shot answers `200 {…, duplicate: true}`. A cross-site browser `Origin` gets 403. Needs a Bearer token with `gallery:upload` (recorded as from the plugin) or a session (web); `?mod=` optionally tags the shot with a mod id (`ghostty`, `almanac`, `xivmcp`, `xivdesktop`), and the list carries `mod` so a mod's page can filter. The same handler answers `POST /mods/ffxiv/term/vote/api/gallery/upload` (the gallery page) and `POST /mods/ffxiv/term/vote/api/shots/upload?mod=` (a minisite; the mod is required), where the session cookie (Path = the vote) reaches: browsers upload there |
+| POST | `/mods/ffxiv/term/gallery/api/upload` | Raw PNG or JPEG body (`Content-Type` is not trusted; the bytes decide), at most 8 MiB. `?credit=` optional (60 characters, cleaned like notes). `201 {ok, id, status: "pending", message}`; a byte-identical shot answers `200 {…, duplicate: true}`. A cross-site browser `Origin` gets 403. Needs a Bearer token with `gallery:upload` (recorded as from the plugin) or a session (web); `?mod=` optionally tags the shot with a mod id (`ghostty`, `almanac`, `xivmcp`, `xivdesktop`, `xivarcade`, `xivwayfinder`, `xivlantern`, `xivpiano`), and the list carries `mod` so a mod's page can filter. The same handler answers `POST /mods/ffxiv/term/vote/api/gallery/upload` (the gallery page) and `POST /mods/ffxiv/term/vote/api/shots/upload?mod=` (a minisite; the mod is required), where the session cookie (Path = the vote) reaches: browsers upload there |
 | GET | `/mods/ffxiv/term/gallery/api/shots` | `{shots: [{id, src, thumb, width, height, credit, approved_at, keeps, passes}]}`, approved only, newest 500. Cached 60 s in the Cache API (cleared in the approving location) and by browsers |
 | POST | `/mods/ffxiv/term/vote/api/gallery/vote` | JSON `{id, vote}` where vote is `keep`, `pass` or `null` (takes it back): `{ok, id, vote, keeps, passes}`. Session only, never an app token; a cross-site `Origin` gets 403. One vote per account per shot; voting again replaces it. See [What stays](#what-stays) |
 | GET | `/mods/ffxiv/term/vote/api/gallery/mine` | `{signed_in, votes: {shot_id: "keep"\|"pass"}}` for the signed-in viewer, `private, no-store`, so each card opens showing which way they voted |
@@ -713,13 +713,13 @@ callbacks, so sign-in cannot complete locally. Put local secrets in `.dev.vars` 
 ## Every mod's vote
 
 Each mod has the same vote page: Ghostty at `term/vote/`, and `xivmcp/vote/`, `xivdesktop/vote/`,
-`xivarcade/vote/`, `xivwayfinder/vote/`, `xivlantern/vote/` and `almanac/vote/`. The mod ids and
-paths are `VOTE_MODS` in `src/lib.js`.
+`xivarcade/vote/`, `xivwayfinder/vote/`, `xivlantern/vote/`, `xivpiano/vote/` and `almanac/vote/`. The
+mod ids and paths are `VOTE_MODS` in `src/lib.js`.
 
 - **Ideas:** Ghostty's are `data/catalogue.json`, as before; every other mod's are
   `data/catalogues/<mod>.json` (the same shape plus `"mod"`). Idea ids and category names are
   unique across all of them (ids carry a prefix: `mcp-`, `desk-`, `arcade-`, `way-`, `lantern-`,
-  `almanac-`), because votes, notes and tallies are keyed by the id alone.
+  `piano-`, `almanac-`), because votes, notes and tallies are keyed by the id alone.
 - **Pages:** `scripts/build.js` writes every `<mod>/vote/index.html` from one template
   (`scripts/vote-page-lib.js`) and the words in `data/vote-pages.json`, beside that mod's
   `ideas.json` and `version.json`. `vote.js`, `ballot.js` and `vote.css` are Ghostty's, shared;

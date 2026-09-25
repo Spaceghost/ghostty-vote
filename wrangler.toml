@@ -28,7 +28,8 @@ routes = [
   { pattern = "spacegho.st/mods/ffxiv/xivdesktop*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/xivarcade*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/xivwayfinder*", zone_name = "spacegho.st" },
-  { pattern = "spacegho.st/mods/ffxiv/xivlantern*", zone_name = "spacegho.st" }
+  { pattern = "spacegho.st/mods/ffxiv/xivlantern*", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/xivpiano*", zone_name = "spacegho.st" }
 ]
 
 # Regenerates public/mods/ffxiv/term/vote/{ideas,version}.json and seed/seed.sql

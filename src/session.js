@@ -172,7 +172,7 @@ export const stateMatches = (cookieState, queryState) => !!cookieState && consta
 const RETURNS = new Set([
   BASE + '/', BASE + '/admin/', BASE + '/apps/', '/mods/ffxiv/term/gallery/',
   // the mod minisites: their community screenshots section has the sign-in buttons
-  '/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/almanac/about/',
+  '/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/xivpiano/', '/mods/ffxiv/almanac/about/',
   // every mod's vote page
   ...Object.values(VOTE_MODS),
 ]);

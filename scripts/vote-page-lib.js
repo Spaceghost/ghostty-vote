@@ -1,5 +1,5 @@
 // Builds every mod's feature vote page from data/vote-pages.json and one template, so
-// the seven pages share their markup, scripts and styles and differ only in words. Pure;
+// the eight pages share their markup, scripts and styles and differ only in words. Pure;
 // no I/O. The page script (vote.js) reads <html data-mod data-page> to know whose vote it
 // is; everything else it needs is under /mods/ffxiv/term/vote/.
 import { VOTE_MODS } from '../src/lib.js';
@@ -9,7 +9,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 // each vote page wears its mod's own icon (site/art is cached a week, so a new drawing gets a new name)
 const ICONS = Object.freeze({
   ghostty: 'ghostty-icon.webp', xivmcp: 'xivmcp-icon.webp', xivdesktop: 'xivdesktop-icon-2.webp', xivarcade: 'xivarcade-icon-2.webp',
-  xivwayfinder: 'xivwayfinder-icon-2.webp', xivlantern: 'xivlantern-icon-2.webp', almanac: 'almanac-icon-2.webp',
+  xivwayfinder: 'xivwayfinder-icon-2.webp', xivlantern: 'xivlantern-icon-2.webp', xivpiano: 'xivpiano-icon-2.webp', almanac: 'almanac-icon-2.webp',
 });
 
 export function validateVotePages(cfg) {
