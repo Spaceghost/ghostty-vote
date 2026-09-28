@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node scripts/build.js",
     "check": "node scripts/build.js --check",
+    "roadmap": "node scripts/accepted-votes.js",
     "test": "node --test"
   }
 }
