@@ -29,13 +29,16 @@
     <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
     <nav aria-label="Mods">
       <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
-      <a class="chip" href="/mods/ffxiv/xivmcp/" aria-current="page">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
       <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
       <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
       <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
       <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
       <a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a>
-      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a>
+      <a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a>
+      <a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
@@ -228,7 +231,8 @@ tools/install-dev.sh        # or: dotnet build XivMcp.slnx -c Release</code></pr
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
     </section>
-  </main>
+  <section class="glass project-section"><h2>The illustrated HUD family</h2><p>The new HUD integration discovers XivHud, Journal and Character independently. It reads readiness, UI selection and requested versus actual window modes. Approved operations open a quest or Character page, set a local bookmark, restore the game HUD or return a window to the screen. Request results confirm processing; presentation is checked separately.</p><p><a href="/mods/ffxiv/xivhud/">Meet the HUD family</a>. The integration is source and host-tested; it has not been checked against a running game here.</p></section>
+</main>
 
   <footer>
     <p class="small"><strong>Privacy.</strong> XivMcp listens on your own machine and sends nothing anywhere by itself. What leaves your machine is up to the AI client you connect: a cloud model sees whatever game state its tool calls return, including chat lines if you allow the chat category. A local model through Almanac keeps it all on your PC.</p>

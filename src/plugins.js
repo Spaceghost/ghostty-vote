@@ -16,7 +16,7 @@ import {
 import MODS from './mods-data.js';
 import { json } from './lib.js';
 
-const LISTED = MODS.mods.filter((m) => m.listed && m.repo);
+const LISTED = MODS.mods.filter((m) => (m.kind || 'plugin') === 'plugin' && m.listed && m.repo);
 const FETCH_TIMEOUT_MS = 4000;
 
 export async function getPluginMaster(request, env, ctx, url, cache, fetcher) {
@@ -45,8 +45,8 @@ export async function getPluginMaster(request, env, ctx, url, cache, fetcher) {
 
 async function entryFor(mod, fetcher) {
   const [stable, testing] = await Promise.all([
-    fetchListing(stableListing(mod.repo), fetcher),
-    fetchListing(testingListing(mod.repo), fetcher),
+    fetchListing(stableListing(mod.repo), fetcher, mod.internalName),
+    fetchListing(testingListing(mod.repo), fetcher, mod.internalName),
   ]);
   const entry = mergeChannels(stable, testing);
   // A repository that has never cut a release has no entry yet; it stays off the listing
@@ -54,7 +54,7 @@ async function entryFor(mod, fetcher) {
   return entry && entry.InternalName === mod.internalName ? entry : null;
 }
 
-async function fetchListing(href, fetcher) {
+async function fetchListing(href, fetcher, internalName) {
   try {
     const res = await fetcher(href, {
       redirect: 'follow',
@@ -63,7 +63,7 @@ async function fetchListing(href, fetcher) {
       cf: { cacheTtl: PLUGINS_TTL_SECONDS, cacheEverything: true },
     });
     if (!res.ok) return null;
-    const entry = firstEntry(await res.json());
+    const entry = firstEntry(await res.json(), internalName);
     return usableEntry(entry) ? entry : null;
   } catch {
     return null;

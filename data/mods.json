@@ -1,16 +1,7 @@
 {
   "version": 1,
   "_comment": [
-    "Every FFXIV mod published here, and the ones that are not published yet.",
-    "scripts/build.js turns this into public/mods/ffxiv/plugins.json, the Dalamud plugin",
-    "repository listing players add in /xlsettings. That file is only the fallback: the",
-    "Worker (src/plugins.js) serves the same URL from each repository's own release",
-    "assets so a release updates the listing without a deploy here, and falls back to the",
-    "committed file when GitHub cannot be reached.",
-    "listed=false keeps a mod off the listing but on the page: that is where a mod waits",
-    "until its repository is public. released=true says that repository has published a",
-    "release, so the fallback listing may name its download; the served listing does not",
-    "need it, because it only carries what GitHub actually answers for."
+    "Project registry for the website, gallery and Dalamud installer. kind separates plugins, companion tools and bundled libraries. Source visibility does not imply a release. released indicates a stable installer fallback; testingVersion indicates a published testing artifact."
   ],
   "mods": [
     {
@@ -19,7 +10,7 @@
       "listed": true,
       "released": true,
       "repo": "Spaceghost/ghostty-dalamud",
-      "assemblyVersion": "0.3.0.2",
+      "assemblyVersion": "0.3.2.0",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Eorzea is a terminal multiplexer.",
@@ -35,7 +26,16 @@
       ],
       "needs": "ghostty-agent running on the machine the game runs on.",
       "build": "tools/build.sh, then tools/package.sh",
-      "umbraWidget": "Umbra.Ghostty"
+      "umbraWidget": "Umbra.Ghostty",
+      "id": "ghostty",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/term/",
+      "status": "released \u00b7 experimental preview",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/ghostty-icon.webp",
+      "bannerPath": "/mods/ffxiv/site/art/ghostty-banner.webp",
+      "votePage": "/mods/ffxiv/term/vote/"
     },
     {
       "internalName": "Almanac",
@@ -62,7 +62,16 @@
       ],
       "needs": "A local model server (Ollama, LM Studio, llama.cpp or any OpenAI-compatible API), and XivMcp for game tools.",
       "build": "dotnet build dalamud/Almanac.Dalamud.slnx -c Release",
-      "umbraWidget": null
+      "umbraWidget": null,
+      "id": "almanac",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/almanac/about/",
+      "status": "stable and testing builds \u00b7 live coverage remains limited",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/almanac-icon-2.webp",
+      "bannerPath": "/mods/ffxiv/site/art/almanac-banner-2.webp",
+      "votePage": "/mods/ffxiv/almanac/vote/"
     },
     {
       "internalName": "XivMcp",
@@ -87,7 +96,16 @@
       "needs": "An MCP client on the same machine (Claude Code, Codex, Almanac).",
       "build": "dotnet build XivMcp.slnx -c Release",
       "umbraWidget": "Umbra.XivMcp",
-      "released": true
+      "released": true,
+      "id": "xivmcp",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/xivmcp/",
+      "status": "released \u00b7 selected in-game calls verified",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/xivmcp-icon.webp",
+      "bannerPath": "/mods/ffxiv/site/art/xivmcp-banner.webp",
+      "votePage": "/mods/ffxiv/xivmcp/vote/"
     },
     {
       "internalName": "XivDesktop",
@@ -112,7 +130,16 @@
       "needs": "Ghostty and ghostty-agent, and a Linux host running the game under Wine.",
       "build": "dotnet build XivDesktop.slnx -c Release",
       "umbraWidget": null,
-      "released": true
+      "released": true,
+      "id": "xivdesktop",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/xivdesktop/",
+      "status": "released \u00b7 broader in-game checks pending",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/xivdesktop-icon-2.webp",
+      "bannerPath": "/mods/ffxiv/site/art/xivdesktop-banner-2.webp",
+      "votePage": "/mods/ffxiv/xivdesktop/vote/"
     },
     {
       "internalName": "XivArcade",
@@ -138,7 +165,16 @@
       "needs": "A Linux host running the game under Wine, RetroArch, and your own game files. Ghostty for panels and Syncthing for save sync are optional.",
       "build": "dotnet build XivArcade.slnx -c Release",
       "umbraWidget": null,
-      "released": true
+      "released": true,
+      "id": "xivarcade",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/xivarcade/",
+      "status": "released \u00b7 in-game checks pending",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/xivarcade-icon-2.webp",
+      "bannerPath": "/mods/ffxiv/site/art/xivarcade-banner-2.webp",
+      "votePage": "/mods/ffxiv/xivarcade/vote/"
     },
     {
       "internalName": "XivWayfinder",
@@ -164,8 +200,16 @@
       "needs": "Nothing beyond Dalamud (API 15), on Windows or Linux under Wine. vnavmesh is optional, for walkable paths.",
       "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivWayfinder.slnx -c Release)",
       "umbraWidget": null,
-      "pending": "No release yet. Build it yourself in the meantime.",
-      "released": true
+      "released": true,
+      "id": "xivwayfinder",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/xivwayfinder/",
+      "status": "released \u00b7 newer guide work remains experimental",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/xivwayfinder-icon-2.webp",
+      "bannerPath": "/mods/ffxiv/site/art/xivwayfinder-banner-2.webp",
+      "votePage": "/mods/ffxiv/xivwayfinder/vote/"
     },
     {
       "internalName": "XivLantern",
@@ -176,7 +220,7 @@
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
-      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
+      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent \u2014 not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
       "tags": [
         "social",
         "chat",
@@ -192,7 +236,16 @@
       "build": "tools/build-native.sh (cargo and mingw-w64), then dotnet build src/XivLantern.Plugin/XivLantern.Plugin.csproj -c Release and tools/package.sh",
       "umbraWidget": null,
       "pending": "Only testing builds so far: turn on Get plugin testing builds in /xlsettings to see it.",
-      "released": true
+      "released": true,
+      "id": "xivlantern",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/xivlantern/",
+      "status": "released \u00b7 newer communication work remains experimental",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/xivlantern-icon-2.webp",
+      "bannerPath": "/mods/ffxiv/site/art/xivlantern-banner-2.webp",
+      "votePage": "/mods/ffxiv/xivlantern/vote/"
     },
     {
       "internalName": "XivPiano",
@@ -218,8 +271,301 @@
       "needs": "Dalamud (API 15), on Windows or Linux under Wine, and a Pandora account in the United States.",
       "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivPiano.slnx -c Release)",
       "umbraWidget": null,
-      "pending": "No release yet. Build it yourself in the meantime.",
-      "released": false
+      "pending": "Testing build available: enable plugin testing builds in Dalamud.",
+      "released": false,
+      "id": "xivpiano",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/xivpiano/",
+      "status": "testing build available \u00b7 playback checks pending",
+      "navigation": true,
+      "gallery": true,
+      "testingVersion": "0.1.0.1",
+      "iconPath": "/mods/ffxiv/site/art/xivpiano-icon-2.webp",
+      "bannerPath": "/mods/ffxiv/site/art/xivpiano-banner-2.webp",
+      "votePage": "/mods/ffxiv/xivpiano/vote/"
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": true,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud",
+      "name": "XivHud",
+      "id": "xivhud",
+      "page": "/mods/ffxiv/xivhud/",
+      "punchline": "An illustrated interface, with the original always within reach.",
+      "description": "A reversible native HUD mode and shared controller support for an illustrated interface. Restore the native HUD with /xivhud off.",
+      "tags": [
+        "hud",
+        "umbra",
+        "interface"
+      ],
+      "status": "experimental \u00b7 HUD restoration observed in game; new IPC awaits live checks",
+      "navigation": true,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud.png",
+      "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "Three modules, one illustrated interface",
+          "body": "<p>XivHud controls native HUD visibility. <a href=\"/mods/ffxiv/xivhud/journal/\">Journal</a> is your illustrated quest book. <a href=\"/mods/ffxiv/xivhud/character/\">Character</a> is your adventurer\u2019s record. Journal and Character are independently loadable; the shared controller host is optional for mouse and keyboard use.</p>"
+        },
+        {
+          "title": "Keep the original within reach",
+          "body": "<p>Click the HUD entry in Umbra\u2019s server-info bar or use <code>/xivhud on</code>. Restore chat, nameplates and action bars with <code>/xivhud off</code>. Your saved HUD layout is preserved, and unloading releases the visibility change.</p>"
+        },
+        {
+          "title": "Windows that fit the moment",
+          "body": "<p>Journal and Character start as ordinary screen windows. Choose a native game frame or, with Ghostty installed, place the same illustrated window in the world. Return anytime with <code>/xivjournal screen</code> or <code>/xivcharacter screen</code>.</p>"
+        },
+        {
+          "title": "Your assistant can see the interface",
+          "body": "<p>The new XivMcp integration reads every module\u2019s readiness, current window mode and selection. Explicit UI changes wait for your approval. It can open a chapter, select a Character page or restore a screen window without simulating controller input.</p>"
+        },
+        {
+          "title": "What has been checked",
+          "body": "<p>Earlier development builds demonstrated HUD toggling and restoration, plus focused controller ownership in Journal. Full logout/relogin, combat, cutscene transitions and physical controller navigation still need acceptance. The new IPC is covered by offline tests; it has not been exercised in a running game here.</p>"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": true,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Journal",
+      "name": "XivHud \u00b7 Journal",
+      "id": "xivhud-journal",
+      "page": "/mods/ffxiv/xivhud/journal/",
+      "punchline": "Your next chapter, on warm vellum.",
+      "description": "An illustrated quest journal with accepted quests, local bookmarks, search, and native map handoff. Optional native frames and world windows.",
+      "tags": [
+        "journal",
+        "quests",
+        "interface"
+      ],
+      "status": "experimental \u00b7 selected Journal and window checks observed in game",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-journal.png",
+      "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-journal-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-journal-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "Your next chapter",
+          "body": "<p>Search accepted quests by title, chapter or current objective. Keep local bookmarks and choose a parchment or night palette. The book uses your installed game\u2019s quest icons and fonts.</p>"
+        },
+        {
+          "title": "Open, map, return",
+          "body": "<p>Use your normal Journal action, the optional Umbra toolbar or <code>/xivjournal open</code>. Show a selected quest on the game map, or return to the complete original Journal with <code>/xivjournal native</code>. Bookmarks do not alter native tracking.</p>"
+        },
+        {
+          "title": "Choose a window",
+          "body": "<p><code>/xivjournal screen</code> opens an ordinary window; <code>/xivjournal frame</code> chooses a native frame; <code>/xivjournal world</code> requests a Ghostty window. Native frames and world hosting are optional. The controller service yields when focus is lost.</p>"
+        },
+        {
+          "title": "What has been checked",
+          "body": "<p>Earlier builds showed a live accepted quest, its native map handoff, day/night appearance, native-frame popups, world-window focus and unload/reload cleanup. Physical controller buttons, dragging/scaling and all world placements remain unverified. The replacement currently covers accepted normal quests; full history and other quest modes remain in the original.</p>"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": false,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Character",
+      "name": "XivHud \u00b7 Character",
+      "id": "xivhud-character",
+      "page": "/mods/ffxiv/xivhud/character/",
+      "punchline": "An adventurer\u2019s record.",
+      "description": "An illustrated adventurer record with equipment, attributes, classes and jobs, and gear sets. The original game window remains available.",
+      "tags": [
+        "character",
+        "gear",
+        "interface"
+      ],
+      "status": "development \u00b7 builds and offline tests; in-game acceptance pending",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
+      "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-character-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-character-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "An adventurer\u2019s record",
+          "body": "<p>Four pages show your equipped gear, attributes, classes and jobs, and saved gear sets. Equipment includes materia, condition, glamour and dyes. The record uses the installed game\u2019s artwork and fonts.</p>"
+        },
+        {
+          "title": "Open the familiar way",
+          "body": "<p>Use the game\u2019s Character action, the optional Umbra toolbar or <code>/xivcharacter open</code>. <code>/xivcharacter native</code> opens the original and <code>/xivcharacter screen</code> recovers the ordinary window. Native frames and Ghostty hosting are optional.</p>"
+        },
+        {
+          "title": "Development source and package",
+          "body": "<p>Character builds against matched API 15 references and has extensive offline tests. It has not yet been loaded into the game in the recorded verification. Its package is for manual development testing and is held out of the shared installer until live acceptance.</p>"
+        },
+        {
+          "title": "Next checks",
+          "body": "<p>Validate native adoption and fallback, displayed item level, equipment slot order, job experience, gear-set results, controller navigation and each window host against the original game windows. A 3-D character preview and appearance editing are future work.</p>"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.0.1.1",
+      "listed": true,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivRug",
+      "name": "XivRug",
+      "id": "xivrug",
+      "page": "/mods/ffxiv/xivrug/",
+      "punchline": "A little woven Eorzea beneath your feet.",
+      "description": "An independent woven map rug beneath your character, with terrain contact, Wayfinder routes and optional XivPiano music visuals.",
+      "tags": [
+        "map",
+        "rug",
+        "visual"
+      ],
+      "status": "prototype \u00b7 selected scenes observed; terrain and performance checks continue",
+      "navigation": true,
+      "repo": "Spaceghost/xivrug-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivrug.png",
+      "needs": "Dalamud API 15; Wayfinder and XivPiano integrations are optional. No Ghostty dependency.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivrug-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivrug-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "A woven map underfoot",
+          "body": "<p>A connected cloth rug carries the current game map beneath your character. Choose a circular mat or rounded rectangle, adjust map coverage and cloth appearance, and show Wayfinder\u2019s route when it is installed.</p>"
+        },
+        {
+          "title": "Music in the weave",
+          "body": "<p>With XivPiano, played audio can ripple through the cloth or drive ten optional 3-D visualizations. Reduced-motion settings stop musical motion, and missing or stale audio makes the visuals quiet. Rug does not require Piano or Ghostty.</p>"
+        },
+        {
+          "title": "A prototype with measured limits",
+          "body": "<p>Selected flat scenes, map imagery, foliage occlusion and native Journal overlap have been observed. Continuous terrain coverage, stairs, stacked floors, jumping, device resets and frame cost remain under development. Native composition hides the rug when its required rendering stage is unavailable.</p>"
+        },
+        {
+          "title": "Controls and compatibility",
+          "body": "<p><code>/rug</code> opens settings. Music, cloth motion, jump catch and optional local visual poses have separate controls. XivRug does not move or teleport your character. Existing development installs may be named XivFloorMap: preserve their settings and disable that copy before loading XivRug. The source retains a compatibility build; these are one project.</p>"
+        },
+        {
+          "title": "Diagnostics for your assistant",
+          "body": "<p>XivMcp can discover Rug and read its renderer, terrain, composition, map and music status through the new read-only status interface. The interface does not start terrain probes or change settings.</p>"
+        }
+      ]
+    },
+    {
+      "internalName": "XivStream",
+      "name": "XivStream",
+      "id": "xivstream",
+      "kind": "companion",
+      "listed": false,
+      "released": false,
+      "repo": "Spaceghost/xivstream-dalamud",
+      "page": "/mods/ffxiv/xivstream/",
+      "punchline": "Your modded Eorzea, on the screen you choose.",
+      "description": "Set up streaming from your game host to Moonlight clients or a browser, with detection, a reviewable plan and diagnostics.",
+      "author": "Johnneylee Jack Rollins",
+      "tags": [
+        "streaming",
+        "host",
+        "setup"
+      ],
+      "status": "release candidate \u00b7 Incus/Sunshine/NVIDIA path tested; other routes experimental",
+      "navigation": true,
+      "gallery": true,
+      "build": "go test ./... && go build ./cmd/xivstream",
+      "releaseTag": "v0.1.0-rc.2",
+      "iconPath": "/mods/ffxiv/site/art/xivstream-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivstream-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "Play on the screen you choose",
+          "body": "<p>XivStream sets up your modded FFXIV host for Moonlight clients or browser streaming. Its wizard detects the machine, then asks for the choices it cannot infer.</p>"
+        },
+        {
+          "title": "Review the plan",
+          "body": "<p><code>xivstream detect</code> describes the host, <code>xivstream plan -v</code> shows planned commands and file changes, and <code>xivstream doctor</code> checks the setup. Review the plan before applying it.</p>"
+        },
+        {
+          "title": "A host tool",
+          "body": "<p>This runs outside the game and is downloaded from its GitHub releases. It is not installed through Dalamud\u2019s plugin repository. The same source project contains Sunshine, Wolf and Selkies setup options.</p>"
+        },
+        {
+          "title": "What has been tested",
+          "body": "<p>The recorded end-to-end hardware path is Fedora with Incus, Sunshine and NVIDIA, including streaming input, audio and mods. Other hosts and streaming backends remain experimental. The published release candidate predates the local Wolf and CPU-policy work; those changes need reconciliation before a new release.</p>"
+        }
+      ]
+    },
+    {
+      "internalName": "XivHud.Windowing",
+      "name": "XivHud Windowing",
+      "id": "xivhud-windowing",
+      "kind": "library",
+      "listed": false,
+      "released": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "page": "/mods/ffxiv/xivhud/developers/",
+      "punchline": "Shared hosting and IPC for the HUD family.",
+      "description": "Bundled libraries for ordinary screen windows, native frames, optional Ghostty hosting, and versioned HUD IPC.",
+      "author": "Johnneylee Jack Rollins",
+      "tags": [
+        "library",
+        "windowing",
+        "ipc"
+      ],
+      "status": "developer library \u00b7 bundled with consuming modules",
+      "navigation": false,
+      "gallery": false,
+      "build": "tools/build.sh",
+      "iconPath": "/mods/ffxiv/site/art/xivstream-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "Bundled, independently optional providers",
+          "body": "<p><code>XivHud.Windowing</code> provides exact-identity Ghostty window adoption. <code>XivHud.Windowing.Dalamud</code> provides native frames using pinned KamiToolKit. <code>XivHud.Protocol</code> supplies the versioned snapshot and bounded operation queue. They ship with consuming modules.</p>"
+        },
+        {
+          "title": "IPC and ownership",
+          "body": "<p>The HUD host, Journal and Character expose versioned JSON Call gates. Reads return immutable snapshots; changes are validated, queued, applied on the framework thread and polled by request ID. Controller ownership stays with a focused local window and is never offered as an MCP operation.</p><p>See <a href=\"https://github.com/Spaceghost/xivhud-dalamud/blob/main/docs/IPC.md\">the IPC contract</a> and the module READMEs for lifecycle, window identity and build instructions.</p>"
+        }
+      ]
     }
   ]
 }

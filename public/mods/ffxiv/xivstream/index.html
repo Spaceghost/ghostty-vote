@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>XivStream for FFXIV</title>
+<meta name="description" content="Set up streaming from your game host to Moonlight clients or a browser, with detection, a reviewable plan and diagnostics."><meta name="color-scheme" content="dark light"><meta name="referrer" content="no-referrer"><link rel="canonical" href="https://spacegho.st/mods/ffxiv/xivstream/">
+<link rel="icon" href="/mods/ffxiv/site/art/xivstream-icon.svg"><link rel="stylesheet" href="/mods/ffxiv/site/site.css"><script src="/mods/ffxiv/site/site.js"></script><script src="/mods/ffxiv/term/vote/beacon.js" defer></script></head>
+<body data-mod="xivstream"><a class="skip" href="#main">Skip to content</a><div class="wrap"><header class="sitebar"><a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a><nav aria-label="Mods"><a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
+      <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
+      <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
+      <a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a>
+      <a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a>
+      <a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a>
+      <a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button></nav></header>
+<main id="main"><section class="hero glass"><div><p class="eyebrow">companion · open source · experimental</p><div class="hero-id"><img src="/mods/ffxiv/site/art/xivstream-icon.svg" alt="" width="72" height="72"><h1>XivStream</h1></div><p class="tagline">Your modded Eorzea, on the screen you choose.</p><p class="lede">Set up streaming from your game host to Moonlight clients or a browser, with detection, a reviewable plan and diagnostics.</p><div class="cta"><a class="btn primary" href="https://github.com/Spaceghost/xivstream-dalamud">Source</a><a class="btn" href="#install">Install / build</a><a class="btn" href="/mods/ffxiv/term/gallery/?mod=xivstream">Gallery</a></div></div><img class="hero-art" src="/mods/ffxiv/site/art/xivstream-banner.svg" alt="XivStream illustration; not an in-game screenshot" width="730" height="380"></section>
+<div class="status" role="note"><b>Current status</b><p>release candidate · Incus/Sunshine/NVIDIA path tested; other routes experimental. Verification below describes earlier recorded checks; the new publication and IPC work have offline validation.</p></div>
+<section class="glass project-section"><h2>Play on the screen you choose</h2><p>XivStream sets up your modded FFXIV host for Moonlight clients or browser streaming. Its wizard detects the machine, then asks for the choices it cannot infer.</p></section>
+<section class="glass project-section"><h2>Review the plan</h2><p><code>xivstream detect</code> describes the host, <code>xivstream plan -v</code> shows planned commands and file changes, and <code>xivstream doctor</code> checks the setup. Review the plan before applying it.</p></section>
+<section class="glass project-section"><h2>A host tool</h2><p>This runs outside the game and is downloaded from its GitHub releases. It is not installed through Dalamud’s plugin repository. The same source project contains Sunshine, Wolf and Selkies setup options.</p></section>
+<section class="glass project-section"><h2>What has been tested</h2><p>The recorded end-to-end hardware path is Fedora with Incus, Sunshine and NVIDIA, including streaming input, audio and mods. Other hosts and streaming backends remain experimental. The published release candidate predates the local Wolf and CPU-policy work; those changes need reconciliation before a new release.</p></section>
+<section id="install" class="glass project-section"><h2>Install and build</h2><p>Download the release candidate from <a href="https://github.com/Spaceghost/xivstream-dalamud/releases">GitHub releases</a>. Run <code>xivstream detect</code> and review <code>xivstream plan -v</code> before applying changes.</p><p></p><p>Build instructions and verification records are in the <a href="https://github.com/Spaceghost/xivstream-dalamud">project README</a>.</p></section>
+
+
+</main><footer class="foot">Made by Johnneylee Jack Rollins · <a href="https://github.com/Spaceghost">Source on GitHub</a>. Unofficial fan projects; not endorsed by Square Enix.</footer></div></body></html>

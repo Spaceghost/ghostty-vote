@@ -29,18 +29,25 @@ export function validateMods(mods) {
     if (!mod.internalName || !/^[A-Za-z0-9._-]+$/.test(mod.internalName)) errors.push(`${where}: internalName must be a plain name`);
     if (seen.has(mod.internalName)) errors.push(`${where}: listed twice`);
     seen.add(mod.internalName);
+    const kind = mod.kind || 'plugin';
+    if (!['plugin', 'companion', 'library'].includes(kind)) errors.push(`${where}: unknown project kind`);
     for (const field of ['name', 'punchline', 'description', 'author']) {
       if (typeof mod[field] !== 'string' || !mod[field].trim()) errors.push(`${where}: ${field} is required`);
     }
     if (!Array.isArray(mod.tags) || !mod.tags.length) errors.push(`${where}: tags must be a non-empty array`);
+    if (kind !== 'plugin') {
+      if (mod.listed || mod.released) errors.push(`${where}: only plugins belong in the installer`);
+      if (!/^[\w.-]+\/[\w.-]+$/.test(mod.repo || '')) errors.push(`${where}: a source repository is required`);
+      continue;
+    }
     if (!VERSION_RE.test(mod.assemblyVersion || '')) errors.push(`${where}: assemblyVersion must be four numbers`);
     if (!Number.isInteger(mod.dalamudApiLevel)) errors.push(`${where}: dalamudApiLevel must be a number`);
     if (mod.released && !mod.listed) errors.push(`${where}: released but not listed`);
     if (mod.listed) {
       if (!/^[\w.-]+\/[\w.-]+$/.test(mod.repo || '')) errors.push(`${where}: a listed mod needs repo as owner/name`);
       if (typeof mod.icon !== 'string' || !mod.icon.startsWith('https://')) errors.push(`${where}: a listed mod needs an https IconUrl`);
-    } else if (mod.repo) {
-      errors.push(`${where}: not listed, so it should have no repo yet`);
+    } else if (mod.repo && !/^[\w.-]+\/[\w.-]+$/.test(mod.repo)) {
+      errors.push(`${where}: repo must be owner/name`);
     }
   }
   return errors;
@@ -70,11 +77,11 @@ export function fallbackEntry(mod) {
   };
 }
 
-export const listedMods = (mods) => mods.mods.filter((m) => m.listed);
+export const listedMods = (mods) => mods.mods.filter((m) => (m.kind || 'plugin') === 'plugin' && m.listed);
 // The fallback listing can only name downloads that exist, so it holds the mods that have
 // actually cut a release. The Worker does not need this: it asks GitHub, and a plugin
 // whose repository has published nothing simply has no entry to serve.
-export const releasedMods = (mods) => mods.mods.filter((m) => m.listed && m.released);
+export const releasedMods = (mods) => listedMods(mods).filter((m) => m.released);
 
 // The committed fallback listing, pretty-printed the way the build writes every file.
 export function buildPluginMaster(mods) {
@@ -113,7 +120,7 @@ export function mergeChannels(stable, testing) {
 }
 
 // The first entry of a plugin master, whatever shape the fetched JSON came in.
-export function firstEntry(body) {
-  if (Array.isArray(body)) return body[0] || null;
+export function firstEntry(body, internalName) {
+  if (Array.isArray(body)) return (internalName ? body.find((entry) => entry.InternalName === internalName) : body[0]) || null;
   return body && typeof body === 'object' ? body : null;
 }
