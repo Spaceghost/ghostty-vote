@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "captured_at": "2026-09-27",
+  "rule": "Every catalogue idea marked Want is accepted; Maybe and Skip are excluded.",
+  "expected_total": 201,
+  "expected_by_mod": {
+    "ghostty": 73,
+    "xivmcp": 16,
+    "xivdesktop": 18,
+    "xivarcade": 17,
+    "xivwayfinder": 19,
+    "xivlantern": 20,
+    "xivpiano": 18,
+    "almanac": 20
+  },
+  "catalogue_versions": {
+    "ghostty": 2,
+    "xivmcp": 1,
+    "xivdesktop": 1,
+    "xivarcade": 1,
+    "xivwayfinder": 1,
+    "xivlantern": 1,
+    "xivpiano": 1,
+    "almanac": 1
+  },
+  "excluded": [
+    { "mod": "ghostty", "id": "parse-your-shell", "vote": "maybe" },
+    { "mod": "ghostty", "id": "town-criers", "vote": "skip" },
+    { "mod": "ghostty", "id": "ansi-gallery", "vote": "skip" },
+    { "mod": "ghostty", "id": "debugger-trial-arena", "vote": "skip" },
+    { "mod": "ghostty", "id": "blue-magic-spellbook", "vote": "skip" },
+    { "mod": "ghostty", "id": "palace-of-the-dead-inodes", "vote": "skip" },
+    { "mod": "ghostty", "id": "scrollback-spire", "vote": "maybe" },
+    { "mod": "ghostty", "id": "waymarked-scrollback", "vote": "skip" },
+    { "mod": "xivmcp", "id": "mcp-session-receipt", "vote": "skip" },
+    { "mod": "xivmcp", "id": "mcp-weekly-reset-ledger", "vote": "maybe" },
+    { "mod": "xivmcp", "id": "mcp-standalone-last-known", "vote": "maybe" },
+    { "mod": "xivwayfinder", "id": "way-nearest-fate", "vote": "maybe" }
+  ]
+}

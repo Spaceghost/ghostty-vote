@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>XivHud Windowing for FFXIV</title>
+<meta name="description" content="Bundled libraries for ordinary screen windows, native frames, optional Ghostty hosting, and versioned HUD IPC."><meta name="color-scheme" content="dark light"><meta name="referrer" content="no-referrer"><link rel="canonical" href="https://spacegho.st/mods/ffxiv/xivhud/developers/">
+<link rel="icon" href="/mods/ffxiv/site/art/xivhud-icon.svg"><link rel="stylesheet" href="/mods/ffxiv/site/site.css"><script src="/mods/ffxiv/site/site.js"></script><script src="/mods/ffxiv/term/vote/beacon.js" defer></script></head>
+<body data-mod="xivhud-windowing"><a class="skip" href="#main">Skip to content</a><div class="wrap"><header class="sitebar"><a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a><nav aria-label="Mods"><a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
+      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
+      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
+      <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
+      <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
+      <a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a>
+      <a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a>
+      <a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a>
+      <a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a>
+      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
+      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button></nav></header>
+<main id="main"><section class="hero glass"><div><p class="eyebrow">library · open source · experimental</p><div class="hero-id"><img src="/mods/ffxiv/site/art/xivhud-icon.svg" alt="" width="72" height="72"><h1>XivHud Windowing</h1></div><p class="tagline">Shared hosting and IPC for the HUD family.</p><p class="lede">Bundled libraries for ordinary screen windows, native frames, optional Ghostty hosting, and versioned HUD IPC.</p><div class="cta"><a class="btn primary" href="https://github.com/Spaceghost/xivhud-dalamud">Source</a><a class="btn" href="#install">Install / build</a></div></div><img class="hero-art" src="/mods/ffxiv/site/art/xivhud-banner.svg" alt="XivHud Windowing illustration; not an in-game screenshot" width="730" height="380"></section>
+<div class="status" role="note"><b>Current status</b><p>developer library · bundled with consuming modules. Verification below describes earlier recorded checks; the new publication and IPC work have offline validation.</p></div>
+<section class="glass project-section"><h2>Bundled, independently optional providers</h2><p><code>XivHud.Windowing</code> provides exact-identity Ghostty window adoption. <code>XivHud.Windowing.Dalamud</code> provides native frames using pinned KamiToolKit. <code>XivHud.Protocol</code> supplies the versioned snapshot and bounded operation queue. They ship with consuming modules.</p></section>
+<section class="glass project-section"><h2>IPC and ownership</h2><p>The HUD host, Journal and Character expose versioned JSON Call gates. Reads return immutable snapshots; changes are validated, queued, applied on the framework thread and polled by request ID. Controller ownership stays with a focused local window and is never offered as an MCP operation.</p><p>See <a href="https://github.com/Spaceghost/xivhud-dalamud/blob/main/docs/IPC.md">the IPC contract</a> and the module READMEs for lifecycle, window identity and build instructions.</p></section>
+<section id="install" class="glass project-section"><h2>Install and build</h2><p>This library is bundled with Journal and Character. It has no separate Dalamud installer entry.</p><p></p><p>Build instructions and verification records are in the <a href="https://github.com/Spaceghost/xivhud-dalamud">project README</a>.</p></section>
+
+<p class="links"><a href="/mods/ffxiv/xivhud/">HUD family</a> · <a href="/mods/ffxiv/xivhud/journal/">Journal</a> · <a href="/mods/ffxiv/xivhud/character/">Character</a> · <a href="/mods/ffxiv/xivhud/developers/">Developer libraries and IPC</a></p>
+</main><footer class="foot">Made by Johnneylee Jack Rollins · <a href="https://github.com/Spaceghost">Source on GitHub</a>. Unofficial fan projects; not endorsed by Square Enix.</footer></div></body></html>

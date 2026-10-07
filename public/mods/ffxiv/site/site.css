@@ -243,3 +243,6 @@ input[type="text"], input[type="file"] {
 footer { margin-top: clamp(48px, 8vw, 80px); border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 8px; }
 footer p { margin: 0; }
 #video:not(:empty) { margin-bottom: 24px; }
+
+.project-section { padding: clamp(20px, 4vw, 32px); margin: 24px 0; }
+.project-section p { max-width: 75ch; }

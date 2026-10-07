@@ -1,9 +1,6 @@
 {
   "version": 1,
-  "_comment": [
-    "Project registry for the website, gallery and Dalamud installer. kind separates plugins, companion tools and bundled libraries. Source visibility does not imply a release. released indicates a stable installer fallback; testingVersion indicates a published testing artifact."
-  ],
-  "mods": [
+  "projects": [
     {
       "internalName": "GhosttyDalamud",
       "name": "Ghostty",
@@ -30,7 +27,7 @@
       "id": "ghostty",
       "kind": "plugin",
       "page": "/mods/ffxiv/term/",
-      "status": "released \u00b7 experimental preview",
+      "status": "released · experimental preview",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/ghostty-icon.webp",
@@ -66,7 +63,7 @@
       "id": "almanac",
       "kind": "plugin",
       "page": "/mods/ffxiv/almanac/about/",
-      "status": "stable and testing builds \u00b7 live coverage remains limited",
+      "status": "stable and testing builds · live coverage remains limited",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/almanac-icon-2.webp",
@@ -100,7 +97,7 @@
       "id": "xivmcp",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivmcp/",
-      "status": "released \u00b7 selected in-game calls verified",
+      "status": "released · selected in-game calls verified",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivmcp-icon.webp",
@@ -134,7 +131,7 @@
       "id": "xivdesktop",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivdesktop/",
-      "status": "released \u00b7 broader in-game checks pending",
+      "status": "released · broader in-game checks pending",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivdesktop-icon-2.webp",
@@ -169,7 +166,7 @@
       "id": "xivarcade",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivarcade/",
-      "status": "released \u00b7 in-game checks pending",
+      "status": "released · in-game checks pending",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivarcade-icon-2.webp",
@@ -204,7 +201,7 @@
       "id": "xivwayfinder",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivwayfinder/",
-      "status": "released \u00b7 newer guide work remains experimental",
+      "status": "released · newer guide work remains experimental",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivwayfinder-icon-2.webp",
@@ -220,7 +217,7 @@
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
-      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent \u2014 not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
+      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
       "tags": [
         "social",
         "chat",
@@ -240,7 +237,7 @@
       "id": "xivlantern",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivlantern/",
-      "status": "released \u00b7 newer communication work remains experimental",
+      "status": "released · newer communication work remains experimental",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivlantern-icon-2.webp",
@@ -276,7 +273,7 @@
       "id": "xivpiano",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivpiano/",
-      "status": "testing build available \u00b7 playback checks pending",
+      "status": "testing build available · playback checks pending",
       "navigation": true,
       "gallery": true,
       "testingVersion": "0.1.0.1",
@@ -304,7 +301,7 @@
         "umbra",
         "interface"
       ],
-      "status": "experimental \u00b7 HUD restoration observed in game; new IPC awaits live checks",
+      "status": "experimental · HUD restoration observed in game; new IPC awaits live checks",
       "navigation": true,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud.png",
@@ -313,29 +310,7 @@
       "pending": "Development source and reproducible packages; see the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
-      "votePage": null,
-      "sections": [
-        {
-          "title": "Three modules, one illustrated interface",
-          "body": "<p>XivHud controls native HUD visibility. <a href=\"/mods/ffxiv/xivhud/journal/\">Journal</a> is your illustrated quest book. <a href=\"/mods/ffxiv/xivhud/character/\">Character</a> is your adventurer\u2019s record. Journal and Character are independently loadable; the shared controller host is optional for mouse and keyboard use.</p>"
-        },
-        {
-          "title": "Keep the original within reach",
-          "body": "<p>Click the HUD entry in Umbra\u2019s server-info bar or use <code>/xivhud on</code>. Restore chat, nameplates and action bars with <code>/xivhud off</code>. Your saved HUD layout is preserved, and unloading releases the visibility change.</p>"
-        },
-        {
-          "title": "Windows that fit the moment",
-          "body": "<p>Journal and Character start as ordinary screen windows. Choose a native game frame or, with Ghostty installed, place the same illustrated window in the world. Return anytime with <code>/xivjournal screen</code> or <code>/xivcharacter screen</code>.</p>"
-        },
-        {
-          "title": "Your assistant can see the interface",
-          "body": "<p>The new XivMcp integration reads every module\u2019s readiness, current window mode and selection. Explicit UI changes wait for your approval. It can open a chapter, select a Character page or restore a screen window without simulating controller input.</p>"
-        },
-        {
-          "title": "What has been checked",
-          "body": "<p>Earlier development builds demonstrated HUD toggling and restoration, plus focused controller ownership in Journal. Full logout/relogin, combat, cutscene transitions and physical controller navigation still need acceptance. The new IPC is covered by offline tests; it has not been exercised in a running game here.</p>"
-        }
-      ]
+      "votePage": null
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -347,7 +322,7 @@
       "kind": "plugin",
       "gallery": true,
       "internalName": "XivHud.Journal",
-      "name": "XivHud \u00b7 Journal",
+      "name": "XivHud · Journal",
       "id": "xivhud-journal",
       "page": "/mods/ffxiv/xivhud/journal/",
       "punchline": "Your next chapter, on warm vellum.",
@@ -357,7 +332,7 @@
         "quests",
         "interface"
       ],
-      "status": "experimental \u00b7 selected Journal and window checks observed in game",
+      "status": "experimental · selected Journal and window checks observed in game",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-journal.png",
@@ -366,25 +341,7 @@
       "pending": "Development source and reproducible packages; see the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-journal-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-journal-banner.svg",
-      "votePage": null,
-      "sections": [
-        {
-          "title": "Your next chapter",
-          "body": "<p>Search accepted quests by title, chapter or current objective. Keep local bookmarks and choose a parchment or night palette. The book uses your installed game\u2019s quest icons and fonts.</p>"
-        },
-        {
-          "title": "Open, map, return",
-          "body": "<p>Use your normal Journal action, the optional Umbra toolbar or <code>/xivjournal open</code>. Show a selected quest on the game map, or return to the complete original Journal with <code>/xivjournal native</code>. Bookmarks do not alter native tracking.</p>"
-        },
-        {
-          "title": "Choose a window",
-          "body": "<p><code>/xivjournal screen</code> opens an ordinary window; <code>/xivjournal frame</code> chooses a native frame; <code>/xivjournal world</code> requests a Ghostty window. Native frames and world hosting are optional. The controller service yields when focus is lost.</p>"
-        },
-        {
-          "title": "What has been checked",
-          "body": "<p>Earlier builds showed a live accepted quest, its native map handoff, day/night appearance, native-frame popups, world-window focus and unload/reload cleanup. Physical controller buttons, dragging/scaling and all world placements remain unverified. The replacement currently covers accepted normal quests; full history and other quest modes remain in the original.</p>"
-        }
-      ]
+      "votePage": null
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -396,17 +353,17 @@
       "kind": "plugin",
       "gallery": true,
       "internalName": "XivHud.Character",
-      "name": "XivHud \u00b7 Character",
+      "name": "XivHud · Character",
       "id": "xivhud-character",
       "page": "/mods/ffxiv/xivhud/character/",
-      "punchline": "An adventurer\u2019s record.",
+      "punchline": "An adventurer’s record.",
       "description": "An illustrated adventurer record with equipment, attributes, classes and jobs, and gear sets. The original game window remains available.",
       "tags": [
         "character",
         "gear",
         "interface"
       ],
-      "status": "development \u00b7 builds and offline tests; in-game acceptance pending",
+      "status": "development · builds and offline tests; in-game acceptance pending",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
@@ -415,25 +372,7 @@
       "pending": "Development source and reproducible packages; see the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-character-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-character-banner.svg",
-      "votePage": null,
-      "sections": [
-        {
-          "title": "An adventurer\u2019s record",
-          "body": "<p>Four pages show your equipped gear, attributes, classes and jobs, and saved gear sets. Equipment includes materia, condition, glamour and dyes. The record uses the installed game\u2019s artwork and fonts.</p>"
-        },
-        {
-          "title": "Open the familiar way",
-          "body": "<p>Use the game\u2019s Character action, the optional Umbra toolbar or <code>/xivcharacter open</code>. <code>/xivcharacter native</code> opens the original and <code>/xivcharacter screen</code> recovers the ordinary window. Native frames and Ghostty hosting are optional.</p>"
-        },
-        {
-          "title": "Development source and package",
-          "body": "<p>Character builds against matched API 15 references and has extensive offline tests. It has not yet been loaded into the game in the recorded verification. Its package is for manual development testing and is held out of the shared installer until live acceptance.</p>"
-        },
-        {
-          "title": "Next checks",
-          "body": "<p>Validate native adoption and fallback, displayed item level, equipment slot order, job experience, gear-set results, controller navigation and each window host against the original game windows. A 3-D character preview and appearance editing are future work.</p>"
-        }
-      ]
+      "votePage": null
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -455,7 +394,7 @@
         "rug",
         "visual"
       ],
-      "status": "prototype \u00b7 selected scenes observed; terrain and performance checks continue",
+      "status": "prototype · selected scenes observed; terrain and performance checks continue",
       "navigation": true,
       "repo": "Spaceghost/xivrug-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivrug.png",
@@ -464,29 +403,7 @@
       "pending": "Development source and reproducible packages; see the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivrug-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivrug-banner.svg",
-      "votePage": null,
-      "sections": [
-        {
-          "title": "A woven map underfoot",
-          "body": "<p>A connected cloth rug carries the current game map beneath your character. Choose a circular mat or rounded rectangle, adjust map coverage and cloth appearance, and show Wayfinder\u2019s route when it is installed.</p>"
-        },
-        {
-          "title": "Music in the weave",
-          "body": "<p>With XivPiano, played audio can ripple through the cloth or drive ten optional 3-D visualizations. Reduced-motion settings stop musical motion, and missing or stale audio makes the visuals quiet. Rug does not require Piano or Ghostty.</p>"
-        },
-        {
-          "title": "A prototype with measured limits",
-          "body": "<p>Selected flat scenes, map imagery, foliage occlusion and native Journal overlap have been observed. Continuous terrain coverage, stairs, stacked floors, jumping, device resets and frame cost remain under development. Native composition hides the rug when its required rendering stage is unavailable.</p>"
-        },
-        {
-          "title": "Controls and compatibility",
-          "body": "<p><code>/rug</code> opens settings. Music, cloth motion, jump catch and optional local visual poses have separate controls. XivRug does not move or teleport your character. Existing development installs may be named XivFloorMap: preserve their settings and disable that copy before loading XivRug. The source retains a compatibility build; these are one project.</p>"
-        },
-        {
-          "title": "Diagnostics for your assistant",
-          "body": "<p>XivMcp can discover Rug and read its renderer, terrain, composition, map and music status through the new read-only status interface. The interface does not start terrain probes or change settings.</p>"
-        }
-      ]
+      "votePage": null
     },
     {
       "internalName": "XivStream",
@@ -505,32 +422,14 @@
         "host",
         "setup"
       ],
-      "status": "release candidate \u00b7 Incus/Sunshine/NVIDIA path tested; other routes experimental",
+      "status": "release candidate · Incus/Sunshine/NVIDIA path tested; other routes experimental",
       "navigation": true,
       "gallery": true,
       "build": "go test ./... && go build ./cmd/xivstream",
       "releaseTag": "v0.1.0-rc.2",
       "iconPath": "/mods/ffxiv/site/art/xivstream-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivstream-banner.svg",
-      "votePage": null,
-      "sections": [
-        {
-          "title": "Play on the screen you choose",
-          "body": "<p>XivStream sets up your modded FFXIV host for Moonlight clients or browser streaming. Its wizard detects the machine, then asks for the choices it cannot infer.</p>"
-        },
-        {
-          "title": "Review the plan",
-          "body": "<p><code>xivstream detect</code> describes the host, <code>xivstream plan -v</code> shows planned commands and file changes, and <code>xivstream doctor</code> checks the setup. Review the plan before applying it.</p>"
-        },
-        {
-          "title": "A host tool",
-          "body": "<p>This runs outside the game and is downloaded from its GitHub releases. It is not installed through Dalamud\u2019s plugin repository. The same source project contains Sunshine, Wolf and Selkies setup options.</p>"
-        },
-        {
-          "title": "What has been tested",
-          "body": "<p>The recorded end-to-end hardware path is Fedora with Incus, Sunshine and NVIDIA, including streaming input, audio and mods. Other hosts and streaming backends remain experimental. The published release candidate predates the local Wolf and CPU-policy work; those changes need reconciliation before a new release.</p>"
-        }
-      ]
+      "votePage": null
     },
     {
       "internalName": "XivHud.Windowing",
@@ -549,23 +448,13 @@
         "windowing",
         "ipc"
       ],
-      "status": "developer library \u00b7 bundled with consuming modules",
+      "status": "developer library · bundled with consuming modules",
       "navigation": false,
       "gallery": false,
       "build": "tools/build.sh",
       "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
-      "votePage": null,
-      "sections": [
-        {
-          "title": "Bundled, independently optional providers",
-          "body": "<p><code>XivHud.Windowing</code> provides exact-identity Ghostty window adoption. <code>XivHud.Windowing.Dalamud</code> provides native frames using pinned KamiToolKit. <code>XivHud.Protocol</code> supplies the versioned snapshot and bounded operation queue. They ship with consuming modules.</p>"
-        },
-        {
-          "title": "IPC and ownership",
-          "body": "<p>The HUD host, Journal and Character expose versioned JSON Call gates. Reads return immutable snapshots; changes are validated, queued, applied on the framework thread and polled by request ID. Controller ownership stays with a focused local window and is never offered as an MCP operation.</p><p>See <a href=\"https://github.com/Spaceghost/xivhud-dalamud/blob/main/docs/IPC.md\">the IPC contract</a> and the module READMEs for lifecycle, window identity and build instructions.</p>"
-        }
-      ]
+      "votePage": null
     }
   ]
 }

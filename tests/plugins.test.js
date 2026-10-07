@@ -85,7 +85,7 @@ test('mods.json is checked, and an unpublished mod may not be listed', () => {
   bad.mods[0].assemblyVersion = '1.2.3';
   assert.ok(validateMods(bad).some((e) => /assemblyVersion/.test(e)));
   const unpublished = mods();
-  const pending = unpublished.mods.find((m) => !m.listed) || unpublished.mods[unpublished.mods.length - 1];
+  const pending = unpublished.mods.find((m) => (m.kind || 'plugin') === 'plugin' && !m.listed) || unpublished.mods.find((m) => (m.kind || 'plugin') === 'plugin');
   pending.listed = true;
   delete pending.repo;
   assert.ok(validateMods(unpublished).some((e) => /needs repo/.test(e)));

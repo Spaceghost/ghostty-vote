@@ -194,7 +194,28 @@ test('public/ holds only the site, at its real URL paths', () => {
     'mods/ffxiv/xivwayfinder/vote/ideas.json',
     'mods/ffxiv/xivwayfinder/vote/index.html',
     'mods/ffxiv/xivwayfinder/vote/version.json',
-  ]);
+    'mods/ffxiv/projects.json',
+    'mods/ffxiv/site/art/xivhud-icon.svg',
+    'mods/ffxiv/site/art/xivhud-banner.svg',
+    'mods/ffxiv/site/art/xivhud-journal-icon.svg',
+    'mods/ffxiv/site/art/xivhud-journal-banner.svg',
+    'mods/ffxiv/site/art/xivhud-character-icon.svg',
+    'mods/ffxiv/site/art/xivhud-character-banner.svg',
+    'mods/ffxiv/site/art/xivrug-icon.svg',
+    'mods/ffxiv/site/art/xivrug-banner.svg',
+    'mods/ffxiv/site/art/xivstream-icon.svg',
+    'mods/ffxiv/site/art/xivstream-banner.svg',
+    'mods/ffxiv/plugins/icons/xivhud.png',
+    'mods/ffxiv/plugins/icons/xivhud-journal.png',
+    'mods/ffxiv/plugins/icons/xivhud-character.png',
+    'mods/ffxiv/plugins/icons/xivrug.png',
+    'mods/ffxiv/xivhud/index.html',
+    'mods/ffxiv/xivhud/journal/index.html',
+    'mods/ffxiv/xivhud/character/index.html',
+    'mods/ffxiv/xivhud/developers/index.html',
+    'mods/ffxiv/xivrug/index.html',
+    'mods/ffxiv/xivstream/index.html',
+  ].sort());
 });
 
 test('page has no inline script, style or handlers, and renders data only through textContent', () => {
@@ -307,7 +328,7 @@ test('gallery page: static, no inline code, images only from its own approved pa
   // every mod with a vote can be picked, on the page and in the script
   for (const mod of Object.keys(VOTE_MODS)) {
     assert.ok(html.includes(`data-mod="${mod}"`), `the gallery filters to ${mod}`);
-    assert.ok(new RegExp(`\\b${mod}: '`).test(js), `gallery.js names ${mod}`);
+    assert.ok(js.includes(JSON.stringify(mod) + ':'), `gallery.js names ${mod}`);
   }
   assert.deepEqual([...html.matchAll(/<script src="([^"]+)"/g)].map((m) => m[1]),
     ['/mods/ffxiv/term/gallery/gallery.js', '/mods/ffxiv/term/vote/beacon.js']);

@@ -15,5 +15,5 @@ export const CLIENTS = Object.freeze({
 
 // ghostty | almanac | xivmcp | xivdesktop | xivarcade | xivwayfinder | xivlantern | xivpiano: the internalName in data/mods.json, lower-cased,
 // without a trailing "dalamud".
-export const MOD_IDS = Object.freeze(mods.mods.map((m) => m.internalName.toLowerCase().replace(/dalamud$/, '')));
+export const MOD_IDS = Object.freeze(mods.mods.filter((m) => m.gallery !== false).map((m) => m.id || m.internalName.toLowerCase().replace(/dalamud$/, '')));
 export const isModId = (id) => typeof id === 'string' && MOD_IDS.includes(id);

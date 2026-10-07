@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FFXIV mods by Spaceghost</title>
-<meta name="description" content="Eight open-source Dalamud plugins for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game), XivArcade (your own classic games, saves in step), XivWayfinder (a bead and a pointing glove that show the way), XivLantern (friends, chat and channels, peer to peer), XivPiano (your Pandora stations in game) and Almanac (local AI for FFXIV).">
+<meta name="description" content="Open-source plugins and host tools for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game), XivArcade (your own classic games, saves in step), XivWayfinder (a bead and a pointing glove that show the way), XivLantern (friends, chat and channels, peer to peer), XivPiano (your Pandora stations in game) and Almanac (local AI for FFXIV).">
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
 <meta name="author" content="Johnneylee Jack Rollins">
 <link rel="canonical" href="https://spacegho.st/mods/ffxiv/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FFXIV mods by Spaceghost">
-<meta property="og:description" content="Eight open-source Dalamud plugins for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game), XivArcade (your own classic games, saves in step), XivWayfinder (a bead and a pointing glove that show the way), XivLantern (friends, chat and channels, peer to peer), XivPiano (your Pandora stations in game) and Almanac (local AI for FFXIV).">
+<meta property="og:description" content="Open-source plugins and host tools for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game), XivArcade (your own classic games, saves in step), XivWayfinder (a bead and a pointing glove that show the way), XivLantern (friends, chat and channels, peer to peer), XivPiano (your Pandora stations in game) and Almanac (local AI for FFXIV).">
 <meta property="og:url" content="https://spacegho.st/mods/ffxiv/">
 <meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -28,13 +28,16 @@
     <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
     <nav aria-label="Mods">
       <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
+      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
       <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
       <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
       <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
       <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
       <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
       <a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a>
-      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
+      <a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a>
+      <a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a>
+      <a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
@@ -45,7 +48,7 @@
         <p class="eyebrow">Dalamud plugins · open source</p>
         <h1 id="title">Mods for Final Fantasy XIV</h1>
         <p class="tagline">Eorzea is a terminal multiplexer</p>
-        <p class="lede">Eight plugins by <strong>Johnneylee Jack Rollins</strong>. Most bring your own computer into the game: a real terminal, your desktop's windows, your own classic games, an MCP server for AI clients, and a local AI that lives on your GPU. Three are simpler: a lantern your friends see lit, a soft pointer that shows the way, and a Pandora radio. Everything is open source, built in public, and runs on your machine.</p>
+        <p class="lede">Plugins and companion tools by <strong>Johnneylee Jack Rollins</strong>. Most bring your own computer into the game: a real terminal, your desktop's windows, your own classic games, an MCP server for AI clients, and a local AI that lives on your GPU. Three are simpler: a lantern your friends see lit, a soft pointer that shows the way, and a Pandora radio. Everything is open source, built in public, and runs on your machine.</p>
         <div class="cta">
           <a class="btn primary" href="/mods/ffxiv/plugins/">Install from the plugin repository</a>
           <a class="btn" href="https://github.com/Spaceghost" rel="noopener">Source on GitHub</a>
@@ -55,115 +58,102 @@
     </section>
     <div class="status" role="note">
       <b>Honest status</b>
-      <p>These are early. Most of what these pages describe is built and covered by tests that run outside the game, and much of it has <strong>not yet been verified in game</strong>. Each mod's page says where it stands. In-game screenshots and clips are still to be captured; their slots are marked.</p>
+      <p>These are early. Most of what these pages describe is built and covered by tests that run outside the game, and much of it has <strong>not yet been verified in game</strong>. Each mod's page says where it stands. Selected live checks are recorded on each project’s page; broader acceptance and new publication screenshots remain pending.</p>
     </div>
 
     <section id="mods" aria-labelledby="mods-h">
       <div class="sec-head"><h2 id="mods-h">The mods</h2></div>
       <div class="mods">
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/ghostty-banner.webp" alt="Ghostty for FFXIV: terminal windows floating around an aetheryte crystal over a night sea, with a small ghost" width="730" height="380" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/ghostty-icon.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/term/">Ghostty</a></h2>
-          </div>
-          <p class="tagline">Eorzea is a terminal multiplexer</p>
-          <p>A real terminal in the game world: a glass drop-down, floating windows, screens pinned to walls or following you as pets, full screen, themes, and shells on your own machine.</p>
-          <p><span class="tag unverified">released · experimental preview</span></p>
-          <p class="links"><a href="/mods/ffxiv/term/">About</a> <a href="/mods/ffxiv/term/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/">Gallery</a> <a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/ghostty-banner.webp" alt="Ghostty illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/ghostty-icon.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/term/">Ghostty</a></h2></div>
+        <p class="tagline">Eorzea is a terminal multiplexer.</p><p>Quake-style dropdown, floating windows and terminals pinned in the world, connected to shells on your own machine through ghostty-agent. /term to toggle. Works with or without Umbra; with Umbra, the Ghostty toolbar widget shows its status and a popup terminal.</p>
+        <p><span class="tag unverified">released · experimental preview</span></p>
+        <p class="links"><a href="/mods/ffxiv/term/">About</a> <a href="/mods/ffxiv/term/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=ghostty">Gallery</a> <a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/xivmcp-banner.webp" alt="XivMcp: an aetheryte crystal wired to tool cards and an approval prompt, over a night sea" width="730" height="380" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/xivmcp-icon.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/xivmcp/">XivMcp</a></h2>
-          </div>
-          <p class="tagline">An MCP server inside FFXIV</p>
-          <p>A Model Context Protocol server inside the game. AI clients read game state and data over loopback; anything that changes your game waits for your approval in game.</p>
-          <p><span class="tag unverified">released · not yet verified in game</span></p>
-          <p class="links"><a href="/mods/ffxiv/xivmcp/">About</a> <a href="/mods/ffxiv/xivmcp/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivmcp">Gallery</a> <a href="https://github.com/Spaceghost/xivmcp-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/almanac-banner-2.webp" alt="Almanac illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/almanac-icon-2.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/almanac/about/">Almanac</a></h2></div>
+        <p class="tagline">Talk to a local AI model in game, with XivMcp&#39;s tools.</p><p>Connects a model running on your own PC (Ollama, LM Studio, llama.cpp or any OpenAI-compatible server) to the game through XivMcp. Setup wizard with GPU-aware model recommendations, an in-game chat with threads and streaming, and a benchmark you can share with the community leaderboard. No cloud, no Python. Requires the XivMcp plugin for game tools.</p>
+        <p><span class="tag unverified">stable and testing builds · live coverage remains limited</span></p>
+        <p class="links"><a href="/mods/ffxiv/almanac/about/">About</a> <a href="/mods/ffxiv/almanac/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=almanac">Gallery</a> <a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/xivdesktop-banner-2.webp" alt="XivDesktop: an app grid window under an aetheryte crystal, with a launcher palette and workspace cards" width="730" height="380" loading="lazy" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/xivdesktop-icon-2.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/xivdesktop/">XivDesktop</a></h2>
-          </div>
-          <p class="tagline">Your Linux desktop, inside the game</p>
-          <p>Your Linux desktop inside the game: a keyboard-first launcher, nine workspaces and a taskbar for real application windows shown as panels in the world, on top of Ghostty.</p>
-          <p><span class="tag unverified">released · not yet verified in game</span></p>
-          <p class="links"><a href="/mods/ffxiv/xivdesktop/">About</a> <a href="/mods/ffxiv/xivdesktop/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivdesktop">Gallery</a> <a href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/xivmcp-banner.webp" alt="XivMcp illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivmcp-icon.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivmcp/">XivMcp</a></h2></div>
+        <p class="tagline">Model Context Protocol server for FINAL FANTASY XIV.</p><p>Exposes game state, game data and opt-in actions to MCP clients over loopback Streamable HTTP. Anything that changes your game is approved in game first. Optional Umbra toolbar widget.</p>
+        <p><span class="tag unverified">released · selected in-game calls verified</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivmcp/">About</a> <a href="/mods/ffxiv/xivmcp/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivmcp">Gallery</a> <a href="https://github.com/Spaceghost/xivmcp-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/xivarcade-banner-2.webp" alt="XivArcade: a handheld console with a pixel crystal on its screen, under an aetheryte over a night sea" width="730" height="380" loading="lazy" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/xivarcade-icon-2.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/xivarcade/">XivArcade</a></h2>
-          </div>
-          <p class="tagline">Your own classics, in the world, saves in step</p>
-          <p>A library for the classic games you own: started in RetroArch on the Linux host, shown as panels in the world, with every save kept in step across your machines. Bring your own games; none are downloaded.</p>
-          <p><span class="tag unverified">released · not yet verified in game</span></p>
-          <p class="links"><a href="/mods/ffxiv/xivarcade/">About</a> <a href="/mods/ffxiv/xivarcade/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivarcade">Gallery</a> <a href="https://github.com/Spaceghost/xivarcade-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/xivdesktop-banner-2.webp" alt="XivDesktop illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivdesktop-icon-2.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivdesktop/">XivDesktop</a></h2></div>
+        <p class="tagline">Launch Linux desktop apps into the game world.</p><p>An app launcher for FINAL FANTASY XIV running under Wine on Linux. Lists the host&#39;s freedesktop applications and opens them as world panels through Ghostty&#39;s remote windows. Optional Umbra toolbar widget.</p>
+        <p><span class="tag unverified">released · broader in-game checks pending</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivdesktop/">About</a> <a href="/mods/ffxiv/xivdesktop/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivdesktop">Gallery</a> <a href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/xivwayfinder-banner-2.webp" alt="XivWayfinder: a glowing bead with a trail of small beads and a pointing glove, under an aetheryte" width="730" height="380" loading="lazy" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/xivwayfinder-icon-2.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a></h2>
-          </div>
-          <p class="tagline">Which way to go, softly</p>
-          <p>A pulsing bead a couple of yalms ahead and the game's own pointing glove show the way to your map flag, your quest's next step or a spot you name, around walls when vnavmesh is installed. It only points; it never moves your character.</p>
-          <p><span class="tag unverified">released · not yet verified in game</span></p>
-          <p class="links"><a href="/mods/ffxiv/xivwayfinder/">About</a> <a href="/mods/ffxiv/xivwayfinder/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivwayfinder">Gallery</a> <a href="https://github.com/Spaceghost/xivwayfinder-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/xivarcade-banner-2.webp" alt="XivArcade illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivarcade-icon-2.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivarcade/">XivArcade</a></h2></div>
+        <p class="tagline">Your own classic games as game panels, with saves kept in step across your machines.</p><p>A library for the classic games you own, for FINAL FANTASY XIV running under Wine on Linux. /arcade lists the game files in folders you choose, starts them in RetroArch on the Linux host, and shows them as world panels through Ghostty when it is installed. Every save and save state lives in one folder that Syncthing copies between your machines. It downloads no games, BIOS files or artwork.</p>
+        <p><span class="tag unverified">released · in-game checks pending</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivarcade/">About</a> <a href="/mods/ffxiv/xivarcade/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivarcade">Gallery</a> <a href="https://github.com/Spaceghost/xivarcade-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/xivlantern-banner-2.webp" alt="XivLantern: a warm paper lantern under an aetheryte crystal, friends' lanterns in the night sky" width="730" height="380" loading="lazy" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/xivlantern-icon-2.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/xivlantern/">XivLantern</a></h2>
-          </div>
-          <p class="tagline">Light a lantern for your friends</p>
-          <p>A friend list with presence, 1:1 chat that waits and channels of your own, peer to peer over iroh, with an opt-in channel for the author's signed announcements. Off until you turn it on; nothing from the game is sent.</p>
-          <p><span class="tag unverified">released · not yet verified in game</span></p>
-          <p class="links"><a href="/mods/ffxiv/xivlantern/">About</a> <a href="/mods/ffxiv/xivlantern/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivlantern">Gallery</a> <a href="https://github.com/Spaceghost/xivlantern-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/xivwayfinder-banner-2.webp" alt="XivWayfinder illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivwayfinder-icon-2.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a></h2></div>
+        <p class="tagline">A softly glowing bead and the classic pointing glove show which way to go.</p><p>XivWayfinder points the way in FINAL FANTASY XIV: a softly pulsing bead floats a couple of yalms ahead of you in the direction to go, and the game&#39;s own white pointing glove points there too, sliding to the edge of the screen when the way is behind you. It follows, in order, a target you set with /wayfinder X Y or another plugin sets over IPC, your map flag, and your tracked quest&#39;s next step; in another zone it names the nearest aetheryte instead. With vnavmesh installed it points along the walkable path. It only points and never moves your character.</p>
+        <p><span class="tag unverified">released · newer guide work remains experimental</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivwayfinder/">About</a> <a href="/mods/ffxiv/xivwayfinder/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivwayfinder">Gallery</a> <a href="https://github.com/Spaceghost/xivwayfinder-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/xivpiano-banner-2.webp" alt="XivPiano: a glowing music note sounding over a small piano keyboard, under a night sky" width="730" height="380" loading="lazy" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/xivpiano-icon-2.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/xivpiano/">XivPiano</a></h2>
-          </div>
-          <p class="tagline">Your Pandora stations, in Eorzea</p>
-          <p>A Pandora radio player in the game, after pianobar, Pithos and Elpis: your stations, thumbs up and down, tired of it, why this song, new stations from a search. It mutes the game's music while a song plays. Pandora serves the US only; not affiliated with Pandora.</p>
-          <p><span class="tag unverified">no release yet · not yet heard in game</span></p>
-          <p class="links"><a href="/mods/ffxiv/xivpiano/">About</a> <a href="/mods/ffxiv/xivpiano/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivpiano">Gallery</a> <a href="https://github.com/Spaceghost/xivpiano-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/xivlantern-banner-2.webp" alt="XivLantern illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivlantern-icon-2.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivlantern/">XivLantern</a></h2></div>
+        <p class="tagline">Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.</p><p>Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod&#39;s author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character&#39;s name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.</p>
+        <p><span class="tag unverified">released · newer communication work remains experimental</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivlantern/">About</a> <a href="/mods/ffxiv/xivlantern/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivlantern">Gallery</a> <a href="https://github.com/Spaceghost/xivlantern-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
-        <img src="/mods/ffxiv/site/art/almanac-banner-2.webp" alt="Almanac: an open book under an aetheryte crystal, with question and answer cards" width="730" height="380" loading="lazy" decoding="async">
-        <div class="in">
-          <div class="id">
-            <img src="/mods/ffxiv/site/art/almanac-icon-2.webp" alt="" width="192" height="192">
-            <h2><a href="/mods/ffxiv/almanac/about/">Almanac</a></h2>
-          </div>
-          <p class="tagline">Local AI for FFXIV, on your own GPU</p>
-          <p>Local AI for FFXIV: a setup wizard that fits a model to your GPU, an in-game chat with a model on your own PC using XivMcp's tools, and a benchmark that feeds a public leaderboard.</p>
-          <p><span class="tag unverified">released · not yet verified in game</span></p>
-          <p class="links"><a href="/mods/ffxiv/almanac/about/">About</a> <a href="/mods/ffxiv/almanac/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=almanac">Gallery</a> <a href="/mods/ffxiv/almanac/">Leaderboard</a> <a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a></p>
-        </div>
+        <img src="/mods/ffxiv/site/art/xivpiano-banner-2.webp" alt="XivPiano illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivpiano-icon-2.webp" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivpiano/">XivPiano</a></h2></div>
+        <p class="tagline">Your Pandora stations inside FFXIV: play, skip, thumbs, new stations.</p><p>XivPiano is a Pandora radio player inside FINAL FANTASY XIV, in the tradition of pianobar and Pithos. Sign in with your Pandora account and play your stations, skip, thumbs up or down, shelve a song you are tired of, bookmark it, ask why it was picked, and make new stations from an artist, a song or a genre. The song shows in the server info bar; /piano next and friends work from chat and macros, and other plugins can control it over IPC. It can mute the game&#39;s music while it plays and pause itself during cutscenes. Pandora is only available in the United States. Not affiliated with Pandora or Sirius XM.</p>
+        <p><span class="tag unverified">testing build available · playback checks pending</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivpiano/">About</a> <a href="/mods/ffxiv/xivpiano/vote/">Vote</a> <a href="/mods/ffxiv/term/gallery/?mod=xivpiano">Gallery</a> <a href="https://github.com/Spaceghost/xivpiano-dalamud" rel="noopener">Source</a></p></div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/xivhud-banner.svg" alt="XivHud illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivhud-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivhud/">XivHud</a></h2></div>
+        <p class="tagline">An illustrated interface, with the original always within reach.</p><p>A reversible native HUD mode and shared controller support for an illustrated interface. Restore the native HUD with /xivhud off.</p>
+        <p><span class="tag unverified">experimental · HUD restoration observed in game; new IPC awaits live checks</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivhud/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivhud">Gallery</a> <a href="https://github.com/Spaceghost/xivhud-dalamud" rel="noopener">Source</a></p></div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/xivhud-journal-banner.svg" alt="XivHud · Journal illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivhud-journal-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivhud/journal/">XivHud · Journal</a></h2></div>
+        <p class="tagline">Your next chapter, on warm vellum.</p><p>An illustrated quest journal with accepted quests, local bookmarks, search, and native map handoff. Optional native frames and world windows.</p>
+        <p><span class="tag unverified">experimental · selected Journal and window checks observed in game</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivhud/journal/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivhud-journal">Gallery</a> <a href="https://github.com/Spaceghost/xivhud-dalamud" rel="noopener">Source</a></p></div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/xivhud-character-banner.svg" alt="XivHud · Character illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivhud-character-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivhud/character/">XivHud · Character</a></h2></div>
+        <p class="tagline">An adventurer’s record.</p><p>An illustrated adventurer record with equipment, attributes, classes and jobs, and gear sets. The original game window remains available.</p>
+        <p><span class="tag unverified">development · builds and offline tests; in-game acceptance pending</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivhud/character/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivhud-character">Gallery</a> <a href="https://github.com/Spaceghost/xivhud-dalamud" rel="noopener">Source</a></p></div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/xivrug-banner.svg" alt="XivRug illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivrug-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivrug/">XivRug</a></h2></div>
+        <p class="tagline">A little woven Eorzea beneath your feet.</p><p>An independent woven map rug beneath your character, with terrain contact, Wayfinder routes and optional XivPiano music visuals.</p>
+        <p><span class="tag unverified">prototype · selected scenes observed; terrain and performance checks continue</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivrug/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivrug">Gallery</a> <a href="https://github.com/Spaceghost/xivrug-dalamud" rel="noopener">Source</a></p></div>
+      </article>
+      <article class="modcard glass">
+        <img src="/mods/ffxiv/site/art/xivstream-banner.svg" alt="XivStream illustration" width="730" height="380" loading="lazy" decoding="async">
+        <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivstream-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivstream/">XivStream</a></h2></div>
+        <p class="tagline">Your modded Eorzea, on the screen you choose.</p><p>Set up streaming from your game host to Moonlight clients or a browser, with detection, a reviewable plan and diagnostics.</p>
+        <p><span class="tag unverified">release candidate · Incus/Sunshine/NVIDIA path tested; other routes experimental</span></p>
+        <p class="links"><a href="/mods/ffxiv/xivstream/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivstream">Gallery</a> <a href="https://github.com/Spaceghost/xivstream-dalamud" rel="noopener">Source</a></p></div>
       </article>
       </div>
     </section>
