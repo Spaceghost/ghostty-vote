@@ -59,3 +59,15 @@ export function projectRoutes(registry) {
   const prefixes = [...new Set(registry.mods.filter((m) => m.sections).map((m) => m.page.split('/').slice(0, 4).join('/')))];
   return prefixes.map((path) => `  { pattern = "spacegho.st${path}*", zone_name = "spacegho.st" },`).join('\n') + '\n  { pattern = "spacegho.st/mods/ffxiv/projects.json", zone_name = "spacegho.st" }';
 }
+
+export function projectHeaders(registry) {
+  const prefixes = [...new Set(registry.mods.filter((m) => m.sections).map((m) => m.page.split('/').slice(0, 4).join('/')))];
+  return prefixes.map((path) => `${path}/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; media-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+`).join('\n');
+}

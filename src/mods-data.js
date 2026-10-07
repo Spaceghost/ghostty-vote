@@ -554,7 +554,7 @@ export default {
       "navigation": false,
       "gallery": false,
       "build": "tools/build.sh",
-      "iconPath": "/mods/ffxiv/site/art/xivstream-icon.svg",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
       "votePage": null,
       "sections": [
