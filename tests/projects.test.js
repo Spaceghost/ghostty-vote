@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { galleryProjects, projectNavigation, projectOutputs } from '../scripts/project-pages.js';
+import { galleryProjects, projectNavigation, projectOutputs, projectRoutes } from '../scripts/project-pages.js';
 import { firstEntry, listedMods, validateMods } from '../scripts/plugins-lib.js';
 import { handle } from '../src/app.js';
 import { MOD_IDS } from '../src/clients.js';
@@ -47,4 +47,12 @@ test('the live listing assembles multiple HUD modules from one release and exclu
   const body = await res.json();
   assert.deepEqual(body.map((m) => m.InternalName), ['XivHud', 'XivHud.Journal']);
   assert.ok(body.every((m) => m.IsTestingExclusive));
+});
+
+test('all generated project pages and the public registry have deployed Cloudflare routes', () => {
+  const routes = projectRoutes(registry);
+  const config = readFileSync(new URL('../wrangler.toml', import.meta.url), 'utf8');
+  assert.ok(config.includes(routes));
+  for (const m of registry.mods.filter((m) => m.sections)) assert.ok(routes.includes('spacegho.st' + m.page.split('/').slice(0, 4).join('/') + '*'));
+  assert.ok(routes.includes('spacegho.st/mods/ffxiv/projects.json'));
 });

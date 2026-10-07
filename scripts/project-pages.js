@@ -54,3 +54,8 @@ export function projectOutputs(registry, pages) {
   out['public/mods/ffxiv/projects.json'] = JSON.stringify({ version: registry.version, projects: registry.mods.map(({ sections, _comment, ...m }) => m) }, null, 2) + '\n';
   return out;
 }
+
+export function projectRoutes(registry) {
+  const prefixes = [...new Set(registry.mods.filter((m) => m.sections).map((m) => m.page.split('/').slice(0, 4).join('/')))];
+  return prefixes.map((path) => `  { pattern = "spacegho.st${path}*", zone_name = "spacegho.st" },`).join('\n') + '\n  { pattern = "spacegho.st/mods/ffxiv/projects.json", zone_name = "spacegho.st" }';
+}

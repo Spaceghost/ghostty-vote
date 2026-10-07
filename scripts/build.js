@@ -11,7 +11,7 @@ import { buildSeedSqlAll } from './seed-lib.js';
 import { buildOutputs } from './static-lib.js';
 import { STATIC_PLUGINS, buildPluginMaster } from './plugins-lib.js';
 import { buildVotePages } from './vote-page-lib.js';
-import { projectOutputs, galleryProjects } from './project-pages.js';
+import { projectOutputs, galleryProjects, projectRoutes } from './project-pages.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const catalogue = JSON.parse(readFileSync(root + 'data/catalogue.json', 'utf8'));
@@ -47,6 +47,7 @@ for (const [path, pattern, replacement] of [
   ['public/mods/ffxiv/site/site.js', /var MODS = \[[^;]+;/, 'var MODS = ' + JSON.stringify(Object.keys(galleryNames)) + ';'],
   ['public/mods/ffxiv/term/gallery/gallery.js', /const MODS = \{[^;]+;/, 'const MODS = ' + JSON.stringify(galleryNames).replace(/[\u007f-\uffff]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + ';'],
 ]) outputs[path] = readFileSync(root + path, 'utf8').replace(pattern, replacement);
+outputs['wrangler.toml'] = readFileSync(root + 'wrangler.toml', 'utf8').replace(/(  # BEGIN GENERATED PROJECT ROUTES)[\s\S]*?(  # END GENERATED PROJECT ROUTES)/, '$1\n' + projectRoutes(mods) + '\n$2');
 const check = process.argv.includes('--check');
 let stale = 0;
 
