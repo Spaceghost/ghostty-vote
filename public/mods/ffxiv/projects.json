@@ -102,7 +102,8 @@
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivmcp-icon.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivmcp-banner.webp",
-      "votePage": "/mods/ffxiv/xivmcp/vote/"
+      "votePage": "/mods/ffxiv/xivmcp/vote/",
+      "testingVersion": "0.1.2.1"
     },
     {
       "internalName": "XivDesktop",
@@ -307,10 +308,11 @@
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud.png",
       "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
       "build": "tools/build.sh",
-      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "pending": "Testing build available: enable plugin testing builds in Dalamud. See the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
-      "votePage": null
+      "votePage": null,
+      "testingVersion": "0.1.0.1"
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -338,10 +340,11 @@
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-journal.png",
       "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
       "build": "tools/build.sh",
-      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "pending": "Testing build available: enable plugin testing builds in Dalamud. See the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-journal-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-journal-banner.svg",
-      "votePage": null
+      "votePage": null,
+      "testingVersion": "0.1.0.1"
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -378,7 +381,7 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.0.1.1",
+      "assemblyVersion": "0.0.1.2",
       "listed": true,
       "umbraWidget": null,
       "kind": "plugin",
@@ -400,10 +403,11 @@
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivrug.png",
       "needs": "Dalamud API 15; Wayfinder and XivPiano integrations are optional. No Ghostty dependency.",
       "build": "tools/build.sh",
-      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "pending": "Testing build available: enable plugin testing builds in Dalamud. See the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivrug-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivrug-banner.svg",
-      "votePage": null
+      "votePage": null,
+      "testingVersion": "0.0.1.2"
     },
     {
       "internalName": "XivStream",
