@@ -15,6 +15,7 @@ let sequence = 0;
 function get(path) {
   const output = join(temp, String(++sequence));
   execFileSync('curl', ['--silent', '--show-error', '--fail-with-body', '--retry', '3',
+    '--user-agent', 'spacegho.st-FFXIV-deploy-check/1.0 (+https://github.com/Spaceghost/ghostty-vote)',
     '--retry-all-errors', '--retry-delay', '2', '--connect-timeout', '10', '--max-time', '30',
     '--output', output, new URL(path, base).href], { stdio: ['ignore', 'ignore', 'inherit'] });
   console.log('GET ' + path + ' -> 200');

@@ -142,6 +142,12 @@ It uses GET, retries transient network/edge errors, and still fails for persiste
 403 responses, stale metadata, missing plugins or incorrect pages. It does not
 change firewall rules or write to D1.
 
+The probe identifies itself as `spacegho.st-FFXIV-deploy-check/1.0` with this
+repository's URL. Generic Python and GitHub curl clients were rejected with
+Cloudflare error 1010, while an identified client returned 200 for the same
+content. Cloudflare documents this as a [client-signature rejection](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-1xxx-errors/error-1010/).
+The probe keeps checking status and content; no zone-wide security setting is disabled.
+
 It deliberately does **not** run D1 migrations or the seed. Those are ordered,
 occasionally destructive steps run by hand against the live database *before*
 deploying -- see README.md, "Deploy".
