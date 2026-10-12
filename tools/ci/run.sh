@@ -4,10 +4,10 @@
 #
 #   tools/ci/run.sh <stage>...   stages: deps check test build deploy-dry all
 #
-#   deps        node is present and new enough for `node --test` (>= 20; the
-#               version is printed), and npm and npx exist. Nothing is
-#               installed: this repository has no dependencies.
-#   check       `node scripts/build.js --check` -- the generated files
+#   deps        node is present and new enough for `node --test` (>= 22; the
+#               version is printed), and npm and npx exist. Dependencies are
+#               installed with npm ci from the lockfile.
+#   check       `npm run check` -- authored Imba outputs and generated files
 #               (ideas.json, version.json, seed/seed.sql, src/almanac-schema.js)
 #               must already match data/catalogue.json. Then the only lint this
 #               repository has: ShellCheck over tools/ci/*.sh and actionlint
@@ -15,7 +15,7 @@
 #               the tool is not installed.
 #   test        `node --test` over tests/*.test.js (the D1 shim and the request
 #               harness; no network, no Cloudflare, no wrangler).
-#   build       `node scripts/build.js` -- regenerates the files `check` verifies.
+#   build       `npm run build` -- precompiles Imba and regenerates metadata.
 #   deploy-dry  `wrangler deploy --dry-run --outdir <tmp>`: wrangler parses
 #               wrangler.toml, runs the [build] command and bundles the Worker
 #               into a temporary directory. It NEVER AUTHENTICATES AND NEVER
@@ -60,36 +60,37 @@ die() { printf 'ci: error: %s\n' "$*" >&2; exit 1; }
 
 usage() { sed -n '2,46p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 
-# node >= 20: `node --test` runs files without a runner and reports non-zero on
+# node >= 22: `node --test` runs files without a runner and reports non-zero on
 # failure, and `--test-reporter` exists. The workflows deliberately do not
 # install node, so this is where a too-old runner has to fail loudly.
 ensure_node() {
-  command -v "$NODE" >/dev/null || die "node is required (NODE=$NODE is not on PATH); install Node.js 20 or newer"
+  command -v "$NODE" >/dev/null || die "node is required (NODE=$NODE is not on PATH); install Node.js 22 or newer"
   local ver major
   ver="$("$NODE" --version)" # v26.8.2
   major="${ver#v}"
   major="${major%%.*}"
   [[ "$major" =~ ^[0-9]+$ ]] || die "cannot read a major version out of node --version = $ver"
-  ((major >= 20)) || die "node $ver is too old: \`node --test\` needs Node.js 20 or newer (install it, or set NODE=/path/to/node20+)"
+  ((major >= 22)) || die "node $ver is too old: \`node --test\` needs Node.js 22 or newer (install it, or set NODE=/path/to/node22+)"
   log "node $ver ($(command -v "$NODE"))"
 }
 
 stage_deps() {
   ensure_node
-  # Nothing is installed here. There are no dependencies to install: the only
-  # thing CI ever downloads is the pinned wrangler in deploy-dry, through npx.
   command -v npm >/dev/null || die "npm is required (it ships with Node.js)"
   command -v npx >/dev/null || die "npx is required (it ships with npm)"
-  log "npm $(npm --version), npx present; no dependencies to install"
+  log "npm ci: locked Imba compiler and build/test dependencies"
+  npm ci --ignore-scripts --no-audit --no-fund
+
 }
 
 stage_check() {
   ensure_node
-  log "node scripts/build.js --check (generated files match data/catalogue.json)"
-  "$NODE" scripts/build.js --check
+  log "check native Imba compilation and generated metadata"
+  [[ -x node_modules/.bin/imbac ]] || stage_deps
+  npm run check
   if command -v shellcheck >/dev/null; then
-    log "shellcheck -x tools/ci/*.sh"
-    shellcheck -x tools/ci/*.sh
+    log "shellcheck -x tools/ci/*.sh tools/compile.sh"
+    shellcheck -x tools/ci/*.sh tools/compile.sh
   else
     log "shellcheck not installed: skipping the shell lint"
   fi
@@ -114,8 +115,9 @@ stage_test() {
 
 stage_build() {
   ensure_node
-  log "node scripts/build.js"
-  "$NODE" scripts/build.js
+  log "precompile Imba and build public metadata"
+  [[ -x node_modules/.bin/imbac ]] || stage_deps
+  npm run build
 }
 
 # Parses wrangler.toml, runs the [build] command and bundles the Worker. It does

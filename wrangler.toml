@@ -41,7 +41,7 @@ routes = [
 # Regenerates public/mods/ffxiv/term/vote/{ideas,version}.json and seed/seed.sql
 # from data/catalogue.json before every deploy (plain node, no dependencies).
 [build]
-command = "node scripts/build.js"
+command = "npm run build"
 
 # Static Assets: the page, vote.js, vote.css, ideas.json and version.json are served
 # from public/ at their real URL paths without invoking the Worker (free, not counted

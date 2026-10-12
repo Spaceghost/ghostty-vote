@@ -4,7 +4,7 @@
 #
 # The hosted job's runner comes from the repository variable CI_RUNS_ON (a JSON
 # string or label array), default GitHub's ubuntu-latest. Nothing here installs
-# node: ubuntu-latest ships a node far newer than the 20 this repository needs,
+# node: ubuntu-latest ships a node far newer than the 22 this repository needs,
 # and the `deps`/`check` stages fail loudly on a too-old one rather than
 # skipping tests. That keeps this file free of another pinned action SHA.
 #
@@ -36,13 +36,12 @@ jobs:
         with:
           persist-credentials: false
 
-      # the pinned wrangler that deploy-dry fetches through npx; nothing else
-      # in this repository is downloaded, and a cold cache only costs the fetch
+      # the pinned wrangler that deploy-dry fetches through npx; the locked Imba compiler and build/test dependencies, and a cold cache only costs the fetch
       - name: Cache the npm download cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ghostty-vote-ci/npm
-          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/ci/run.sh') }}
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/ci/run.sh', 'package-lock.json') }}
 
       - name: Check, test, build, dry-run
         run: tools/ci/run.sh all
@@ -77,7 +76,7 @@ jobs:
       - name: Probe for node
         run: |
           if ! command -v node >/dev/null; then
-            echo "::error::this self-hosted runner has no node on PATH; install Node.js 20 or newer on the runner host (Fedora/Bazzite: sudo dnf install nodejs; Debian/Ubuntu: sudo apt install nodejs npm), or unset the repository variable CI_SELF_HOSTED to stop scheduling this job"
+            echo "::error::this self-hosted runner has no node on PATH; install Node.js 22 or newer on the runner host (Fedora/Bazzite: sudo dnf install nodejs; Debian/Ubuntu: sudo apt install nodejs npm), or unset the repository variable CI_SELF_HOSTED to stop scheduling this job"
             exit 1
           fi
           tools/ci/run.sh deps

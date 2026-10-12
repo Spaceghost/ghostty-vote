@@ -6,8 +6,7 @@ self-hosted runner or a local shell running it. The workflows only check out the
 repository, restore one cache and call it, so there is no second definition of
 "what CI does" to drift.
 
-This repository has no dependencies: everything below is plain node plus, for
-the dry run only, one pinned wrangler fetched through `npx`.
+Node 22 runs the precompiled application and tests. `npm ci --ignore-scripts` installs the locked Imba compiler, esbuild bundler and Acorn build/test parser. Wrangler is pinned separately for the credential-free dry run. Authored source is Imba; compiler versions and runtime artifacts are checked into the repository.
 
 ## What runs where
 
@@ -26,12 +25,7 @@ Cloudflare. `deploy.yml` has `contents: read` and exactly one secret, which
 lives in the `cloudflare` environment. Third-party actions are pinned by commit
 SHA. No workflow uses `pull_request_target`.
 
-**Nothing installs node.** GitHub's `ubuntu-latest` image ships a node far newer
-than the 20 this repository needs, so `actions/setup-node` (and another pinned
-SHA to keep current) would buy nothing. Instead `tools/ci/run.sh` fails loudly on
-a too-old or missing node, and the `self-hosted` job probes for node in its first
-step and prints what to install. A green run therefore cannot mean "the tests
-were skipped".
+Hosted builds use the runner's Node 22 runtime. The credential-free public verification job installs pinned Node 22.23.3 because the ephemeral runner image does not ship Node. Build stages install locked dependencies when they are absent; unsupported or missing Node fails clearly.
 
 ## `tools/ci/run.sh`
 
@@ -43,12 +37,12 @@ tools/ci/run.sh all             # check, test, build, deploy-dry
 
 | Stage | Does |
 | --- | --- |
-| `deps` | node is on `PATH` and its major version is >= 20 (printed), and npm and npx exist. Installs nothing -- there is nothing to install |
-| `check` | `node scripts/build.js --check`: `ideas.json`, `version.json`, `seed/seed.sql` and `src/almanac-schema.js` must already match `data/catalogue.json`. Then the only lint the repository has -- ShellCheck over `tools/ci/*.sh` and `actionlint` over the workflows -- each skipped with a line saying so when the tool is not installed |
+| `deps` | Node 22, npm and npx exist; install the locked compiler and build/test dependencies with `npm ci --ignore-scripts` |
+| `check` | `npm run check`: precompiled JavaScript must match every authored Imba source, and `ideas.json`, `version.json`, `seed/seed.sql` and `src/almanac-schema.js` must already match `data/catalogue.json`. Then the only lint the repository has -- ShellCheck over `tools/ci/*.sh` and `actionlint` over the workflows -- each skipped with a line saying so when the tool is not installed |
 | `test` | `node --test` over `tests/*.test.js` (the D1 shim and the request harness; no network, no Cloudflare, no wrangler). `--test-reporter=dot` when this node accepts it, probed |
-| `build` | `node scripts/build.js`: regenerates the files `check` verifies |
+| `build` | `npm run build`: compile Node/Worker/test sources, generate metadata and browser registry constants, then bundle browser scripts |
 | `deploy-dry` | `wrangler deploy --dry-run --outdir <tmp>`: wrangler parses `wrangler.toml`, runs the `[build]` command and bundles the Worker into a temporary directory that is then deleted. **It never authenticates and never deploys** -- no API token, no account id, no Cloudflare API call, and nothing about the live Worker, its routes, D1 or KV is touched. It needs the network once, to fetch the pinned wrangler from npm |
-| `all` | `check`, `test`, `build`, `deploy-dry`. Not `deps`: that is what a workflow calls to probe its runner |
+| `all` | `check`, `test`, `build`, `deploy-dry`. Installs locked dependencies if the compiler is absent |
 
 An unknown stage, or no stage at all, prints the usage and exits **2**;
 `--help` prints it and exits 0.
@@ -93,7 +87,7 @@ tools/ci/local.sh check test   # just the cheap stages
 
 `tools/ci/local.sh` is a thin wrapper that runs `tools/ci/run.sh` with the same
 stages the workflows use, so a local pass and a CI pass are the same thing. The
-whole run is plain node, takes seconds, and touches nothing outside the checkout
+whole run uses the locked Imba build and precompiled Node tests, takes seconds, and touches nothing outside the checkout
 and the npm cache.
 
 There is **no** `CI_LOCAL_REMOTE`. Running the stages on a separate build host

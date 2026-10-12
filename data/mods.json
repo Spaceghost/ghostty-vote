@@ -280,7 +280,7 @@
       "status": "testing build available \u00b7 playback checks pending",
       "navigation": true,
       "gallery": true,
-      "testingVersion": "0.1.0.1",
+      "testingVersion": "0.1.1.1",
       "iconPath": "/mods/ffxiv/site/art/xivpiano-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivpiano-banner-2.webp",
       "votePage": "/mods/ffxiv/xivpiano/vote/"
