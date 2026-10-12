@@ -72,9 +72,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         run: npx --yes wrangler@4.135.0 deploy
 
-      # GET, not HEAD: the Worker answers HEAD on a GET route with 405
-      - name: Check the deployed page answers
-        run: |
-          code="$(curl -sS -o /dev/null -w '%{http_code}' https://spacegho.st/mods/ffxiv/term/vote/)"
-          echo "GET /mods/ffxiv/term/vote/ -> $code"
-          [[ "$code" == 200 ]] || { echo "::error::the deployed page answered $code, not 200"; exit 1; }
+      # GET verifies the actual metadata, installer and pages. Retry transient
+      # edge/network errors; persistent 403s and stale content still fail.
+      - name: Verify the deployed project registry, installer and pages
+        run: node scripts/deploy-health.js

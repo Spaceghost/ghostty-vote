@@ -135,9 +135,12 @@ workflows* to *Require approval for all external contributors* as well.
 
 `deploy.yml` runs `check test build` and then
 `npx --yes wrangler@4.135.0 deploy`, which uploads `public/` as Static Assets and
-`src/worker.js` as the script in one deployment, and finally checks that
-`GET https://spacegho.st/mods/ffxiv/term/vote/` answers 200 (GET, not `curl -I`:
-the Worker answers HEAD on a GET route with 405).
+`src/worker.js` as the script in one deployment. `node scripts/deploy-health.js`
+then checks the deployed project registry against this build, validates the
+published installer entries, and checks the vote and generated project pages.
+It uses GET, retries transient network/edge errors, and still fails for persistent
+403 responses, stale metadata, missing plugins or incorrect pages. It does not
+change firewall rules or write to D1.
 
 It deliberately does **not** run D1 migrations or the seed. Those are ordered,
 occasionally destructive steps run by hand against the live database *before*
@@ -194,23 +197,15 @@ Run here, on this workstation, against this checkout (node v26.8.2, ShellCheck
   from `public/`, listed the KV, D1 and vars bindings and exited 0 without
   contacting the Cloudflare API.
 
-Not verified, because it can only be verified on GitHub:
+GitHub evidence from the October 7 publication:
 
-* **Neither workflow has ever run.** `actionlint` checks syntax, expressions and
-  action references; it does not run anything. The first run on GitHub is their
-  test -- including the cache, the artifact upload, and whether `ubuntu-latest`'s
-  node really is >= 20 on the day (if it is not, `deps` fails loudly, which is
-  the point).
-* **No self-hosted runner exists for this repository.** The `self-hosted` job,
-  its label `ghostty-vote`, its node probe and its fork gate have never been
-  exercised. The fork gate is argued from GitHub's documented `if:` semantics,
-  not observed.
-* **`deploy.yml` has never deployed anything.** Neither the missing-secret
-  failure path nor a real `wrangler deploy` from Actions nor the 200 check has
-  been run. The site's live deployments so far were made by hand (README.md,
-  "Deploy").
-* **The repository is private and CI has not run.** It is at
-  github.com/Spaceghost/ghostty-vote (since 2026-09-23). Its first push started no
-  job: GitHub reported that an Actions budget prevented it. No environment,
-  secret or variable has been created yet; every `gh` command above is still for
-  the owner to run.
+* [CI passed for the published metadata](https://github.com/Spaceghost/ghostty-vote/actions/runs/37600983118).
+* [Deploy uploaded the site but failed its single-page health check](https://github.com/Spaceghost/ghostty-vote/actions/runs/37600983084)
+  because that request returned 403. The installer, registry and new project pages
+  subsequently returned 200. The broader verification above checks their content
+  and retries transient edge failures without accepting a persistent failure.
+* The Cloudflare environment and deployment credentials are configured. Their
+  values remain confined to GitHub's deployment environment.
+
+The optional self-hosted runner and fork behavior still require their own
+evidence; a hosted CI or deploy result does not establish either.
