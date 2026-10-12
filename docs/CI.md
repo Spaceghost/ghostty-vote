@@ -215,3 +215,5 @@ GitHub evidence from the October 7 publication:
 
 The optional self-hosted runner and fork behavior still require their own
 evidence; a hosted CI or deploy result does not establish either.
+
+The public deployment check runs in a separate job with no Cloudflare credentials. `DEPLOY_VERIFY_RUNS_ON` may select a trusted repository-scoped ephemeral runner when the custom domain rejects GitHub-hosted network requests. The default remains `ubuntu-latest`; a persistent 403 fails verification. Uploading the Worker stays on the deployment runner and does not disable Cloudflare security checks.
