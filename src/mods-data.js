@@ -107,7 +107,7 @@ export default {
       "iconPath": "/mods/ffxiv/site/art/xivmcp-icon.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivmcp-banner.webp",
       "votePage": "/mods/ffxiv/xivmcp/vote/",
-      "testingVersion": "0.1.2.1"
+      "testingVersion": "0.1.2.3"
     },
     {
       "internalName": "XivDesktop",
@@ -141,7 +141,8 @@ export default {
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivdesktop-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivdesktop-banner-2.webp",
-      "votePage": "/mods/ffxiv/xivdesktop/vote/"
+      "votePage": "/mods/ffxiv/xivdesktop/vote/",
+      "testingVersion": "1.0.3.1"
     },
     {
       "internalName": "XivArcade",
