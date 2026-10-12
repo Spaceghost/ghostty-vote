@@ -597,7 +597,9 @@ test(
 
 test(
 	'me: signed out costs no D1 and reports an old anonymous ballot; sessions near expiry are renewed',
-	(do()
+	(do(context)
+		# Freeze seconds so asynchronous signing cannot cross the cookie-age assertion.
+		context.mock.timers.enable({apis: ['Date'], now: Date.now()})
 		const t = setup()
 		let res = (await t.call((API + 'auth/me')))
 		assert.deepEqual((await res.json()), {signed_in: false, legacy_ballot: false})
