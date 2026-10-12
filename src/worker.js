@@ -1,3 +1,6 @@
+// Generated from imba/src/worker.imba; edit the Imba source.
+
+/*body*/
 // Cloudflare Worker entry. Only the paths in assets.run_worker_first (wrangler.toml) run
 // this code; everything else is a static asset.
 //
@@ -5,11 +8,13 @@
 // answers its own three paths, refuses anything on the owner's deny list, and otherwise
 // calls handle() unchanged and counts the answer afterwards, fire-and-forget. app.js does
 // not know it exists, and a fault in it cannot change a response.
-import { handle } from './app.js';
-import { analyticsFetch } from './analytics.js';
+import {handle} from './app.js';
+
+import {analyticsFetch} from './analytics.js';
 
 export default {
-  fetch(request, env, ctx) {
-    return analyticsFetch(request, env, ctx, handle);
-  },
+	fetch: function(request,env,ctx) {
+		return analyticsFetch(request,env,ctx,handle);
+		return;
+	}
 };

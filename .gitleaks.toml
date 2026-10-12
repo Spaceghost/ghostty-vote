@@ -1,0 +1,12 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Existing public OAuth client IDs and dummy account IDs in regression fixtures"
+condition = "AND"
+regexTarget = "secret"
+paths = ['^(?:imba/)?tests/']
+regexes = [
+  "^0190a1b2\\-c3d4\\-7e5f\\-8a9b\\-0c1d2e3f4a5b$",
+  "^3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU$",
+]

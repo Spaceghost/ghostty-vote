@@ -1,182 +1,105 @@
+// Generated from imba/scripts/vote-page-lib.imba; edit the Imba source.
+import {iterable$} from 'imba/runtime';
+
+/*body*/
 // Builds every mod's feature vote page from data/vote-pages.json and one template, so
 // the eight pages share their markup, scripts and styles and differ only in words. Pure;
 // no I/O. The page script (vote.js) reads <html data-mod data-page> to know whose vote it
 // is; everything else it needs is under /mods/ffxiv/term/vote/.
-import { VOTE_MODS } from '../src/lib.js';
+import {VOTE_MODS} from '../src/lib.js';
 
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const esc = function(s) {
+	return String(s).replace(
+		new RegExp('[&<>"]','g'),
+		function(c) {
+			return {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;'}[c];
+		}
+	);
+};
 
-// each vote page wears its mod's own icon (site/art is cached a week, so a new drawing gets a new name)
-const ICONS = Object.freeze({
-  ghostty: 'ghostty-icon.webp', xivmcp: 'xivmcp-icon.webp', xivdesktop: 'xivdesktop-icon-2.webp', xivarcade: 'xivarcade-icon-2.webp',
-  xivwayfinder: 'xivwayfinder-icon-2.webp', xivlantern: 'xivlantern-icon-2.webp', xivpiano: 'xivpiano-icon-2.webp', almanac: 'almanac-icon-2.webp',
-});
+const ICONS = Object.freeze({ghostty: 'ghostty-icon.webp',xivmcp: 'xivmcp-icon.webp',xivdesktop: 'xivdesktop-icon-2.webp',xivarcade: 'xivarcade-icon-2.webp',xivwayfinder: 'xivwayfinder-icon-2.webp',xivlantern: 'xivlantern-icon-2.webp',xivpiano: 'xivpiano-icon-2.webp',almanac: 'almanac-icon-2.webp'});
 
-export function validateVotePages(cfg) {
-  const errors = [];
-  const order = cfg?.order;
-  if (!Array.isArray(order)) return ['order must be an array'];
-  const want = Object.keys(VOTE_MODS).sort().join(',');
-  if ([...order].sort().join(',') !== want) errors.push(`order must list exactly the mods in VOTE_MODS (${want})`);
-  for (const mod of order) {
-    const p = cfg.pages?.[mod];
-    if (!p) { errors.push(`pages.${mod} is missing`); continue; }
-    for (const k of ['name', 'title', 'description', 'eyebrow', 'h1_before', 'h1_glyph', 'h1_after', 'lede_html', 'about', 'banner', 'suggest_title', 'suggest_detail']) {
-      if (typeof p[k] !== 'string' || !p[k]) errors.push(`pages.${mod}.${k} is required`);
-    }
-    if (!Array.isArray(p.links)) errors.push(`pages.${mod}.links must be an array`);
-    if (/<script|\son\w+=|javascript:/i.test(p.lede_html || '')) errors.push(`pages.${mod}.lede_html may not carry script`);
-  }
-  return errors;
-}
+export function validateVotePages(cfg){
+	const errors = [];
+	const order = function() {
+		let cursor$1 = cfg;
+		let cursor$2 = undefined;
+		if (cursor$1 == null) {
+			return undefined;
+		};
+		cursor$2 = cursor$1;
+		cursor$1 = cursor$1.order;
+		return cursor$1;
+	}();
+	if ((!Array.isArray(order))) {
+		return ['order must be an array'];
+	};
+	const want = Object.keys(VOTE_MODS).sort().join(',');
+	if (([...order].sort().join(',') !== want)) {
+		errors.push(('order must list exactly the mods in VOTE_MODS (' + String(want) + ')'));
+	};
+	for (let mod of iterable$(order)){
+		const p = function() {
+			let cursor$3 = cfg;
+			let cursor$4 = undefined;
+			cursor$4 = cursor$3;
+			cursor$3 = cursor$3.pages;
+			if (cursor$3 == null) {
+				return undefined;
+			};
+			cursor$4 = cursor$3;
+			cursor$3 = cursor$3[mod];
+			return cursor$3;
+		}();
+		if ((!p)) {
+			errors.push(('pages.' + String(mod) + ' is missing'));
+			continue;
+		};
+		for (let k of ['name','title','description','eyebrow','h1_before','h1_glyph','h1_after','lede_html','about','banner','suggest_title','suggest_detail']){
+			if ((((typeof p[k]) !== 'string') || (!p[k]))) {
+				errors.push(('pages.' + String(mod) + '.' + String(k) + ' is required'));
+			};
+		};
+		if ((!Array.isArray(p.links))) {
+			errors.push(('pages.' + String(mod) + '.links must be an array'));
+		};
+		if (new RegExp('<script|\\son\\w+=|javascript:','i').test((p.lede_html || ''))) {
+			errors.push(('pages.' + String(mod) + '.lede_html may not carry script'));
+		};
+	};
+	return errors;
+	return;
+};
 
-export function buildVotePage(cfg, mod) {
-  const p = cfg.pages[mod];
-  const page = VOTE_MODS[mod];
-  const others = cfg.order.map((m) => {
-    const cur = m === mod ? ' aria-current="page"' : '';
-    return `<a class="chip"${cur} href="${VOTE_MODS[m]}">${esc(cfg.pages[m].name)}</a>`;
-  }).join('\n        ');
-  const links = [[`About ${p.name}`, p.about], ...p.links]
-    .map(([t, h]) => `<a class="chip" href="${esc(h)}">${esc(t)}</a>`).join('\n        ');
-  const legacy = p.legacy_ballots
-    ? 'Voted here before sign-in existed? Sign in from the same browser and those votes move to your account. '
-    : '';
-  return `<!doctype html>
-<html lang="en" data-mod="${mod}" data-page="${page}">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${esc(p.title)}</title>
-<meta name="description" content="${esc(p.description)}">
-<meta name="color-scheme" content="dark light">
-<meta name="referrer" content="no-referrer">
-<link rel="canonical" href="https://spacegho.st${page}">
-<meta property="og:type" content="website">
-<meta property="og:title" content="${esc(p.title)}">
-<meta property="og:description" content="${esc(p.description)}">
-<meta property="og:url" content="https://spacegho.st${page}">
-<meta property="og:image" content="https://spacegho.st${esc(p.banner)}">
-<link rel="icon" type="image/webp" href="/mods/ffxiv/site/art/${ICONS[mod]}">
-<link rel="apple-touch-icon" href="/mods/ffxiv/plugins/icons/${mod}.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
-<link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
-<!-- Generated by scripts/build.js from data/vote-pages.json; do not edit by hand.
-     Not deferred on purpose: vote.js applies the saved theme before first paint, then waits for the DOM.
-     ballot.js (its DOM-free logic) must load first. -->
-<script src="/mods/ffxiv/term/vote/ballot.js"></script>
-<script src="/mods/ffxiv/term/vote/vote.js"></script>
-<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <div class="topline">
-      <span class="eyebrow">${esc(p.eyebrow)}</span>
-      <span class="row">
-        ${links}
-        <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
-      </span>
-    </div>
-    <nav class="mods" aria-label="Every mod's vote">
-      <span class="eyebrow">votes</span>
-      <span class="row">
-        ${others}
-      </span>
-    </nav>
-    <h1>${esc(p.h1_before)}<span class="glyph">${esc(p.h1_glyph)}</span>${esc(p.h1_after)}</h1>
-    <p class="lede">${p.lede_html}</p>
-    <p class="lede">Sign in, then mark each idea <strong>Want</strong>, <strong>Maybe</strong> or <strong>Skip</strong>, leave a note, or suggest something the list missed. The tallies are public and help decide what gets built next. None of this is a promise that an idea will ship.</p>
-    <section class="account" aria-label="Sign-in">
-      <div id="signed-out" hidden>
-        <p class="account-text" id="signed-out-text">Sign in to vote: one ballot per account. Anyone can read the tallies.</p>
-        <div class="row">
-          <a class="btn" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start">Sign in with GitHub</a>
-          <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start">Sign in with FFXIV</a>
-        </div>
-        <p class="small disclosure">Signing in with FFXIV needs an XIVAuth account and shares no character. After signing in you can link one, which needs a character verified on XIVAuth. One sign-in covers every mod's vote.</p>
-      </div>
-      <div id="signed-in" hidden>
-        <div class="who">
-          <img class="portrait" id="who-portrait" alt="" width="44" height="44" referrerpolicy="no-referrer" hidden>
-          <p class="account-text" id="who"></p>
-        </div>
-        <div class="row">
-          <a class="btn ghost" id="link-character" href="/mods/ffxiv/term/vote/api/auth/xivauth/link" hidden>Link an FFXIV character</a>
-          <button class="btn ghost" type="button" id="forget-character" hidden>Forget my character</button>
-          <a class="btn ghost" id="admin-link" href="/mods/ffxiv/term/vote/admin/" hidden>Voters</a>
-          <button class="btn ghost" type="button" id="logout">Sign out</button>
-        </div>
-        <p class="small disclosure" id="link-disclosure" hidden>Linking needs a character verified on XIVAuth, and shares the character you choose (name and world) with the site owner.</p>
-      </div>
-      <p class="notice" id="account-notice" role="status"></p>
-    </section>
-    <div class="prompt" id="tally" aria-live="polite">$ <b>vote</b> --mine &nbsp; loading…</div>
-    <div class="progress" aria-hidden="true"><i id="progress"></i></div>
-    <div class="banner" id="new-banner" hidden>
-      <p id="new-text"></p>
-      <button class="btn ghost" type="button" id="new-show">Show new ideas</button>
-    </div>
-  </header>
+export function buildVotePage(cfg,mod){
+	const p = cfg.pages[mod];
+	const page = VOTE_MODS[mod];
+	const others = cfg.order.map(
+		function(m) {
+			const cur = ((m === mod) ? ' aria-current="page"' : '');
+			return ('<a class="chip"' + String(cur) + ' href="' + String(VOTE_MODS[m]) + '">' + String(esc(cfg.pages[m].name)) + '</a>');
+			return;
+		}
+	).join('\n        ');
+	const links = [[('About ' + String(p.name) + ''),p.about],...p.links].map(
+		function([t,h]) {
+			return ('<a class="chip" href="' + String(esc(h)) + '">' + String(esc(t)) + '</a>');
+		}
+	).join('\n        ');
+	const legacy = (p.legacy_ballots ? 'Voted here before sign-in existed? Sign in from the same browser and those votes move to your account. ' : '');
+	return ('<!doctype html>\n<html lang="en" data-mod="' + String(mod) + '" data-page="' + String(page) + '">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>' + String(esc(p.title)) + '</title>\n<meta name="description" content="' + String(esc(p.description)) + '">\n<meta name="color-scheme" content="dark light">\n<meta name="referrer" content="no-referrer">\n<link rel="canonical" href="https://spacegho.st' + String(page) + '">\n<meta property="og:type" content="website">\n<meta property="og:title" content="' + String(esc(p.title)) + '">\n<meta property="og:description" content="' + String(esc(p.description)) + '">\n<meta property="og:url" content="https://spacegho.st' + String(page) + '">\n<meta property="og:image" content="https://spacegho.st' + String(esc(p.banner)) + '">\n<link rel="icon" type="image/webp" href="/mods/ffxiv/site/art/' + String(ICONS[mod]) + '">\n<link rel="apple-touch-icon" href="/mods/ffxiv/plugins/icons/' + String(mod) + '.png">\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">\n<link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">\n<!-- Generated by scripts/build.js from data/vote-pages.json; do not edit by hand.\n     Not deferred on purpose: vote.js applies the saved theme before first paint, then waits for the DOM.\n     ballot.js (its DOM-free logic) must load first. -->\n<script src="/mods/ffxiv/term/vote/ballot.js"></script>\n<script src="/mods/ffxiv/term/vote/vote.js"></script>\n<script src="/mods/ffxiv/term/vote/beacon.js" defer></script>\n</head>\n<body>\n<div class="wrap">\n  <header>\n    <div class="topline">\n      <span class="eyebrow">' + String(esc(p.eyebrow)) + '</span>\n      <span class="row">\n        ' + String(links) + '\n        <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>\n      </span>\n    </div>\n    <nav class="mods" aria-label="Every mod\'s vote">\n      <span class="eyebrow">votes</span>\n      <span class="row">\n        ' + String(others) + '\n      </span>\n    </nav>\n    <h1>' + String(esc(p.h1_before)) + '<span class="glyph">' + String(esc(p.h1_glyph)) + '</span>' + String(esc(p.h1_after)) + '</h1>\n    <p class="lede">' + String(p.lede_html) + '</p>\n    <p class="lede">Sign in, then mark each idea <strong>Want</strong>, <strong>Maybe</strong> or <strong>Skip</strong>, leave a note, or suggest something the list missed. The tallies are public and help decide what gets built next. None of this is a promise that an idea will ship.</p>\n    <section class="account" aria-label="Sign-in">\n      <div id="signed-out" hidden>\n        <p class="account-text" id="signed-out-text">Sign in to vote: one ballot per account. Anyone can read the tallies.</p>\n        <div class="row">\n          <a class="btn" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start">Sign in with GitHub</a>\n          <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start">Sign in with FFXIV</a>\n        </div>\n        <p class="small disclosure">Signing in with FFXIV needs an XIVAuth account and shares no character. After signing in you can link one, which needs a character verified on XIVAuth. One sign-in covers every mod\'s vote.</p>\n      </div>\n      <div id="signed-in" hidden>\n        <div class="who">\n          <img class="portrait" id="who-portrait" alt="" width="44" height="44" referrerpolicy="no-referrer" hidden>\n          <p class="account-text" id="who"></p>\n        </div>\n        <div class="row">\n          <a class="btn ghost" id="link-character" href="/mods/ffxiv/term/vote/api/auth/xivauth/link" hidden>Link an FFXIV character</a>\n          <button class="btn ghost" type="button" id="forget-character" hidden>Forget my character</button>\n          <a class="btn ghost" id="admin-link" href="/mods/ffxiv/term/vote/admin/" hidden>Voters</a>\n          <button class="btn ghost" type="button" id="logout">Sign out</button>\n        </div>\n        <p class="small disclosure" id="link-disclosure" hidden>Linking needs a character verified on XIVAuth, and shares the character you choose (name and world) with the site owner.</p>\n      </div>\n      <p class="notice" id="account-notice" role="status"></p>\n    </section>\n    <div class="prompt" id="tally" aria-live="polite">$ <b>vote</b> --mine &nbsp; loading…</div>\n    <div class="progress" aria-hidden="true"><i id="progress"></i></div>\n    <div class="banner" id="new-banner" hidden>\n      <p id="new-text"></p>\n      <button class="btn ghost" type="button" id="new-show">Show new ideas</button>\n    </div>\n  </header>\n\n  <div class="bar" role="toolbar" aria-label="Filter ideas">\n    <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>\n    <button class="chip" type="button" data-filter="unvoted" aria-pressed="false">Not voted</button>\n    <button class="chip" type="button" data-filter="new" aria-pressed="false" hidden>New</button>\n    <button class="chip" type="button" data-filter="top" aria-pressed="false">Top picks</button>\n    <button class="chip" type="button" data-filter="world" aria-pressed="false">In-world</button>\n    <button class="chip" type="button" data-filter="want" aria-pressed="false">My wants</button>\n    <button class="chip" type="button" id="next-open">Next unvoted ↓</button>\n    <span class="spacer"></span>\n    <label for="sort">sort <select id="sort">\n      <option value="catalogue">catalogue</option>\n      <option value="wow">wow</option>\n      <option value="wanted">most wanted</option>\n      <option value="feas">feasibility</option>\n      <option value="effort">effort</option>\n    </select></label>\n  </div>\n\n  <main id="cats"><p class="empty">Loading ideas…</p></main>\n\n  <section class="yours" aria-labelledby="yours-h">\n    <div class="cat-head">\n      <h2 id="yours-h">Suggest an idea</h2>\n      <p>Anything the list missed. Suggestions go to the maintainer for review; they are not shown to other visitors.</p>\n    </div>\n    <form id="suggest" novalidate>\n      <label for="s-title" class="eyebrow">Idea</label>\n      <input type="text" id="s-title" maxlength="80" placeholder="' + String(esc(p.suggest_title)) + '" required autocomplete="off">\n      <label for="s-detail" class="eyebrow">What it feels like</label>\n      <textarea id="s-detail" maxlength="600" rows="3" placeholder="' + String(esc(p.suggest_detail)) + '"></textarea>\n      <div class="note-row"><span></span><span id="s-count">0 / 600</span></div>\n      <div class="row">\n        <button class="btn" type="submit" id="s-send">Send suggestion</button>\n        <span class="notice" id="s-state" aria-live="polite"></span>\n      </div>\n    </form>\n    <div class="grid" id="suggestions"></div>\n  </section>\n\n  <footer>\n    <p class="small"><strong>Privacy.</strong> Voting needs a GitHub or FFXIV (XIVAuth) sign-in, so each account has one ballot. Your votes, notes and suggestions are linked to your GitHub or XIVAuth account id and are visible to the site owner. They are stored under a SHA-256 hash of the provider name and that id, and the hash does not hide who you are: GitHub account ids are public, so anyone who has the id can work out the hash, and the owner can look the account up. The server does not store your GitHub username, your email address, IP addresses or the sign-in token, which is used once and thrown away. The sign-in itself is a signed cookie that only these vote pages can use; it lasts 30 days and renews while you keep visiting, but ends 90 days after you signed in, or when you sign out.</p>\n    <p class="small">If you link a character, the site keeps the character you chose on XIVAuth: its name, world, Lodestone ID and portrait link, and when it was first and last seen. Only the site owner sees it, next to your ballot. <strong>Forget my character</strong> deletes it, and your votes stay. Notes and suggestions are visible only to you and the maintainer. A copy of your ballot is kept in this browser\'s local storage so the page can show it straight away. The tallies can be up to a minute old. Fonts load from Google Fonts, and character portraits from the Lodestone.</p>\n    <p class="small">' + String(legacy) + 'The plugins sign in with the same account: <a href="/mods/ffxiv/term/vote/apps/">connected apps</a>. Made by Johnneylee Jack Rollins, <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>\n    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>.</p>\n  </footer>\n</div>\n</body>\n</html>\n');
+	return;
+};
 
-  <div class="bar" role="toolbar" aria-label="Filter ideas">
-    <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
-    <button class="chip" type="button" data-filter="unvoted" aria-pressed="false">Not voted</button>
-    <button class="chip" type="button" data-filter="new" aria-pressed="false" hidden>New</button>
-    <button class="chip" type="button" data-filter="top" aria-pressed="false">Top picks</button>
-    <button class="chip" type="button" data-filter="world" aria-pressed="false">In-world</button>
-    <button class="chip" type="button" data-filter="want" aria-pressed="false">My wants</button>
-    <button class="chip" type="button" id="next-open">Next unvoted ↓</button>
-    <span class="spacer"></span>
-    <label for="sort">sort <select id="sort">
-      <option value="catalogue">catalogue</option>
-      <option value="wow">wow</option>
-      <option value="wanted">most wanted</option>
-      <option value="feas">feasibility</option>
-      <option value="effort">effort</option>
-    </select></label>
-  </div>
-
-  <main id="cats"><p class="empty">Loading ideas…</p></main>
-
-  <section class="yours" aria-labelledby="yours-h">
-    <div class="cat-head">
-      <h2 id="yours-h">Suggest an idea</h2>
-      <p>Anything the list missed. Suggestions go to the maintainer for review; they are not shown to other visitors.</p>
-    </div>
-    <form id="suggest" novalidate>
-      <label for="s-title" class="eyebrow">Idea</label>
-      <input type="text" id="s-title" maxlength="80" placeholder="${esc(p.suggest_title)}" required autocomplete="off">
-      <label for="s-detail" class="eyebrow">What it feels like</label>
-      <textarea id="s-detail" maxlength="600" rows="3" placeholder="${esc(p.suggest_detail)}"></textarea>
-      <div class="note-row"><span></span><span id="s-count">0 / 600</span></div>
-      <div class="row">
-        <button class="btn" type="submit" id="s-send">Send suggestion</button>
-        <span class="notice" id="s-state" aria-live="polite"></span>
-      </div>
-    </form>
-    <div class="grid" id="suggestions"></div>
-  </section>
-
-  <footer>
-    <p class="small"><strong>Privacy.</strong> Voting needs a GitHub or FFXIV (XIVAuth) sign-in, so each account has one ballot. Your votes, notes and suggestions are linked to your GitHub or XIVAuth account id and are visible to the site owner. They are stored under a SHA-256 hash of the provider name and that id, and the hash does not hide who you are: GitHub account ids are public, so anyone who has the id can work out the hash, and the owner can look the account up. The server does not store your GitHub username, your email address, IP addresses or the sign-in token, which is used once and thrown away. The sign-in itself is a signed cookie that only these vote pages can use; it lasts 30 days and renews while you keep visiting, but ends 90 days after you signed in, or when you sign out.</p>
-    <p class="small">If you link a character, the site keeps the character you chose on XIVAuth: its name, world, Lodestone ID and portrait link, and when it was first and last seen. Only the site owner sees it, next to your ballot. <strong>Forget my character</strong> deletes it, and your votes stay. Notes and suggestions are visible only to you and the maintainer. A copy of your ballot is kept in this browser's local storage so the page can show it straight away. The tallies can be up to a minute old. Fonts load from Google Fonts, and character portraits from the Lodestone.</p>
-    <p class="small">${legacy}The plugins sign in with the same account: <a href="/mods/ffxiv/term/vote/apps/">connected apps</a>. Made by Johnneylee Jack Rollins, <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
-    <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>.</p>
-  </footer>
-</div>
-</body>
-</html>
-`;
-}
-
-// Relative path (from the repo root) -> contents, for every vote page.
-export function buildVotePages(cfg) {
-  const errors = validateVotePages(cfg);
-  if (errors.length) throw new Error('invalid data/vote-pages.json:\n  ' + errors.join('\n  '));
-  const out = {};
-  for (const mod of cfg.order) out['public' + VOTE_MODS[mod] + 'index.html'] = buildVotePage(cfg, mod);
-  return out;
-}
+export function buildVotePages(cfg){
+	const errors = validateVotePages(cfg);
+	if (errors.length) {
+		throw new Error(('invalid data/vote-pages.json:\n  ' + errors.join('\n  ')));
+	};
+	const out = {};
+	for (let mod of iterable$(cfg.order)){
+		out[(('public' + VOTE_MODS[mod]) + 'index.html')] = buildVotePage(cfg,mod);
+	};
+	return out;
+	return;
+};
