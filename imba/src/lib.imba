@@ -8,7 +8,7 @@ export const BASE = '/mods/ffxiv/term/vote'
 
 export const API_PREFIX = (BASE + '/api/')
 
-export const VOTE_MODS = Object.freeze({ghostty: '/mods/ffxiv/term/vote/', xivmcp: '/mods/ffxiv/xivmcp/vote/', xivdesktop: '/mods/ffxiv/xivdesktop/vote/', xivarcade: '/mods/ffxiv/xivarcade/vote/', xivwayfinder: '/mods/ffxiv/xivwayfinder/vote/', xivlantern: '/mods/ffxiv/xivlantern/vote/', xivpiano: '/mods/ffxiv/xivpiano/vote/', almanac: '/mods/ffxiv/almanac/vote/'})
+export const VOTE_MODS = Object.freeze({ghostty: '/mods/ffxiv/term/vote/', xivmcp: '/mods/ffxiv/xivmcp/vote/', xivdesktop: '/mods/ffxiv/xivdesktop/vote/', xivarcade: '/mods/ffxiv/xivarcade/vote/', xivwayfinder: '/mods/ffxiv/xivwayfinder/vote/', xivlantern: '/mods/ffxiv/xivlantern/vote/', xivpiano: '/mods/ffxiv/xivpiano/vote/', almanac: '/mods/ffxiv/almanac/vote/', xivprism: '/mods/ffxiv/xivprism/vote/', xivdispatch: '/mods/ffxiv/xivdispatch/vote/', xivcamp: '/mods/ffxiv/xivcamp/vote/'})
 
 export const DEFAULT_VOTE_MOD = 'ghostty'
 

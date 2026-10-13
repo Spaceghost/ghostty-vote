@@ -1,6 +1,6 @@
 // Generated from imba/public/mods/ffxiv/term/vote/admin/analytics.imba; edit the Imba source.
 (() => {
-  // node_modules/imba/src/imba/runtime.mjs
+  // ../../../xivmods/ghostty-vote/node_modules/imba/src/imba/runtime.mjs
   var __imba__$ = /* @__PURE__ */ Symbol.for("imba");
   var HAS = {
     SUPERCALLS: 1 << 3,

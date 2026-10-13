@@ -10,3 +10,10 @@ regexes = [
   "^0190a1b2\\-c3d4\\-7e5f\\-8a9b\\-0c1d2e3f4a5b$",
   "^3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU$",
 ]
+
+[[allowlists]]
+description = "Existing public XIVAuth OAuth client ID in the deployment configuration"
+condition = "AND"
+regexTarget = "secret"
+paths = ['^wrangler\.toml$']
+regexes = ["^3yHMau3T_wNUzny9QQDeiSS9wRl6BjNKIN5IpHxzQyU$"]

@@ -6,19 +6,40 @@
     "field is text and is escaped. The ideas themselves are data/catalogue.json (Ghostty)",
     "and data/catalogues/<mod>.json; the page paths are src/lib.js VOTE_MODS."
   ],
-  "order": ["ghostty", "xivmcp", "xivdesktop", "xivarcade", "xivwayfinder", "xivlantern", "xivpiano", "almanac"],
+  "order": [
+    "ghostty",
+    "xivmcp",
+    "xivdesktop",
+    "xivarcade",
+    "xivwayfinder",
+    "xivlantern",
+    "xivpiano",
+    "almanac",
+    "xivprism",
+    "xivdispatch",
+    "xivcamp"
+  ],
   "pages": {
     "ghostty": {
       "name": "Ghostty",
       "title": "Ghostty FFXIV Vote",
       "description": "Vote on what the Ghostty for FFXIV terminal plugin should do next.",
-      "eyebrow": "ghostty for ffxiv · community vote",
+      "eyebrow": "ghostty for ffxiv \u00b7 community vote",
       "h1_before": "What should the terminal ",
       "h1_glyph": "do",
       "h1_after": " in Eorzea next?",
       "lede_html": "<strong>Ghostty for FFXIV</strong> is a plugin that puts a real Ghostty terminal inside Final Fantasy XIV, made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next. Each was checked against how the plugin actually works: how feasible it is, how much effort it takes, and whether it stays client-side and within the game's terms of service.",
       "about": "/mods/ffxiv/term/",
-      "links": [["Gallery", "/mods/ffxiv/term/gallery/"], ["Almanac models", "/mods/ffxiv/almanac/"]],
+      "links": [
+        [
+          "Gallery",
+          "/mods/ffxiv/term/gallery/"
+        ],
+        [
+          "Almanac models",
+          "/mods/ffxiv/almanac/"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/ghostty-banner.png",
       "suggest_title": "A split-flap board at the Gold Saucer for my CI",
       "suggest_detail": "Describe the moment you'd want in game.",
@@ -28,7 +49,7 @@
       "name": "XivMcp",
       "title": "XivMcp Vote",
       "description": "Vote on what XivMcp, the MCP server inside Final Fantasy XIV, should let AI clients do next.",
-      "eyebrow": "xivmcp · community vote",
+      "eyebrow": "xivmcp \u00b7 community vote",
       "h1_before": "What should your AI be able to ",
       "h1_glyph": "ask",
       "h1_after": " Eorzea next?",
@@ -43,7 +64,7 @@
       "name": "XivDesktop",
       "title": "XivDesktop Vote",
       "description": "Vote on what XivDesktop, your Linux desktop inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivdesktop · community vote",
+      "eyebrow": "xivdesktop \u00b7 community vote",
       "h1_before": "What should your desktop ",
       "h1_glyph": "do",
       "h1_after": " in Eorzea next?",
@@ -58,7 +79,7 @@
       "name": "XivArcade",
       "title": "XivArcade Vote",
       "description": "Vote on what XivArcade, your own classic games inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivarcade · community vote",
+      "eyebrow": "xivarcade \u00b7 community vote",
       "h1_before": "What should the arcade ",
       "h1_glyph": "play",
       "h1_after": " next?",
@@ -73,7 +94,7 @@
       "name": "XivWayfinder",
       "title": "XivWayfinder Vote",
       "description": "Vote on what XivWayfinder, the soft bead and pointing glove for Final Fantasy XIV, should do next.",
-      "eyebrow": "xivwayfinder · community vote",
+      "eyebrow": "xivwayfinder \u00b7 community vote",
       "h1_before": "Where should the glove ",
       "h1_glyph": "point",
       "h1_after": " next?",
@@ -88,7 +109,7 @@
       "name": "XivLantern",
       "title": "XivLantern Vote",
       "description": "Vote on what XivLantern, friends, chat and channels peer to peer inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivlantern · community vote",
+      "eyebrow": "xivlantern \u00b7 community vote",
       "h1_before": "What should a lantern ",
       "h1_glyph": "light up",
       "h1_after": " next?",
@@ -103,7 +124,7 @@
       "name": "XivPiano",
       "title": "XivPiano Vote",
       "description": "Vote on what XivPiano, the Pandora radio player inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivpiano · community vote",
+      "eyebrow": "xivpiano \u00b7 community vote",
       "h1_before": "What should the radio ",
       "h1_glyph": "play",
       "h1_after": " next?",
@@ -118,16 +139,96 @@
       "name": "Almanac",
       "title": "Almanac Vote",
       "description": "Vote on what Almanac, the local AI companion for Final Fantasy XIV, should do next.",
-      "eyebrow": "almanac · community vote",
+      "eyebrow": "almanac \u00b7 community vote",
       "h1_before": "What should the Almanac ",
       "h1_glyph": "learn",
       "h1_after": " next?",
       "lede_html": "<strong>Almanac</strong> connects a model running on your own PC to Final Fantasy XIV through XivMcp's tools: a setup wizard that reads your GPU, an in-game chat with threads, and a benchmark you can share. No cloud, no Python. Made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next, each checked against how it works and whether it fits beside the game on one GPU.",
       "about": "/mods/ffxiv/almanac/about/",
-      "links": [["Models leaderboard", "/mods/ffxiv/almanac/"]],
+      "links": [
+        [
+          "Models leaderboard",
+          "/mods/ffxiv/almanac/"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/almanac-banner.png",
       "suggest_title": "Remember what I asked last session",
       "suggest_detail": "What would you want to ask it, and what should it know?"
+    },
+    "xivprism": {
+      "name": "XivPrism",
+      "title": "XivPrism Feature Vote",
+      "description": "Choose the first useful features for XivPrism.",
+      "eyebrow": "xivprism \u00b7 community feature vote",
+      "h1_before": "What should XivPrism ",
+      "h1_glyph": "bring",
+      "h1_after": " to your next session?",
+      "lede_html": "<strong>XivPrism</strong> is a new project by <strong>Johnneylee Jack Rollins</strong>. The public source and interactive preview describe the design; live integrations are planned. Vote for the features you would use, or suggest one we missed.",
+      "about": "/mods/ffxiv/xivprism/",
+      "links": [
+        [
+          "Try the preview",
+          "/mods/ffxiv/xivprism/preview/"
+        ],
+        [
+          "Source",
+          "https://github.com/Spaceghost/xivprism-dalamud"
+        ]
+      ],
+      "banner": "/mods/ffxiv/site/art/xivprism-hero.webp",
+      "icon": "/mods/ffxiv/site/art/xivprism-icon.svg",
+      "suggest_title": "The feature I would use every session",
+      "suggest_detail": "Describe the device, situation and behavior you want."
+    },
+    "xivdispatch": {
+      "name": "XivDispatch",
+      "title": "XivDispatch Feature Vote",
+      "description": "Choose the first useful features for XivDispatch.",
+      "eyebrow": "xivdispatch \u00b7 community feature vote",
+      "h1_before": "What should XivDispatch ",
+      "h1_glyph": "bring",
+      "h1_after": " to your next session?",
+      "lede_html": "<strong>XivDispatch</strong> is a new project by <strong>Johnneylee Jack Rollins</strong>. The public source and interactive preview describe the design; live integrations are planned. Vote for the features you would use, or suggest one we missed.",
+      "about": "/mods/ffxiv/xivdispatch/",
+      "links": [
+        [
+          "Try the preview",
+          "/mods/ffxiv/xivdispatch/preview/"
+        ],
+        [
+          "Source",
+          "https://github.com/Spaceghost/xivdispatch-dalamud"
+        ]
+      ],
+      "banner": "/mods/ffxiv/site/art/xivdispatch-hero.webp",
+      "icon": "/mods/ffxiv/site/art/xivdispatch-icon.svg",
+      "suggest_title": "The feature I would use every session",
+      "suggest_detail": "Describe the device, situation and behavior you want."
+    },
+    "xivcamp": {
+      "name": "XivCamp",
+      "title": "XivCamp Feature Vote",
+      "description": "Choose the first useful features for XivCamp.",
+      "eyebrow": "xivcamp \u00b7 community feature vote",
+      "h1_before": "What should XivCamp ",
+      "h1_glyph": "bring",
+      "h1_after": " to your next session?",
+      "lede_html": "<strong>XivCamp</strong> is a new project by <strong>Johnneylee Jack Rollins</strong>. The public source and interactive preview describe the design; live integrations are planned. Vote for the features you would use, or suggest one we missed.",
+      "about": "/mods/ffxiv/xivcamp/",
+      "links": [
+        [
+          "Try the preview",
+          "/mods/ffxiv/xivcamp/preview/"
+        ],
+        [
+          "Source",
+          "https://github.com/Spaceghost/xivcamp-dalamud"
+        ]
+      ],
+      "banner": "/mods/ffxiv/site/art/xivcamp-hero.webp",
+      "icon": "/mods/ffxiv/site/art/xivcamp-icon.svg",
+      "suggest_title": "The feature I would use every session",
+      "suggest_detail": "Describe the device, situation and behavior you want."
     }
   }
 }

@@ -13,7 +13,7 @@ import {dirname} from 'node:path';
 
 import {fileURLToPath} from 'node:url';
 
-import {buildSeedSqlAll} from './seed-lib.js';
+import {buildSeedSqlAll,buildSeedSql} from './seed-lib.js';
 
 import {buildOutputs} from './static-lib.js';
 
@@ -38,6 +38,10 @@ const others = readdirSync((root + 'data/catalogues')).filter(
 );
 
 const outputs = buildOutputs([catalogue,...others],buildSeedSqlAll);
+
+const launchMods = new Set(['xivprism','xivdispatch','xivcamp']);
+outputs['seed/project-launch.sql'] = others.filter(function(cat) { return launchMods.has(cat.mod); }).map(function(cat) { return buildSeedSql(cat).split('\n').filter(function(line) { return !(line.startsWith('UPDATE ideas SET retired')); }).join('\n'); }).join('\n');
+
 
 Object.assign(outputs,buildVotePages(JSON.parse(readFileSync((root + 'data/vote-pages.json'),'utf8'))));
 

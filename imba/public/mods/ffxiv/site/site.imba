@@ -11,7 +11,7 @@ def cursor$1()
 	var GALLERY = '/mods/ffxiv/term/gallery/'
 	var THEME_KEY = 'ghostty-vote:theme'
 	var MAX_BYTES = ((8 * 1024) * 1024)
-	var MODS = ["ghostty","almanac","xivmcp","xivdesktop","xivarcade","xivwayfinder","xivlantern","xivpiano","xivhud","xivhud-journal","xivhud-character","xivrug","xivstream"]
+	var MODS = ["ghostty","almanac","xivmcp","xivdesktop","xivarcade","xivwayfinder","xivlantern","xivpiano","xivhud","xivhud-journal","xivhud-character","xivrug","xivstream","xivprism","xivdispatch","xivcamp"]
 	var DOT = ' · '
 	def get(k)
 		try

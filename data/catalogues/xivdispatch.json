@@ -1,0 +1,192 @@
+{
+  "mod": "xivdispatch",
+  "version": 1,
+  "top_picks": [
+    "xivdispatch-official-window",
+    "xivdispatch-direct-messages",
+    "xivdispatch-mentions",
+    "xivdispatch-threads"
+  ],
+  "categories": [
+    {
+      "name": "XivDispatch \u00b7 First useful release",
+      "tagline": "Choose what would make this project useful first.",
+      "ideas": [
+        {
+          "id": "xivdispatch-official-window",
+          "title": "Official Slack within reach",
+          "pitch": "Start with the Slack client you already trust and use.",
+          "experience": "Start with the Slack client you already trust and use. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Evaluate Desktop and Ghostty hosting of the official app window.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 8,
+          "feasibility": "medium",
+          "effort": "medium",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-direct-messages",
+          "title": "A compact DM inbox",
+          "pitch": "Keep a few useful conversations close while you play.",
+          "experience": "Keep a few useful conversations close while you play. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Supported Slack conversation APIs with authorized user access.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 8,
+          "feasibility": "high",
+          "effort": "medium",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-mentions",
+          "title": "Mentions worth seeing",
+          "pitch": "Surface selected mentions without filling the game screen.",
+          "experience": "Surface selected mentions without filling the game screen. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Event updates and user-selected notification filters.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 8,
+          "feasibility": "medium",
+          "effort": "medium",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-threads",
+          "title": "Read and reply to threads",
+          "pitch": "Keep replies attached to their conversation.",
+          "experience": "Keep replies attached to their conversation. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Thread-aware history and explicit composition, respecting API limits.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 8,
+          "feasibility": "medium",
+          "effort": "medium",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-drafts",
+          "title": "Drafts that survive closing",
+          "pitch": "Finish a message later without losing what you typed.",
+          "experience": "Finish a message later without losing what you typed. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Local drafts keyed by workspace and conversation, with a visible clear action.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "high",
+          "effort": "small",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-quiet",
+          "title": "Quiet play sessions",
+          "pitch": "Queue notifications until your chosen quiet session ends.",
+          "experience": "Queue notifications until your chosen quiet session ends. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Local notification policy and a clearly visible quiet state.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "high",
+          "effort": "small",
+          "added_version": 1
+        }
+      ]
+    },
+    {
+      "name": "XivDispatch \u00b7 Grow the experience",
+      "tagline": "Later integrations and presentation choices.",
+      "ideas": [
+        {
+          "id": "xivdispatch-pinned-channels",
+          "title": "Only the channels you choose",
+          "pitch": "A small useful sidebar instead of every workspace channel.",
+          "experience": "A small useful sidebar instead of every workspace channel. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Explicit channel pinning and per-workspace selection.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "high",
+          "effort": "small",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-reactions",
+          "title": "Quick deliberate reactions",
+          "pitch": "Acknowledge a message without writing a full reply.",
+          "experience": "Acknowledge a message without writing a full reply. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Supported reactions API with user identity and explicit input.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "high",
+          "effort": "medium",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-links",
+          "title": "Open the original message",
+          "pitch": "Hand off complex work to the official client.",
+          "experience": "Hand off complex work to the official client. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Supported permalinks and an explicit open action.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "high",
+          "effort": "small",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-prism-panel",
+          "title": "Dispatch on your glasses",
+          "pitch": "Read a selected conversation on a companion display.",
+          "experience": "Read a selected conversation on a companion display. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "A compact panel contract that never contains connector secrets.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "medium",
+          "effort": "medium",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-controller",
+          "title": "A controller-friendly conversation",
+          "pitch": "Open, browse and dismiss the panel with clear focus ownership.",
+          "experience": "Open, browse and dismiss the panel with clear focus ownership. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Explicit interaction mode, keyboard access and large touch targets.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "medium",
+          "effort": "medium",
+          "added_version": 1
+        },
+        {
+          "id": "xivdispatch-account-lifecycle",
+          "title": "Clear account and permission controls",
+          "pitch": "See which workspace is connected and disconnect it cleanly.",
+          "experience": "See which workspace is connected and disconnect it cleanly. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "OAuth lifecycle, revocation, secure credential storage and honest identity display.",
+          "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
+          "audience": "Players using companion displays and the illustrated HUD family.",
+          "in_world": false,
+          "wow": 7,
+          "feasibility": "high",
+          "effort": "large",
+          "added_version": 1
+        }
+      ]
+    }
+  ]
+}
