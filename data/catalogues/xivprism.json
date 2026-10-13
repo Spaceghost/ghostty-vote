@@ -57,8 +57,8 @@
         {
           "id": "xivprism-android",
           "title": "Android and wearable viewers",
-          "pitch": "Use a phone, Beam or neckband with or without attached glasses.",
-          "experience": "Use a phone, Beam or neckband with or without attached glasses. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "pitch": "Use an Android device with or without attached glasses.",
+          "experience": "Use an Android device with or without attached glasses. This is a proposed feature; the published preview demonstrates design choices with invented data.",
           "how": "A native Android shell, with model-specific presentation adapters.",
           "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
           "audience": "Players using companion displays and the illustrated HUD family.",
@@ -105,9 +105,9 @@
         {
           "id": "xivprism-local-game",
           "title": "Native PC play",
-          "pitch": "Use the same viewer while FFXIV runs on Alienware or Win Max 2.",
-          "experience": "Use the same viewer while FFXIV runs on Alienware or Win Max 2. This is a proposed feature; the published preview demonstrates design choices with invented data.",
-          "how": "Select a local publisher rather than the Fedora remote publisher.",
+          "pitch": "Use the same viewer while FFXIV runs locally on a desktop or handheld PC.",
+          "experience": "Use the same viewer while FFXIV runs locally on a desktop or handheld PC. This is a proposed feature; the published preview demonstrates design choices with invented data.",
+          "how": "Select a local game publisher or a paired remote game publisher.",
           "risks": "Live provider, platform and hardware behavior must be tested before this feature is advertised as available.",
           "audience": "Players using companion displays and the illustrated HUD family.",
           "in_world": false,
