@@ -803,13 +803,13 @@ export default {
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.2-preview/browser-preview.zip",
+      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.3-preview/browser-preview.zip",
       "reviewedAt": "2026-10-13",
       "releaseChannels": [
         {
           "channel": "browser preview",
-          "tag": "v0.0.2-preview",
-          "url": "https://github.com/Spaceghost/xivprism-dalamud/releases/tag/v0.0.2-preview"
+          "tag": "v0.0.3-preview",
+          "url": "https://github.com/Spaceghost/xivprism-dalamud/releases/tag/v0.0.3-preview"
         }
       ]
     },
@@ -886,13 +886,13 @@ export default {
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/download/v0.0.1-preview/browser-preview.zip",
+      "previewDownload": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/download/v0.0.2-preview/browser-preview.zip",
       "reviewedAt": "2026-10-13",
       "releaseChannels": [
         {
           "channel": "browser preview",
-          "tag": "v0.0.1-preview",
-          "url": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/tag/v0.0.1-preview"
+          "tag": "v0.0.2-preview",
+          "url": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/tag/v0.0.2-preview"
         }
       ]
     },
@@ -969,13 +969,13 @@ export default {
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivcamp-dalamud/releases/download/v0.0.1-preview/browser-preview.zip",
+      "previewDownload": "https://github.com/Spaceghost/xivcamp-dalamud/releases/download/v0.0.2-preview/browser-preview.zip",
       "reviewedAt": "2026-10-13",
       "releaseChannels": [
         {
           "channel": "browser preview",
-          "tag": "v0.0.1-preview",
-          "url": "https://github.com/Spaceghost/xivcamp-dalamud/releases/tag/v0.0.1-preview"
+          "tag": "v0.0.2-preview",
+          "url": "https://github.com/Spaceghost/xivcamp-dalamud/releases/tag/v0.0.2-preview"
         }
       ]
     }
