@@ -8,33 +8,21 @@
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Marcellus+SC&display=swap">
 <link rel="stylesheet" href="/mods/ffxiv/term/vote/vote.css">
 <link rel="stylesheet" href="/mods/ffxiv/almanac/almanac.css">
 <!-- Static: the data comes from leaderboard.json (computed from D1, cached 5 minutes).
      Not deferred, so the saved theme applies before first paint. -->
-<script src="/mods/ffxiv/almanac/almanac.js"></script>
+<script src="/mods/ffxiv/site/theme.js"></script><script src="/mods/ffxiv/almanac/almanac.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
-<body>
-<div class="wrap">
-  <header>
-    <div class="topline">
-      <span class="eyebrow">almanac for ffxiv · community model leaderboard</span>
-      <span class="row">
-        <a class="chip" href="/mods/ffxiv/">All mods</a>
-        <a class="chip" href="/mods/ffxiv/almanac/about/">About Almanac</a>
-        <a class="chip" href="/mods/ffxiv/term/vote/">Ghostty vote</a>
-        <a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a>
-        <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
-      </span>
-    </div>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script><link rel="canonical" href="https://spacegho.st/mods/ffxiv/almanac/"><link rel="stylesheet" href="/mods/ffxiv/site/site.css"></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<div class="wrap"><!-- BEGIN FAMILY SHELL --><header class="sitebar family-header" data-family-shell><div class="family-masthead"><a class="brand" href="/mods/ffxiv/" aria-label="FFXIV mods home"><b>spacegho.st</b> / ffxiv mods</a><div class="family-tools"><div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div><button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button></div></div><nav aria-label="Mods"><a class="chip" href="/mods/ffxiv/">All projects</a><a class="chip" href="/mods/ffxiv/term/">Ghostty</a><a class="chip" href="/mods/ffxiv/almanac/about/" aria-current="true">Almanac</a><a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a><a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a><a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a><a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a><a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a><a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a><a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a><a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a><a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a><a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a><a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a><a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a><a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a><a class="chip" href="/mods/ffxiv/plugins/">Install</a><a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a><a class="chip" href="/mods/ffxiv/almanac/" aria-current="page">Model leaderboard</a></nav></header><div class="family-context"><nav aria-label="Breadcrumb"><a href="/mods/ffxiv/">FFXIV mods</a><span aria-hidden="true">/</span><a href="/mods/ffxiv/almanac/about/">Almanac</a><span aria-hidden="true">/</span><span>Model leaderboard</span></nav><nav class="family-tabs" aria-label="Project"><a href="/mods/ffxiv/almanac/about/">About</a><a href="/mods/ffxiv/almanac/vote/">Vote</a><a href="https://github.com/Spaceghost/almanac-dalamud">Source</a><a href="https://github.com/Spaceghost/almanac-dalamud/releases">Releases</a></nav></div><!-- END FAMILY SHELL --><main id="main">
+  <section class="family-intro glass">
+
     <h1>Which local model for <span class="glyph">your</span> GPU?</h1>
     <p class="lede"><strong>Almanac</strong> is the open-source local AI companion for Final Fantasy XIV (<a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">github.com/Spaceghost/almanac-dalamud</a>), made by <strong>Johnneylee Jack Rollins</strong>. It runs a model on your own machine. These results come from players who ran its benchmark suite and chose to share them, so you can pick the model that gives the best answers for the memory and speed you have.</p>
     <div class="prompt" id="summary" aria-live="polite">$ <b>almanac</b> leaderboard &nbsp; loading…</div>
-  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
+  </section>
 
   <div class="bar" role="toolbar" aria-label="What to show">
     <label for="f-suite">suite <select id="f-suite"></select></label>
@@ -69,10 +57,9 @@
     <p class="small" id="method"></p>
   </section>
 
-  <footer>
+  <section class="page-notes">
     <p class="small"><strong>Privacy.</strong> Sharing is opt-in and needs a sign-in with GitHub or FFXIV (XIVAuth): Almanac (0.2.0 or newer, plugin and command line) shows a short code and you approve it on <a href="/mods/ffxiv/term/vote/apps/">the connected apps page</a>. With each result the server keeps which sign-in you used, a key derived from that account's id and which linked app sent it; none of that is shown on the leaderboard, and no login name, e-mail or provider token is kept. A result holds the suite, the model, the backend, the GPU's marketing name, its VRAM, the operating system family and the scores; the server refuses anything else, and refuses text that looks like a file path, an address or an e-mail. Your IP address is not stored: a keyed digest of it counts submissions for the rate limit, and each account counts once per model. The site owner can hide results that look wrong. To have a result removed, contact the owner through <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
     <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>.</p>
-  </footer>
-</div>
-</body>
+  </section>
+</main><!-- BEGIN FAMILY FOOTER --><footer class="foot family-footer"><p>Open-source FFXIV projects by <a href="https://github.com/Spaceghost">Johnneylee Jack Rollins</a>.</p><nav aria-label="Footer"><a href="/mods/ffxiv/">All projects</a><a href="/mods/ffxiv/plugins/">Install</a><a href="/mods/ffxiv/roadmap/">Feature queue</a><a href="/mods/ffxiv/term/vote/privacy/">Site privacy</a></nav><p class="small">Unofficial fan projects; not endorsed by Square Enix.</p></footer><!-- END FAMILY FOOTER --></div></body>
 </html>

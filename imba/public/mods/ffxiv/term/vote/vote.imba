@@ -902,16 +902,17 @@ def cursor$1()
 		render()
 		return
 	def wireControls()
-		query$('#theme').addEventListener(
-			'click',
-			(do()
-				const cur = (document.documentElement.dataset.theme || '')
-				const next = ((cur === '') ? 'dark' : ((cur === 'dark') ? 'light' : ''))
-				setItem('localStorage', KEY.theme, next)
-				applyTheme(next)
-				return
+		if !query$('#theme').familyThemeOwned
+			query$('#theme').addEventListener(
+				'click',
+				(do()
+					const cur = (document.documentElement.dataset.theme || '')
+					const next = ((cur === '') ? 'dark' : ((cur === 'dark') ? 'light' : ''))
+					setItem('localStorage', KEY.theme, next)
+					applyTheme(next)
+					return
+				)
 			)
-		)
 		applyTheme((document.documentElement.dataset.theme || ''))
 		for b of document.querySelectorAll('.chip[data-filter]')
 			b.addEventListener(

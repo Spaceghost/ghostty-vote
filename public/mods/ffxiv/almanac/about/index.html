@@ -16,38 +16,14 @@
 <meta property="og:image" content="https://spacegho.st/mods/ffxiv/site/art/almanac-banner-2.webp">
 <link rel="icon" type="image/webp" href="/mods/ffxiv/site/art/almanac-icon-2.webp">
 <link rel="apple-touch-icon" href="/mods/ffxiv/plugins/icons/almanac.png">
-<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
 <!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
      also fills the media slots from media/manifest.json and the community screenshots. -->
-<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/site/theme.js"></script><script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script><link rel="stylesheet" href="/mods/ffxiv/site/site.css"></head>
 <body data-mod="almanac" data-name="Almanac" data-media="/mods/ffxiv/almanac/media/manifest.json">
 <a class="skip" href="#main">Skip to content</a>
-<div class="wrap">
-  <header class="sitebar">
-    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
-    <nav aria-label="Mods">
-      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
-      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
-      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
-      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
-      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
-      <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
-      <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
-      <a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a>
-      <a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a>
-      <a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a>
-      <a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a>
-      <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
-      <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
-      <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
-      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
-      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
-      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
-    </nav>
-  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
-  <main id="main">
+<div class="wrap"><!-- BEGIN FAMILY SHELL --><header class="sitebar family-header" data-family-shell><div class="family-masthead"><a class="brand" href="/mods/ffxiv/" aria-label="FFXIV mods home"><b>spacegho.st</b> / ffxiv mods</a><div class="family-tools"><div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div><button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button></div></div><nav aria-label="Mods"><a class="chip" href="/mods/ffxiv/">All projects</a><a class="chip" href="/mods/ffxiv/term/">Ghostty</a><a class="chip" href="/mods/ffxiv/almanac/about/" aria-current="page">Almanac</a><a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a><a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a><a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a><a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a><a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a><a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a><a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a><a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a><a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a><a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a><a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a><a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a><a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a><a class="chip" href="/mods/ffxiv/plugins/">Install</a><a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a><a class="chip" href="/mods/ffxiv/almanac/">Model leaderboard</a></nav></header><div class="family-context"><nav aria-label="Breadcrumb"><a href="/mods/ffxiv/">FFXIV mods</a><span aria-hidden="true">/</span><a href="/mods/ffxiv/almanac/about/">Almanac</a><span aria-hidden="true">/</span><span>About</span></nav><nav class="family-tabs" aria-label="Project"><a href="/mods/ffxiv/almanac/about/" aria-current="page">About</a><a href="/mods/ffxiv/almanac/vote/">Vote</a><a href="https://github.com/Spaceghost/almanac-dalamud">Source</a><a href="https://github.com/Spaceghost/almanac-dalamud/releases">Releases</a></nav></div><!-- END FAMILY SHELL --><main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
         <div class="hero-id">
@@ -235,13 +211,11 @@ dotnet build dalamud/Almanac.Dalamud.slnx -c Release</code></pre>
       </ul>
     </section>
   <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/almanac-dalamud/releases/tag/v0.2.2-test.1">testing: v0.2.2-test.1</a> · package 0.2.2.1</li><li><a href="https://github.com/Spaceghost/almanac-dalamud/releases/tag/v0.2.1">stable: v0.2.1</a> · package 0.2.1.5</li></ul><p>Core model, MCP, thread and benchmark logic has host-side tests. In-game UI, GPU detection, live model/tool calls and benchmark output still require acceptance.</p><p><a href="/mods/ffxiv/roadmap/?project=almanac">Voted feature queue</a> · <a href="/mods/ffxiv/almanac/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/almanac-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
-</main>
-
-  <footer>
+</main><!-- BEGIN FAMILY FOOTER --><footer class="foot family-footer"><p>Open-source FFXIV projects by <a href="https://github.com/Spaceghost">Johnneylee Jack Rollins</a>.</p><nav aria-label="Footer"><a href="/mods/ffxiv/">All projects</a><a href="/mods/ffxiv/plugins/">Install</a><a href="/mods/ffxiv/roadmap/">Feature queue</a><a href="/mods/ffxiv/term/vote/privacy/">Site privacy</a></nav><p class="small">Unofficial fan projects; not endorsed by Square Enix.</p></footer><!-- END FAMILY FOOTER --><section class="page-notes">
     <p class="small"><strong>Privacy.</strong> Your chats go to the model server you chose, on your own machine, and stay in a SQLite file on your PC. The only thing Almanac fetches from this site is the public model recommendations. A benchmark result is sent only when you press Share and confirm it: GPU model, VRAM, rounded RAM, OS family, backend, model and scores, with no names, paths or addresses.</p>
     <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
     <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
-  </footer>
+  </section>
 </div>
 </body>
 </html>

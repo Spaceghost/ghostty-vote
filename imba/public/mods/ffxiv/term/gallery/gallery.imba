@@ -260,16 +260,17 @@ def cursor$1()
 		if MOD
 			(document.title = (MODS[MOD] + ' screenshots · FFXIV Mods Gallery'))
 			(query$('#u-send').textContent = (('Share a ' + MODS[MOD]) + ' screenshot'))
-		query$('#theme').addEventListener(
-			'click',
-			(do()
-				const cur = (document.documentElement.dataset.theme || '')
-				const next = ((cur === '') ? 'dark' : ((cur === 'dark') ? 'light' : ''))
-				set(THEME_KEY, next)
-				applyTheme(next)
-				return
+		if !query$('#theme').familyThemeOwned
+			query$('#theme').addEventListener(
+				'click',
+				(do()
+					const cur = (document.documentElement.dataset.theme || '')
+					const next = ((cur === '') ? 'dark' : ((cur === 'dark') ? 'light' : ''))
+					set(THEME_KEY, next)
+					applyTheme(next)
+					return
+				)
 			)
-		)
 		applyTheme((document.documentElement.dataset.theme || ''))
 		query$('#upload').addEventListener('submit', upload)
 		whoAmI()
