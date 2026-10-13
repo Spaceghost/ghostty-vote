@@ -613,7 +613,7 @@ export default {
       "sections": [
         {
           "title": "A second HUD, on your side of the connection",
-          "body": "<p>Keep FFXIV on its game screen and place selected information in your glasses or another display. Fedora supplies game state; display detection belongs to your remote client. Alienware and Win Max 2 can also supply local game state when playing natively.</p>"
+          "body": "<p>Keep FFXIV on its game screen and place selected information in your glasses or another display. The computer running FFXIV supplies game state; the receiving device handles display detection. When playing natively, the same computer can supply game state to its local companion viewer.</p>"
         },
         {
           "title": "An app when you just want Prism",
@@ -621,7 +621,7 @@ export default {
         },
         {
           "title": "Native Moonlight, with Prism around the game",
-          "body": "<p>Combined mode is planned for native Moonlight applications. Ordinary overlays will be evaluated where supported; restricted platforms may need a Prism-enabled native Moonlight build. Beam and neckband presentation must be checked on the exact model before support is claimed.</p>"
+          "body": "<p>Combined mode is planned for native Moonlight applications. Ordinary overlays will be evaluated where supported; restricted platforms may need a Prism-enabled native Moonlight build. Presentation support must be verified for each receiving device, operating system and connected display.</p>"
         },
         {
           "title": "Peripheral first, pinned afterward",
@@ -651,7 +651,7 @@ export default {
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.1-preview/browser-preview.zip"
+      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.2-preview/browser-preview.zip"
     },
     {
       "author": "Johnneylee Jack Rollins",
