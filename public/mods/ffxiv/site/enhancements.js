@@ -5305,6 +5305,7 @@ border-color: currentColor;
     }
     open() {
       this.query = "";
+      this.commit();
       this.querySelector("dialog").showModal();
       return this.querySelector("input").focus();
     }
@@ -5484,7 +5485,16 @@ border-color: currentColor;
       this.query = params.get("q") || "";
       this.project = params.get("project") || "";
       this.status = params.get("status") || "";
-      return this.apply();
+      if (!Object.hasOwn(this.model.counts, this.project)) {
+        this.project = "";
+      }
+      ;
+      if (!["queued", "verification_pending"].includes(this.status)) {
+        this.status = "";
+      }
+      ;
+      this.apply();
+      return this.commit();
     }
     unmount() {
       var $8;

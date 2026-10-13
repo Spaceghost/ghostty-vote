@@ -1,6 +1,6 @@
 # Check, test, build and dry-run-bundle on every push and pull request; see
-# docs/CI.md. Both jobs run the same thing -- `tools/ci/run.sh all` -- so the
-# workflow holds no build knowledge of its own.
+# docs/CI.md. Hosted and self-hosted jobs use `tools/ci/run.sh all`; the
+# browser job additionally checks keyboard interaction and responsive layouts.
 #
 # The hosted job's runner comes from the repository variable CI_RUNS_ON (a JSON
 # string or label array), default GitHub's ubuntu-latest. Nothing here installs
@@ -28,6 +28,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  browser:
+    name: Browser interactions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - run: tools/ci/run.sh deps check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+
   hosted:
     runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     timeout-minutes: 15

@@ -15,6 +15,7 @@ tag project-finder
 
 	def open
 		query = ''
+		commit()
 		self.querySelector('dialog').showModal()
 		self.querySelector('input').focus()
 
@@ -105,7 +106,14 @@ tag queue-controls
 		query = params.get('q') || ''
 		project = params.get('project') || ''
 		status = params.get('status') || ''
+		# Old or mistyped links must not hide the queue behind an empty select.
+		if !Object.hasOwn(model.counts, project)
+			project = ''
+		if !['queued', 'verification_pending'].includes(status)
+			status = ''
 		apply()
+		# Mount runs after the first render and outside an Imba event handler.
+		commit()
 
 	def unmount
 		for entry in model.entries
