@@ -78,7 +78,7 @@ def cursor$1()
 		return
 	def wireTheme()
 		var b = query$('#theme')
-		if (! b)
+		if ((! b) || b.familyThemeOwned)
 			return
 		b.addEventListener(
 			'click',

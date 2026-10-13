@@ -110,7 +110,7 @@
     ;
     function wireTheme() {
       var b = query$("#theme");
-      if (!b) {
+      if (!b || b.familyThemeOwned) {
         return;
       }
       ;

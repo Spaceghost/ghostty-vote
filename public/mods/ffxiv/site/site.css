@@ -25,6 +25,7 @@
   --display: "Palatino Linotype", Palatino, "Book Antiqua", "URW Palladio L", "Iowan Old Style", Georgia, serif;
   --body: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  --want: #7bc89a; --maybe: #e0a860; --skip: #c77b86;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
@@ -34,6 +35,7 @@
     --text: #1c212b; --muted: #535c6b; --gold: #7d5a1a; --gold-2: #5e430f; --aether: #0b6f6a; --warn: #8a500a;
     --on-accent: #ffffff; --well: #fffbf2; --glow-a: rgba(12, 122, 116, 0.10); --glow-g: rgba(134, 97, 31, 0.10);
     --shadow: 0 14px 36px rgba(60, 45, 15, 0.16);
+    --want: #2c7f50; --maybe: #8a500a; --skip: #a13d4d;
   }
 }
 :root[data-theme="light"] {
@@ -43,6 +45,13 @@
   --text: #1c212b; --muted: #535c6b; --gold: #7d5a1a; --gold-2: #5e430f; --aether: #0b6f6a; --warn: #8a500a;
   --on-accent: #ffffff; --well: #fffbf2; --glow-a: rgba(12, 122, 116, 0.10); --glow-g: rgba(134, 97, 31, 0.10);
   --shadow: 0 14px 36px rgba(60, 45, 15, 0.16);
+  --want: #2c7f50; --maybe: #8a500a; --skip: #a13d4d;
+}
+
+/* Functional ballot/gallery sheets use these aliases, never another palette. */
+:root, :root[data-theme], :root:not([data-theme="dark"]) {
+  --slate: var(--solid); --slate-2: var(--glass-2);
+  --gold-dim: var(--line); --glow: var(--glow-a); --bg: var(--solid);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -248,3 +257,52 @@ footer p { margin: 0; }
 .project-section p { max-width: 75ch; }
 
 .hero-figure{margin:0}.hero-figure figcaption{padding:10px;font-size:.85rem;line-height:1.5}.preview-media{width:100%;height:auto;border-radius:16px}.preview-gallery{display:grid;gap:20px}.preview-gallery figure{margin:0}.preview-gallery figcaption{padding-top:8px;font-size:.9rem}
+
+/* One family shell around the hub, project pages and their working tools. */
+.family-header { display: grid; gap: 18px; padding-block: max(20px, env(safe-area-inset-top)) 18px; width: 100%; min-width: 0; border-bottom: 1px solid var(--line); }
+.family-masthead { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; min-width: 0; }
+.family-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.family-tools [data-project-finder] { margin: 0; }
+.family-header nav { flex-wrap: nowrap; overflow-x: auto; min-width: 0; padding: 3px 3px 10px; width: 100%; scrollbar-width: thin; }
+.family-header nav .chip { flex: 0 0 auto; }
+.chip[aria-current="true"] { color: var(--gold-2); border-color: var(--gold); background: var(--glass-2); }
+.family-context { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 18px; color: var(--muted); font-size: 14px; }
+.family-context nav { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.family-context nav[aria-label="Breadcrumb"] a { color: var(--muted); text-decoration: none; }
+.family-context nav[aria-label="Breadcrumb"] a:hover { color: var(--aether); }
+.family-tabs a { padding: 7px 12px; border-radius: 8px; text-decoration: none; border: 1px solid transparent; color: var(--muted); }
+.family-tabs a:hover { border-color: var(--line); color: var(--text); }
+.family-tabs a[aria-current="page"] { border-color: var(--gold); color: var(--gold-2); background: var(--glass-2); }
+.family-intro { display: grid; gap: 16px; padding: clamp(20px, 4vw, 40px); margin-top: 8px; }
+.family-intro .lede { max-width: 70ch; font-size: 18px; }
+.family-intro .prompt { margin: 0; }
+.family-intro h1, .preview-shell h1 { font-size: clamp(38px, 7vw, 64px); line-height: 1.02; color: var(--gold-2); }
+.family-intro h1 .glyph { color: var(--aether); }
+.preview-shell { max-width: none; margin: 8px 0 0; padding: 0; }
+.preview-controls select { background: var(--well); color: var(--text); border-color: var(--line-2); font: inherit; }
+.preview-controls button[aria-pressed="true"] { background: var(--gold); color: var(--on-accent); border-color: var(--gold); }
+.family-footer { margin-top: 48px; }
+.family-footer nav { display: flex; flex-wrap: wrap; gap: 10px 20px; font-size: 14px; }
+.page-notes { border-top: 1px solid var(--line); margin-top: 40px; padding-top: 20px; }
+.page-notes p { max-width: 80ch; }
+article.idea, .mod, figure.shot, .account, .banner, .scroll, .scatter { border-radius: 14px; border-color: var(--line); }
+article.idea { background: var(--glass); }
+.idea h3 { font: 400 21px/1.25 var(--display); color: var(--gold-2); }
+.mod { background: var(--glass); padding: 20px; border: 1px solid var(--line); margin-top: 16px; }
+.mod h3 { font: 400 25px/1.2 var(--display); color: var(--gold-2); }
+.mod .punch { font-family: var(--mono); color: var(--aether); }
+select, input[type="search"], textarea { font: inherit; color: var(--text); background: var(--well); border: 1px solid var(--line-2); border-radius: 8px; }
+@media (max-width: 720px) {
+  .family-header { gap: 12px; }
+  .family-context { display: grid; gap: 10px; }
+  .family-tabs { gap: 4px; }
+  .family-tools .chip { min-height: 40px; }
+  .family-intro h1, .preview-shell h1 { font-size: clamp(32px, 9vw, 46px); }
+}
+.family-votes { flex-basis: 100%; width: 100%; }
+.family-votes summary { cursor: pointer; color: var(--aether); padding: 8px 0; }
+.family-votes nav { padding: 8px 0; }
+@media (max-width: 720px) {
+  .family-context .family-tabs { gap: 4px; }
+  .family-tabs a { padding-inline: 9px; }
+}

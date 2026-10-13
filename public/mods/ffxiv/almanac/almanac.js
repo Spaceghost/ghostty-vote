@@ -597,16 +597,19 @@
     }
     ;
     function start() {
-      query$("#theme").addEventListener(
-        "click",
-        function() {
-          const cur = globalThis.document.documentElement.dataset.theme || "";
-          const next = cur === "" ? "dark" : cur === "dark" ? "light" : "";
-          set(THEME_KEY, next);
-          applyTheme(next);
-          return;
-        }
-      );
+      if (!query$("#theme").familyThemeOwned) {
+        query$("#theme").addEventListener(
+          "click",
+          function() {
+            const cur = globalThis.document.documentElement.dataset.theme || "";
+            const next = cur === "" ? "dark" : cur === "dark" ? "light" : "";
+            set(THEME_KEY, next);
+            applyTheme(next);
+            return;
+          }
+        );
+      }
+      ;
       applyTheme(globalThis.document.documentElement.dataset.theme || "");
       query$("#f-suite").addEventListener(
         "change",

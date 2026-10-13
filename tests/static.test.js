@@ -16,6 +16,7 @@ import {buildSeedSqlAll,validateCatalogues} from '../scripts/seed-lib.js';
 import {BASE,PUBLIC_URL,STATIC_DIR,buildIdeas,buildOutputs,buildVersion} from '../scripts/static-lib.js';
 
 import {buildVotePages} from '../scripts/vote-page-lib.js';
+import {familyPage} from '../scripts/project-pages.js';
 
 import {VOTE_MODS} from '../src/lib.js';
 
@@ -88,7 +89,7 @@ test(
 	function() {
 		const outputs = {...buildOutputs(catalogues(),buildSeedSqlAll),...buildVotePages(JSON.parse(read('data/vote-pages.json')))};
 		for (let [path,body] of iterable$(Object.entries(outputs))){
-			assert.equal(read(path),body,('' + String(path) + ' is stale; run node scripts/build.js'));
+			assert.equal(read(path),path.endsWith('.html') ? familyPage(body,JSON.parse(read('data/mods.json')),path) : body,('' + String(path) + ' is stale; run node scripts/build.js'));
 		};
 		return;
 	}
@@ -241,7 +242,7 @@ test(
 					return (!isMediaFile(f));
 				}
 			).sort(),
-			["mods/ffxiv/roadmap/index.html","mods/ffxiv/roadmap/queue.json","mods/ffxiv/site/enhancements.imba.css","mods/ffxiv/site/enhancements.js","mods/ffxiv/site/enhancements.css","_headers","mods/ffxiv/almanac/about/index.html","mods/ffxiv/almanac/almanac.css","mods/ffxiv/almanac/almanac.js","mods/ffxiv/almanac/index.html","mods/ffxiv/almanac/media/manifest.json","mods/ffxiv/almanac/schema/recommendations.v1.json","mods/ffxiv/almanac/schema/results.v1.json","mods/ffxiv/almanac/vote/ideas.json","mods/ffxiv/almanac/vote/index.html","mods/ffxiv/almanac/vote/version.json","mods/ffxiv/index.html","mods/ffxiv/plugins.json","mods/ffxiv/plugins/icons/almanac-banner.png","mods/ffxiv/plugins/icons/almanac.png","mods/ffxiv/plugins/icons/ghostty-banner.png","mods/ffxiv/plugins/icons/ghostty.png","mods/ffxiv/plugins/icons/xivarcade-banner.png","mods/ffxiv/plugins/icons/xivarcade.png","mods/ffxiv/plugins/icons/xivcamp.png","mods/ffxiv/plugins/icons/xivdesktop-banner.png","mods/ffxiv/plugins/icons/xivdesktop.png","mods/ffxiv/plugins/icons/xivdispatch.png","mods/ffxiv/plugins/icons/xivhud-character.png","mods/ffxiv/plugins/icons/xivhud-journal.png","mods/ffxiv/plugins/icons/xivhud.png","mods/ffxiv/plugins/icons/xivlantern-banner.png","mods/ffxiv/plugins/icons/xivlantern.png","mods/ffxiv/plugins/icons/xivmcp-banner.png","mods/ffxiv/plugins/icons/xivmcp.png","mods/ffxiv/plugins/icons/xivpiano-banner.png","mods/ffxiv/plugins/icons/xivpiano.png","mods/ffxiv/plugins/icons/xivprism.png","mods/ffxiv/plugins/icons/xivrug.png","mods/ffxiv/plugins/icons/xivwayfinder-banner.png","mods/ffxiv/plugins/icons/xivwayfinder.png","mods/ffxiv/plugins/index.html","mods/ffxiv/plugins/plugins.css","mods/ffxiv/plugins/plugins.js","mods/ffxiv/projects.json","mods/ffxiv/site/art/almanac-banner-2.webp","mods/ffxiv/site/art/almanac-icon-2.webp","mods/ffxiv/site/art/ghostty-banner.webp","mods/ffxiv/site/art/ghostty-icon.webp","mods/ffxiv/site/art/xivarcade-banner-2.webp","mods/ffxiv/site/art/xivarcade-icon-2.webp","mods/ffxiv/site/art/xivcamp-hero.webp","mods/ffxiv/site/art/xivcamp-icon.svg","mods/ffxiv/site/art/xivcamp-preview.png","mods/ffxiv/site/art/xivdesktop-banner-2.webp","mods/ffxiv/site/art/xivdesktop-icon-2.webp","mods/ffxiv/site/art/xivdispatch-hero.webp","mods/ffxiv/site/art/xivdispatch-icon.svg","mods/ffxiv/site/art/xivdispatch-preview.png","mods/ffxiv/site/art/xivhud-banner.svg","mods/ffxiv/site/art/xivhud-character-banner.svg","mods/ffxiv/site/art/xivhud-character-icon.svg","mods/ffxiv/site/art/xivhud-icon.svg","mods/ffxiv/site/art/xivhud-journal-banner.svg","mods/ffxiv/site/art/xivhud-journal-icon.svg","mods/ffxiv/site/art/xivlantern-banner-2.webp","mods/ffxiv/site/art/xivlantern-icon-2.webp","mods/ffxiv/site/art/xivmcp-banner.webp","mods/ffxiv/site/art/xivmcp-icon.webp","mods/ffxiv/site/art/xivpiano-banner-2.webp","mods/ffxiv/site/art/xivpiano-icon-2.webp","mods/ffxiv/site/art/xivprism-hero.webp","mods/ffxiv/site/art/xivprism-icon.svg","mods/ffxiv/site/art/xivprism-preview.png","mods/ffxiv/site/art/xivrug-banner.svg","mods/ffxiv/site/art/xivrug-icon.svg","mods/ffxiv/site/art/xivstream-banner.svg","mods/ffxiv/site/art/xivstream-icon.svg","mods/ffxiv/site/art/xivwayfinder-banner-2.webp","mods/ffxiv/site/art/xivwayfinder-icon-2.webp","mods/ffxiv/site/project-preview.css","mods/ffxiv/site/project-preview.js","mods/ffxiv/site/site.css","mods/ffxiv/site/site.js","mods/ffxiv/term/gallery/gallery.css","mods/ffxiv/term/gallery/gallery.js","mods/ffxiv/term/gallery/index.html","mods/ffxiv/term/index.html","mods/ffxiv/term/media/manifest.json","mods/ffxiv/term/vote/admin/accounts.js","mods/ffxiv/term/vote/admin/admin.js","mods/ffxiv/term/vote/admin/analytics.css","mods/ffxiv/term/vote/admin/analytics.js","mods/ffxiv/term/vote/admin/index.html","mods/ffxiv/term/vote/apps/apps.js","mods/ffxiv/term/vote/apps/index.html","mods/ffxiv/term/vote/ballot.js","mods/ffxiv/term/vote/beacon.js","mods/ffxiv/term/vote/ideas.json","mods/ffxiv/term/vote/index.html","mods/ffxiv/term/vote/privacy/index.html","mods/ffxiv/term/vote/version.json","mods/ffxiv/term/vote/vote.css","mods/ffxiv/term/vote/vote.js","mods/ffxiv/xivarcade/index.html","mods/ffxiv/xivarcade/media/manifest.json","mods/ffxiv/xivarcade/vote/ideas.json","mods/ffxiv/xivarcade/vote/index.html","mods/ffxiv/xivarcade/vote/version.json","mods/ffxiv/xivcamp/index.html","mods/ffxiv/xivcamp/preview/index.html","mods/ffxiv/xivcamp/vote/ideas.json","mods/ffxiv/xivcamp/vote/index.html","mods/ffxiv/xivcamp/vote/version.json","mods/ffxiv/xivdesktop/index.html","mods/ffxiv/xivdesktop/media/manifest.json","mods/ffxiv/xivdesktop/vote/ideas.json","mods/ffxiv/xivdesktop/vote/index.html","mods/ffxiv/xivdesktop/vote/version.json","mods/ffxiv/xivdispatch/index.html","mods/ffxiv/xivdispatch/preview/index.html","mods/ffxiv/xivdispatch/vote/ideas.json","mods/ffxiv/xivdispatch/vote/index.html","mods/ffxiv/xivdispatch/vote/version.json","mods/ffxiv/xivhud/character/index.html","mods/ffxiv/xivhud/developers/index.html","mods/ffxiv/xivhud/index.html","mods/ffxiv/xivhud/journal/index.html","mods/ffxiv/xivlantern/index.html","mods/ffxiv/xivlantern/media/manifest.json","mods/ffxiv/xivlantern/vote/ideas.json","mods/ffxiv/xivlantern/vote/index.html","mods/ffxiv/xivlantern/vote/version.json","mods/ffxiv/xivmcp/index.html","mods/ffxiv/xivmcp/media/manifest.json","mods/ffxiv/xivmcp/vote/ideas.json","mods/ffxiv/xivmcp/vote/index.html","mods/ffxiv/xivmcp/vote/version.json","mods/ffxiv/xivpiano/index.html","mods/ffxiv/xivpiano/media/manifest.json","mods/ffxiv/xivpiano/vote/ideas.json","mods/ffxiv/xivpiano/vote/index.html","mods/ffxiv/xivpiano/vote/version.json","mods/ffxiv/xivprism/index.html","mods/ffxiv/xivprism/preview/index.html","mods/ffxiv/xivprism/vote/ideas.json","mods/ffxiv/xivprism/vote/index.html","mods/ffxiv/xivprism/vote/version.json","mods/ffxiv/xivrug/index.html","mods/ffxiv/xivstream/index.html","mods/ffxiv/xivwayfinder/index.html","mods/ffxiv/xivwayfinder/media/manifest.json","mods/ffxiv/xivwayfinder/vote/ideas.json","mods/ffxiv/xivwayfinder/vote/index.html","mods/ffxiv/xivwayfinder/vote/version.json"].sort()
+			["mods/ffxiv/roadmap/index.html","mods/ffxiv/roadmap/queue.json","mods/ffxiv/site/enhancements.imba.css","mods/ffxiv/site/theme.js","mods/ffxiv/site/enhancements.js","mods/ffxiv/site/enhancements.css","_headers","mods/ffxiv/almanac/about/index.html","mods/ffxiv/almanac/almanac.css","mods/ffxiv/almanac/almanac.js","mods/ffxiv/almanac/index.html","mods/ffxiv/almanac/media/manifest.json","mods/ffxiv/almanac/schema/recommendations.v1.json","mods/ffxiv/almanac/schema/results.v1.json","mods/ffxiv/almanac/vote/ideas.json","mods/ffxiv/almanac/vote/index.html","mods/ffxiv/almanac/vote/version.json","mods/ffxiv/index.html","mods/ffxiv/plugins.json","mods/ffxiv/plugins/icons/almanac-banner.png","mods/ffxiv/plugins/icons/almanac.png","mods/ffxiv/plugins/icons/ghostty-banner.png","mods/ffxiv/plugins/icons/ghostty.png","mods/ffxiv/plugins/icons/xivarcade-banner.png","mods/ffxiv/plugins/icons/xivarcade.png","mods/ffxiv/plugins/icons/xivcamp.png","mods/ffxiv/plugins/icons/xivdesktop-banner.png","mods/ffxiv/plugins/icons/xivdesktop.png","mods/ffxiv/plugins/icons/xivdispatch.png","mods/ffxiv/plugins/icons/xivhud-character.png","mods/ffxiv/plugins/icons/xivhud-journal.png","mods/ffxiv/plugins/icons/xivhud.png","mods/ffxiv/plugins/icons/xivlantern-banner.png","mods/ffxiv/plugins/icons/xivlantern.png","mods/ffxiv/plugins/icons/xivmcp-banner.png","mods/ffxiv/plugins/icons/xivmcp.png","mods/ffxiv/plugins/icons/xivpiano-banner.png","mods/ffxiv/plugins/icons/xivpiano.png","mods/ffxiv/plugins/icons/xivprism.png","mods/ffxiv/plugins/icons/xivrug.png","mods/ffxiv/plugins/icons/xivwayfinder-banner.png","mods/ffxiv/plugins/icons/xivwayfinder.png","mods/ffxiv/plugins/index.html","mods/ffxiv/plugins/plugins.css","mods/ffxiv/plugins/plugins.js","mods/ffxiv/projects.json","mods/ffxiv/site/art/almanac-banner-2.webp","mods/ffxiv/site/art/almanac-icon-2.webp","mods/ffxiv/site/art/ghostty-banner.webp","mods/ffxiv/site/art/ghostty-icon.webp","mods/ffxiv/site/art/xivarcade-banner-2.webp","mods/ffxiv/site/art/xivarcade-icon-2.webp","mods/ffxiv/site/art/xivcamp-hero.webp","mods/ffxiv/site/art/xivcamp-icon.svg","mods/ffxiv/site/art/xivcamp-preview.png","mods/ffxiv/site/art/xivdesktop-banner-2.webp","mods/ffxiv/site/art/xivdesktop-icon-2.webp","mods/ffxiv/site/art/xivdispatch-hero.webp","mods/ffxiv/site/art/xivdispatch-icon.svg","mods/ffxiv/site/art/xivdispatch-preview.png","mods/ffxiv/site/art/xivhud-banner.svg","mods/ffxiv/site/art/xivhud-character-banner.svg","mods/ffxiv/site/art/xivhud-character-icon.svg","mods/ffxiv/site/art/xivhud-icon.svg","mods/ffxiv/site/art/xivhud-journal-banner.svg","mods/ffxiv/site/art/xivhud-journal-icon.svg","mods/ffxiv/site/art/xivlantern-banner-2.webp","mods/ffxiv/site/art/xivlantern-icon-2.webp","mods/ffxiv/site/art/xivmcp-banner.webp","mods/ffxiv/site/art/xivmcp-icon.webp","mods/ffxiv/site/art/xivpiano-banner-2.webp","mods/ffxiv/site/art/xivpiano-icon-2.webp","mods/ffxiv/site/art/xivprism-hero.webp","mods/ffxiv/site/art/xivprism-icon.svg","mods/ffxiv/site/art/xivprism-preview.png","mods/ffxiv/site/art/xivrug-banner.svg","mods/ffxiv/site/art/xivrug-icon.svg","mods/ffxiv/site/art/xivstream-banner.svg","mods/ffxiv/site/art/xivstream-icon.svg","mods/ffxiv/site/art/xivwayfinder-banner-2.webp","mods/ffxiv/site/art/xivwayfinder-icon-2.webp","mods/ffxiv/site/project-preview.css","mods/ffxiv/site/project-preview.js","mods/ffxiv/site/site.css","mods/ffxiv/site/site.js","mods/ffxiv/term/gallery/gallery.css","mods/ffxiv/term/gallery/gallery.js","mods/ffxiv/term/gallery/index.html","mods/ffxiv/term/index.html","mods/ffxiv/term/media/manifest.json","mods/ffxiv/term/vote/admin/accounts.js","mods/ffxiv/term/vote/admin/admin.js","mods/ffxiv/term/vote/admin/analytics.css","mods/ffxiv/term/vote/admin/analytics.js","mods/ffxiv/term/vote/admin/index.html","mods/ffxiv/term/vote/apps/apps.js","mods/ffxiv/term/vote/apps/index.html","mods/ffxiv/term/vote/ballot.js","mods/ffxiv/term/vote/beacon.js","mods/ffxiv/term/vote/ideas.json","mods/ffxiv/term/vote/index.html","mods/ffxiv/term/vote/privacy/index.html","mods/ffxiv/term/vote/version.json","mods/ffxiv/term/vote/vote.css","mods/ffxiv/term/vote/vote.js","mods/ffxiv/xivarcade/index.html","mods/ffxiv/xivarcade/media/manifest.json","mods/ffxiv/xivarcade/vote/ideas.json","mods/ffxiv/xivarcade/vote/index.html","mods/ffxiv/xivarcade/vote/version.json","mods/ffxiv/xivcamp/index.html","mods/ffxiv/xivcamp/preview/index.html","mods/ffxiv/xivcamp/vote/ideas.json","mods/ffxiv/xivcamp/vote/index.html","mods/ffxiv/xivcamp/vote/version.json","mods/ffxiv/xivdesktop/index.html","mods/ffxiv/xivdesktop/media/manifest.json","mods/ffxiv/xivdesktop/vote/ideas.json","mods/ffxiv/xivdesktop/vote/index.html","mods/ffxiv/xivdesktop/vote/version.json","mods/ffxiv/xivdispatch/index.html","mods/ffxiv/xivdispatch/preview/index.html","mods/ffxiv/xivdispatch/vote/ideas.json","mods/ffxiv/xivdispatch/vote/index.html","mods/ffxiv/xivdispatch/vote/version.json","mods/ffxiv/xivhud/character/index.html","mods/ffxiv/xivhud/developers/index.html","mods/ffxiv/xivhud/index.html","mods/ffxiv/xivhud/journal/index.html","mods/ffxiv/xivlantern/index.html","mods/ffxiv/xivlantern/media/manifest.json","mods/ffxiv/xivlantern/vote/ideas.json","mods/ffxiv/xivlantern/vote/index.html","mods/ffxiv/xivlantern/vote/version.json","mods/ffxiv/xivmcp/index.html","mods/ffxiv/xivmcp/media/manifest.json","mods/ffxiv/xivmcp/vote/ideas.json","mods/ffxiv/xivmcp/vote/index.html","mods/ffxiv/xivmcp/vote/version.json","mods/ffxiv/xivpiano/index.html","mods/ffxiv/xivpiano/media/manifest.json","mods/ffxiv/xivpiano/vote/ideas.json","mods/ffxiv/xivpiano/vote/index.html","mods/ffxiv/xivpiano/vote/version.json","mods/ffxiv/xivprism/index.html","mods/ffxiv/xivprism/preview/index.html","mods/ffxiv/xivprism/vote/ideas.json","mods/ffxiv/xivprism/vote/index.html","mods/ffxiv/xivprism/vote/version.json","mods/ffxiv/xivrug/index.html","mods/ffxiv/xivstream/index.html","mods/ffxiv/xivwayfinder/index.html","mods/ffxiv/xivwayfinder/media/manifest.json","mods/ffxiv/xivwayfinder/vote/ideas.json","mods/ffxiv/xivwayfinder/vote/index.html","mods/ffxiv/xivwayfinder/vote/version.json"].sort()
 		);
 		return;
 	}
@@ -259,7 +260,7 @@ test(
 				return m[1];
 			}
 		);
-		assert.deepEqual(scripts,['/mods/ffxiv/term/vote/ballot.js','/mods/ffxiv/term/vote/vote.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js'],'ballot.js loads before vote.js, with a deferred progressive enhancement');
+		assert.deepEqual(scripts,['/mods/ffxiv/site/theme.js','/mods/ffxiv/term/vote/ballot.js','/mods/ffxiv/term/vote/vote.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js'],'ballot.js loads before vote.js, with a deferred progressive enhancement');
 		assert.ok((!(new RegExp('<style','i').test(html))),'no style elements');
 		assert.ok((!(new RegExp('\\sstyle=','i').test(html))),'no style attributes');
 		assert.ok((!(new RegExp('\\son[a-z]+=','i').test(html))),'no inline event handlers');
@@ -320,7 +321,7 @@ test(
 					return m[1];
 				}
 			),
-			['/mods/ffxiv/term/vote/admin/admin.js','/mods/ffxiv/term/vote/admin/analytics.js','/mods/ffxiv/term/vote/admin/accounts.js']
+			['/mods/ffxiv/site/theme.js','/mods/ffxiv/term/vote/admin/admin.js','/mods/ffxiv/term/vote/admin/analytics.js','/mods/ffxiv/term/vote/admin/accounts.js']
 		);
 		assert.match(html,new RegExp('<meta name="robots" content="noindex, nofollow">',''));
 		const files = walk('public/');
@@ -409,7 +410,7 @@ test(
 					return m[1];
 				}
 			),
-			['/mods/ffxiv/term/gallery/gallery.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js']
+			['/mods/ffxiv/site/theme.js','/mods/ffxiv/term/gallery/gallery.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js']
 		);
 		const files = walk('public/');
 		for (let ref of iterable$(html.matchAll(new RegExp('(?:src|href)="(\\/mods\\/[^"]+)"','g')))){
@@ -453,7 +454,7 @@ test(
 					return m[1];
 				}
 			),
-			['/mods/ffxiv/term/vote/apps/apps.js']
+			['/mods/ffxiv/site/theme.js','/mods/ffxiv/term/vote/apps/apps.js']
 		);
 		assert.match(html,new RegExp('<meta name="robots" content="noindex, nofollow">',''));
 		const files = walk('public/');
@@ -493,7 +494,7 @@ test(
 					return m[1];
 				}
 			),
-			['/mods/ffxiv/almanac/almanac.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js']
+			['/mods/ffxiv/site/theme.js','/mods/ffxiv/almanac/almanac.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js']
 		);
 		const files = walk('public/');
 		for (let ref of iterable$(html.matchAll(new RegExp('(?:src|href)="(\\/mods\\/[^"]+)"','g')))){
@@ -562,7 +563,7 @@ test(
 						return m[1];
 					}
 				),
-				['/mods/ffxiv/site/site.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js'],
+				['/mods/ffxiv/site/theme.js','/mods/ffxiv/site/site.js','/mods/ffxiv/term/vote/beacon.js','/mods/ffxiv/site/enhancements.js'],
 				path
 			);
 			assert.deepEqual(
@@ -571,7 +572,7 @@ test(
 						return m[1];
 					}
 				),
-				['/mods/ffxiv/site/site.css','/mods/ffxiv/site/enhancements.imba.css','/mods/ffxiv/site/enhancements.css'],
+				['/mods/ffxiv/site/enhancements.imba.css','/mods/ffxiv/site/enhancements.css','/mods/ffxiv/site/site.css'],
 				(path + ' uses shared stylesheets')
 			);
 			assert.ok((!(new RegExp('fonts\\.googleapis|fonts\\.gstatic','').test(html))),(path + ' uses system fonts'));

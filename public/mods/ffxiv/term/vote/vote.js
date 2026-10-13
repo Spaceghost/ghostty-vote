@@ -1297,16 +1297,19 @@
     }
     ;
     function wireControls() {
-      query$("#theme").addEventListener(
-        "click",
-        function() {
-          const cur = globalThis.document.documentElement.dataset.theme || "";
-          const next = cur === "" ? "dark" : cur === "dark" ? "light" : "";
-          setItem("localStorage", KEY.theme, next);
-          applyTheme(next);
-          return;
-        }
-      );
+      if (!query$("#theme").familyThemeOwned) {
+        query$("#theme").addEventListener(
+          "click",
+          function() {
+            const cur = globalThis.document.documentElement.dataset.theme || "";
+            const next = cur === "" ? "dark" : cur === "dark" ? "light" : "";
+            setItem("localStorage", KEY.theme, next);
+            applyTheme(next);
+            return;
+          }
+        );
+      }
+      ;
       applyTheme(globalThis.document.documentElement.dataset.theme || "");
       for (let b of iterable$(globalThis.document.querySelectorAll(".chip[data-filter]"))) {
         b.addEventListener(

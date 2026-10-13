@@ -16,38 +16,14 @@
 <meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png">
 <link rel="icon" type="image/webp" href="/mods/ffxiv/site/art/ghostty-icon.webp">
 <link rel="apple-touch-icon" href="/mods/ffxiv/plugins/icons/ghostty.png">
-<link rel="stylesheet" href="/mods/ffxiv/site/site.css">
 <!-- Static page. site.js is not deferred so a saved theme applies before first paint; it
      also fills the media slots from media/manifest.json and the community screenshots. -->
-<script src="/mods/ffxiv/site/site.js"></script>
+<script src="/mods/ffxiv/site/theme.js"></script><script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script><link rel="stylesheet" href="/mods/ffxiv/site/site.css"></head>
 <body data-mod="ghostty" data-name="Ghostty" data-media="/mods/ffxiv/term/media/manifest.json">
 <a class="skip" href="#main">Skip to content</a>
-<div class="wrap">
-  <header class="sitebar">
-    <a class="brand" href="/mods/ffxiv/"><b>spacegho.st</b> / ffxiv mods</a>
-    <nav aria-label="Mods">
-      <a class="chip" href="/mods/ffxiv/term/">Ghostty</a>
-      <a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a>
-      <a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a>
-      <a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a>
-      <a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a>
-      <a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a>
-      <a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a>
-      <a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a>
-      <a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a>
-      <a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a>
-      <a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a>
-      <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
-      <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
-      <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
-      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
-      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
-      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
-    </nav>
-  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
-  <main id="main">
+<div class="wrap"><!-- BEGIN FAMILY SHELL --><header class="sitebar family-header" data-family-shell><div class="family-masthead"><a class="brand" href="/mods/ffxiv/" aria-label="FFXIV mods home"><b>spacegho.st</b> / ffxiv mods</a><div class="family-tools"><div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div><button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button></div></div><nav aria-label="Mods"><a class="chip" href="/mods/ffxiv/">All projects</a><a class="chip" href="/mods/ffxiv/term/" aria-current="page">Ghostty</a><a class="chip" href="/mods/ffxiv/almanac/about/">Almanac</a><a class="chip" href="/mods/ffxiv/xivmcp/">XivMcp</a><a class="chip" href="/mods/ffxiv/xivdesktop/">XivDesktop</a><a class="chip" href="/mods/ffxiv/xivarcade/">XivArcade</a><a class="chip" href="/mods/ffxiv/xivwayfinder/">XivWayfinder</a><a class="chip" href="/mods/ffxiv/xivlantern/">XivLantern</a><a class="chip" href="/mods/ffxiv/xivpiano/">XivPiano</a><a class="chip" href="/mods/ffxiv/xivhud/">XivHud</a><a class="chip" href="/mods/ffxiv/xivrug/">XivRug</a><a class="chip" href="/mods/ffxiv/xivstream/">XivStream</a><a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a><a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a><a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a><a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a><a class="chip" href="/mods/ffxiv/plugins/">Install</a><a class="chip" href="/mods/ffxiv/term/gallery/">Gallery</a><a class="chip" href="/mods/ffxiv/almanac/">Model leaderboard</a></nav></header><div class="family-context"><nav aria-label="Breadcrumb"><a href="/mods/ffxiv/">FFXIV mods</a><span aria-hidden="true">/</span><a href="/mods/ffxiv/term/">Ghostty</a><span aria-hidden="true">/</span><span>About</span></nav><nav class="family-tabs" aria-label="Project"><a href="/mods/ffxiv/term/" aria-current="page">About</a><a href="/mods/ffxiv/term/vote/">Vote</a><a href="https://github.com/Spaceghost/ghostty-dalamud">Source</a><a href="https://github.com/Spaceghost/ghostty-dalamud/releases">Releases</a></nav></div><!-- END FAMILY SHELL --><main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
         <div class="hero-id">
@@ -254,13 +230,11 @@ tools/install-dev.sh</code></pre>
       </ul>
     </section>
   <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/ghostty-dalamud/releases/tag/v0.3.2">stable: v0.3.2</a> · package 0.3.2.0</li></ul><p>Selected ground-placement and world-panel behavior was observed in earlier builds. The latest release changes, controller behavior and full window lifecycle still require live acceptance. Host tests do not certify every platform.</p><p><a href="/mods/ffxiv/roadmap/?project=ghostty">Voted feature queue</a> · <a href="/mods/ffxiv/term/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
-</main>
-
-  <footer>
+</main><!-- BEGIN FAMILY FOOTER --><footer class="foot family-footer"><p>Open-source FFXIV projects by <a href="https://github.com/Spaceghost">Johnneylee Jack Rollins</a>.</p><nav aria-label="Footer"><a href="/mods/ffxiv/">All projects</a><a href="/mods/ffxiv/plugins/">Install</a><a href="/mods/ffxiv/roadmap/">Feature queue</a><a href="/mods/ffxiv/term/vote/privacy/">Site privacy</a></nav><p class="small">Unofficial fan projects; not endorsed by Square Enix.</p></footer><!-- END FAMILY FOOTER --><section class="page-notes">
     <p class="small"><strong>Privacy.</strong> Ghostty runs on your machine and talks only to the agent you started. It does not fetch anything in the background; its vote link opens this site in your browser, and a screenshot is sent here only when you choose to share it. A terminal can show private things: look before you share a shot.</p>
     <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>
     <p class="small">Made by <strong>Johnneylee Jack Rollins</strong> · <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>. FINAL FANTASY XIV is © SQUARE ENIX; these are unofficial fan plugins and are not endorsed by SQUARE ENIX.</p>
-  </footer>
+  </section>
 </div>
 </body>
 </html>
