@@ -80,6 +80,26 @@ so bumping the pin starts a fresh cache.
 
 ## Running it locally
 
+The separate `Browser interactions` job runs the compiled Imba browser check
+against a temporary loopback static server. It checks every project page at
+desktop and mobile widths, project-finder keyboard navigation, feature-queue
+deep links and initial counts, preview focus, and Dispatch drafts when browser
+storage is blocked. It uses simulated preview data and never signs in or
+changes a live account.
+
+To reproduce it after installing the locked dependencies:
+
+```sh
+npx playwright install chromium
+npm run test:browser
+# On systems with an existing compatible Chromium:
+BROWSER_EXECUTABLE=/usr/bin/chromium npm run test:browser
+```
+
+Edit `imba/scripts/browser-check.imba`, then run `npm run build` to update its
+committed JavaScript. `npm run check` verifies that output alongside the other
+authored Imba modules.
+
 ```sh
 tools/ci/local.sh              # all
 tools/ci/local.sh check test   # just the cheap stages
