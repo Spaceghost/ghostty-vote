@@ -21,7 +21,7 @@
      also fills the media slots from media/manifest.json and the community screenshots. -->
 <script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body data-mod="almanac" data-name="Almanac" data-media="/mods/ffxiv/almanac/media/manifest.json">
 <a class="skip" href="#main">Skip to content</a>
 <div class="wrap">
@@ -42,10 +42,11 @@
       <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
       <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
       <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
+      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
   <main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
@@ -67,10 +68,7 @@
       </div>
       <img class="hero-art" src="/mods/ffxiv/site/art/almanac-banner-2.webp" alt="Almanac: an open book under an aetheryte crystal, with question and answer cards" width="730" height="380" fetchpriority="high">
     </section>
-    <div class="status" role="note">
-      <b>Honest status</b>
-      <p>Almanac has a stable release in the plugin repository. Its core logic (model client, MCP client, agent loop, benchmark scorer, setup detection, SQLite store) is unit-tested with fakes. <strong>The plugin has not yet been verified in a running game</strong>: the windows, GPU detection through DXGI on Windows and Wine, SQLite inside Dalamud, the XivMcp connection and live benchmark mode are all still to be observed.</p>
-    </div>
+    <div class="status" role="note"><b>Current status</b><p>stable and testing builds · live coverage remains limited. Core model, MCP, thread and benchmark logic has host-side tests. In-game UI, GPU detection, live model/tool calls and benchmark output still require acceptance.</p></div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
@@ -236,7 +234,8 @@ dotnet build dalamud/Almanac.Dalamud.slnx -c Release</code></pre>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
     </section>
-  </main>
+  <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/almanac-dalamud/releases/tag/v0.2.2-test.1">testing: v0.2.2-test.1</a> · package 0.2.2.1</li><li><a href="https://github.com/Spaceghost/almanac-dalamud/releases/tag/v0.2.1">stable: v0.2.1</a> · package 0.2.1.5</li></ul><p>Core model, MCP, thread and benchmark logic has host-side tests. In-game UI, GPU detection, live model/tool calls and benchmark output still require acceptance.</p><p><a href="/mods/ffxiv/roadmap/?project=almanac">Voted feature queue</a> · <a href="/mods/ffxiv/almanac/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/almanac-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
+</main>
 
   <footer>
     <p class="small"><strong>Privacy.</strong> Your chats go to the model server you chose, on your own machine, and stay in a SQLite file on your PC. The only thing Almanac fetches from this site is the public model recommendations. A benchmark result is sent only when you press Share and confirm it: GPU model, VRAM, rounded RAM, OS family, backend, model and scores, with no names, paths or addresses.</p>

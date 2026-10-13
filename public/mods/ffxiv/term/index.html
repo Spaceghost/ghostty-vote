@@ -21,7 +21,7 @@
      also fills the media slots from media/manifest.json and the community screenshots. -->
 <script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body data-mod="ghostty" data-name="Ghostty" data-media="/mods/ffxiv/term/media/manifest.json">
 <a class="skip" href="#main">Skip to content</a>
 <div class="wrap">
@@ -42,10 +42,11 @@
       <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
       <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
       <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
+      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
   <main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
@@ -66,10 +67,7 @@
       </div>
       <img class="hero-art" src="/mods/ffxiv/site/art/ghostty-banner.webp" alt="Ghostty for FFXIV: terminal windows floating around an aetheryte crystal over a night sea, with a small ghost" width="730" height="380" fetchpriority="high">
     </section>
-    <div class="status" role="note">
-      <b>Honest status</b>
-      <p><strong>Experimental developer preview.</strong> An independent project, not an official Ghostty project, and not in the official Dalamud plugin list. World placement, animation, lighting and occlusion are implemented but still need validation in game; Windows (ConPTY), macOS and controller support are not certified by the Linux host tests. The in-game screenshots and clips below have not been captured yet.</p>
-    </div>
+    <div class="status" role="note"><b>Current status</b><p>released · experimental preview. Selected ground-placement and world-panel behavior was observed in earlier builds. The latest release changes, controller behavior and full window lifecycle still require live acceptance. Host tests do not certify every platform.</p></div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
@@ -255,7 +253,8 @@ tools/install-dev.sh</code></pre>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
     </section>
-  </main>
+  <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/ghostty-dalamud/releases/tag/v0.3.2">stable: v0.3.2</a> · package 0.3.2.0</li></ul><p>Selected ground-placement and world-panel behavior was observed in earlier builds. The latest release changes, controller behavior and full window lifecycle still require live acceptance. Host tests do not certify every platform.</p><p><a href="/mods/ffxiv/roadmap/?project=ghostty">Voted feature queue</a> · <a href="/mods/ffxiv/term/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
+</main>
 
   <footer>
     <p class="small"><strong>Privacy.</strong> Ghostty runs on your machine and talks only to the agent you started. It does not fetch anything in the background; its vote link opens this site in your browser, and a screenshot is sent here only when you choose to share it. A terminal can show private things: look before you share a shot.</p>

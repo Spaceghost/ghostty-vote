@@ -21,7 +21,7 @@
      also fills the media slots from media/manifest.json and the community screenshots. -->
 <script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body data-mod="xivlantern" data-name="XivLantern" data-media="/mods/ffxiv/xivlantern/media/manifest.json">
 <a class="skip" href="#main">Skip to content</a>
 <div class="wrap">
@@ -42,10 +42,11 @@
       <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
       <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
       <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
+      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
   <main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
@@ -67,10 +68,7 @@
       </div>
       <img class="hero-art" src="/mods/ffxiv/site/art/xivlantern-banner-2.webp" alt="XivLantern: a warm paper lantern under an aetheryte crystal, friends' lanterns in the night sky" width="730" height="380" fetchpriority="high">
     </section>
-    <div class="status" role="note">
-      <b>Honest status</b>
-      <p>Everything is tested on a Linux host: the network layer, its C interface, the C# binding and the plugin's logic. The Windows build of the network layer passed its selftest and talked to a native node under a stock Wine 11 in a container. The plugin builds against Dalamud 15 but has never been loaded by it. <strong>Nothing has been observed in the game yet</strong>, not even <code>/lantern selftest</code>, which is the next proof. The author channel has no author key configured yet, and says so. It is released (0.1.0); the changelog marks what has been seen working in game.</p>
-    </div>
+    <div class="status" role="note"><b>Current status</b><p>released · newer communication work remains experimental. Host and native networking checks cover selected peer connections. In-game chat, presence, channels and communication extensions still require acceptance.</p></div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
@@ -258,7 +256,8 @@ tools/package.sh            # latest.zip</code></pre>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
     </section>
-  </main>
+  <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/xivlantern-dalamud/releases/tag/v0.1.0">stable: v0.1.0</a> · package 0.1.0.3</li></ul><p>Host and native networking checks cover selected peer connections. In-game chat, presence, channels and communication extensions still require acceptance.</p><p><a href="/mods/ffxiv/roadmap/?project=xivlantern">Voted feature queue</a> · <a href="/mods/ffxiv/xivlantern/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/xivlantern-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
+</main>
 
   <footer>
     <p class="small"><strong>Privacy.</strong> XivLantern connects to nothing until you turn it on. Then it talks to your friends' nodes and, unless you turn relays off, to the iroh relay you chose, which sees your IP address and when you are online but not what you say. It reads and sends nothing from the game. Your keys and messages stay in the plugin's own folder on your machine.</p>

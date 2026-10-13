@@ -17,7 +17,7 @@
      Not deferred, so the saved theme applies before first paint. -->
 <script src="/mods/ffxiv/almanac/almanac.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body>
 <div class="wrap">
   <header>
@@ -34,7 +34,7 @@
     <h1>Which local model for <span class="glyph">your</span> GPU?</h1>
     <p class="lede"><strong>Almanac</strong> is the open-source local AI companion for Final Fantasy XIV (<a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">github.com/Spaceghost/almanac-dalamud</a>), made by <strong>Johnneylee Jack Rollins</strong>. It runs a model on your own machine. These results come from players who ran its benchmark suite and chose to share them, so you can pick the model that gives the best answers for the memory and speed you have.</p>
     <div class="prompt" id="summary" aria-live="polite">$ <b>almanac</b> leaderboard &nbsp; loading…</div>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
 
   <div class="bar" role="toolbar" aria-label="What to show">
     <label for="f-suite">suite <select id="f-suite"></select></label>

@@ -21,7 +21,7 @@
      also fills the media slots from media/manifest.json and the community screenshots. -->
 <script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body data-mod="xivwayfinder" data-name="XivWayfinder" data-media="/mods/ffxiv/xivwayfinder/media/manifest.json">
 <a class="skip" href="#main">Skip to content</a>
 <div class="wrap">
@@ -42,10 +42,11 @@
       <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
       <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
       <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
+      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
   <main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
@@ -67,10 +68,7 @@
       </div>
       <img class="hero-art" src="/mods/ffxiv/site/art/xivwayfinder-banner-2.webp" alt="XivWayfinder: a glowing bead with a trail of small beads and a pointing glove, under an aetheryte" width="730" height="380" fetchpriority="high">
     </section>
-    <div class="status" role="note">
-      <b>Honest status</b>
-      <p>Host tests cover the direction and angle maths, the screen-edge clamping, the glove's placement and mirroring, the target priority, the pulse and tap timing, the command and IPC parsing and the state JSON. <strong>Nothing has been observed in the game yet</strong>: not the drawing, not the flag, quest and aetheryte reads, not vnavmesh. What this page describes is implemented intent. It is released (0.1.0); the changelog marks what has been seen working in game.</p>
-    </div>
+    <div class="status" role="note"><b>Current status</b><p>released · newer guide work remains experimental. Direction, routing and target policies have host-side tests. Drawing, physical controller behavior and navigation handoffs still require live acceptance. Newer guide work is not certified by older releases.</p></div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
@@ -258,7 +256,8 @@ tools/fetch-dalamud.sh && tools/install-dev.sh</code></pre>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
     </section>
-  </main>
+  <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.1-test.1">testing: v0.1.1-test.1</a> · package 0.1.1.1</li><li><a href="https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.0">stable: v0.1.0</a> · package 0.1.0.2</li></ul><p>Direction, routing and target policies have host-side tests. Drawing, physical controller behavior and navigation handoffs still require live acceptance. Newer guide work is not certified by older releases.</p><p><a href="/mods/ffxiv/roadmap/?project=xivwayfinder">Voted feature queue</a> · <a href="/mods/ffxiv/xivwayfinder/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/xivwayfinder-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
+</main>
 
   <footer>
     <p class="small"><strong>Privacy.</strong> XivWayfinder talks to nothing on the network and writes nothing but its own settings. It reads the game's own UI files for the glove, the game's sheets for zones, maps and aetherytes, and your journal, flag and map markers from game memory; it changes none of them.</p>

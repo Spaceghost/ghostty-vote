@@ -25,7 +25,7 @@
 <script src="/mods/ffxiv/term/vote/ballot.js"></script>
 <script src="/mods/ffxiv/term/vote/vote.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body>
 <div class="wrap">
   <header>
@@ -35,6 +35,7 @@
         <a class="chip" href="/mods/ffxiv/xivcamp/">About XivCamp</a>
         <a class="chip" href="/mods/ffxiv/xivcamp/preview/">Try the preview</a>
         <a class="chip" href="https://github.com/Spaceghost/xivcamp-dalamud">Source</a>
+        <a class="chip" href="/mods/ffxiv/roadmap/?project=xivcamp">Feature queue</a>
         <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
       </span>
     </div>
@@ -87,7 +88,7 @@
       <p id="new-text"></p>
       <button class="btn ghost" type="button" id="new-show">Show new ideas</button>
     </div>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
 
   <div class="bar" role="toolbar" aria-label="Filter ideas">
     <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
