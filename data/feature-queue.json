@@ -1,0 +1,1361 @@
+{
+  "version": 1,
+  "capturedAt": "2026-10-13T03:43:10.708971+00:00",
+  "rule": "Preserve the 201 features accepted in the confirmed ballot. For newer projects, queue ideas with more Want votes than Maybe and Skip combined. Previously excluded ideas require a new acceptance decision.",
+  "tallies": {
+    "ghostty": {
+      "homelab-server-room": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "ops-weather": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "homelab-minion-menagerie": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "aetheryte-uplink": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "airship-departure-board": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "commit-constellations": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "sit-down-to-work": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "drive-in-cinema": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "furniture-anchors": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "ghost-furniture-blueprints": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "homecoming-boot-sequence": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "tablet-prop-shell": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "cast-bar-commands": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "wardrobe-by-hostname": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "emote-window-manager": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "flow-state-limit-break": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "gaze-and-presence": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "job-codex-terminals": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "moogle-mail": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "loot-roll-job-results": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "cutscene-director": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "pass-the-model-m": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "over-the-shoulder-pets": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "static-war-room": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "guest-terminal-scenes": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "two-person-rule": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "paged-mid-pull": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "linkpearl-bridge": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "queue-pop-eject": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "eorzea-cron": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "market-board-hover": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xhb-shell-slots": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "echo-replays": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "aetherial-visualizer": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "stream-redaction": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "credits-roll": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "obs-scene-conductor": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "gpose-terminal-studio": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "aetheryte-ssh-network": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "deploy-raid-pull": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "parse-your-shell": {
+        "want": 0,
+        "maybe": 2,
+        "skip": 0
+      },
+      "git-status-buffs": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "grep-the-world": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "folding-screen-splits": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "kitty-graphics-tapestries": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "item-links": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "legible-at-distance": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "soul-crystal-themes": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "terminal-perf-meter": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "accessibility-inheritance": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "kana-on-the-curve": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "town-criers": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 2
+      },
+      "process-skyline": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "fishing-for-errors": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "saucer-arcade-cabinets": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "ansi-gallery": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 2
+      },
+      "shell-tomestones": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "keystroke-colosseum": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "bomb-defusal-night": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "glyphfall": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "magic-lantern-projector": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "shader-sky": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "venue-lighting-desk": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "algorave-conductor": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "cracktro-login": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "failing-suite-extreme": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "debugger-trial-arena": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 2
+      },
+      "bisect-heaven-on-high": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "blue-magic-spellbook": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 2
+      },
+      "palace-of-the-dead-inodes": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 2
+      },
+      "apps-follow-the-sun": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "regional-phosphor": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "scrollback-spire": {
+        "want": 0,
+        "maybe": 2,
+        "skip": 0
+      },
+      "stage-directions-apc": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "clipboard-crystals": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "your-feet-are-the-mouse": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "emoji-pyrotechnics": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "waymarked-scrollback": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 2
+      },
+      "agent-party-formation": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "familiar-tells-ready-check": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "feed-the-familiar": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivmcp": {
+      "mcp-pull-safe-approvals": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-approval-diff-preview": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-session-receipt": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 2
+      },
+      "mcp-per-client-read-scopes": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-ask-the-player": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-agent-board-duty-list": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-tickets-in-duty-list": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-agent-linkshell": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-objective-here": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-native-duty-list-rows": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-sightseeing-log-objectives": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-weekly-reset-ledger": {
+        "want": 0,
+        "maybe": 2,
+        "skip": 0
+      },
+      "mcp-dresser-armoire-tidy": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-gear-upgrade-path": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-craft-margin-sheet": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-standalone-last-known": {
+        "want": 0,
+        "maybe": 2,
+        "skip": 0
+      },
+      "mcp-plugin-tool-gate": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-client-budget-meter": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "mcp-house-aware-terminal-layouts": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivdesktop": {
+      "desk-doctor": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-open-with-file": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-desktop-actions": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-svg-icons": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-record-chord": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-macro-lines": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-controller-ring": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-glamour-plate-layouts": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-zone-layouts": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-gearset-workspaces": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-scratchpad": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-taskbar-icons": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-clipboard-bridge": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-app-notifications": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-xivmcp-tools": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-send-to-game": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-duty-pop-stow": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "desk-privacy-veil": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivarcade": {
+      "arcade-duty-pop-pause": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-bgm-duck": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-housing-cabinet": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-crt-glass": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-save-timeline": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-state-slots": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-conflict-picker": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-handheld-bridge": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-play-journal": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-crystal-pilgrimage": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-custom-shelves": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-screenshot-covers": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-dat-verify": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-lantern-netplay": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-umbra-widget": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-almanac-names": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "arcade-almanac-hints": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivwayfinder": {
+      "way-source-colours": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-corner-double-tap": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-hot-and-cold-chime": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-minimap-glove": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-bead-behind-walls": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-named-places": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-waypoint-queue": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-find-npc": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-aether-currents": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-sightseeing-vistas": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-nearest-fate": {
+        "want": 1,
+        "maybe": 1,
+        "skip": 0
+      },
+      "way-timeworn-map": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-quest-map-links": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-walk-next-zone": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-aethernet-last-leg": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-flight-paths": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-breadcrumbs-back": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-arrival-events": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-route-codes": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "way-proving-ground": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivlantern": {
+      "lantern-status-presets": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-idle-away": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-lfg-tags": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-friend-groups": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-dtr-roster": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-channel-history": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-sealed-channels": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-pull-timer": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-share-screenshot": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-voice-sidecar": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-voice-in-process": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-fc-hearth": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-nostr-mailbox": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-every-device": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-invite-by-npub": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-pocket": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-safety-words": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-key-passphrase": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-move-house": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "lantern-signed-release-notes": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivpiano": {
+      "piano-duty-stations": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-boss-themes": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-duck-dialogue": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-crossfade": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-share-song": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-lantern-status": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-listen-together": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-station-seeds": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-genre-stations": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-quickmix": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-station-modes": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-explicit-filter": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-adopt-shared": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-history-window": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-song-events": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-scrobble": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-media-keys": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "piano-lyrics": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "almanac": {
+      "almanac-thread-search": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-context-gauge": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-clickable-answers": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-thread-voices": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-thread-export": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-wasm-tool-sources": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-notes-tool-source": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-engine-knowledge-bridge": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-tool-call-inspector": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-question-router": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-streaming-ask-ipc": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-bench-head-to-head": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-context-fit-finder": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-headroom-gauge": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-suite-from-thread": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-duty-quiet-mode": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-duty-residency": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-spoiler-guard": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-reference-pages": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      },
+      "almanac-push-to-talk": {
+        "want": 2,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivprism": {
+      "xivprism-standalone": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-native-moonlight": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-display-profiles": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-android": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-ipad": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-multi-output": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-local-game": {
+        "want": 0,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-recovery": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-hud-family": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-whole-pinning": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-spatial-panels": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivprism-mcp-status": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivdispatch": {
+      "xivdispatch-official-window": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-direct-messages": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-mentions": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-threads": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-drafts": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-quiet": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-pinned-channels": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-reactions": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-links": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-prism-panel": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-controller": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivdispatch-account-lifecycle": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      }
+    },
+    "xivcamp": {
+      "xivcamp-presets": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-screen-layout": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-prism-layout": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-world-windows": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-rug": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-music": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-dispatch": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-lantern": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-restore": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-missing-providers": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-export": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      },
+      "xivcamp-controller": {
+        "want": 1,
+        "maybe": 0,
+        "skip": 0
+      }
+    }
+  },
+  "implementation": {
+    "piano-share-song": {
+      "state": "in progress; live acceptance pending",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/blob/master/docs/VOTE-IMPLEMENTATION.md"
+    },
+    "piano-song-events": {
+      "state": "in progress; live acceptance pending",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/blob/master/docs/VOTE-IMPLEMENTATION.md"
+    },
+    "piano-duck-dialogue": {
+      "state": "in progress; live acceptance pending",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/blob/master/docs/VOTE-IMPLEMENTATION.md"
+    },
+    "piano-boss-themes": {
+      "state": "in progress; live acceptance pending",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/blob/master/docs/VOTE-IMPLEMENTATION.md"
+    },
+    "piano-adopt-shared": {
+      "state": "in progress; live acceptance pending",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/blob/master/docs/VOTE-IMPLEMENTATION.md"
+    },
+    "piano-station-seeds": {
+      "state": "in progress; live acceptance pending",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/blob/master/docs/VOTE-IMPLEMENTATION.md"
+    },
+    "piano-history-window": {
+      "state": "in progress; live acceptance pending",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/blob/master/docs/VOTE-IMPLEMENTATION.md"
+    }
+  },
+  "tracking": {
+    "ghostty": {
+      "repo": "Spaceghost/ghostty-dalamud",
+      "url": "https://github.com/Spaceghost/ghostty-dalamud/issues/75",
+      "number": 75
+    },
+    "xivmcp": {
+      "repo": "Spaceghost/xivmcp-dalamud",
+      "url": "https://github.com/Spaceghost/xivmcp-dalamud/issues/27",
+      "number": 27
+    },
+    "xivdesktop": {
+      "repo": "Spaceghost/xivdesktop-dalamud",
+      "url": "https://github.com/Spaceghost/xivdesktop-dalamud/issues/24",
+      "number": 24
+    },
+    "xivarcade": {
+      "repo": "Spaceghost/xivarcade-dalamud",
+      "url": "https://github.com/Spaceghost/xivarcade-dalamud/issues/11",
+      "number": 11
+    },
+    "xivwayfinder": {
+      "repo": "Spaceghost/xivwayfinder-dalamud",
+      "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/issues/11",
+      "number": 11
+    },
+    "xivlantern": {
+      "repo": "Spaceghost/xivlantern-dalamud",
+      "url": "https://github.com/Spaceghost/xivlantern-dalamud/issues/2",
+      "number": 2
+    },
+    "xivpiano": {
+      "repo": "Spaceghost/xivpiano-dalamud",
+      "url": "https://github.com/Spaceghost/xivpiano-dalamud/issues/9",
+      "number": 9
+    },
+    "almanac": {
+      "repo": "Spaceghost/almanac-dalamud",
+      "url": "https://github.com/Spaceghost/almanac-dalamud/issues/25",
+      "number": 25
+    },
+    "xivprism": {
+      "repo": "Spaceghost/xivprism-dalamud",
+      "url": "https://github.com/Spaceghost/xivprism-dalamud/issues/1",
+      "number": 1
+    },
+    "xivdispatch": {
+      "repo": "Spaceghost/xivdispatch-dalamud",
+      "url": "https://github.com/Spaceghost/xivdispatch-dalamud/issues/1",
+      "number": 1
+    },
+    "xivcamp": {
+      "repo": "Spaceghost/xivcamp-dalamud",
+      "url": "https://github.com/Spaceghost/xivcamp-dalamud/issues/1",
+      "number": 1
+    }
+  }
+}

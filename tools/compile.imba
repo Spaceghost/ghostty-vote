@@ -43,6 +43,29 @@ for source of authored
 	if errors.length
 		throw new Error(source + ': ' + JSON.stringify(errors))
 	let code = result.js
+	# Imba tags generate CSS even without explicit styling. Publish it alongside
+	# the browser bundle and remove only the compiler's matching registration;
+	# the site's strict style-src policy can then stay unchanged.
+	if browser && result.css
+		const tree = parse(code, {ecmaVersion: 'latest', sourceType: 'module'})
+		const registration = tree.body.find(do(node) node.type == 'ExpressionStatement' && node.expression.type == 'CallExpression' && node.expression.callee.type == 'MemberExpression' && node.expression.callee.object.name == 'imba_styles' && node.expression.callee.property.name == 'register' && node.expression.arguments[1] && node.expression.arguments[1].value == result.css)
+		if !registration
+			throw new Error(source + ': generated CSS registration was not found')
+		code = code.slice(0, registration.start) + code.slice(registration.end)
+		const cssPath = output.replace(new RegExp('\\.js$'), '.imba.css')
+		const generatedCss = '/* Generated from ' + source + '; edit the Imba source. */\n' + result.css + '\n'
+		let currentCss = null
+		try
+			currentCss = readFileSync(join(root, cssPath), 'utf8')
+		catch
+			currentCss = null
+		if currentCss != generatedCss
+			changed++
+			if check
+				console.error(cssPath + ' is stale; run npm run build')
+			else
+				mkdirSync(dirname(join(root, cssPath)), {recursive: true})
+				writeFileSync(join(root, cssPath), generatedCss)
 	parse(code, {ecmaVersion: 'latest', sourceType: 'module'})
 	if browser
 		code = buildSync({stdin: {contents: code, sourcefile: output, resolveDir: root}, bundle: true, write: false, format: 'iife', platform: 'browser', target: 'es2022', charset: 'ascii', legalComments: 'none'}).outputFiles[0].text

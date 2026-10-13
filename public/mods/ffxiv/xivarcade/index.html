@@ -21,7 +21,7 @@
      also fills the media slots from media/manifest.json and the community screenshots. -->
 <script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body data-mod="xivarcade" data-name="XivArcade" data-media="/mods/ffxiv/xivarcade/media/manifest.json">
 <a class="skip" href="#main">Skip to content</a>
 <div class="wrap">
@@ -42,10 +42,11 @@
       <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
       <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
       <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
+      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
   <main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
@@ -67,10 +68,7 @@
       </div>
       <img class="hero-art" src="/mods/ffxiv/site/art/xivarcade-banner-2.webp" alt="XivArcade: a handheld console with a pixel crystal on its screen, under an aetheryte over a night sea" width="730" height="380" fetchpriority="high">
     </section>
-    <div class="status" role="note">
-      <b>Honest status</b>
-      <p>The logic has host-side tests, all run on empty placeholder files: finding which console a file is for, reading a LaunchBox library, multi-disc playlists, name matching, the emulator command for each core, the save-sync rules and the IPC payloads. The host helper's first run has been run on a real Linux machine. <strong>Nothing has been observed in the game yet</strong>: not the window, a game as a panel, a real emulator, the controller, or saves syncing between two machines. It has a stable release (v0.2.0).</p>
-    </div>
+    <div class="status" role="note"><b>Current status</b><p>released · in-game checks pending. Library, import, launch and synchronization policies have host-side tests. Real emulators, controller input, in-game panels and two-device save synchronization still require acceptance.</p></div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
@@ -252,7 +250,8 @@ tools/install-dev.sh        # or: dotnet build XivArcade.slnx -c Release</code><
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
     </section>
-  </main>
+  <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/xivarcade-dalamud/releases/tag/v0.2.0">stable: v0.2.0</a> · package 0.2.0.0</li></ul><p>Library, import, launch and synchronization policies have host-side tests. Real emulators, controller input, in-game panels and two-device save synchronization still require acceptance.</p><p><a href="/mods/ffxiv/roadmap/?project=xivarcade">Voted feature queue</a> · <a href="/mods/ffxiv/xivarcade/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/xivarcade-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
+</main>
 
   <footer>
     <p class="small"><strong>Privacy.</strong> XivArcade reads the folders you chose on your own disk and talks only to Ghostty and Syncthing on the same machine; your saves travel only between your own devices, through Syncthing. The one exception is the cover fetch, off unless you turn it on: it sends a console's and a game's name to <code>thumbnails.libretro.com</code> over HTTPS.</p>

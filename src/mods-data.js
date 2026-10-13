@@ -36,7 +36,17 @@ export default {
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/ghostty-icon.webp",
       "bannerPath": "/mods/ffxiv/site/art/ghostty-banner.webp",
-      "votePage": "/mods/ffxiv/term/vote/"
+      "votePage": "/mods/ffxiv/term/vote/",
+      "reviewedAt": "2026-10-13",
+      "verification": "Selected ground-placement and world-panel behavior was observed in earlier builds. The latest release changes, controller behavior and full window lifecycle still require live acceptance. Host tests do not certify every platform.",
+      "releaseChannels": [
+        {
+          "channel": "stable",
+          "tag": "v0.3.2",
+          "version": "0.3.2.0",
+          "url": "https://github.com/Spaceghost/ghostty-dalamud/releases/tag/v0.3.2"
+        }
+      ]
     },
     {
       "internalName": "Almanac",
@@ -72,7 +82,25 @@ export default {
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/almanac-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/almanac-banner-2.webp",
-      "votePage": "/mods/ffxiv/almanac/vote/"
+      "votePage": "/mods/ffxiv/almanac/vote/",
+      "reviewedAt": "2026-10-13",
+      "verification": "Core model, MCP, thread and benchmark logic has host-side tests. In-game UI, GPU detection, live model/tool calls and benchmark output still require acceptance.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "v0.2.2-test.1",
+          "version": "0.2.2.1",
+          "url": "https://github.com/Spaceghost/almanac-dalamud/releases/tag/v0.2.2-test.1"
+        },
+        {
+          "channel": "stable",
+          "tag": "v0.2.1",
+          "version": "0.2.1.5",
+          "url": "https://github.com/Spaceghost/almanac-dalamud/releases/tag/v0.2.1"
+        }
+      ],
+      "testingVersion": "0.2.2.1",
+      "testingTag": "v0.2.2-test.1"
     },
     {
       "internalName": "XivMcp",
@@ -107,7 +135,23 @@ export default {
       "iconPath": "/mods/ffxiv/site/art/xivmcp-icon.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivmcp-banner.webp",
       "votePage": "/mods/ffxiv/xivmcp/vote/",
-      "testingVersion": "0.1.2.3"
+      "testingVersion": "0.1.2.3",
+      "reviewedAt": "2026-10-13",
+      "verification": "Selected game-state calls were observed in earlier builds. The latest testing package has offline validation; loading it, approvals and current HUD-family integration still require live acceptance.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "v0.1.2-test.3",
+          "version": "0.1.2.3",
+          "url": "https://github.com/Spaceghost/xivmcp-dalamud/releases/tag/v0.1.2-test.3"
+        },
+        {
+          "channel": "stable",
+          "tag": "v0.1.1",
+          "version": "0.1.1.4",
+          "url": "https://github.com/Spaceghost/xivmcp-dalamud/releases/tag/v0.1.1"
+        }
+      ]
     },
     {
       "internalName": "XivDesktop",
@@ -142,7 +186,23 @@ export default {
       "iconPath": "/mods/ffxiv/site/art/xivdesktop-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivdesktop-banner-2.webp",
       "votePage": "/mods/ffxiv/xivdesktop/vote/",
-      "testingVersion": "1.0.3.1"
+      "testingVersion": "1.0.3.1",
+      "reviewedAt": "2026-10-13",
+      "verification": "The app scanner and core logic have host-side tests. Live application windows, Wine input, workspaces, NPC/session interfaces and Umbra widgets still require acceptance.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "v1.0.3-test.1",
+          "version": "1.0.3.1",
+          "url": "https://github.com/Spaceghost/xivdesktop-dalamud/releases/tag/v1.0.3-test.1"
+        },
+        {
+          "channel": "stable",
+          "tag": "v1.0.2",
+          "version": "1.0.2.4",
+          "url": "https://github.com/Spaceghost/xivdesktop-dalamud/releases/tag/v1.0.2"
+        }
+      ]
     },
     {
       "internalName": "XivArcade",
@@ -177,7 +237,17 @@ export default {
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivarcade-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivarcade-banner-2.webp",
-      "votePage": "/mods/ffxiv/xivarcade/vote/"
+      "votePage": "/mods/ffxiv/xivarcade/vote/",
+      "reviewedAt": "2026-10-13",
+      "verification": "Library, import, launch and synchronization policies have host-side tests. Real emulators, controller input, in-game panels and two-device save synchronization still require acceptance.",
+      "releaseChannels": [
+        {
+          "channel": "stable",
+          "tag": "v0.2.0",
+          "version": "0.2.0.0",
+          "url": "https://github.com/Spaceghost/xivarcade-dalamud/releases/tag/v0.2.0"
+        }
+      ]
     },
     {
       "internalName": "XivWayfinder",
@@ -212,7 +282,25 @@ export default {
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivwayfinder-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivwayfinder-banner-2.webp",
-      "votePage": "/mods/ffxiv/xivwayfinder/vote/"
+      "votePage": "/mods/ffxiv/xivwayfinder/vote/",
+      "reviewedAt": "2026-10-13",
+      "verification": "Direction, routing and target policies have host-side tests. Drawing, physical controller behavior and navigation handoffs still require live acceptance. Newer guide work is not certified by older releases.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "v0.1.1-test.1",
+          "version": "0.1.1.1",
+          "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.1-test.1"
+        },
+        {
+          "channel": "stable",
+          "tag": "v0.1.0",
+          "version": "0.1.0.2",
+          "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.0"
+        }
+      ],
+      "testingVersion": "0.1.1.1",
+      "testingTag": "v0.1.1-test.1"
     },
     {
       "internalName": "XivLantern",
@@ -238,7 +326,6 @@ export default {
       "needs": "Nothing beyond Dalamud (API 15); the network layer ships inside the plugin as lantern.dll. Friends running XivLantern too.",
       "build": "tools/build-native.sh (cargo and mingw-w64), then dotnet build src/XivLantern.Plugin/XivLantern.Plugin.csproj -c Release and tools/package.sh",
       "umbraWidget": null,
-      "pending": "Only testing builds so far: turn on Get plugin testing builds in /xlsettings to see it.",
       "released": true,
       "id": "xivlantern",
       "kind": "plugin",
@@ -248,7 +335,17 @@ export default {
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivlantern-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivlantern-banner-2.webp",
-      "votePage": "/mods/ffxiv/xivlantern/vote/"
+      "votePage": "/mods/ffxiv/xivlantern/vote/",
+      "reviewedAt": "2026-10-13",
+      "verification": "Host and native networking checks cover selected peer connections. In-game chat, presence, channels and communication extensions still require acceptance.",
+      "releaseChannels": [
+        {
+          "channel": "stable",
+          "tag": "v0.1.0",
+          "version": "0.1.0.3",
+          "url": "https://github.com/Spaceghost/xivlantern-dalamud/releases/tag/v0.1.0"
+        }
+      ]
     },
     {
       "internalName": "XivPiano",
@@ -285,7 +382,17 @@ export default {
       "testingVersion": "0.1.1.1",
       "iconPath": "/mods/ffxiv/site/art/xivpiano-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivpiano-banner-2.webp",
-      "votePage": "/mods/ffxiv/xivpiano/vote/"
+      "votePage": "/mods/ffxiv/xivpiano/vote/",
+      "reviewedAt": "2026-10-13",
+      "verification": "Core radio policies have host-side tests. Live Pandora authentication, audible playback, dialogue/duty transitions and account actions still require acceptance. Several voted features have implementation evidence but are not certified complete.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "v0.1.1-test.1",
+          "version": "0.1.1.1",
+          "url": "https://github.com/Spaceghost/xivpiano-dalamud/releases/tag/v0.1.1-test.1"
+        }
+      ]
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -307,7 +414,7 @@ export default {
         "umbra",
         "interface"
       ],
-      "status": "experimental · HUD restoration observed in game; new IPC awaits live checks",
+      "status": "experimental · module loading and read-only IPC checked; UI acceptance pending",
       "navigation": true,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud.png",
@@ -336,10 +443,20 @@ export default {
         },
         {
           "title": "What has been checked",
-          "body": "<p>Earlier development builds demonstrated HUD toggling and restoration, plus focused controller ownership in Journal. Full logout/relogin, combat, cutscene transitions and physical controller navigation still need acceptance. The new IPC is covered by offline tests; it has not been exercised in a running game here.</p>"
+          "body": "<p>HUD restoration was observed in earlier builds. HUD, Journal and Character modules loaded and exposed read-only IPC snapshots in the recorded checks. UI mutations, visual transitions and physical controller navigation still require acceptance.</p>"
         }
       ],
-      "testingVersion": "0.1.0.1"
+      "testingVersion": "0.1.0.1",
+      "reviewedAt": "2026-10-13",
+      "verification": "HUD restoration was observed in earlier builds. HUD, Journal and Character modules loaded and exposed read-only IPC snapshots in the recorded checks. UI mutations, visual transitions and physical controller navigation still require acceptance.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "testing",
+          "version": "0.1.0.1",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/testing"
+        }
+      ]
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -361,7 +478,7 @@ export default {
         "quests",
         "interface"
       ],
-      "status": "experimental · selected Journal and window checks observed in game",
+      "status": "experimental · selected Journal checks and read-only IPC observed",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-journal.png",
@@ -389,7 +506,17 @@ export default {
           "body": "<p>Earlier builds showed a live accepted quest, its native map handoff, day/night appearance, native-frame popups, world-window focus and unload/reload cleanup. Physical controller buttons, dragging/scaling and all world placements remain unverified. The replacement currently covers accepted normal quests; full history and other quest modes remain in the original.</p>"
         }
       ],
-      "testingVersion": "0.1.0.1"
+      "testingVersion": "0.1.0.1",
+      "reviewedAt": "2026-10-13",
+      "verification": "Earlier builds showed an accepted quest, native map handoff, day/night appearance and window cleanup. Module loading and read-only IPC snapshots were checked. Physical controllers and all window-host transitions remain acceptance work.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "testing",
+          "version": "0.1.0.1",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/testing"
+        }
+      ]
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -411,7 +538,7 @@ export default {
         "gear",
         "interface"
       ],
-      "status": "development · builds and offline tests; in-game acceptance pending",
+      "status": "development · loaded and read-only IPC checked; visual acceptance pending",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
@@ -432,13 +559,16 @@ export default {
         },
         {
           "title": "Development source and package",
-          "body": "<p>Character builds against matched API 15 references and has extensive offline tests. It has not yet been loaded into the game in the recorded verification. Its package is for manual development testing and is held out of the shared installer until live acceptance.</p>"
+          "body": "<p>The module loaded and its read-only IPC snapshot was checked. Equipment accuracy, native adoption/fallback, UI mutations and physical controller navigation still require acceptance. Character remains outside the automatic installer.</p>"
         },
         {
           "title": "Next checks",
           "body": "<p>Validate native adoption and fallback, displayed item level, equipment slot order, job experience, gear-set results, controller navigation and each window host against the original game windows. A 3-D character preview and appearance editing are future work.</p>"
         }
-      ]
+      ],
+      "reviewedAt": "2026-10-13",
+      "verification": "The module loaded and its read-only IPC snapshot was checked. Equipment accuracy, native adoption/fallback, UI mutations and physical controller navigation still require acceptance. Character remains outside the automatic installer.",
+      "releaseChannels": []
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -492,7 +622,17 @@ export default {
           "body": "<p>XivMcp can discover Rug and read its renderer, terrain, composition, map and music status through the new read-only status interface. The interface does not start terrain probes or change settings.</p>"
         }
       ],
-      "testingVersion": "0.0.1.2"
+      "testingVersion": "0.0.1.2",
+      "reviewedAt": "2026-10-13",
+      "verification": "Selected flat scenes and Journal overlap were observed in earlier builds. Current diagnostics have offline validation. Continuous terrain, stairs, device resets, frame cost and music visuals still require acceptance.",
+      "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "testing",
+          "version": "0.0.1.2",
+          "url": "https://github.com/Spaceghost/xivrug-dalamud/releases/tag/testing"
+        }
+      ]
     },
     {
       "internalName": "XivStream",
@@ -534,7 +674,16 @@ export default {
         },
         {
           "title": "What has been tested",
-          "body": "<p>The recorded end-to-end hardware path is Fedora with Incus, Sunshine and NVIDIA, including streaming input, audio and mods. Other hosts and streaming backends remain experimental. The published release candidate predates the local Wolf and CPU-policy work; those changes need reconciliation before a new release.</p>"
+          "body": "<p>The recorded streaming path uses Incus, Sunshine and NVIDIA. Recent source fixes cover pending pairing requests and input-device registration; Wolf performance parity and other host/backend combinations are not established. The pairing and input fixes are merged into source but are newer than the published release candidate.</p>"
+        }
+      ],
+      "reviewedAt": "2026-10-13",
+      "verification": "The recorded streaming path uses Incus, Sunshine and NVIDIA. Recent source fixes cover pending pairing requests and input-device registration; Wolf performance parity and other host/backend combinations are not established.",
+      "releaseChannels": [
+        {
+          "channel": "release candidate",
+          "tag": "v0.1.0-rc.2",
+          "url": "https://github.com/Spaceghost/xivstream-dalamud/releases/tag/v0.1.0-rc.2"
         }
       ]
     },
@@ -571,7 +720,10 @@ export default {
           "title": "IPC and ownership",
           "body": "<p>The HUD host, Journal and Character expose versioned JSON Call gates. Reads return immutable snapshots; changes are validated, queued, applied on the framework thread and polled by request ID. Controller ownership stays with a focused local window and is never offered as an MCP operation.</p><p>See <a href=\"https://github.com/Spaceghost/xivhud-dalamud/blob/main/docs/IPC.md\">the IPC contract</a> and the module READMEs for lifecycle, window identity and build instructions.</p>"
         }
-      ]
+      ],
+      "reviewedAt": "2026-10-13",
+      "verification": "Libraries are bundled with consuming HUD modules. Read-only IPC snapshots were checked; all frame/world hosting transitions and controller navigation still require acceptance.",
+      "releaseChannels": []
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -651,7 +803,15 @@ export default {
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.2-preview/browser-preview.zip"
+      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.2-preview/browser-preview.zip",
+      "reviewedAt": "2026-10-13",
+      "releaseChannels": [
+        {
+          "channel": "browser preview",
+          "tag": "v0.0.2-preview",
+          "url": "https://github.com/Spaceghost/xivprism-dalamud/releases/tag/v0.0.2-preview"
+        }
+      ]
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -726,7 +886,15 @@ export default {
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/download/v0.0.1-preview/browser-preview.zip"
+      "previewDownload": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/download/v0.0.1-preview/browser-preview.zip",
+      "reviewedAt": "2026-10-13",
+      "releaseChannels": [
+        {
+          "channel": "browser preview",
+          "tag": "v0.0.1-preview",
+          "url": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/tag/v0.0.1-preview"
+        }
+      ]
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -801,7 +969,15 @@ export default {
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivcamp-dalamud/releases/download/v0.0.1-preview/browser-preview.zip"
+      "previewDownload": "https://github.com/Spaceghost/xivcamp-dalamud/releases/download/v0.0.1-preview/browser-preview.zip",
+      "reviewedAt": "2026-10-13",
+      "releaseChannels": [
+        {
+          "channel": "browser preview",
+          "tag": "v0.0.1-preview",
+          "url": "https://github.com/Spaceghost/xivcamp-dalamud/releases/tag/v0.0.1-preview"
+        }
+      ]
     }
   ]
 };

@@ -1,0 +1,70 @@
+/* Progressive Imba islands; every page and queue row exists without JavaScript. */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 140ms; }
+html { scroll-behavior: smooth; }
+[hidden] { display: none !important; }
+[data-project-finder] { margin-top: 12px; }
+.project-finder, .queue-controls { display: block; }
+.project-finder kbd { margin-left: 8px; font: inherit; opacity: .6; }
+.project-dialog {
+  color: var(--text, #eee); background: var(--bg, #151820);
+  border: 1px solid var(--line, #555); border-radius: 20px;
+  padding: clamp(18px, 4vw, 32px); width: min(680px, calc(100vw - 32px));
+  max-height: min(80dvh, 760px); box-sizing: border-box;
+  box-shadow: 0 24px 100px #0008;
+}
+.project-dialog::backdrop { background: #080b12aa; backdrop-filter: blur(8px); }
+.project-dialog[open] { animation: finder-enter 160ms ease-out; }
+.finder-heading { display: flex; gap: 16px; align-items: center; justify-content: space-between; }
+.finder-heading h2 { margin: 0; font-size: clamp(20px, 4vw, 28px); }
+.finder-search, .queue-fields label { display: grid; gap: 6px; }
+.finder-search { margin-top: 20px; }
+.finder-search input, .queue-fields input, .queue-fields select {
+  box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px;
+  padding: 10px 12px; border: 1px solid var(--line, #555); border-radius: 10px;
+  font: inherit; color: inherit; background: var(--well, #232733);
+}
+.finder-count, .queue-result { color: var(--muted, #aaa); font-size: .9rem; }
+.finder-results { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.finder-results a {
+  display: grid; gap: 4px; padding: 14px; border: 1px solid transparent;
+  border-radius: 12px; color: inherit; text-decoration: none;
+  transition: background 140ms, border-color 140ms;
+}
+.finder-results a:hover, .finder-results a:focus-visible {
+  background: var(--well, #232733); border-color: var(--aether, #6fd6d0);
+}
+.finder-results small { color: var(--muted, #aaa); }
+.queue-fields { display: grid; gap: 12px; grid-template-columns: 2fr 1fr 1fr auto; align-items: end; }
+.queue-scroll { max-width: 100%; overflow: auto; scrollbar-gutter: stable; }
+.queue-scroll table { width: 100%; min-width: 850px; border-collapse: collapse; }
+.queue-scroll th, .queue-scroll td { text-align: left; vertical-align: top; padding: 14px 10px; border-bottom: 1px solid var(--line, #555); }
+.queue-scroll th { color: var(--muted, #aaa); }
+.queue-scroll td:nth-child(3) { min-width: 240px; }
+.queue-scroll small { display: block; padding-top: 6px; line-height: 1.5; color: var(--muted, #aaa); }
+.queue-scroll tr { scroll-margin-top: 24px; }
+.queue-policy summary { cursor: pointer; padding: 8px 0; color: var(--aether, #6fd6d0); }
+.chip, .btn { transition: background-color 140ms, border-color 140ms, box-shadow 140ms; }
+:focus-visible { outline: 2px solid var(--aether, #6fd6d0); outline-offset: 3px; }
+@keyframes finder-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 720px) {
+  .sitebar nav { flex-wrap: nowrap; overflow-x: auto; padding: 3px 3px 12px; min-width: 0; }
+  .sitebar nav .chip { flex: 0 0 auto; }
+  .queue-fields { grid-template-columns: 1fr 1fr; }
+  .queue-fields label:first-child { grid-column: 1 / -1; }
+  .queue-scroll table { min-width: 0; }
+  .queue-scroll thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .queue-scroll tbody { display: grid; gap: 16px; }
+  .queue-scroll tr { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line, #555); border-radius: 12px; padding: 8px; }
+  .queue-scroll td { border: 0; padding: 8px; min-width: 0; }
+  .queue-scroll td:nth-child(1)::before { content: "Order "; }
+  .queue-scroll td:nth-child(3) { grid-column: 1 / -1; grid-row: 2; min-width: 0; }
+  .queue-scroll td:nth-child(4)::before { content: "Want / Maybe / Skip: "; display: block; font-size: .8rem; color: var(--muted, #aaa); }
+  .queue-scroll td:nth-child(6) { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  html { scroll-behavior: auto; }
+  .project-dialog[open], ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  .chip, .btn, .finder-results a { transition: none; }
+}

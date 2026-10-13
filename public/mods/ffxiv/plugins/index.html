@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FFXIV mods: plugin repository</title>
-<meta name="description" content="Add this Dalamud plugin repository in XIVLauncher to install Ghostty, Almanac, XivMcp, XivDesktop, XivArcade and XivLantern for Final Fantasy XIV in one click, or build them yourself as dev plugins.">
+<meta name="description" content="Install the published FFXIV plugins and HUD modules from one Dalamud repository. Find stable and testing builds, separate streaming tools and browser design previews.">
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
 <meta name="author" content="Johnneylee Jack Rollins">
 <link rel="canonical" href="https://spacegho.st/mods/ffxiv/plugins/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FFXIV mods: plugin repository">
-<meta property="og:description" content="Add this Dalamud plugin repository in XIVLauncher to install Ghostty, Almanac, XivMcp, XivDesktop, XivArcade and XivLantern for Final Fantasy XIV in one click, or build them yourself as dev plugins.">
+<meta property="og:description" content="Install the published FFXIV plugins and HUD modules from one Dalamud repository. Find stable and testing builds, separate streaming tools and browser design previews.">
 <meta property="og:url" content="https://spacegho.st/mods/ffxiv/plugins/">
 <meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -23,7 +23,7 @@
 <!-- The page is static and complete without script; plugins.js only fills in the live
      version of each plugin from plugins.json, and wires the copy button. -->
 <script src="/mods/ffxiv/plugins/plugins.js"></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body>
 <div class="wrap">
   <header>
@@ -38,8 +38,8 @@
       </span>
     </div>
     <h1>My mods, in <span class="glyph">one</span> repository</h1>
-    <p class="lede">Everything here is a <strong>Dalamud plugin</strong> for Final Fantasy XIV, written by <strong>Johnneylee Jack Rollins</strong> and open source. Add the repository below to XIVLauncher once, and they install and update like any other plugin. You can also build any of them yourself and skip this page entirely — <a href="#build">that path is kept on purpose</a>.</p>
-  </header>
+    <p class="lede">The published installer entries are <strong>Dalamud plugins</strong> for Final Fantasy XIV, written by <strong>Johnneylee Jack Rollins</strong> and open source. Add the repository below to XIVLauncher once, and they install and update like any other plugin. You can also build any of them yourself and skip this page entirely — <a href="#build">that path is kept on purpose</a>.</p>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
 
   <section aria-labelledby="add-h">
     <h2 id="add-h">Add the repository</h2>
@@ -56,77 +56,17 @@
     <p class="note"><b>Dalamud will warn you</b> that this is a third-party repository whose plugins nobody but their author has reviewed. That warning is correct, and it is true of every custom repository. Every plugin here is open source and built in public on GitHub Actions: the zip the installer downloads is the one the workflow built from the tagged commit, and you can read both. Install it because you trust the author, not because a page said it was fine.</p>
   </section>
 
-  <section aria-labelledby="mods-h">
-    <h2 id="mods-h">What is in it</h2>
-    <p class="small">Live versions come from <a href="/mods/ffxiv/plugins.json">plugins.json</a>, the same file the installer reads.</p>
-
-    <article class="mod" id="ghostty" data-plugin="GhosttyDalamud">
-      <h3>Ghostty <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Eorzea is a terminal multiplexer.</p>
-      <p>A real terminal inside the game: a Quake-style dropdown, floating windows, and terminals pinned to panels in the world. It talks to shells on your own machine through <code>ghostty-agent</code>, which you run yourself — the plugin never opens a shell on its own. <code>/term</code> toggles it. With <a href="https://github.com/una-xiv/umbra" rel="noopener">Umbra</a> installed, its toolbar widget shows the agent's status and a popup terminal.</p>
-      <p class="needs"><b>Needs:</b> <code>ghostty-agent</code> running on the machine the game runs on.</p>
-      <p class="links"><a href="/mods/ffxiv/term/">About</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/term/vote/">Vote on what it does next</a></p>
-    </article>
-
-    <article class="mod" id="almanac" data-plugin="Almanac">
-      <h3>Almanac <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Talk to a local AI model in game, with XivMcp's tools.</p>
-      <p>An in-game chat with a model running on <em>your</em> PC — Ollama, LM Studio, llama.cpp, anything with an OpenAI-compatible API. It sets itself up with a wizard that reads your GPU and recommends models that fit its memory, keeps threads in SQLite, streams replies, and can run a shared benchmark whose results feed the <a href="/mods/ffxiv/almanac/">community model leaderboard</a>. Nothing is sent to a cloud, and there is no Python to install.</p>
-      <p class="needs"><b>Needs:</b> a local model server, and <b>XivMcp</b> for in-game tools (below).</p>
-      <p class="links"><a href="/mods/ffxiv/almanac/about/">About</a> · <a href="https://github.com/Spaceghost/almanac-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/almanac-dalamud/releases" rel="noopener">Releases</a> · <a href="/mods/ffxiv/almanac/">Leaderboard</a></p>
-    </article>
-
-    <article class="mod" id="xivmcp" data-plugin="XivMcp">
-      <h3>XivMcp <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Model Context Protocol server for Final Fantasy XIV.</p>
-      <p>Exposes game state, game data and opt-in actions to MCP clients — Claude Code, Codex, Almanac — over a loopback HTTP server. Anything that would change your game is approved in game first, one prompt at a time. It has an Umbra toolbar widget too.</p>
-      <p class="needs"><b>Needs:</b> an MCP client on the same machine.</p>
-      <p class="note">It has a stable release, so it shows under <b>All Plugins</b> straight away. A newer test build is there too, for those who <a href="#testing-h">opt in</a>.</p>
-      <p class="links"><a href="/mods/ffxiv/xivmcp/">About</a> · <a href="https://github.com/Spaceghost/xivmcp-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivmcp-dalamud/releases" rel="noopener">Releases</a></p>
-    </article>
-
-    <article class="mod" id="xivdesktop" data-plugin="XivDesktop">
-      <h3>XivDesktop <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Launch Linux desktop apps into the game world.</p>
-      <p>For the game running under Wine on Linux: lists the host's applications and opens them as panels in the world, through Ghostty's remote windows. An app launcher for Eorzea.</p>
-      <p class="needs"><b>Needs:</b> Ghostty and <code>ghostty-agent</code>, on a Linux host.</p>
-      <p class="note">It has a stable release, so it shows under <b>All Plugins</b> straight away. A newer test build is there too, for those who <a href="#testing-h">opt in</a>.</p>
-      <p class="links"><a href="/mods/ffxiv/xivdesktop/">About</a> · <a href="https://github.com/Spaceghost/xivdesktop-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivdesktop-dalamud/releases" rel="noopener">Releases</a></p>
-    </article>
-
-    <article class="mod" id="xivarcade" data-plugin="XivArcade">
-      <h3>XivArcade <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Your own classic games as game panels, with saves kept in step across your machines.</p>
-      <p>For the game running under Wine on Linux: <code>/arcade</code> is a wall of the classic games you own, Final Fantasy first, started in RetroArch (or PCSX2 and DuckStation) on the host and shown as panels in the world through Ghostty. Every save lives in one folder that Syncthing copies between your machines. It downloads no games or BIOS files, and cover art only if you turn that on.</p>
-      <p class="needs"><b>Needs:</b> a Linux host, RetroArch and your own game files. Ghostty for panels and Syncthing for save sync are optional.</p>
-      <p class="links"><a href="/mods/ffxiv/xivarcade/">About</a> · <a href="https://github.com/Spaceghost/xivarcade-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivarcade-dalamud/releases" rel="noopener">Releases</a></p>
-    </article>
-
-    <article class="mod" id="xivlantern" data-plugin="XivLantern">
-      <h3>XivLantern <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.</p>
-      <p>Friends by one-time invite, presence and a note you type, 1:1 chat that waits for a friend who is offline, and channels you make, peer to peer over iroh with no Lantern server. An opt-in channel carries the author's signed announcements. Off until you turn it on; nothing from the game is read or sent. With the default relays, n0's relay servers see your IP address and when you are online; "relays off" contacts no third party.</p>
-      <p class="needs"><b>Needs:</b> friends running XivLantern too.</p>
-      <p class="links"><a href="/mods/ffxiv/xivlantern/">About</a> · <a href="https://github.com/Spaceghost/xivlantern-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivlantern-dalamud/releases" rel="noopener">Releases</a></p>
-    </article>
-
-    <article class="mod" id="xivwayfinder" data-plugin="XivWayfinder">
-      <h3>XivWayfinder <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Which way to go, softly: a bead, a trail along the path and a pointing glove.</p>
-      <p>A softly pulsing bead ahead of you, a trail that follows the walkable path when vnavmesh is installed, and the game's own pointing glove (or, as an option, the Wind-up Cursor minion's model) showing the way to a target, your map flag or your quest's next step. It only points; it never moves your character.</p>
-      <p class="needs"><b>Needs:</b> nothing; vnavmesh, if installed, makes the trail follow the path.</p>
-      <p class="links"><a href="/mods/ffxiv/xivwayfinder/">About</a> · <a href="https://github.com/Spaceghost/xivwayfinder-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivwayfinder-dalamud/releases" rel="noopener">Releases</a></p>
-    </article>
-
-    <article class="mod" id="xivpiano" data-plugin="XivPiano">
-      <h3>XivPiano <span class="ver" data-ver>—</span></h3>
-      <p class="punch">Your Pandora stations inside FFXIV: play, skip, thumbs, new stations.</p>
-      <p>A Pandora radio player in the game, after pianobar, Pithos and Elpis: your stations, play and pause, next, thumbs up and down, tired of it, bookmarks, why this song, and new stations from a search or from what is playing. Plus and Premium accounts stream 192 kbit/s MP3. The song shows in the server info bar, <code>/piano</code> works in chat and macros, and it mutes the game's music while a song plays. Not affiliated with Pandora.</p>
-      <p class="needs"><b>Needs:</b> a Pandora account (free, Plus or Premium) in the United States.</p>
-      <p class="note" data-unreleased>No release yet, so it is not in the repository: <a href="#build">build it yourself</a> in the meantime. It has not been heard playing in game yet.</p>
-      <p class="links"><a href="/mods/ffxiv/xivpiano/">About</a> · <a href="https://github.com/Spaceghost/xivpiano-dalamud" rel="noopener">Source</a> · <a href="https://github.com/Spaceghost/xivpiano-dalamud/releases" rel="noopener">Releases</a></p>
-    </article>
-  </section>
+  <section aria-labelledby="mods-h"><h2 id="mods-h">Published installer entries</h2><article class="mod" id="ghostty" data-plugin="GhosttyDalamud"><h3>Ghostty <span class="ver" data-ver>—</span></h3><p class="punch">Eorzea is a terminal multiplexer.</p><p>Quake-style dropdown, floating windows and terminals pinned in the world, connected to shells on your own machine through ghostty-agent. /term to toggle. Works with or without Umbra; with Umbra, the Ghostty toolbar widget shows its status and a popup terminal.</p><p class="needs"><b>Needs:</b> ghostty-agent running on the machine the game runs on.</p><p class="note">Stable release available. Testing builds, when newer, require opt-in.</p><p class="links"><a href="/mods/ffxiv/term/">About and verification</a> · <a href="https://github.com/Spaceghost/ghostty-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="almanac" data-plugin="Almanac"><h3>Almanac <span class="ver" data-ver>—</span></h3><p class="punch">Talk to a local AI model in game, with XivMcp&#39;s tools.</p><p>Connects a model running on your own PC (Ollama, LM Studio, llama.cpp or any OpenAI-compatible server) to the game through XivMcp. Setup wizard with GPU-aware model recommendations, an in-game chat with threads and streaming, and a benchmark you can share with the community leaderboard. No cloud, no Python. Requires the XivMcp plugin for game tools.</p><p class="needs"><b>Needs:</b> A local model server (Ollama, LM Studio, llama.cpp or any OpenAI-compatible API), and XivMcp for game tools.</p><p class="note">Stable release available. Testing builds, when newer, require opt-in.</p><p class="links"><a href="/mods/ffxiv/almanac/about/">About and verification</a> · <a href="https://github.com/Spaceghost/almanac-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivmcp" data-plugin="XivMcp"><h3>XivMcp <span class="ver" data-ver>—</span></h3><p class="punch">Model Context Protocol server for FINAL FANTASY XIV.</p><p>Exposes game state, game data and opt-in actions to MCP clients over loopback Streamable HTTP. Anything that changes your game is approved in game first. Optional Umbra toolbar widget.</p><p class="needs"><b>Needs:</b> An MCP client on the same machine (Claude Code, Codex, Almanac).</p><p class="note">Stable release available. Testing builds, when newer, require opt-in.</p><p class="links"><a href="/mods/ffxiv/xivmcp/">About and verification</a> · <a href="https://github.com/Spaceghost/xivmcp-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivdesktop" data-plugin="XivDesktop"><h3>XivDesktop <span class="ver" data-ver>—</span></h3><p class="punch">Launch Linux desktop apps into the game world.</p><p>An app launcher for FINAL FANTASY XIV running under Wine on Linux. Lists the host&#39;s freedesktop applications and opens them as world panels through Ghostty&#39;s remote windows. Optional Umbra toolbar widget.</p><p class="needs"><b>Needs:</b> Ghostty and ghostty-agent, and a Linux host running the game under Wine.</p><p class="note">Stable release available. Testing builds, when newer, require opt-in.</p><p class="links"><a href="/mods/ffxiv/xivdesktop/">About and verification</a> · <a href="https://github.com/Spaceghost/xivdesktop-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivarcade" data-plugin="XivArcade"><h3>XivArcade <span class="ver" data-ver>—</span></h3><p class="punch">Your own classic games as game panels, with saves kept in step across your machines.</p><p>A library for the classic games you own, for FINAL FANTASY XIV running under Wine on Linux. /arcade lists the game files in folders you choose, starts them in RetroArch on the Linux host, and shows them as world panels through Ghostty when it is installed. Every save and save state lives in one folder that Syncthing copies between your machines. It downloads no games, BIOS files or artwork.</p><p class="needs"><b>Needs:</b> A Linux host running the game under Wine, RetroArch, and your own game files. Ghostty for panels and Syncthing for save sync are optional.</p><p class="note">Stable release available. Testing builds, when newer, require opt-in.</p><p class="links"><a href="/mods/ffxiv/xivarcade/">About and verification</a> · <a href="https://github.com/Spaceghost/xivarcade-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivwayfinder" data-plugin="XivWayfinder"><h3>XivWayfinder <span class="ver" data-ver>—</span></h3><p class="punch">A softly glowing bead and the classic pointing glove show which way to go.</p><p>XivWayfinder points the way in FINAL FANTASY XIV: a softly pulsing bead floats a couple of yalms ahead of you in the direction to go, and the game&#39;s own white pointing glove points there too, sliding to the edge of the screen when the way is behind you. It follows, in order, a target you set with /wayfinder X Y or another plugin sets over IPC, your map flag, and your tracked quest&#39;s next step; in another zone it names the nearest aetheryte instead. With vnavmesh installed it points along the walkable path. It only points and never moves your character.</p><p class="needs"><b>Needs:</b> Nothing beyond Dalamud (API 15), on Windows or Linux under Wine. vnavmesh is optional, for walkable paths.</p><p class="note">Stable release available. Testing builds, when newer, require opt-in.</p><p class="links"><a href="/mods/ffxiv/xivwayfinder/">About and verification</a> · <a href="https://github.com/Spaceghost/xivwayfinder-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivlantern" data-plugin="XivLantern"><h3>XivLantern <span class="ver" data-ver>—</span></h3><p class="punch">Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.</p><p>Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod&#39;s author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character&#39;s name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.</p><p class="needs"><b>Needs:</b> Nothing beyond Dalamud (API 15); the network layer ships inside the plugin as lantern.dll. Friends running XivLantern too.</p><p class="note">Stable release available. Testing builds, when newer, require opt-in.</p><p class="links"><a href="/mods/ffxiv/xivlantern/">About and verification</a> · <a href="https://github.com/Spaceghost/xivlantern-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivpiano" data-plugin="XivPiano"><h3>XivPiano <span class="ver" data-ver>—</span></h3><p class="punch">Your Pandora stations inside FFXIV: play, skip, thumbs, new stations.</p><p>XivPiano is a Pandora radio player inside FINAL FANTASY XIV, in the tradition of pianobar and Pithos. Sign in with your Pandora account and play your stations, skip, thumbs up or down, shelve a song you are tired of, bookmark it, ask why it was picked, and make new stations from an artist, a song or a genre. The song shows in the server info bar; /piano next and friends work from chat and macros, and other plugins can control it over IPC. It can mute the game&#39;s music while it plays and pause itself during cutscenes. Pandora is only available in the United States. Not affiliated with Pandora or Sirius XM.</p><p class="needs"><b>Needs:</b> Dalamud (API 15), on Windows or Linux under Wine, and a Pandora account in the United States.</p><p class="note">Testing builds only. Enable plugin testing builds in Dalamud.</p><p class="links"><a href="/mods/ffxiv/xivpiano/">About and verification</a> · <a href="https://github.com/Spaceghost/xivpiano-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivhud" data-plugin="XivHud"><h3>XivHud <span class="ver" data-ver>—</span></h3><p class="punch">An illustrated interface, with the original always within reach.</p><p>A reversible native HUD mode and shared controller support for an illustrated interface. Restore the native HUD with /xivhud off.</p><p class="needs"><b>Needs:</b> Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.</p><p class="note">Testing builds only. Enable plugin testing builds in Dalamud.</p><p class="links"><a href="/mods/ffxiv/xivhud/">About and verification</a> · <a href="https://github.com/Spaceghost/xivhud-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivhud-journal" data-plugin="XivHud.Journal"><h3>XivHud · Journal <span class="ver" data-ver>—</span></h3><p class="punch">Your next chapter, on warm vellum.</p><p>An illustrated quest journal with accepted quests, local bookmarks, search, and native map handoff. Optional native frames and world windows.</p><p class="needs"><b>Needs:</b> Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.</p><p class="note">Testing builds only. Enable plugin testing builds in Dalamud.</p><p class="links"><a href="/mods/ffxiv/xivhud/journal/">About and verification</a> · <a href="https://github.com/Spaceghost/xivhud-dalamud/releases">Releases</a></p></article>
+<article class="mod" id="xivrug" data-plugin="XivRug"><h3>XivRug <span class="ver" data-ver>—</span></h3><p class="punch">A little woven Eorzea beneath your feet.</p><p>An independent woven map rug beneath your character, with terrain contact, Wayfinder routes and optional XivPiano music visuals.</p><p class="needs"><b>Needs:</b> Dalamud API 15; Wayfinder and XivPiano integrations are optional. No Ghostty dependency.</p><p class="note">Testing builds only. Enable plugin testing builds in Dalamud.</p><p class="links"><a href="/mods/ffxiv/xivrug/">About and verification</a> · <a href="https://github.com/Spaceghost/xivrug-dalamud/releases">Releases</a></p></article><h3>Separate downloads and development projects</h3><ul><li><a href="/mods/ffxiv/xivhud/character/">XivHud · Character</a>: development · loaded and read-only IPC checked; visual acceptance pending</li><li><a href="/mods/ffxiv/xivstream/">XivStream</a>: release candidate · Incus/Sunshine/NVIDIA path tested; other routes experimental</li><li><a href="/mods/ffxiv/xivprism/">XivPrism</a>: design preview; live plugin and native companion apps are not released</li><li><a href="/mods/ffxiv/xivdispatch/">XivDispatch</a>: design preview; live plugin and native companion apps are not released</li><li><a href="/mods/ffxiv/xivcamp/">XivCamp</a>: design preview; live plugin and native companion apps are not released</li></ul><p>Companion tools, browser previews and modules awaiting acceptance use their project pages. They have no automatic Dalamud installer entry.</p></section>
 
   <section aria-labelledby="testing-h">
     <h2 id="testing-h">Test builds, if you want them early</h2>

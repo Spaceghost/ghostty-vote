@@ -20,6 +20,34 @@ export const galleryProjects = function(registry) {
 	);
 };
 
+
+export function enhancePage(html){
+	if (!html.includes('/mods/ffxiv/site/enhancements.js')) {
+		html = html.replace('</head>','<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>');
+	};
+	if (!html.includes('data-project-finder')) {
+		html = html.replace('</header>','<div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>');
+	};
+	return html;
+};
+
+export function projectReview(m){
+	const releases = (m.releaseChannels || []).map(function(release) { return '<li><a href="' + escape(release.url) + '">' + escape(release.channel) + ': ' + escape(release.tag) + '</a>' + (release.version ? (' · package ' + escape(release.version)) : '') + '</li>'; }).join('');
+	const availability = releases ? ('<ul>' + releases + '</ul>') : '<p>Source and development packages only; no separate automatic installer release.</p>';
+	const queue = m.votePage ? ('<a href="/mods/ffxiv/roadmap/?project=' + escape(m.id) + '">Voted feature queue</a> · <a href="' + escape(m.votePage) + '">Vote on features</a>') : '<a href="/mods/ffxiv/roadmap/">Family feature queue</a>';
+	return '<!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="' + escape(m.reviewedAt) + '">' + escape(m.reviewedAt) + ' UTC</time>. Release availability and live verification are tracked separately.</p>' + availability + '<p>' + escape(m.verification) + '</p><p>' + queue + ' · <a href="https://github.com/' + escape(m.repo) + '">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->';
+};
+
+export function installationProjects(registry){
+	const plugins = registry.mods.filter(function(m) { return m.listed && m.kind == 'plugin'; });
+	const cards = plugins.map(function(m) {
+		const channel = m.released ? 'Stable release available. Testing builds, when newer, require opt-in.' : 'Testing builds only. Enable plugin testing builds in Dalamud.';
+		return '<article class="mod" id="' + escape(m.id) + '" data-plugin="' + escape(m.internalName) + '"><h3>' + escape(m.name) + ' <span class="ver" data-ver>—</span></h3><p class="punch">' + escape(m.punchline) + '</p><p>' + escape(m.description) + '</p><p class="needs"><b>Needs:</b> ' + escape(m.needs || 'See the project build instructions.') + '</p><p class="note">' + escape(channel) + '</p><p class="links"><a href="' + escape(m.page) + '">About and verification</a> · <a href="https://github.com/' + escape(m.repo) + '/releases">Releases</a></p></article>';
+	}).join('\n');
+	const others = registry.mods.filter(function(m) { return !m.listed && m.kind != 'library'; }).map(function(m) { return '<li><a href="' + escape(m.page) + '">' + escape(m.name) + '</a>: ' + escape(m.status) + '</li>'; }).join('');
+	return '<section aria-labelledby="mods-h"><h2 id="mods-h">Published installer entries</h2>' + cards + '<h3>Separate downloads and development projects</h3><ul>' + others + '</ul><p>Companion tools, browser previews and modules awaiting acceptance use their project pages. They have no automatic Dalamud installer entry.</p></section>';
+};
+
 export function projectNavigation(registry){
 	return (registry.mods.filter(
 		function(m) {
@@ -29,7 +57,7 @@ export function projectNavigation(registry){
 		function(m) {
 			return ('<a class="chip" href="' + String(escape(m.page)) + '">' + String(escape(m.name)) + '</a>');
 		}
-	).join('\n      ') + '\n      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>\n      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>');
+	).join('\n      ') + '\n      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>\n      <a class="chip" href="/mods/ffxiv/plugins/">Install</a>\n      <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>');
 	return;
 };
 
@@ -72,12 +100,12 @@ export function projectOutputs(registry,pages){
 		out[(('public' + m.page) + 'index.html')] = projectPage(m,registry);
 	};
 	for (let [path,content] of iterable$(Object.entries(pages))){
-		if (Object.hasOwn(out,path)) {
-			continue;
-		};
-		let html = content;
+		let html = out[path] || content;
 		if ((path === 'public/mods/ffxiv/index.html')) {
 			html = html.replace(new RegExp('(<div class="mods">)[\\s\\S]*?(<\\/div>\\s*<\\/section>)',''),('$1\n      ' + String(projectCards(registry)) + '\n      $2'));
+		};
+		if (path == 'public/mods/ffxiv/plugins/index.html') {
+			html = html.replace(new RegExp('<section aria-labelledby="mods-h">[\\s\\S]*?</section>'),installationProjects(registry));
 		};
 		html = html.replace(new RegExp('(<nav aria-label="Mods">)[\\s\\S]*?(<\\/nav>)',''),('$1\n      ' + String(projectNavigation(registry)) + '\n    $2'));
 		if (path.endsWith('/term/gallery/index.html')) {
@@ -90,9 +118,26 @@ export function projectOutputs(registry,pages){
 				).join('\n')) + '\n      $2')
 			);
 		};
+		if (!path.includes('/admin/') && !path.includes('/apps/') && !path.includes('/privacy/')) {
+			html = enhancePage(html);
+		};
 		if ((html !== content)) {
 			out[path] = html;
 		};
+	};
+	// All project pages use the same reviewed status and release evidence, even
+	// where their longer feature descriptions remain hand-authored HTML.
+	for (let m of iterable$(registry.mods)){
+		const path = 'public' + m.page + 'index.html';
+		const current = out[path] || pages[path];
+		if (!current) {
+			continue;
+		};
+		const status = '<div class="status" role="note"><b>Current status</b><p>' + escape(m.status) + '. ' + escape(m.verification) + '</p></div>';
+		let html = current.replace(new RegExp('<div class="status"[^>]*>[\\s\\S]*?</div>'),status);
+		html = html.replace(new RegExp('<!-- BEGIN PROJECT REVIEW -->[\\s\\S]*?<!-- END PROJECT REVIEW -->\\s*'),'');
+		html = html.replace('</main>',projectReview(m) + '\n</main>');
+		out[path] = html;
 	};
 	out['public/mods/ffxiv/projects.json'] = (JSON.stringify(
 		{
@@ -126,7 +171,7 @@ export function projectRoutes(registry){
 		function(path) {
 			return ('  { pattern = "spacegho.st' + String(path) + '*", zone_name = "spacegho.st" },');
 		}
-	).join('\n') + '\n  { pattern = "spacegho.st/mods/ffxiv/projects.json", zone_name = "spacegho.st" }');
+	).join('\n') + '\n  { pattern = "spacegho.st/mods/ffxiv/roadmap*", zone_name = "spacegho.st" },\n  { pattern = "spacegho.st/mods/ffxiv/projects.json", zone_name = "spacegho.st" }');
 	return;
 };
 
@@ -142,6 +187,7 @@ export function projectHeaders(registry){
 			}
 		)
 	)];
+	prefixes.push('/mods/ffxiv/roadmap');
 	return prefixes.map(
 		function(path) {
 			return ('' + String(path) + '/*\n  Content-Security-Policy: default-src \'none\'; script-src \'self\'; style-src \'self\'; connect-src \'self\'; img-src \'self\' data:; media-src \'self\'; base-uri \'none\'; form-action \'self\'; frame-ancestors \'none\'\n  X-Content-Type-Options: nosniff\n  X-Frame-Options: DENY\n  Referrer-Policy: no-referrer\n  Cross-Origin-Opener-Policy: same-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()\n');

@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FFXIV mods by Spaceghost</title>
-<meta name="description" content="Open-source plugins and host tools for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game), XivArcade (your own classic games, saves in step), XivWayfinder (a bead and a pointing glove that show the way), XivLantern (friends, chat and channels, peer to peer), XivPiano (your Pandora stations in game) and Almanac (local AI for FFXIV).">
+<meta name="description" content="Open-source FFXIV plugins, illustrated HUD modules and streaming tools, plus XivPrism companion-display, XivDispatch Slack and XivCamp layout previews. Find current releases, verification notes and the voted feature queue.">
 <meta name="color-scheme" content="dark light">
 <meta name="referrer" content="no-referrer">
 <meta name="author" content="Johnneylee Jack Rollins">
 <link rel="canonical" href="https://spacegho.st/mods/ffxiv/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FFXIV mods by Spaceghost">
-<meta property="og:description" content="Open-source plugins and host tools for Final Fantasy XIV: Ghostty (a real terminal in the game world), XivMcp (an MCP server inside the game), XivDesktop (your Linux desktop in game), XivArcade (your own classic games, saves in step), XivWayfinder (a bead and a pointing glove that show the way), XivLantern (friends, chat and channels, peer to peer), XivPiano (your Pandora stations in game) and Almanac (local AI for FFXIV).">
+<meta property="og:description" content="Open-source FFXIV plugins, illustrated HUD modules and streaming tools, plus XivPrism companion-display, XivDispatch Slack and XivCamp layout previews. Find current releases, verification notes and the voted feature queue.">
 <meta property="og:url" content="https://spacegho.st/mods/ffxiv/">
 <meta property="og:image" content="https://spacegho.st/mods/ffxiv/plugins/icons/ghostty-banner.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e1116'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23d8b26a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%236fd6d0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -20,7 +20,7 @@
      also fills the media slots from media/manifest.json and the community screenshots. -->
 <script src="/mods/ffxiv/site/site.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="wrap">
@@ -41,10 +41,11 @@
       <a class="chip" href="/mods/ffxiv/xivprism/">XivPrism</a>
       <a class="chip" href="/mods/ffxiv/xivdispatch/">XivDispatch</a>
       <a class="chip" href="/mods/ffxiv/xivcamp/">XivCamp</a>
+      <a class="chip" href="/mods/ffxiv/roadmap/">Feature queue</a>
       <a class="chip" href="/mods/ffxiv/plugins/">Install</a>
       <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
     </nav>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
   <main id="main">
     <section class="hero glass" aria-labelledby="title">
       <div>
@@ -127,21 +128,21 @@
         <img src="/mods/ffxiv/site/art/xivhud-banner.svg" alt="XivHud illustration" width="730" height="380" loading="lazy" decoding="async">
         <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivhud-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivhud/">XivHud</a></h2></div>
         <p class="tagline">An illustrated interface, with the original always within reach.</p><p>A reversible native HUD mode and shared controller support for an illustrated interface. Restore the native HUD with /xivhud off.</p>
-        <p><span class="tag unverified">experimental · HUD restoration observed in game; new IPC awaits live checks</span></p>
+        <p><span class="tag unverified">experimental · module loading and read-only IPC checked; UI acceptance pending</span></p>
         <p class="links"><a href="/mods/ffxiv/xivhud/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivhud">Gallery</a> <a href="https://github.com/Spaceghost/xivhud-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
         <img src="/mods/ffxiv/site/art/xivhud-journal-banner.svg" alt="XivHud · Journal illustration" width="730" height="380" loading="lazy" decoding="async">
         <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivhud-journal-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivhud/journal/">XivHud · Journal</a></h2></div>
         <p class="tagline">Your next chapter, on warm vellum.</p><p>An illustrated quest journal with accepted quests, local bookmarks, search, and native map handoff. Optional native frames and world windows.</p>
-        <p><span class="tag unverified">experimental · selected Journal and window checks observed in game</span></p>
+        <p><span class="tag unverified">experimental · selected Journal checks and read-only IPC observed</span></p>
         <p class="links"><a href="/mods/ffxiv/xivhud/journal/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivhud-journal">Gallery</a> <a href="https://github.com/Spaceghost/xivhud-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">
         <img src="/mods/ffxiv/site/art/xivhud-character-banner.svg" alt="XivHud · Character illustration" width="730" height="380" loading="lazy" decoding="async">
         <div class="in"><div class="id"><img src="/mods/ffxiv/site/art/xivhud-character-icon.svg" alt="" width="192" height="192"><h2><a href="/mods/ffxiv/xivhud/character/">XivHud · Character</a></h2></div>
         <p class="tagline">An adventurer’s record.</p><p>An illustrated adventurer record with equipment, attributes, classes and jobs, and gear sets. The original game window remains available.</p>
-        <p><span class="tag unverified">development · builds and offline tests; in-game acceptance pending</span></p>
+        <p><span class="tag unverified">development · loaded and read-only IPC checked; visual acceptance pending</span></p>
         <p class="links"><a href="/mods/ffxiv/xivhud/character/">About</a> <a href="/mods/ffxiv/term/gallery/?mod=xivhud-character">Gallery</a> <a href="https://github.com/Spaceghost/xivhud-dalamud" rel="noopener">Source</a></p></div>
       </article>
       <article class="modcard glass">

@@ -16,7 +16,7 @@
 <!-- Not deferred: gallery.js applies the saved theme before first paint, then waits for the DOM. -->
 <script src="/mods/ffxiv/term/gallery/gallery.js"></script>
 <script src="/mods/ffxiv/term/vote/beacon.js" defer></script>
-</head>
+<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script></head>
 <body>
 <div class="wrap">
   <header>
@@ -54,7 +54,7 @@
     <h1>Screenshots from <span class="glyph">Eorzea</span></h1>
     <p class="lede">Players' screenshots of the FFXIV mods by <strong>Johnneylee Jack Rollins</strong> (<a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>): Ghostty, XivMcp, XivDesktop, XivArcade, XivWayfinder, XivLantern, XivPiano and Almanac. Pick a mod above to see only its screenshots.</p>
     <div class="prompt" id="summary" aria-live="polite">$ <b>ls</b> gallery/ &nbsp; loading…</div>
-  </header>
+  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
 
   <section class="share" aria-labelledby="share-h">
     <div class="cat-head">

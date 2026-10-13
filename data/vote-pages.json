@@ -38,6 +38,10 @@
         [
           "Almanac models",
           "/mods/ffxiv/almanac/"
+        ],
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=ghostty"
         ]
       ],
       "banner": "/mods/ffxiv/plugins/icons/ghostty-banner.png",
@@ -55,7 +59,12 @@
       "h1_after": " Eorzea next?",
       "lede_html": "<strong>XivMcp</strong> is a Model Context Protocol server inside Final Fantasy XIV, made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). AI clients read game state and game data over loopback, and anything that changes your game waits for your approval in game. These are ideas for what it could do next, each checked against how the plugin works and against its hard lines: client-side, your own character only, and nothing that plays the game for you.",
       "about": "/mods/ffxiv/xivmcp/",
-      "links": [],
+      "links": [
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivmcp"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/xivmcp-banner.png",
       "suggest_title": "A tool that reads my retainers' sale history",
       "suggest_detail": "What would you ask your AI, and what should it be able to see or do?"
@@ -70,7 +79,12 @@
       "h1_after": " in Eorzea next?",
       "lede_html": "<strong>XivDesktop</strong> brings your Linux desktop into Final Fantasy XIV: a keyboard-first launcher, nine workspaces and a taskbar for real application windows shown as panels in the world, on top of Ghostty. Made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next, each checked against how it actually works: how feasible it is, how much effort it takes, and whether it stays client-side.",
       "about": "/mods/ffxiv/xivdesktop/",
-      "links": [],
+      "links": [
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivdesktop"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/xivdesktop-banner.png",
       "suggest_title": "Drag a file from my file manager onto a housing wall",
       "suggest_detail": "Describe the moment you'd want in game."
@@ -85,7 +99,12 @@
       "h1_after": " next?",
       "lede_html": "<strong>XivArcade</strong> is a library for the classic games you own: started in RetroArch on the Linux host, shown as panels in the world, with every save kept in step across your machines. Bring your own games; none are downloaded. Made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next, each checked against how it actually works.",
       "about": "/mods/ffxiv/xivarcade/",
-      "links": [],
+      "links": [
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivarcade"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/xivarcade-banner.png",
       "suggest_title": "A cabinet in my FC house that friends can walk up to",
       "suggest_detail": "Describe the moment you'd want in game."
@@ -100,7 +119,12 @@
       "h1_after": " next?",
       "lede_html": "<strong>XivWayfinder</strong> shows the way softly: a bead at your target and a small pointing glove at the edge of the screen, for map flags and quest steps. Made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next, each checked against how it works: it only ever points, and never moves your character.",
       "about": "/mods/ffxiv/xivwayfinder/",
-      "links": [],
+      "links": [
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivwayfinder"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/xivwayfinder-banner.png",
       "suggest_title": "Point me at the next FATE in the zone",
       "suggest_detail": "Where would you want it to lead you, and how should that feel?"
@@ -115,7 +139,12 @@
       "h1_after": " next?",
       "lede_html": "<strong>XivLantern</strong> is a friend list of your own inside Final Fantasy XIV, with presence, 1:1 chat and channels, peer to peer over iroh: there is no Lantern server, and nothing from the game is ever sent. Made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next, each checked against how it works and against its promise to stay a separate chat that never reads the game.",
       "about": "/mods/ffxiv/xivlantern/",
-      "links": [],
+      "links": [
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivlantern"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/xivlantern-banner.png",
       "suggest_title": "Share a waymark layout with my static's channel",
       "suggest_detail": "Describe the moment you'd want with your friends."
@@ -130,7 +159,12 @@
       "h1_after": " next?",
       "lede_html": "<strong>XivPiano</strong> plays your Pandora stations inside Final Fantasy XIV, in the tradition of pianobar, Pithos and Elpis: thumbs up and down, tired of it, why this song, and new stations from a search. It has not been heard playing in game yet. Made by <strong>Johnneylee Jack Rollins</strong> (<a href=\"https://github.com/Spaceghost\" rel=\"noopener\">github.com/Spaceghost</a>). These are ideas for what it could do next, each checked against how it works and against Pandora's terms: it streams, it never keeps a song. Pandora serves the United States only, and XivPiano is not affiliated with Pandora.",
       "about": "/mods/ffxiv/xivpiano/",
-      "links": [],
+      "links": [
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivpiano"
+        ]
+      ],
       "banner": "/mods/ffxiv/plugins/icons/xivpiano-banner.png",
       "suggest_title": "Switch to my battle station when a duty starts",
       "suggest_detail": "When would you want the music to change, and what should it do?"
@@ -149,6 +183,10 @@
         [
           "Models leaderboard",
           "/mods/ffxiv/almanac/"
+        ],
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=almanac"
         ]
       ],
       "banner": "/mods/ffxiv/plugins/icons/almanac-banner.png",
@@ -173,6 +211,10 @@
         [
           "Source",
           "https://github.com/Spaceghost/xivprism-dalamud"
+        ],
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivprism"
         ]
       ],
       "banner": "/mods/ffxiv/site/art/xivprism-hero.webp",
@@ -198,6 +240,10 @@
         [
           "Source",
           "https://github.com/Spaceghost/xivdispatch-dalamud"
+        ],
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivdispatch"
         ]
       ],
       "banner": "/mods/ffxiv/site/art/xivdispatch-hero.webp",
@@ -223,6 +269,10 @@
         [
           "Source",
           "https://github.com/Spaceghost/xivcamp-dalamud"
+        ],
+        [
+          "Feature queue",
+          "/mods/ffxiv/roadmap/?project=xivcamp"
         ]
       ],
       "banner": "/mods/ffxiv/site/art/xivcamp-hero.webp",

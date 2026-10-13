@@ -18,3 +18,7 @@ Work ships in independently testable releases. Stability, security and live
 in-game certification remain gates for every release; the size of this ballot
 does not turn research ideas into unreviewed hooks or permit one unstable mega
 release.
+
+The current [feature queue](https://spacegho.st/mods/ffxiv/roadmap/) adds the newer
+projects and GitHub tracking while preserving this original scope. See
+[FEATURE_QUEUE.md](FEATURE_QUEUE.md) for vote snapshots and delivery states.
