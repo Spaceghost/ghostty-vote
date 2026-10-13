@@ -11,7 +11,9 @@ import {tmpdir} from 'node:os';
 
 import {join} from 'node:path';
 
-import {verifyProjects,verifyPlugins,verifyPage} from './deploy-health-lib.js';
+import {verifyProjects,verifyPlugins,verifyPage,verifyBallot} from './deploy-health-lib.js';
+
+import assert from 'node:assert/strict';
 
 const root = new URL('../',import.meta.url);
 
@@ -25,11 +27,12 @@ const temp = mkdtempSync(join(tmpdir(),'ffxiv-deploy-health-'));
 
 let sequence = 0;
 
-function get(path){
+function get(path,binary = false){
 	const output = join(temp,String((++sequence)));
 	execFileSync('curl',['--silent','--show-error','--fail-with-body','--retry','3','--user-agent','spacegho.st-FFXIV-deploy-check/1.0 (+https://github.com/Spaceghost/ghostty-vote)','--retry-all-errors','--retry-delay','2','--connect-timeout','10','--max-time','30','--output',output,new URL(path,base).href],{stdio: ['ignore','ignore','inherit']});
 	console.log((('GET ' + path) + ' -> 200'));
-	return readFileSync(output,'utf8');
+	const bytes = readFileSync(output);
+	return binary ? bytes : bytes.toString('utf8');
 	return;
 };
 
@@ -43,6 +46,17 @@ try {
 		}
 	))){
 		verifyPage(get(mod.page),mod.page);
+		if (mod.publicationStage == 'preview') {
+			verifyPage(get(mod.previewPage),mod.previewPage);
+			verifyPage(get(mod.votePage),mod.votePage);
+			const ideasPath = mod.votePage + 'ideas.json';
+			const ideas = JSON.parse(get(ideasPath));
+			const expectedIdeas = JSON.parse(readFileSync(new URL('public' + ideasPath,root),'utf8'));
+			verifyBallot(ideas,expectedIdeas,JSON.parse(get('/mods/ffxiv/term/vote/api/tallies?mod=' + mod.id)));
+			const image = get(mod.bannerPath,true);
+			assert.equal(image.subarray(0,4).toString(),'RIFF');
+			assert.equal(image.subarray(8,12).toString(),'WEBP');
+		};
 	};
 	console.log('Deployed project registry, published installer entries and project pages verified.');
 } finally {

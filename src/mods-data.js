@@ -572,6 +572,236 @@ export default {
           "body": "<p>The HUD host, Journal and Character expose versioned JSON Call gates. Reads return immutable snapshots; changes are validated, queued, applied on the framework thread and polled by request ID. Controller ownership stays with a focused local window and is never offered as an MCP operation.</p><p>See <a href=\"https://github.com/Spaceghost/xivhud-dalamud/blob/main/docs/IPC.md\">the IPC contract</a> and the module READMEs for lifecycle, window identity and build instructions.</p>"
         }
       ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.0.0.0",
+      "listed": false,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivPrism",
+      "name": "XivPrism",
+      "id": "xivprism",
+      "page": "/mods/ffxiv/xivprism/",
+      "punchline": "Your HUD, wherever you look.",
+      "description": "A companion HUD project for glasses, extra monitors, phones and tablets. A standalone Prism app and combined presentation in native Moonlight share the same layouts.",
+      "tags": [
+        "hud",
+        "glasses",
+        "multi-monitor",
+        "android",
+        "ipad",
+        "moonlight"
+      ],
+      "status": "design preview; live plugin and native companion apps are not released",
+      "navigation": true,
+      "repo": "Spaceghost/xivprism-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivprism.png",
+      "needs": "The browser preview needs no game, account or glasses. Live integrations are planned.",
+      "build": "npm ci && npm run build",
+      "pending": "Preview source is available. No installable Dalamud release yet.",
+      "iconPath": "/mods/ffxiv/site/art/xivprism-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivprism-hero.webp",
+      "votePage": "/mods/ffxiv/xivprism/vote/",
+      "previewPage": "/mods/ffxiv/xivprism/preview/",
+      "publicationStage": "preview",
+      "verification": "The interactive preview uses invented data. Live game integration, native companion apps and hardware support have not yet been verified.",
+      "artCaption": "AI-generated concept illustration. This is not a hardware photograph or an in-game screenshot.",
+      "sections": [
+        {
+          "title": "A second HUD, on your side of the connection",
+          "body": "<p>Keep FFXIV on its game screen and place selected information in your glasses or another display. Fedora supplies game state; display detection belongs to your remote client. Alienware and Win Max 2 can also supply local game state when playing natively.</p>"
+        },
+        {
+          "title": "An app when you just want Prism",
+          "body": "<p>The planned standalone Prism Display app receives HUD information without opening Moonlight. Phone, tablet, desktop and glasses outputs can have different layouts. A browser preview below demonstrates the layout choices with invented data.</p>"
+        },
+        {
+          "title": "Native Moonlight, with Prism around the game",
+          "body": "<p>Combined mode is planned for native Moonlight applications. Ordinary overlays will be evaluated where supported; restricted platforms may need a Prism-enabled native Moonlight build. Beam and neckband presentation must be checked on the exact model before support is claimed.</p>"
+        },
+        {
+          "title": "Peripheral first, pinned afterward",
+          "body": "<p>Start with sparse, readable panels and a clear centre. Whole-surface pinning can use capabilities already supplied by the glasses. Independent spatial panels and physical-monitor alignment are later work, depending on tracking and calibration.</p>"
+        },
+        {
+          "title": "Remember the glasses you actually use",
+          "body": "<p>Associate a display with a profile once. During an active companion session, plugging in those glasses should activate that profile. Unplugging, stale data and viewer failure must close the output and release any optional native HUD relocation.</p>"
+        },
+        {
+          "title": "The HUD family, connected",
+          "body": "<p>Journal, Character, Wayfinder and Piano are planned panel sources. XivMcp will report viewer readiness, actual presentation and recovery state. The display feed will be independent of high-frequency MCP tool calls.</p>"
+        },
+        {
+          "title": "Compatibility is a test record",
+          "body": "<p>Windows clients, Android phone and wearable clients, and iPadOS are targets. Ordinary display output, simultaneous Moonlight use, whole-surface pinning and spatial panels are separate capabilities. No glasses model, native companion app or live game connection has been verified yet.</p>"
+        }
+      ],
+      "artWidth": 1672,
+      "artHeight": 941,
+      "media": [
+        {
+          "src": "/mods/ffxiv/site/art/xivprism-preview.png",
+          "alt": "XivPrism browser preview with invented data",
+          "width": 1440,
+          "height": 1080,
+          "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
+        }
+      ],
+      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.1-preview/browser-preview.zip"
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.0.0.0",
+      "listed": false,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivDispatch",
+      "name": "XivDispatch",
+      "id": "xivdispatch",
+      "page": "/mods/ffxiv/xivdispatch/",
+      "punchline": "Slack, within reach.",
+      "description": "A practical Slack companion project for FFXIV: DMs, mentions, threads and persistent drafts, with quiet play sessions and optional Prism panels.",
+      "tags": [
+        "slack",
+        "communication",
+        "companion",
+        "hud",
+        "productivity"
+      ],
+      "status": "design preview; live plugin and native companion apps are not released",
+      "navigation": true,
+      "repo": "Spaceghost/xivdispatch-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivdispatch.png",
+      "needs": "The browser preview needs no game, account or glasses. Live integrations are planned.",
+      "build": "npm ci && npm run build",
+      "pending": "Preview source is available. No installable Dalamud release yet.",
+      "iconPath": "/mods/ffxiv/site/art/xivdispatch-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivdispatch-hero.webp",
+      "votePage": "/mods/ffxiv/xivdispatch/vote/",
+      "previewPage": "/mods/ffxiv/xivdispatch/preview/",
+      "publicationStage": "preview",
+      "verification": "The interactive preview uses invented data. Live game integration, native companion apps and hardware support have not yet been verified.",
+      "artCaption": "AI-generated concept illustration. This is not a hardware photograph or an in-game screenshot.",
+      "sections": [
+        {
+          "title": "The conversations you actually need",
+          "body": "<p>The first dedicated interface is planned around DMs, mentions and pinned channels. Read a thread, keep a draft, react or open the original message. The interactive preview uses a fictional workspace and never connects to Slack.</p>"
+        },
+        {
+          "title": "A useful path before a complete custom client",
+          "body": "<p>First evaluate hosting the official Slack app window through Desktop and Ghostty in the Wine/Linux setup. A dedicated compact interface then uses supported Slack APIs and workspace-authorized access. Official app hosting is planned, not verified.</p>"
+        },
+        {
+          "title": "Your identity, your deliberate send",
+          "body": "<p>A real client needs authorized user access, rather than silently substituting a bot identity. Credentials stay in the connector on a trusted device. Sending and reactions are explicit actions; an assistant never sends merely because a message appeared.</p>"
+        },
+        {
+          "title": "Quiet while you play",
+          "body": "<p>Choose when a conversation deserves attention. Compact notifications, a quiet session and drafts that survive closing the panel make a more useful first release than an attempt to reproduce every Slack feature.</p>"
+        },
+        {
+          "title": "A conversation panel for Prism and Camp",
+          "body": "<p>Dispatch will offer a compact panel for glasses or another display and a larger window in a Camp arrangement. Viewers receive only the conversations you choose. A controller should open or dismiss a panel without stealing ordinary game input.</p>"
+        },
+        {
+          "title": "What still needs proving",
+          "body": "<p>OAuth, workspace installation policy, event delivery, history limits, message identity and permission revocation need integration checks. There is no Slack connection, live account access or installable Dalamud plugin in this publication.</p>"
+        }
+      ],
+      "artWidth": 1672,
+      "artHeight": 941,
+      "media": [
+        {
+          "src": "/mods/ffxiv/site/art/xivdispatch-preview.png",
+          "alt": "XivDispatch browser preview with invented data",
+          "width": 1440,
+          "height": 1080,
+          "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
+        }
+      ],
+      "previewDownload": "https://github.com/Spaceghost/xivdispatch-dalamud/releases/download/v0.0.1-preview/browser-preview.zip"
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.0.0.0",
+      "listed": false,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivCamp",
+      "name": "XivCamp",
+      "id": "xivcamp",
+      "page": "/mods/ffxiv/xivcamp/",
+      "punchline": "Unfold your little corner of Eorzea.",
+      "description": "A saved-layout project for your map rug, journal, music, conversations and world windows. Make a campfire, work corner or adventure arrangement and return to it.",
+      "tags": [
+        "layouts",
+        "world-windows",
+        "hud",
+        "music",
+        "companion"
+      ],
+      "status": "design preview; live plugin and native companion apps are not released",
+      "navigation": true,
+      "repo": "Spaceghost/xivcamp-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivcamp.png",
+      "needs": "The browser preview needs no game, account or glasses. Live integrations are planned.",
+      "build": "npm ci && npm run build",
+      "pending": "Preview source is available. No installable Dalamud release yet.",
+      "iconPath": "/mods/ffxiv/site/art/xivcamp-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivcamp-hero.webp",
+      "votePage": "/mods/ffxiv/xivcamp/vote/",
+      "previewPage": "/mods/ffxiv/xivcamp/preview/",
+      "publicationStage": "preview",
+      "verification": "The interactive preview uses invented data. Live game integration, native companion apps and hardware support have not yet been verified.",
+      "artCaption": "AI-generated concept illustration. This is not a hardware photograph or an in-game screenshot.",
+      "sections": [
+        {
+          "title": "A place for the tools you already have",
+          "body": "<p>Campfire brings Rug, Piano, Journal and Lantern together. Work corner adds Dispatch, notes and a terminal. Adventure favours Wayfinder and compact Prism information. Each arrangement remembers what belongs there.</p>"
+        },
+        {
+          "title": "Begin on the screen",
+          "body": "<p>The first implementation target is a saved screen layout: panel selection, position, size and display assignment. The interactive preview switches invented arrangements and exports a draft. It does not move real plugin windows.</p>"
+        },
+        {
+          "title": "Then unfold it into the world",
+          "body": "<p>Ghostty world windows and Rug placement are later integrations. A scene should retain an ordinary screen recovery path whenever a world host is missing or unavailable. A picture of a campsite is concept artwork, not evidence that furniture is being spawned.</p>"
+        },
+        {
+          "title": "One arrangement, several displays",
+          "body": "<p>With Prism, a Camp arrangement can send navigation to glasses, a journal to a tablet and work conversations to another monitor. Display mappings remain owned by the receiving client.</p>"
+        },
+        {
+          "title": "Controller-friendly and reversible",
+          "body": "<p>Opening Camp should have explicit focus ownership. Closing it, switching scenes or losing an optional provider should restore the previous arrangement. Missing panels should be reported individually rather than breaking the whole scene.</p>"
+        },
+        {
+          "title": "What still needs proving",
+          "body": "<p>Live window ownership, restoring positions, world placement, music actions and controller navigation need acceptance with the actual modules. There is no live plugin integration or installable Dalamud release in this publication.</p>"
+        }
+      ],
+      "artWidth": 1672,
+      "artHeight": 941,
+      "media": [
+        {
+          "src": "/mods/ffxiv/site/art/xivcamp-preview.png",
+          "alt": "XivCamp browser preview with invented data",
+          "width": 1440,
+          "height": 1080,
+          "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
+        }
+      ],
+      "previewDownload": "https://github.com/Spaceghost/xivcamp-dalamud/releases/download/v0.0.1-preview/browser-preview.zip"
     }
   ]
 };

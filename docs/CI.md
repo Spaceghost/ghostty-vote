@@ -211,3 +211,7 @@ The optional self-hosted runner and fork behavior still require their own
 evidence; a hosted CI or deploy result does not establish either.
 
 The public deployment check runs in a separate job with no Cloudflare credentials. `DEPLOY_VERIFY_RUNS_ON` may select a trusted repository-scoped ephemeral runner when the custom domain rejects GitHub-hosted network requests. The default remains `ubuntu-latest`; a persistent 403 fails verification. Uploading the Worker stays on the deployment runner and does not disable Cloudflare security checks.
+
+## Prism, Dispatch and Camp vote publication
+
+The requested project launch adds an explicit, generated `seed/project-launch.sql` step before deployment. It contains only category/idea upserts for `xivprism`, `xivdispatch`, and `xivcamp`; no migrations, full-catalogue retirement, vote updates or vote deletion. Tests reapply it twice and verify that existing votes and tallies survive unchanged. The full catalogue seed remains a separate maintainer operation.

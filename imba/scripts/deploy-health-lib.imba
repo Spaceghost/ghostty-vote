@@ -3,6 +3,10 @@ import assert from 'node:assert/strict'
 
 import { usableEntry } from './plugins-lib.js'
 
+export def verifyBallot(ideas, expected, tallies)
+	assert.deepEqual(ideas, expected, 'Deployed feature catalogue differs from this build')
+	assert.deepEqual(Object.keys(tallies).sort(), expected.ideas.map(do(idea) idea.id).sort(), 'Live vote database does not contain every published idea')
+
 export def verifyProjects(actual, expected)
 	assert.deepEqual(actual, expected, 'Deployed project registry differs from this build')
 	return

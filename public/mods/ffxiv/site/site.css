@@ -246,3 +246,5 @@ footer p { margin: 0; }
 
 .project-section { padding: clamp(20px, 4vw, 32px); margin: 24px 0; }
 .project-section p { max-width: 75ch; }
+
+.hero-figure{margin:0}.hero-figure figcaption{padding:10px;font-size:.85rem;line-height:1.5}.preview-media{width:100%;height:auto;border-radius:16px}.preview-gallery{display:grid;gap:20px}.preview-gallery figure{margin:0}.preview-gallery figcaption{padding-top:8px;font-size:.9rem}

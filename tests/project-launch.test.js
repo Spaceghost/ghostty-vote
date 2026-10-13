@@ -1,0 +1,42 @@
+// Generated from imba/tests/project-launch.test.imba; edit the Imba source.
+
+/*body*/
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {setup,API,read,allTallies} from './harness.js';
+
+test('new project ballots accept ideas and keep each project ballot separate',async function() {
+	var $1;
+	const t = setup();
+	const cookie = await t.signedIn();
+	$1 = [];
+	for (let mod of ['xivprism','xivdispatch','xivcamp']){
+		const catalogue = JSON.parse(read('data/catalogues/' + mod + '.json'));
+		const idea = catalogue.categories[0].ideas[0].id;
+		const response = await t.vote({mod: mod,idea_id: idea,vote: 'want',note: 'A useful first release'},{cookie: cookie});
+		assert.equal(response.status,200);
+		const mine = await (await t.call(API + 'mine?mod=' + mod,{cookie: cookie})).json();
+		assert.equal(mine.votes[idea].vote,'want');
+		const original = await (await t.call(API + 'mine?mod=ghostty',{cookie: cookie})).json();
+		assert.equal(original.votes[idea],undefined);
+		const count = t.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM ideas WHERE mod = ? AND retired = 0').get(mod).n;
+		$1.push(assert.equal(count,12));
+	};
+	return $1;
+});
+
+test('the scoped launch seed is idempotent and preserves existing votes and tallies',async function() {
+	const t = setup();
+	const cookie = await t.signedIn();
+	const old = JSON.parse(read('data/catalogue.json')).categories[0].ideas[0].id;
+	assert.equal((await t.vote({idea_id: old,vote: 'want',note: 'Keep my vote'},{cookie: cookie})).status,200);
+	assert.equal((await t.vote({mod: 'xivprism',idea_id: 'xivprism-standalone',vote: 'maybe'},{cookie: cookie})).status,200);
+	const before = allTallies(t.env.DB.raw);
+	const votes = t.env.DB.raw.prepare('SELECT * FROM votes ORDER BY voter,idea_id').all();
+	const seed = read('seed/project-launch.sql');
+	assert.doesNotMatch(seed,new RegExp('^\\s*(DELETE\\b|UPDATE ideas SET retired|INSERT INTO catalogue)','im'));
+	t.env.DB.raw.exec(seed);
+	t.env.DB.raw.exec(seed);
+	assert.deepEqual(allTallies(t.env.DB.raw),before);
+	return assert.deepEqual(t.env.DB.raw.prepare('SELECT * FROM votes ORDER BY voter,idea_id').all(),votes);
+});

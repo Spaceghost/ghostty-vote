@@ -54,7 +54,7 @@
     const THEME_KEY = "ghostty-vote:theme";
     const MAX_BYTES = 8 * 1024 * 1024;
     const DOT = " \xB7 ";
-    const MODS = { ghostty: "Ghostty", almanac: "Almanac", xivmcp: "XivMcp", xivdesktop: "XivDesktop", xivarcade: "XivArcade", xivwayfinder: "XivWayfinder", xivlantern: "XivLantern", xivpiano: "XivPiano", xivhud: "XivHud", "xivhud-journal": "XivHud \xB7 Journal", "xivhud-character": "XivHud \xB7 Character", xivrug: "XivRug", xivstream: "XivStream" };
+    const MODS = { ghostty: "Ghostty", almanac: "Almanac", xivmcp: "XivMcp", xivdesktop: "XivDesktop", xivarcade: "XivArcade", xivwayfinder: "XivWayfinder", xivlantern: "XivLantern", xivpiano: "XivPiano", xivhud: "XivHud", "xivhud-journal": "XivHud \xB7 Journal", "xivhud-character": "XivHud \xB7 Character", xivrug: "XivRug", xivstream: "XivStream", xivprism: "XivPrism", xivdispatch: "XivDispatch", xivcamp: "XivCamp" };
     const want = new URLSearchParams(location.search).get("mod");
     const MOD = want && Object.hasOwn(MODS, want) ? want : "";
     const modOf = function(s) {

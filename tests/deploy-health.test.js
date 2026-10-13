@@ -6,7 +6,7 @@ import test from 'node:test';
 
 import assert from 'node:assert/strict';
 
-import {verifyProjects,verifyPlugins,verifyPage} from '../scripts/deploy-health-lib.js';
+import {verifyProjects,verifyPlugins,verifyPage,verifyBallot} from '../scripts/deploy-health-lib.js';
 
 const registry = {mods: [{internalName: 'Stable',listed: true,released: true},{internalName: 'Testing',listed: true,testingVersion: '0.1.0.1'},{internalName: 'Character',listed: false},{internalName: 'Library',kind: 'library',listed: false}]};
 
@@ -77,3 +77,11 @@ test(
 		return;
 	}
 );
+
+
+test('public vote verification rejects unseeded ideas',function() {
+	const ideas = {version: 1,ideas: [{id: 'prism-example'}]};
+	verifyBallot(ideas,ideas,{'prism-example': {want: 0,maybe: 0,skip: 0}});
+	assert.throws(function() { return verifyBallot(ideas,ideas,{}); });
+	return assert.throws(function() { return verifyBallot({version: 2,ideas: []},ideas,{}); });
+});
