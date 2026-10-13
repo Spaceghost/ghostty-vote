@@ -134,15 +134,15 @@
       "iconPath": "/mods/ffxiv/site/art/xivmcp-icon.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivmcp-banner.webp",
       "votePage": "/mods/ffxiv/xivmcp/vote/",
-      "testingVersion": "0.1.2.3",
+      "testingVersion": "0.1.2.4",
       "reviewedAt": "2026-10-13",
       "verification": "Selected game-state calls were observed in earlier builds. The latest testing package has offline validation; loading it, approvals and current HUD-family integration still require live acceptance.",
       "releaseChannels": [
         {
           "channel": "testing",
-          "tag": "v0.1.2-test.3",
-          "version": "0.1.2.3",
-          "url": "https://github.com/Spaceghost/xivmcp-dalamud/releases/tag/v0.1.2-test.3"
+          "tag": "v0.1.2-test.4",
+          "version": "0.1.2.4",
+          "url": "https://github.com/Spaceghost/xivmcp-dalamud/releases/tag/v0.1.2-test.4"
         },
         {
           "channel": "stable",
@@ -185,15 +185,15 @@
       "iconPath": "/mods/ffxiv/site/art/xivdesktop-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivdesktop-banner-2.webp",
       "votePage": "/mods/ffxiv/xivdesktop/vote/",
-      "testingVersion": "1.0.3.1",
+      "testingVersion": "1.0.3.2",
       "reviewedAt": "2026-10-13",
       "verification": "The app scanner and core logic have host-side tests. Live application windows, Wine input, workspaces, NPC/session interfaces and Umbra widgets still require acceptance.",
       "releaseChannels": [
         {
           "channel": "testing",
-          "tag": "v1.0.3-test.1",
-          "version": "1.0.3.1",
-          "url": "https://github.com/Spaceghost/xivdesktop-dalamud/releases/tag/v1.0.3-test.1"
+          "tag": "v1.0.3-test.2",
+          "version": "1.0.3.2",
+          "url": "https://github.com/Spaceghost/xivdesktop-dalamud/releases/tag/v1.0.3-test.2"
         },
         {
           "channel": "stable",
@@ -283,13 +283,13 @@
       "bannerPath": "/mods/ffxiv/site/art/xivwayfinder-banner-2.webp",
       "votePage": "/mods/ffxiv/xivwayfinder/vote/",
       "reviewedAt": "2026-10-13",
-      "verification": "Direction, routing and target policies have host-side tests. Drawing, physical controller behavior and navigation handoffs still require live acceptance. Newer guide work is not certified by older releases.",
+      "verification": "The latest testing build passes offline logic, model-pack, shader-checksum and packaging checks. Live rendering, collision, boarding, teleport, controller behavior and navigation handoffs still require acceptance.",
       "releaseChannels": [
         {
           "channel": "testing",
-          "tag": "v0.1.1-test.1",
-          "version": "0.1.1.1",
-          "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.1-test.1"
+          "tag": "v0.1.1-test.2",
+          "version": "0.1.1.2",
+          "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.1-test.2"
         },
         {
           "channel": "stable",
@@ -298,7 +298,7 @@
           "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.0"
         }
       ],
-      "testingVersion": "0.1.1.1",
+      "testingVersion": "0.1.1.2",
       "testingTag": "v0.1.1-test.1"
     },
     {
@@ -336,15 +336,22 @@
       "bannerPath": "/mods/ffxiv/site/art/xivlantern-banner-2.webp",
       "votePage": "/mods/ffxiv/xivlantern/vote/",
       "reviewedAt": "2026-10-13",
-      "verification": "Host and native networking checks cover selected peer connections. In-game chat, presence, channels and communication extensions still require acceptance.",
+      "verification": "The latest testing build passes native default/optional-feature tests, C# binding tests, core tests and packaging checks. Windows/Wine execution, in-game UI and communication extensions still require acceptance for this build.",
       "releaseChannels": [
+        {
+          "channel": "testing",
+          "tag": "v0.1.1-test.1",
+          "version": "0.1.1.1",
+          "url": "https://github.com/Spaceghost/xivlantern-dalamud/releases/tag/v0.1.1-test.1"
+        },
         {
           "channel": "stable",
           "tag": "v0.1.0",
           "version": "0.1.0.3",
           "url": "https://github.com/Spaceghost/xivlantern-dalamud/releases/tag/v0.1.0"
         }
-      ]
+      ],
+      "testingVersion": "0.1.1.1"
     },
     {
       "internalName": "XivPiano",
@@ -681,8 +688,8 @@
       "releaseChannels": [
         {
           "channel": "release candidate",
-          "tag": "v0.1.0-rc.2",
-          "url": "https://github.com/Spaceghost/xivstream-dalamud/releases/tag/v0.1.0-rc.2"
+          "tag": "v0.1.0-rc.3",
+          "url": "https://github.com/Spaceghost/xivstream-dalamud/releases/tag/v0.1.0-rc.3"
         }
       ]
     },
