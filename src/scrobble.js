@@ -133,7 +133,7 @@ async function state(env,session,url){
 	};
 	const key = session.k;
 	const [tokens,providers,counts,playing,forwarding] = await env.DB.batch([
-		env.DB.prepare('SELECT id,label,prefix,created_at,last_used_at,revoked_at FROM scrobble_tokens WHERE account=? ORDER BY created_at DESC LIMIT 50').bind(key),
+		env.DB.prepare('SELECT id,label,prefix,created_at,last_used_at,revoked_at FROM scrobble_tokens WHERE account=? ORDER BY (revoked_at=0) DESC,created_at DESC LIMIT 50').bind(key),
 		env.DB.prepare('SELECT * FROM scrobble_providers WHERE account=?').bind(key),
 		env.DB.prepare('SELECT (SELECT COUNT(*) FROM scrobble_listens WHERE account=?1) AS listens,(SELECT COUNT(*) FROM scrobble_outbox WHERE account=?1 AND status IN (\'pending\',\'retry\',\'sending\')) AS pending,(SELECT COUNT(*) FROM scrobble_outbox WHERE account=?1 AND status=\'failed\') AS failed').bind(key),
 		env.DB.prepare('SELECT metadata,updated_at,expires_at FROM scrobble_nowplaying WHERE account=? AND expires_at>?').bind(key,Date.now()),
