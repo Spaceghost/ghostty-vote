@@ -359,7 +359,7 @@ export default {
       "name": "XivPiano",
       "listed": true,
       "repo": "Spaceghost/xivpiano-dalamud",
-      "assemblyVersion": "0.1.1.2",
+      "assemblyVersion": "0.1.1.3",
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Your Pandora stations inside FFXIV: play, skip, thumbs, new stations.",
@@ -378,12 +378,11 @@ export default {
       "needs": "Dalamud (API 15), on Windows or Linux under Wine, and a Pandora account in the United States.",
       "build": "tools/fetch-dalamud.sh, then tools/install-dev.sh (or dotnet build XivPiano.slnx -c Release)",
       "umbraWidget": null,
-      "pending": "Testing build available: enable plugin testing builds in Dalamud.",
-      "released": false,
+      "released": true,
       "id": "xivpiano",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivpiano/",
-      "status": "testing build available · native melodica protocol · private scrobbling",
+      "status": "stable release available · native melodica protocol · private scrobbling",
       "navigation": true,
       "gallery": true,
       "testingVersion": "0.1.1.2",
@@ -393,6 +392,12 @@ export default {
       "reviewedAt": "2026-10-23",
       "verification": "Uses the native melodica protocol bridge, with private listening history and optional ListenBrainz/Last.fm forwarding through Spaceghost Scrobbles. Live Pandora authentication, audible playback and in-game transitions still require player acceptance.",
       "releaseChannels": [
+        {
+          "channel": "stable",
+          "tag": "v0.1.1",
+          "version": "0.1.1.3",
+          "url": "https://github.com/Spaceghost/xivpiano-dalamud/releases/tag/v0.1.1"
+        },
         {
           "channel": "testing",
           "tag": "v0.1.1-test.2",

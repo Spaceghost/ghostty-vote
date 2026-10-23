@@ -177,5 +177,31 @@
     "DownloadLinkUpdate": "https://github.com/Spaceghost/xivlantern-dalamud/releases/latest/download/latest.zip",
     "IsTestingExclusive": false,
     "LastUpdate": 0
+  },
+  {
+    "Author": "Johnneylee Jack Rollins",
+    "Name": "XivPiano",
+    "InternalName": "XivPiano",
+    "AssemblyVersion": "0.1.1.3",
+    "Punchline": "Your Pandora stations inside FFXIV: play, skip, thumbs, new stations.",
+    "Description": "XivPiano is a Pandora radio player inside FINAL FANTASY XIV, in the tradition of pianobar and Pithos. Sign in with your Pandora account and play your stations, skip, thumbs up or down, shelve a song you are tired of, bookmark it, ask why it was picked, and make new stations from an artist, a song or a genre. The song shows in the server info bar; /piano next and friends work from chat and macros, and other plugins can control it over IPC. It can mute the game's music while it plays and pause itself during cutscenes. Pandora is only available in the United States. Not affiliated with Pandora or Sirius XM. Optional Spaceghost Scrobbles keeps a private listening history, with export, deletion and user-controlled forwarding to ListenBrainz or Last.fm. Your Pandora account and stream URLs are never sent to the scrobbling service.",
+    "Tags": [
+      "music",
+      "radio",
+      "pandora",
+      "audio",
+      "utility"
+    ],
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "RepoUrl": "https://github.com/Spaceghost/xivpiano-dalamud",
+    "IconUrl": "https://spacegho.st/mods/ffxiv/plugins/icons/xivpiano.png",
+    "ImageUrls": [
+      "https://spacegho.st/mods/ffxiv/plugins/icons/xivpiano-banner.png"
+    ],
+    "DownloadLinkInstall": "https://github.com/Spaceghost/xivpiano-dalamud/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/Spaceghost/xivpiano-dalamud/releases/latest/download/latest.zip",
+    "IsTestingExclusive": false,
+    "LastUpdate": 0
   }
 ]
