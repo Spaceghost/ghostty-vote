@@ -9,6 +9,7 @@ preview_urls = false
 
 # Exactly these path prefixes on spacegho.st; every other route on the zone is untouched.
 routes = [
+  { pattern = "spacegho.st/mods/ffxiv/scrobble*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/term/vote*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/term/gallery*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/almanac*", zone_name = "spacegho.st" },
@@ -58,7 +59,7 @@ directory = "public"
 binding = "ASSETS"
 html_handling = "auto-trailing-slash"   # public/.../vote/index.html is served at /vote/; /vote redirects there
 not_found_handling = "none"
-run_worker_first = ["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json", "/mods/ffxiv/plugins.json"]
+run_worker_first = ["/mods/ffxiv/scrobble/1/*", "/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json", "/mods/ffxiv/plugins.json"]
 
 [[d1_databases]]
 binding = "DB"
@@ -85,3 +86,8 @@ ADMIN_ACCOUNTS = "github:251370"                   # 'provider:user_id', comma-s
 # "it had errors" can be looked up afterwards. Lines never carry codes, tokens or bodies.
 [observability]
 enabled = true
+
+# Persistent outbox retries and private-history retention. Secret encryption key is
+# provisioned once with SCROBBLE_ENCRYPTION_KEY (base64 of 32 random bytes).
+[triggers]
+crons = ["*/5 * * * *"]

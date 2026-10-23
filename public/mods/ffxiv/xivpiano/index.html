@@ -44,7 +44,7 @@
       </div>
       <img class="hero-art" src="/mods/ffxiv/site/art/xivpiano-banner-2.webp" alt="XivPiano: a glowing music note sounding over a small piano keyboard, under a night sky" width="730" height="380" fetchpriority="high">
     </section>
-    <div class="status" role="note"><b>Current status</b><p>testing build available · playback checks pending. Core radio policies have host-side tests. Live Pandora authentication, audible playback, dialogue/duty transitions and account actions still require acceptance. Several voted features have implementation evidence but are not certified complete.</p></div>
+    <div class="status" role="note"><b>Current status</b><p>testing build available · native melodica protocol · private scrobbling. Uses the native melodica protocol bridge, with private listening history and optional ListenBrainz/Last.fm forwarding through Spaceghost Scrobbles. Live Pandora authentication, audible playback and in-game transitions still require player acceptance.</p></div>
 
     <section id="what" aria-labelledby="what-h">
       <div class="sec-head"><h2 id="what-h">What it does</h2></div>
@@ -111,6 +111,11 @@
         <span class="tag unverified">unverified in game</span>
       </article>
       <article class="card glass">
+        <h3>Your listening history, privately</h3>
+        <p>Opt in to <a href="/mods/ffxiv/scrobble/">Spaceghost Scrobbles</a> to keep a private music history and export or delete it whenever you choose. Connect ListenBrainz or Last.fm there if you want completed listens forwarded. Only music metadata is sent; your Pandora account, audio and stream URLs stay out.</p>
+        <a class="chip" href="/mods/ffxiv/scrobble/">Open your scrobble dashboard</a>
+      </article>
+      <article class="card glass">
         <h3>Stays signed in, if you want</h3>
         <p>The password is encrypted for your Windows (or Wine) user with DPAPI before it is saved, never kept in the clear, and XivPiano can sign in and resume your last station when the game starts.</p>
         <span class="tag unverified">unverified in game</span>
@@ -161,7 +166,7 @@
             <li><b>Save and Close</b>.</li>
             <li><code>/xlplugins</code> → <b>All Plugins</b> → search <b>XivPiano</b> → <b>Install</b>.</li>
           </ol>
-          <p class="note">XivPiano has <b>testing release available</b>, so it does not show under <b>All Plugins</b> until it has one. Build it yourself in the meantime; the changelog will say when it is released and which parts have been heard working in game.</p>
+          <p class="note">XivPiano <b>0.1.1.2</b> is a testing release. Enable testing builds in Dalamud, then install it from this repository. The <a href="https://github.com/Spaceghost/xivpiano-dalamud/releases/tag/v0.1.1-test.2" rel="noopener">release notes</a> describe the native melodica protocol and optional private scrobbling. Audible playback and in-game transitions still need player acceptance.</p>
           <p class="small">Dalamud will warn you that this is a third-party repository nobody but its author has reviewed. That is true. The <a href="/mods/ffxiv/plugins/">repository page</a> says more, including how test builds work.</p>
         </div>
         <div class="path glass">
@@ -238,7 +243,7 @@ tools/fetch-dalamud.sh && tools/install-dev.sh</code></pre>
         <li><a class="btn" href="/mods/ffxiv/plugins/">Plugin repository</a></li>
       </ul>
     </section>
-  <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-13">2026-10-13 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/xivpiano-dalamud/releases/tag/v0.1.1-test.1">testing: v0.1.1-test.1</a> · package 0.1.1.1</li></ul><p>Core radio policies have host-side tests. Live Pandora authentication, audible playback, dialogue/duty transitions and account actions still require acceptance. Several voted features have implementation evidence but are not certified complete.</p><p><a href="/mods/ffxiv/roadmap/?project=xivpiano">Voted feature queue</a> · <a href="/mods/ffxiv/xivpiano/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/xivpiano-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
+  <!-- BEGIN PROJECT REVIEW --><section class="glass project-section" id="release-status"><h2>Releases and next checks</h2><p>Reviewed <time datetime="2026-10-23">2026-10-23 UTC</time>. Release availability and live verification are tracked separately.</p><ul><li><a href="https://github.com/Spaceghost/xivpiano-dalamud/releases/tag/v0.1.1-test.2">testing: v0.1.1-test.2</a> · package 0.1.1.2</li></ul><p>Uses the native melodica protocol bridge, with private listening history and optional ListenBrainz/Last.fm forwarding through Spaceghost Scrobbles. Live Pandora authentication, audible playback and in-game transitions still require player acceptance.</p><p><a href="/mods/ffxiv/roadmap/?project=xivpiano">Voted feature queue</a> · <a href="/mods/ffxiv/xivpiano/vote/">Vote on features</a> · <a href="https://github.com/Spaceghost/xivpiano-dalamud">Source and build instructions</a></p></section><!-- END PROJECT REVIEW -->
 </main><!-- BEGIN FAMILY FOOTER --><footer class="foot family-footer"><p>Open-source FFXIV projects by <a href="https://github.com/Spaceghost">Johnneylee Jack Rollins</a>.</p><nav aria-label="Footer"><a href="/mods/ffxiv/">All projects</a><a href="/mods/ffxiv/plugins/">Install</a><a href="/mods/ffxiv/roadmap/">Feature queue</a><a href="/mods/ffxiv/term/vote/privacy/">Site privacy</a></nav><p class="small">Unofficial fan projects; not endorsed by Square Enix.</p></footer><!-- END FAMILY FOOTER --><section class="page-notes">
     <p class="small"><strong>Privacy.</strong> XivPiano talks to Pandora and nothing else: your email and password go to Pandora's own servers to sign in, and songs and album art come from Pandora's links. The password is saved only if you ask, encrypted with DPAPI for your Windows (or Wine) user. It reads the game's music setting to put it back as it was, and whether a cutscene is playing; it reads nothing else from the game and sends nothing from it.</p>
     <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>. It loads nothing from any other site.</p>

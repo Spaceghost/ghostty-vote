@@ -284,3 +284,11 @@
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
 # END GENERATED PROJECT HEADERS
+
+/mods/ffxiv/scrobble/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()

@@ -21,6 +21,8 @@ import { getAdminAlmanac, getAggregate, postAdminAlmanacReview, postAdminAlmanac
 
 import { getPluginMaster } from './plugins.js'
 
+import { handleScrobble } from './scrobble.js'
+
 import { getAdminGallery, getAdminImage, getMyShotVotes, getPublicImage, getShots, postAdminReview, postAdminThumb, postMemberUpload, postShotVote, postUpload } from './gallery.js'
 
 const WRITES = {vote: [validateVote, postVote], suggest: [validateSuggestion, postSuggest]}
@@ -165,6 +167,9 @@ export def handle(request, env, ctx, cache = (do()
 	return fetch(...args)
 ))
 	const url = new URL(request.url)
+	const scrobble = await handleScrobble(request, env, ctx, url, fetcher)
+	if scrobble
+		return scrobble
 	const r = route(url.pathname)
 	if (r.kind !== 'api')
 		return new Response('Not found\n', {status: 404, headers: {'content-type': 'text/plain; charset=utf-8'}})

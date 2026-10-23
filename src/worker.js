@@ -12,7 +12,10 @@ import {handle} from './app.js';
 
 import {analyticsFetch} from './analytics.js';
 
+import {scheduledScrobbles} from './scrobble-queue.js';
+
 export default {
+	scheduled: scheduledScrobbles,
 	fetch: function(request,env,ctx) {
 		return analyticsFetch(request,env,ctx,handle);
 		return;

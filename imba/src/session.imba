@@ -220,7 +220,7 @@ export const stateMatches = (do(cookieState, queryState)
 	return ((! (! cookieState)) && constantTimeEqual(cookieState.s, queryState))
 )
 
-const RETURNS = new Set([(BASE + '/'), (BASE + '/admin/'), (BASE + '/apps/'), '/mods/ffxiv/term/gallery/', '/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/xivpiano/', '/mods/ffxiv/almanac/about/', ...Object.values(VOTE_MODS)])
+const RETURNS = new Set(['/mods/ffxiv/scrobble/', (BASE + '/'), (BASE + '/admin/'), (BASE + '/apps/'), '/mods/ffxiv/term/gallery/', '/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/xivpiano/', '/mods/ffxiv/almanac/about/', ...Object.values(VOTE_MODS)])
 
 const USER_CODE_RE = new RegExp('^[A-Z]{4}-[A-Z]{4}$', '')
 

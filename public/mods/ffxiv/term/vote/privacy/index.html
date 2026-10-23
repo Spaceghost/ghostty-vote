@@ -17,7 +17,7 @@
   <section class="family-intro glass">
 
     <h1>What this site <span class="glyph">counts</span></h1>
-    <p class="lede">Short version: how many people opened each page and how many machines fetched each file, per day. No cookies for any of it, no third-party scripts, nothing sold or shared, and nothing that says which of those people was you.</p>
+    <p class="lede">Page and download analytics are anonymous daily counters, without analytics cookies or third-party scripts. Account features store what you choose to send. Spaceghost Scrobbles keeps private listening history and forwards it only to music services you connect.</p>
   </section>
 
   <div>
@@ -39,7 +39,7 @@
         <li>the two-letter country Cloudflare already attaches to the request.</li>
       </ul>
       <p>Those counters are shared by everyone who asked for the same thing on the same day. They are kept for 400 days and then deleted. There is no row anywhere that represents one visitor, one session, or one machine.</p>
-      <p><strong>The plugins themselves do not phone home.</strong> Nothing was added to any plugin for this. What the site knows about installs is only what it can see from the outside: how many times the repository file was fetched, and by what class of client.</p>
+      <p><strong>The plugins do not send usage analytics.</strong> Install counts come from repository-file requests. XivPiano can separately send song metadata to Spaceghost Scrobbles when you enable that option; the listening-history feature is described below.</p>
     </section>
 
     <section>
@@ -56,27 +56,35 @@
 
     <section>
       <h2>Things you send</h2>
-      <p>Nothing new is stored on this site without a signed-in account from one of two places: GitHub, or XIVAuth (FFXIV). That covers votes, notes and suggestions, screenshots shared to the gallery or to a mod's page, and Almanac benchmark results. The plugins and the command line sign in by showing a short code that you approve on <a href="/mods/ffxiv/term/vote/apps/">the connected apps page</a>, where you can also disconnect them.</p>
+      <p>Account features use a signed-in GitHub or XIVAuth (FFXIV) account. That covers votes, notes and suggestions, screenshots, Almanac benchmark results, and private listening history. Gallery and benchmark clients use <a href="/mods/ffxiv/term/vote/apps/">the connected apps page</a>. XivPiano uses a separate token created and revoked on the <a href="/mods/ffxiv/scrobble/">Scrobbles dashboard</a>.</p>
       <p>With each thing you send, the server keeps which of the two sign-ins you used and a key for the account: a SHA-256 of the provider name and your account id there. The key does not hide who you are from the owner (GitHub ids are public), and it is what lets the owner act on an account, not an address, when something is abusive. If you linked a character, the owner sees its name and world beside what you sent; that is the only display name kept. Your login name, e-mail address and the provider's token are not stored. Things sent before this rule existed stay as they were, with no account on them.</p>
     </section>
 
     <section>
-      <h2>What is never collected</h2>
+      <h2>Optional listening history</h2>
+      <p><a href="/mods/ffxiv/scrobble/">Spaceghost Scrobbles</a> is off by default in XivPiano. When enabled, it sends song, artist, album, duration, playback timestamp and the submitting player name. The host accepts only supported music metadata; it does not save Pandora passwords, account tokens, stream URLs or audio.</p>
+      <p>Listening history is private to the signed-in account, retained for up to 365 days and at most 100,000 listens per account. The dashboard can export or delete it. Deleting history also removes waiting forwards. Now-playing metadata expires after five minutes. Client tokens are shown once and stored only as SHA-256 hashes; revoking one stops that player's access.</p>
+      <p>Forwarding to ListenBrainz or Last.fm is a separate choice. Connecting a destination stores its user name and encrypted credentials, and allows song metadata to be sent there. Last.fm authorization uses an API key and shared secret from your own API account; your Last.fm password is not requested. Transient failures are retried, with delivery status visible in the dashboard. Disconnecting removes that destination's credentials and cancels waiting forwards. Listens already received by another service stay there until you remove them through that service.</p>
+      <p>The account key links only the submissions and connections you made. It does not link your music to the anonymous page-view counters. Browser controls use the existing signed session cookie; the XivPiano token cannot read your private history or manage destinations.</p>
+    </section>
+
+    <section>
+      <h2>What is never collected for analytics</h2>
       <ul>
         <li>No cookies, for analytics, ever. (Signing in to vote sets a session cookie; that is the vote's own cookie and is described on <a href="/mods/ffxiv/term/vote/">that page</a>.)</li>
-        <li>No third-party analytics, no advertising, no tag managers, no fingerprinting, no cross-site tracking. Nothing is sold, shared or sent to anyone else.</li>
+        <li>No third-party analytics, advertising, tag managers, fingerprinting or cross-site tracking. Nothing is sold. Scrobble forwarding sends music metadata only to destinations you explicitly connect.</li>
         <li>No IP addresses stored, for anything. No User-Agent strings stored. No full URLs, no query strings, no page contents.</li>
         <li>No profile of a visitor, no session identifier, no visit history, no linking of a page view to a vote, a screenshot or a benchmark result. (Those three are linked to the account that sent them, as described above; page views are not.)</li>
         <li>No consent banner, because there is nothing to consent to.</li>
       </ul>
       <p>Cloudflare, which serves this site, keeps its own request logs and security analytics as part of running the network; the owner can see aggregate totals and attack data there. That is Cloudflare's processing, not extra collection by this site.</p>
       <p>Every page in the FFXIV mod family uses fonts already installed on your device. The site does not request typefaces from a font service. Linked character portraits, when displayed, load from the Lodestone.</p>
-      <p>Everything above is implemented in this site's Worker — the schema is <code>migrations/0007_analytics.sql</code> and the code is <code>src/analytics.js</code>. That source is not public yet. Questions, or something that looks wrong: <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+      <p>Analytics are implemented in <code>migrations/0007_analytics.sql</code> and <code>imba/src/analytics.imba</code>; listening history has its own schema and handlers. <a href="https://github.com/Spaceghost/ghostty-vote">Read the source</a>. Questions, or something that looks wrong: <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
     </section>
   </div>
 
   <section class="page-notes">
-    <p class="small">The vote, the gallery and the Almanac each keep a little more than this, because they hold something you chose to send; each of those pages says exactly what, at the bottom.</p>
+    <p class="small">The vote, gallery, Almanac and Scrobbles keep the data you choose to submit; each feature's page explains its own storage and controls.</p>
   </section>
 </main><!-- BEGIN FAMILY FOOTER --><footer class="foot family-footer"><p>Open-source FFXIV projects by <a href="https://github.com/Spaceghost">Johnneylee Jack Rollins</a>.</p><nav aria-label="Footer"><a href="/mods/ffxiv/">All projects</a><a href="/mods/ffxiv/plugins/">Install</a><a href="/mods/ffxiv/roadmap/">Feature queue</a><a href="/mods/ffxiv/term/vote/privacy/">Site privacy</a></nav><p class="small">Unofficial fan projects; not endorsed by Square Enix.</p></footer><!-- END FAMILY FOOTER --></div></body>
 </html>
