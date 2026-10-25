@@ -6,13 +6,13 @@ import {iterable$} from 'imba/runtime';
 // A D1 batch commits history + per-destination outbox before any external request.
 import {PRIVATE,isSameOrigin,json,randomToken,readJsonBody,sha256hex} from './lib.js';
 import {readSession} from './session.js';
+import {clientAccount,accountRecord,validAccountSQL} from './scrobble-auth.js';
 import {isBanned} from './account.js';
 import {SCROBBLE_BASE,SCROBBLE_BROWSER,SCROBBLE_BODY_BYTES,SCROBBLE_RETENTION_MS,ScrobbleError,cursor,problem,submission,text} from './scrobble-data.js';
 import {DeliveryError,beginLastfm,decryptCredentials,encryptCredentials,encryptionReady,finishLastfm,validateListenBrainz} from './scrobble-providers.js';
 import {drainScrobbles} from './scrobble-queue.js';
 
 const BROWSER_METHODS = Object.freeze({state: 'GET',export: 'GET',tokens: 'POST','tokens/revoke': 'POST','providers/listenbrainz': 'POST','providers/lastfm/start': 'POST','providers/lastfm/finish': 'POST','providers/disconnect': 'POST','history/delete': 'POST',retry: 'POST'});
-const CLIENT_TOKEN = new RegExp('^Token (sgs_[A-Za-z0-9_-]{43})$','i');
 const NO_CACHE = {...PRIVATE,'referrer-policy': 'no-referrer','x-content-type-options': 'nosniff'};
 
 function response(value,status = 200,headers = {}){
@@ -28,27 +28,6 @@ function providerName(value){
 		problem(400,'invalid_provider','Choose ListenBrainz or Last.fm.');
 	};
 	return value;
-};
-
-function validAccountSQL(){
-	return 'EXISTS (SELECT 1 FROM scrobble_accounts a JOIN scrobble_tokens t ON t.account=a.account WHERE a.account=?1 AND a.epoch=?2 AND t.id=?3 AND t.revoked_at=0 AND NOT EXISTS (SELECT 1 FROM account_bans b WHERE b.account=a.account))';
-};
-
-async function clientAccount(request,env){
-	const match = CLIENT_TOKEN.exec(request.headers.get('authorization') || '');
-	if (!match) {
-		problem(401,'invalid_token','Use Authorization: Token followed by your Spaceghost client token.');
-	};
-	const row = await env.DB.prepare('SELECT a.account,a.provider,a.epoch,t.id AS token_id,t.last_used_at FROM scrobble_tokens t JOIN scrobble_accounts a ON a.account=t.account WHERE t.token_hash=? AND t.revoked_at=0 AND NOT EXISTS (SELECT 1 FROM account_bans b WHERE b.account=a.account)').bind(await sha256hex(match[1])).first();
-	if (!row) {
-		problem(401,'invalid_token','This client token is invalid or revoked.');
-	};
-	return row;
-};
-
-async function accountRecord(env,session){
-	await env.DB.prepare('INSERT OR IGNORE INTO scrobble_accounts(account,provider,epoch,created_at) VALUES(?,?,?,?)').bind(session.k,session.p,randomToken(16),Date.now()).run();
-	return await env.DB.prepare('SELECT account,provider,epoch FROM scrobble_accounts WHERE account=?').bind(session.k).first();
 };
 
 async function bodyValue(request,max = 16384){

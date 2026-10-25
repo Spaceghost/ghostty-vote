@@ -59,6 +59,7 @@
   var historyCursor = null;
   var nextHistoryCursor = null;
   var refreshGeneration = 0;
+  var recordingsCursor = null;
   function node(tag, text, className = "") {
     const result = globalThis.document.createElement(tag);
     result.textContent = String(text || "");
@@ -141,6 +142,16 @@
     q("now-playing").replaceChildren();
     q("history").replaceChildren();
     q("tokens").replaceChildren();
+    q("recordings-list").replaceChildren();
+    q("recordings-usage").textContent = "";
+    q("recording-link").value = "";
+    q("recording-link-box").hidden = true;
+    q("recordings-older").hidden = true;
+    recordingsCursor = null;
+    q("recording-player").pause();
+    q("recording-player").removeAttribute("src");
+    q("recording-player").load();
+    q("recording-player").hidden = true;
     q("history-latest").hidden = true;
     q("history-older").hidden = true;
     for (let id of ["listenbrainz-token", "lastfm-key", "lastfm-secret", "delete-confirm"]) {
@@ -606,4 +617,101 @@
     ;
   };
   window.setInterval(poll, 3e4);
+  async function loadRecordings(cursor = null) {
+    const data = await api("recordings", void 0, cursor);
+    if (!Array.isArray(data.recordings)) {
+      throw new Error("The host returned an invalid recording list.");
+    }
+    ;
+    q("recordings-usage").textContent = (Number(data.bytes_used) / 1048576).toFixed(1) + " MiB used of " + (Number(data.bytes_limit) / 1073741824).toFixed(0) + " GiB.";
+    const list = q("recordings-list");
+    list.replaceChildren();
+    q("recording-link").value = "";
+    q("recording-link-box").hidden = true;
+    for (let recording of iterable$(data.recordings)) {
+      if (!new RegExp("^[0-9a-f]{64}$").test(recording.id)) {
+        throw new Error("The host returned an invalid recording identifier.");
+      }
+      ;
+      const meta = recording.track_metadata || {};
+      const row = node("article", "", "recording-row");
+      row.append(node("h3", meta.track_name || "Saved recording"), node("p", (meta.artist_name || "") + (meta.release_name ? " \xB7 " + meta.release_name : ""), "small"));
+      const actions = node("div", "", "scrobble-actions");
+      for (let [label, operation] of [["Play", "open"], ["Create new listening link", "share"], ["Revoke links", "revoke"], ["Delete hosted MP3", "delete"]]) {
+        const button = node("button", label, "chip");
+        button.type = "button";
+        button.addEventListener("click", function() {
+          if (operation === "delete" && !window.confirm("Delete this hosted recording and revoke its listening links? Your local MP3 is kept.")) {
+            return;
+          }
+          ;
+          return withBusy(async function() {
+            const result = await api("recordings/" + recording.id + "/" + operation, {});
+            if (operation === "open") {
+              if (result.audio_url !== "/mods/ffxiv/scrobble/1/recordings/audio/" + recording.id) {
+                throw new Error("The host returned an invalid audio address.");
+              }
+              ;
+              q("recording-player").src = result.audio_url;
+              q("recording-player").hidden = false;
+              try {
+                return await q("recording-player").play();
+              } catch ($5) {
+                return say("Ready. Press play in the audio controls.");
+              }
+              ;
+            } else if (operation === "share") {
+              const link = new URL(result.url);
+              if (link.origin !== window.location.origin || link.pathname !== "/mods/ffxiv/scrobble/listen/" || !new RegExp("^#[A-Za-z0-9_-]{43}$").test(link.hash) || link.search) {
+                throw new Error("The host returned an invalid listening link.");
+              }
+              ;
+              q("recording-link").value = link.href;
+              q("recording-link-box").hidden = false;
+              return say("Private link created. It expires in 30 days; any previous link for this song has been revoked.");
+            } else {
+              q("recording-player").pause();
+              q("recording-player").removeAttribute("src");
+              q("recording-player").load();
+              q("recording-player").hidden = true;
+              await loadRecordings();
+              return say(operation === "delete" ? "Hosted recording deleted. Your local copy is kept." : "Listening links revoked.");
+            }
+            ;
+          });
+        });
+        actions.append(button);
+      }
+      ;
+      row.append(actions);
+      list.append(row);
+    }
+    ;
+    if (!data.recordings.length) {
+      list.append(node("p", "No recordings on this page. Upload one from XivPiano\u2019s Recordings tab.", "empty-state"));
+    }
+    ;
+    recordingsCursor = pageCursor(data.next_cursor);
+    return q("recordings-older").hidden = !recordingsCursor;
+  }
+  q("recordings-refresh").addEventListener("click", function() {
+    return withBusy(async function() {
+      return await loadRecordings();
+    });
+  });
+  q("recordings-older").addEventListener("click", function() {
+    return withBusy(async function() {
+      return await loadRecordings(recordingsCursor);
+    });
+  });
+  q("recording-copy").addEventListener("click", async function() {
+    try {
+      await navigator.clipboard.writeText(q("recording-link").value);
+      return say("Listening link copied.");
+    } catch ($6) {
+      q("recording-link").select();
+      return say("Select and copy the listening link above.");
+    }
+    ;
+  });
 })();

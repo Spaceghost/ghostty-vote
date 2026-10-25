@@ -7,6 +7,7 @@ import {iterable$} from 'imba/runtime';
 import {randomToken} from './lib.js';
 import {SCROBBLE_MAX_ATTEMPTS,SCROBBLE_RETENTION_MS} from './scrobble-data.js';
 import {DeliveryError,decryptCredentials,deliver} from './scrobble-providers.js';
+import {pruneRecordings} from './recordings.js';
 
 export async function drainScrobbles(env,fetcher = fetch,limit = 8){
 	var $1;
@@ -60,11 +61,18 @@ export async function drainScrobbles(env,fetcher = fetch,limit = 8){
 };
 
 export function scheduledScrobbles(event,env,ctx){
+	ctx.waitUntil(async function() {
+		try {
+			return await pruneRecordings(env);
+		} catch ($2) {
+			return console.error('recordings_storage: scheduled_cleanup_failed');
+		};
+	}());
 	return ctx.waitUntil(async function() {
 		try {
 			await pruneScrobbles(env);
 			return await drainScrobbles(env);
-		} catch ($2) {
+		} catch ($3) {
 			return console.error('scrobble_queue: scheduled_run_failed');
 		};
 	}());

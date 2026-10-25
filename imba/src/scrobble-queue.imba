@@ -3,6 +3,7 @@
 import {randomToken} from './lib.js'
 import {SCROBBLE_MAX_ATTEMPTS, SCROBBLE_RETENTION_MS} from './scrobble-data.js'
 import {DeliveryError, decryptCredentials, deliver} from './scrobble-providers.js'
+import {pruneRecordings} from './recordings.js'
 
 export def drainScrobbles(env, fetcher = fetch, limit = 8)
 	const now = Date.now()
@@ -46,6 +47,12 @@ export def drainScrobbles(env, fetcher = fetch, limit = 8)
 		await env.DB.prepare('UPDATE scrobble_outbox SET status=?,last_error=?,next_attempt_at=?,lease=\'\',lease_until=0,updated_at=? WHERE id=? AND lease=? AND status=\'sending\'').bind(status, code, next, Date.now(), row.id, lease).run()
 
 export def scheduledScrobbles(event, env, ctx)
+	ctx.waitUntil((do()
+		try
+			await pruneRecordings(env)
+		catch
+			console.error('recordings_storage: scheduled_cleanup_failed')
+	)())
 	ctx.waitUntil((do()
 		try
 			await pruneScrobbles(env)

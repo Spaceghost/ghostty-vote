@@ -22,6 +22,7 @@ import { getAdminAlmanac, getAggregate, postAdminAlmanacReview, postAdminAlmanac
 import { getPluginMaster } from './plugins.js'
 
 import { handleScrobble } from './scrobble.js'
+import { handleRecordings } from './recordings.js'
 
 import { getAdminGallery, getAdminImage, getMyShotVotes, getPublicImage, getShots, postAdminReview, postAdminThumb, postMemberUpload, postShotVote, postUpload } from './gallery.js'
 
@@ -167,6 +168,9 @@ export def handle(request, env, ctx, cache = (do()
 	return fetch(...args)
 ))
 	const url = new URL(request.url)
+	const recording = await handleRecordings(request, env, ctx, url)
+	if recording
+		return recording
 	const scrobble = await handleScrobble(request, env, ctx, url, fetcher)
 	if scrobble
 		return scrobble
