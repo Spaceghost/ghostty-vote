@@ -11,6 +11,7 @@ let historyCursor = null
 let nextHistoryCursor = null
 let refreshGeneration = 0
 let recordingsCursor = null
+let activeAccount = ''
 
 def node(tag, text, className = '')
 	const result = document.createElement(tag)
@@ -68,6 +69,7 @@ def api(name, body = undefined, cursor = null)
 def signedOut()
 	accountGeneration++
 	refreshGeneration++
+	activeAccount = ''
 	historyCursor = null
 	nextHistoryCursor = null
 	q('dashboard').hidden = true
@@ -227,6 +229,11 @@ def refresh(cursor = historyCursor)
 		signedOut()
 		say('Sign in to see your private history and connect a player.')
 		throw new DOMException('Sign-in is required.', 'AbortError')
+	const nextAccount = String(state.user_name || '')
+	if activeAccount && activeAccount !== nextAccount
+		signedOut()
+		return await refresh(null)
+	activeAccount = nextAccount
 	q('signin').hidden = true
 	q('dashboard').hidden = false
 	q('account-label').textContent = state.user_name ? 'Signed in as ' + state.user_name : 'Signed in · your private history'

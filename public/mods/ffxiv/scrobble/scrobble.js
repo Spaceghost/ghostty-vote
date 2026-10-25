@@ -60,6 +60,7 @@
   var nextHistoryCursor = null;
   var refreshGeneration = 0;
   var recordingsCursor = null;
+  var activeAccount = "";
   function node(tag, text, className = "") {
     const result = globalThis.document.createElement(tag);
     result.textContent = String(text || "");
@@ -130,6 +131,7 @@
   function signedOut() {
     accountGeneration++;
     refreshGeneration++;
+    activeAccount = "";
     historyCursor = null;
     nextHistoryCursor = null;
     q("dashboard").hidden = true;
@@ -350,6 +352,13 @@
       throw new DOMException("Sign-in is required.", "AbortError");
     }
     ;
+    const nextAccount = String(state2.user_name || "");
+    if (activeAccount && activeAccount !== nextAccount) {
+      signedOut();
+      return await refresh(null);
+    }
+    ;
+    activeAccount = nextAccount;
     q("signin").hidden = true;
     q("dashboard").hidden = false;
     q("account-label").textContent = state2.user_name ? "Signed in as " + state2.user_name : "Signed in \xB7 your private history";
