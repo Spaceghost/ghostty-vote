@@ -1055,7 +1055,7 @@ export default {
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.2",
+      "assemblyVersion": "0.1.0.3",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Combat",
       "kind": "plugin",
@@ -1105,7 +1105,7 @@ export default {
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.2",
+          "version": "0.1.0.3",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ]
@@ -1114,7 +1114,7 @@ export default {
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.2",
+      "assemblyVersion": "0.1.0.3",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Chat",
       "kind": "plugin",
@@ -1164,7 +1164,7 @@ export default {
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.2",
+          "version": "0.1.0.3",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ]
