@@ -1368,7 +1368,7 @@ export default {
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.3",
+      "assemblyVersion": "0.1.0.4",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Windows",
       "kind": "plugin",
@@ -1418,7 +1418,7 @@ export default {
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.3",
+          "version": "0.1.0.4",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ],
