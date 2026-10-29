@@ -149,3 +149,19 @@ test('Umbra hub groups the illustrated modules without adding development module
 	assert.ok(projectRoutes(registry).includes('spacegho.st/mods/ffxiv/umbra*'));
 	return assert.ok(projectNavigation(registry).includes('/mods/ffxiv/umbra/'));
 });
+
+
+test('live Prism and Camp use development installation without claiming native device apps',function() {
+	var $1;
+	$1 = [];
+	for (let id of ['xivprism','xivcamp']){
+		const mod = registry.mods.find(function(m) { return m.id == id; });
+		assert.equal(mod.publicationStage,'development');
+		assert.equal(mod.listed,false);
+		assert.ok(mod.umbraWidget);
+		const page = projectOutputs(registry,{})['public' + mod.page + 'index.html'];
+		assert.ok(page.includes('explicit development repository'));
+		$1.push(assert.ok(!(page.includes('No installable Dalamud plugin'))));
+	};
+	return $1;
+});

@@ -792,9 +792,9 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.0.0.0",
+      "assemblyVersion": "0.1.0.0",
       "listed": false,
-      "umbraWidget": null,
+      "umbraWidget": "Umbra.XivPrism",
       "kind": "plugin",
       "gallery": true,
       "internalName": "XivPrism",
@@ -802,7 +802,7 @@
       "id": "xivprism",
       "page": "/mods/ffxiv/xivprism/",
       "punchline": "Your HUD, wherever you look.",
-      "description": "A companion HUD project for glasses, extra monitors, phones and tablets. A standalone Prism app and combined presentation in native Moonlight share the same layouts.",
+      "description": "A paired, read-only standalone companion HUD for player, target, party, Wayfinder guidance and Piano now playing. Layout profiles stay on the receiving device. Native Moonlight composition and device-specific apps remain separate milestones.",
       "tags": [
         "hud",
         "glasses",
@@ -811,48 +811,40 @@
         "ipad",
         "moonlight"
       ],
-      "status": "design preview; live plugin and native companion apps are not released",
+      "status": "development · live plugin integration checked",
       "navigation": true,
       "repo": "Spaceghost/xivprism-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivprism.png",
-      "needs": "The browser preview needs no game, account or glasses. Live integrations are planned.",
-      "build": "npm ci && npm run build",
-      "pending": "Preview source is available. No installable Dalamud release yet.",
+      "needs": "Dalamud API 15. The Umbra toolbar adapter is optional.",
+      "build": "python3 tools/plugin-build.py --test --locked",
+      "pending": "Use the explicit development package; hardware-specific and controller acceptance remain separate.",
       "iconPath": "/mods/ffxiv/site/art/xivprism-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivprism-hero.webp",
       "votePage": "/mods/ffxiv/xivprism/vote/",
       "previewPage": "/mods/ffxiv/xivprism/preview/",
-      "publicationStage": "preview",
-      "verification": "The interactive preview uses invented data. Live game integration, native companion apps and hardware support have not yet been verified.",
+      "publicationStage": "development",
+      "verification": "The plugin loaded in the running Wine game and served its paired viewer over the private tailnet. Actual game data rendered in desktop and phone-size Chromium viewports. Tests also cover stale hiding, revocation, parser bounds and local layout export. Specific glasses, native device shells and Moonlight composition remain unverified.",
       "artCaption": "AI-generated concept illustration. This is not a hardware photograph or an in-game screenshot.",
       "sections": [
         {
-          "title": "A second HUD, on your side of the connection",
-          "body": "<p>Keep FFXIV on its game screen and place selected information in your glasses or another display. The computer running FFXIV supplies game state; the receiving device handles display detection. When playing natively, the same computer can supply game state to its local companion viewer.</p>"
+          "title": "A little more room to see",
+          "body": "<p>Keep the game on its screen and open Prism in another browser window, monitor, phone or tablet. The standalone viewer shows live player and target resources, party readings, guidance and public now-playing information. No simulated data appears in the live view.</p>"
         },
         {
-          "title": "An app when you just want Prism",
-          "body": "<p>The planned standalone Prism Display app receives HUD information without opening Moonlight. Phone, tablet, desktop and glasses outputs can have different layouts. A browser preview below demonstrates the layout choices with invented data.</p>"
+          "title": "Pair from your game",
+          "body": "<p>Open <code>/xivprism</code>, enable its viewer, and enter the game’s pairing code at the displayed viewer address. Codes expire and rotate after use. Logout and revocation remove access. For another device, use a trusted private network or encrypted tunnel.</p>"
         },
         {
-          "title": "Native Moonlight, with Prism around the game",
-          "body": "<p>Combined mode is planned for native Moonlight applications. Ordinary overlays will be evaluated where supported; restricted platforms may need a Prism-enabled native Moonlight build. Presentation support must be verified for each receiving device, operating system and connected display.</p>"
+          "title": "Your display, your layout",
+          "body": "<p>Choose peripheral or desk layouts, arrange panels, go full screen and save local profiles. Exported layouts contain settings rather than game facts. Missing or stale game data is hidden. Camp can suggest one of your saved profiles, which you can choose to use.</p>"
         },
         {
-          "title": "Peripheral first, pinned afterward",
-          "body": "<p>Start with sparse, readable panels and a clear centre. Whole-surface pinning can use capabilities already supplied by the glasses. Independent spatial panels and physical-monitor alignment are later work, depending on tracking and calibration.</p>"
+          "title": "Within the Umbra family",
+          "body": "<p><code>Umbra.XivPrism.dll</code> adds its toolbar entry. Existing modules keep their own rendering, controller and world-window ownership. The state feed is read-only and carries no chat bodies, credentials or stream URLs. <a href=\"/mods/ffxiv/umbra/\">Explore the family.</a></p>"
         },
         {
-          "title": "Remember the glasses you actually use",
-          "body": "<p>Associate a display with a profile once. During an active companion session, plugging in those glasses should activate that profile. Unplugging, stale data and viewer failure must close the output and release any optional native HUD relocation.</p>"
-        },
-        {
-          "title": "The HUD family, connected",
-          "body": "<p>Journal, Character, Wayfinder and Piano are planned panel sources. XivMcp will report viewer readiness, actual presentation and recovery state. The display feed will be independent of high-frequency MCP tool calls.</p>"
-        },
-        {
-          "title": "Compatibility is a test record",
-          "body": "<p>Windows clients, Android phone and wearable clients, and iPadOS are targets. Ordinary display output, simultaneous Moonlight use, whole-surface pinning and spatial panels are separate capabilities. No glasses model, native companion app or live game connection has been verified yet.</p>"
+          "title": "What this release covers",
+          "body": "<p>This version delivers the FFXIV publisher and standalone browser viewer. Full rendered-window streaming, native Moonlight composition, native device apps, glasses tracking and automatic display/hotplug integration are separate work.</p>"
         }
       ],
       "artWidth": 1672,
@@ -866,15 +858,16 @@
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivprism-dalamud/releases/download/v0.0.3-preview/browser-preview.zip",
-      "reviewedAt": "2026-10-13",
+      "reviewedAt": "2026-10-29",
       "releaseChannels": [
         {
-          "channel": "browser preview",
-          "tag": "v0.0.3-preview",
-          "url": "https://github.com/Spaceghost/xivprism-dalamud/releases/tag/v0.0.3-preview"
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.0",
+          "url": "https://github.com/Spaceghost/xivprism-dalamud/releases/tag/development"
         }
-      ]
+      ],
+      "previewLabel": "Earlier design demo"
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -963,9 +956,9 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.0.0.0",
+      "assemblyVersion": "0.1.0.3",
       "listed": false,
-      "umbraWidget": null,
+      "umbraWidget": "Umbra.XivCamp",
       "kind": "plugin",
       "gallery": true,
       "internalName": "XivCamp",
@@ -973,7 +966,7 @@
       "id": "xivcamp",
       "page": "/mods/ffxiv/xivcamp/",
       "punchline": "Unfold your little corner of Eorzea.",
-      "description": "A saved-layout project for your map rug, journal, music, conversations and world windows. Make a campfire, work corner or adventure arrangement and return to it.",
+      "description": "A saved workspace for your illustrated UI family. Unfold Campfire, Work corner or Adventure, remember your own arrangement, and pack up to restore what was there before.",
       "tags": [
         "layouts",
         "world-windows",
@@ -981,44 +974,40 @@
         "music",
         "companion"
       ],
-      "status": "design preview; live plugin and native companion apps are not released",
+      "status": "development · live plugin integration checked",
       "navigation": true,
       "repo": "Spaceghost/xivcamp-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivcamp.png",
-      "needs": "The browser preview needs no game, account or glasses. Live integrations are planned.",
-      "build": "npm ci && npm run build",
-      "pending": "Preview source is available. No installable Dalamud release yet.",
+      "needs": "Dalamud API 15. The Umbra toolbar adapter is optional.",
+      "build": "python3 tools/plugin-build.py --test --locked",
+      "pending": "Use the explicit development package; hardware-specific and controller acceptance remain separate.",
       "iconPath": "/mods/ffxiv/site/art/xivcamp-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivcamp-hero.webp",
       "votePage": "/mods/ffxiv/xivcamp/vote/",
       "previewPage": "/mods/ffxiv/xivcamp/preview/",
-      "publicationStage": "preview",
-      "verification": "The interactive preview uses invented data. Live game integration, native companion apps and hardware support have not yet been verified.",
+      "publicationStage": "development",
+      "verification": "The plugin and Umbra adapter loaded live. Scene capture, Campfire application and acknowledged restoration were checked in the running game. Core tests exercise older/missing providers, pre-change recovery persistence, rollback and import bounds. Physical controller navigation and new world-anchor placement remain separate acceptance work.",
       "artCaption": "AI-generated concept illustration. This is not a hardware photograph or an in-game screenshot.",
       "sections": [
         {
-          "title": "A place for the tools you already have",
-          "body": "<p>Campfire brings Rug, Piano, Journal and Lantern together. Work corner adds Dispatch, notes and a terminal. Adventure favours Wayfinder and compact Prism information. Each arrangement remembers what belongs there.</p>"
+          "title": "A place to settle",
+          "body": "<p>Campfire brings journal and conversations together. Work corner makes room for your tools. Adventure leaves combat and vitals close to hand. You can remember the workspace you have now and return to it whenever you choose.</p>"
         },
         {
-          "title": "Begin on the screen",
-          "body": "<p>The first implementation target is a saved screen layout: panel selection, position, size and display assignment. The interactive preview switches invented arrangements and exports a draft. It does not move real plugin windows.</p>"
+          "title": "Unfold, then pack up",
+          "body": "<p>Open <code>/xivcamp</code>, choose an arrangement and unfold it. Packing up restores the previous workspace. Original state is recorded before changes begin, and unavailable panels are reported individually. A saved recovery record stays available when a provider cannot be restored yet.</p>"
         },
         {
-          "title": "Then unfold it into the world",
-          "body": "<p>Ghostty world windows and Rug placement are later integrations. A scene should retain an ordinary screen recovery path whenever a world host is missing or unavailable. A picture of a campsite is concept artwork, not evidence that furniture is being spawned.</p>"
+          "title": "Familiar modules, their own homes",
+          "body": "<p>Camp uses the modules’ supported window controls. New family versions can restore viewport-relative positions; older versions retain their positions. Existing world/native host preferences stay with their providers. Camp can suggest a local Prism profile while the receiving viewer owns its display layout.</p>"
         },
         {
-          "title": "One arrangement, several displays",
-          "body": "<p>With Prism, a Camp arrangement can send navigation to glasses, a journal to a tablet and work conversations to another monitor. Display mappings remain owned by the receiving client.</p>"
+          "title": "Keep your little corner",
+          "body": "<p>Saved arrangements persist across restarts and can be copied or imported as bounded, versioned JSON. Imports wait for your explicit choice to apply them. <code>Umbra.XivCamp.dll</code> adds a toolbar launcher. <a href=\"/mods/ffxiv/umbra/\">See the whole family.</a></p>"
         },
         {
-          "title": "Controller-friendly and reversible",
-          "body": "<p>Opening Camp should have explicit focus ownership. Closing it, switching scenes or losing an optional provider should restore the previous arrangement. Missing panels should be reported individually rather than breaking the whole scene.</p>"
-        },
-        {
-          "title": "What still needs proving",
-          "body": "<p>Live window ownership, restoring positions, world placement, music actions and controller navigation need acceptance with the actual modules. There is no live plugin integration or installable Dalamud release in this publication.</p>"
+          "title": "The first working release",
+          "body": "<p>The initial release manages screen workspaces and existing host preferences. Individual world anchors, Rug geometry, physical controller navigation and furniture or ambience systems remain separate work. Your current music and game controls continue under their existing owners.</p>"
         }
       ],
       "artWidth": 1672,
@@ -1032,15 +1021,16 @@
           "caption": "Actual Chromium capture of the interactive browser preview. Invented data; no live game, account or hardware connection."
         }
       ],
-      "previewDownload": "https://github.com/Spaceghost/xivcamp-dalamud/releases/download/v0.0.2-preview/browser-preview.zip",
-      "reviewedAt": "2026-10-13",
+      "reviewedAt": "2026-10-29",
       "releaseChannels": [
         {
-          "channel": "browser preview",
-          "tag": "v0.0.2-preview",
-          "url": "https://github.com/Spaceghost/xivcamp-dalamud/releases/tag/v0.0.2-preview"
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.2",
+          "url": "https://github.com/Spaceghost/xivcamp-dalamud/releases/tag/development"
         }
-      ]
+      ],
+      "previewLabel": "Earlier design demo"
     },
     {
       "author": "Johnneylee Jack Rollins",
