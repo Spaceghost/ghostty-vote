@@ -1055,7 +1055,7 @@ export default {
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.1",
+      "assemblyVersion": "0.1.0.2",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Combat",
       "kind": "plugin",
@@ -1071,7 +1071,7 @@ export default {
         "xivhud",
         "combat"
       ],
-      "status": "development · live loading checked; new visual acceptance pending",
+      "status": "development · redesigned UI and Umbra adapters loaded live",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
@@ -1100,12 +1100,12 @@ export default {
         }
       ],
       "reviewedAt": "2026-10-29",
-      "verification": "The modules loaded live. The illustrated redesign and Umbra toolbar adapters build against the installed references. Combat actions, actual chat delivery and visual acceptance remain separate live checks.",
+      "verification": "The redesigned modules and Umbra toolbar adapters loaded live; the live capture shows the shared illustrated style beside the quest tracker. Explicit combat action correctness and actual chat delivery remain acceptance checks.",
       "releaseChannels": [
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.1",
+          "version": "0.1.0.2",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ]
@@ -1114,7 +1114,7 @@ export default {
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.1",
+      "assemblyVersion": "0.1.0.2",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Chat",
       "kind": "plugin",
@@ -1130,7 +1130,7 @@ export default {
         "xivhud",
         "chat"
       ],
-      "status": "development · live loading checked; new visual acceptance pending",
+      "status": "development · redesigned UI and Umbra adapters loaded live",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
@@ -1159,12 +1159,12 @@ export default {
         }
       ],
       "reviewedAt": "2026-10-29",
-      "verification": "The modules loaded live. The illustrated redesign and Umbra toolbar adapters build against the installed references. Combat actions, actual chat delivery and visual acceptance remain separate live checks.",
+      "verification": "The redesigned modules and Umbra toolbar adapters loaded live; the live capture shows the shared illustrated style beside the quest tracker. Explicit combat action correctness and actual chat delivery remain acceptance checks.",
       "releaseChannels": [
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.1",
+          "version": "0.1.0.2",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ]
