@@ -283,14 +283,14 @@ export default {
       "iconPath": "/mods/ffxiv/site/art/xivwayfinder-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivwayfinder-banner-2.webp",
       "votePage": "/mods/ffxiv/xivwayfinder/vote/",
-      "reviewedAt": "2026-10-13",
-      "verification": "The latest testing build passes offline logic, model-pack, shader-checksum and packaging checks. Live rendering, collision, boarding, teleport, controller behavior and navigation handoffs still require acceptance.",
+      "reviewedAt": "2026-10-29",
+      "verification": "The cursor testing build passes 1,300 C# tests, 19 model/packaging tests and a clean Dalamud API 15 build. The native 3D cursor and downward destination presentation were observed in the running Wine game. Broader collision, boarding, teleport, controller behavior and navigation handoffs still require separate acceptance.",
       "releaseChannels": [
         {
           "channel": "testing",
-          "tag": "v0.1.1-test.2",
-          "version": "0.1.1.2",
-          "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.1-test.2"
+          "tag": "v0.1.1-test.4",
+          "version": "0.1.1.4",
+          "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.1-test.4"
         },
         {
           "channel": "stable",
@@ -299,8 +299,8 @@ export default {
           "url": "https://github.com/Spaceghost/xivwayfinder-dalamud/releases/tag/v0.1.0"
         }
       ],
-      "testingVersion": "0.1.1.2",
-      "testingTag": "v0.1.1-test.1"
+      "testingVersion": "0.1.1.4",
+      "testingTag": "v0.1.1-test.4"
     },
     {
       "internalName": "XivLantern",
