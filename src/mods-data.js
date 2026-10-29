@@ -1027,7 +1027,7 @@ export default {
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.2",
+          "version": "0.1.0.3",
           "url": "https://github.com/Spaceghost/xivcamp-dalamud/releases/tag/development"
         }
       ],
