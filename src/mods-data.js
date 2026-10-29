@@ -456,7 +456,7 @@ export default {
         },
         {
           "title": "What has been checked",
-          "body": "<p>The nine modules and eight Umbra adapters loaded in game. Recorded checks cover standalone Journal placement and its settings popup, Inventory selection, beside-character projection, screen recovery, and Crafting worklist totals. All 548 offline tests pass. Physical controller navigation and scene depth occlusion remain unverified.</p>"
+          "body": "<p>The nine modules and eight Umbra adapters loaded in game. Recorded checks cover standalone Journal placement and its settings popup, Inventory selection, beside-character projection, screen recovery, and Crafting worklist totals. All 559 offline tests pass. Physical controller navigation and scene depth occlusion remain unverified.</p>"
         }
       ],
       "testingVersion": "0.1.0.3",
@@ -1247,7 +1247,7 @@ export default {
         },
         {
           "title": "Independent floating presentation",
-          "body": "<p>Open <code>/xivwindows</code>, choose an open plugin window, then Float selected. Choose Beside me, View, Here or Ground. Screen returns one source; <code>/xivwindows screen</code> recovers all sources. Closing the host restores their ordinary screen rendering.</p>"
+          "body": "<p>Open <code>/xivwindows</code>, choose an open plugin window, then Float selected. Choose Follow me, Orbit, View, Here or Ground. Screen returns one source; <code>/xivwindows screen</code> recovers all sources. Closing the host restores their ordinary screen rendering.</p>"
         },
         {
           "title": "Development installation",
@@ -1321,7 +1321,7 @@ export default {
         },
         {
           "title": "Independent floating presentation",
-          "body": "<p>Open <code>/xivwindows</code>, choose an open plugin window, then Float selected. Choose Beside me, View, Here or Ground. Screen returns one source; <code>/xivwindows screen</code> recovers all sources. Closing the host restores their ordinary screen rendering.</p>"
+          "body": "<p>Open <code>/xivwindows</code>, choose an open plugin window, then Float selected. Choose Follow me, Orbit, View, Here or Ground. Screen returns one source; <code>/xivwindows screen</code> recovers all sources. Closing the host restores their ordinary screen rendering.</p>"
         },
         {
           "title": "Development installation",
@@ -1358,7 +1358,7 @@ export default {
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.4",
+      "assemblyVersion": "0.1.0.6",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Windows",
       "kind": "plugin",
@@ -1368,7 +1368,7 @@ export default {
       "id": "xivhud-windows",
       "page": "/mods/ffxiv/umbra/windows/",
       "punchline": "A window is not a terminal.",
-      "description": "Float open plugin windows beside your character, in view, in the world or on the ground. No Ghostty or virtual terminal is required.",
+      "description": "Floating plugin windows that trail on springs, ease around your character and optionally orbit. No Ghostty terminal required.",
       "tags": [
         "umbra",
         "xivhud",
@@ -1390,8 +1390,12 @@ export default {
           "body": "<p>Float open plugin windows beside your character, in view, in the world or on the ground. No Ghostty or virtual terminal is required. Use <code>/xivwindows</code> or its optional <code>Umbra.XivHud.Windows</code> toolbar button. Each module works without Umbra.</p>"
         },
         {
+          "title": "The companion feel",
+          "body": "<p>Follow me uses Ghostty’s companion spring tuning: windows trail your movement, swing back while running and ease around you through turns. The camera does not move their world positions. Companions stay hosted outside the view and return naturally as they circle back. Orbit continuously circles; hovering or focusing pauses it for reading. Reduce motion removes trailing, bob and automatic orbit. Ghostty’s existing windows keep their own behavior. <a href=\"/mods/ffxiv/umbra/#companion-motion\">Watch the recorded walking and orbit clip.</a></p>"
+        },
+        {
           "title": "Independent floating presentation",
-          "body": "<p>Open <code>/xivwindows</code>, choose an open plugin window, then Float selected. Choose Beside me, View, Here or Ground. Screen returns one source; <code>/xivwindows screen</code> recovers all sources. Closing the host restores their ordinary screen rendering.</p>"
+          "body": "<p>Open <code>/xivwindows</code>, choose an open plugin window, then Float selected. Choose Follow me, Orbit, View, Here or Ground. Screen returns one source; <code>/xivwindows screen</code> recovers all sources. Closing the host restores their ordinary screen rendering.</p>"
         },
         {
           "title": "Development installation",
@@ -1408,12 +1412,20 @@ export default {
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.4",
+          "version": "0.1.0.6",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ],
       "developmentOnly": true,
       "media": [
+        {
+          "src": "/mods/ffxiv/umbra/media/companion-orbit.png",
+          "alt": "Inventory orbiting beside the character in game",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29, version 0.1.0.6. Standalone Orbit placement with no terminal allocation.",
+          "capture": "live"
+        },
         {
           "src": "/mods/ffxiv/umbra/media/inventory-companion.png",
           "alt": "Inventory follows beside the character as a projected world overlay.",

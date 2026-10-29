@@ -1090,7 +1090,7 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.4",
+      "assemblyVersion": "0.1.0.6",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Windows",
       "kind": "plugin",
@@ -1100,7 +1100,7 @@
       "id": "xivhud-windows",
       "page": "/mods/ffxiv/umbra/windows/",
       "punchline": "A window is not a terminal.",
-      "description": "Float open plugin windows beside your character, in view, in the world or on the ground. No Ghostty or virtual terminal is required.",
+      "description": "Floating plugin windows that trail on springs, ease around your character and optionally orbit. No Ghostty terminal required.",
       "tags": [
         "umbra",
         "xivhud",
@@ -1122,12 +1122,20 @@
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.4",
+          "version": "0.1.0.6",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ],
       "developmentOnly": true,
       "media": [
+        {
+          "src": "/mods/ffxiv/umbra/media/companion-orbit.png",
+          "alt": "Inventory orbiting beside the character in game",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29, version 0.1.0.6. Standalone Orbit placement with no terminal allocation.",
+          "capture": "live"
+        },
         {
           "src": "/mods/ffxiv/umbra/media/inventory-companion.png",
           "alt": "Inventory follows beside the character as a projected world overlay.",
