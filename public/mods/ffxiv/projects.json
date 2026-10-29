@@ -359,7 +359,7 @@
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Your Pandora stations inside FFXIV: play, skip, thumbs, new stations.",
-      "description": "XivPiano is a Pandora radio player inside FINAL FANTASY XIV, in the tradition of pianobar and Pithos. Sign in with your Pandora account and play your stations, skip, thumbs up or down, shelve a song you are tired of, bookmark it, ask why it was picked, and make new stations from an artist, a song or a genre. The song shows in the server info bar; /piano next and friends work from chat and macros, and other plugins can control it over IPC. It can mute the game's music while it plays and pause itself during cutscenes. Pandora is only available in the United States. Not affiliated with Pandora or Sirius XM. Optional Spaceghost Scrobbles keeps a private listening history, with export, deletion and user-controlled forwarding to ListenBrainz or Last.fm. Your Pandora account and stream URLs are never sent to the scrobbling service. Opt into saving MP3 songs for offline replay, then explicitly share selected recordings through private, revocable browser listening links.",
+      "description": "XivPiano is a Pandora radio player inside FINAL FANTASY XIV, in the tradition of pianobar and Pithos. Sign in with your Pandora account and play your stations, skip, thumbs up or down, shelve a song you are tired of, bookmark it, ask why it was picked, and make new stations from an artist, a song or a genre. The song shows in the server info bar; /piano next and friends work from chat and macros, and other plugins can control it over IPC. It can mute the game's music while it plays and pause itself during cutscenes. Pandora is only available in the United States. Not affiliated with Pandora or Sirius XM. Optional Spaceghost Scrobbles keeps a private listening history, with export, deletion and user-controlled forwarding to ListenBrainz or Last.fm. Your Pandora account and stream URLs are never sent to the scrobbling service.",
       "tags": [
         "music",
         "radio",
@@ -378,7 +378,7 @@
       "id": "xivpiano",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivpiano/",
-      "status": "stable release available · native melodica protocol · saved recordings · private scrobbling",
+      "status": "stable release available · native melodica protocol · private scrobbling",
       "navigation": true,
       "gallery": true,
       "testingVersion": "0.1.1.2",
@@ -386,7 +386,7 @@
       "bannerPath": "/mods/ffxiv/site/art/xivpiano-banner-2.webp",
       "votePage": "/mods/ffxiv/xivpiano/vote/",
       "reviewedAt": "2026-10-25",
-      "verification": "Native melodica protocol, private listening history and optional ListenBrainz/Last.fm forwarding are implemented. Saved MP3s support offline replay and explicitly shared, revocable browser links. Live Pandora authentication, audible playback, in-game transitions and recording/friend-browser playback still require player acceptance.",
+      "verification": "Native melodica protocol, private listening history and optional ListenBrainz/Last.fm forwarding are implemented. Live Pandora authentication, audible playback, in-game transitions still require player acceptance.",
       "releaseChannels": [
         {
           "channel": "stable",
