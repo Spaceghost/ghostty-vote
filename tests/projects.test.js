@@ -132,3 +132,20 @@ test(
 		return;
 	}
 );
+
+
+test('Umbra hub groups the illustrated modules without adding development modules to the default installer',function() {
+	const hub = readFileSync(new URL('../public/mods/ffxiv/umbra/index.html',import.meta.url),'utf8');
+	for (let id of ['xivhud','xivhud-journal','xivhud-character','xivhud-vitals','xivhud-combat','xivhud-chat']){
+		const mod = registry.mods.find(function(m) { return m.id == id; });
+		assert.ok(mod,id);
+		assert.ok(hub.includes(mod.page),id);
+	};
+	for (let id of ['xivhud-combat','xivhud-chat']){
+		const mod = registry.mods.find(function(m) { return m.id == id; });
+		assert.equal(mod.listed,false);
+		assert.ok(mod.umbraWidget.startsWith('Umbra.XivHud.'));
+	};
+	assert.ok(projectRoutes(registry).includes('spacegho.st/mods/ffxiv/umbra*'));
+	return assert.ok(projectNavigation(registry).includes('/mods/ffxiv/umbra/'));
+});

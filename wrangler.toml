@@ -38,6 +38,7 @@ routes = [
   { pattern = "spacegho.st/mods/ffxiv/xivprism*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/xivdispatch*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/xivcamp*", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/mods/ffxiv/umbra*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/roadmap*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/projects.json", zone_name = "spacegho.st" }
   # END GENERATED PROJECT ROUTES

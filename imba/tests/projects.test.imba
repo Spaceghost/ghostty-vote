@@ -127,3 +127,18 @@ test(
 		return
 	)
 )
+
+
+test('Umbra hub groups the illustrated modules without adding development modules to the default installer', do
+	const hub = readFileSync(new URL('../public/mods/ffxiv/umbra/index.html', import.meta.url), 'utf8')
+	for id of ['xivhud', 'xivhud-journal', 'xivhud-character', 'xivhud-vitals', 'xivhud-combat', 'xivhud-chat']
+		const mod = registry.mods.find(do(m) m.id == id)
+		assert.ok(mod, id)
+		assert.ok(hub.includes(mod.page), id)
+	for id of ['xivhud-combat', 'xivhud-chat']
+		const mod = registry.mods.find(do(m) m.id == id)
+		assert.equal(mod.listed, false)
+		assert.ok(mod.umbraWidget.startsWith('Umbra.XivHud.'))
+	assert.ok(projectRoutes(registry).includes('spacegho.st/mods/ffxiv/umbra*'))
+	assert.ok(projectNavigation(registry).includes('/mods/ffxiv/umbra/'))
+)

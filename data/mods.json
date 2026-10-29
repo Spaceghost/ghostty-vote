@@ -30,7 +30,7 @@
       "id": "ghostty",
       "kind": "plugin",
       "page": "/mods/ffxiv/term/",
-      "status": "released \u00b7 experimental preview",
+      "status": "released · experimental preview",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/ghostty-icon.webp",
@@ -76,7 +76,7 @@
       "id": "almanac",
       "kind": "plugin",
       "page": "/mods/ffxiv/almanac/about/",
-      "status": "stable and testing builds \u00b7 live coverage remains limited",
+      "status": "stable and testing builds · live coverage remains limited",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/almanac-icon-2.webp",
@@ -128,7 +128,7 @@
       "id": "xivmcp",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivmcp/",
-      "status": "released \u00b7 selected in-game calls verified",
+      "status": "released · selected in-game calls verified",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivmcp-icon.webp",
@@ -179,7 +179,7 @@
       "id": "xivdesktop",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivdesktop/",
-      "status": "released \u00b7 broader in-game checks pending",
+      "status": "released · broader in-game checks pending",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivdesktop-icon-2.webp",
@@ -231,7 +231,7 @@
       "id": "xivarcade",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivarcade/",
-      "status": "released \u00b7 in-game checks pending",
+      "status": "released · in-game checks pending",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivarcade-icon-2.webp",
@@ -276,7 +276,7 @@
       "id": "xivwayfinder",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivwayfinder/",
-      "status": "released \u00b7 newer guide work remains experimental",
+      "status": "released · newer guide work remains experimental",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivwayfinder-icon-2.webp",
@@ -310,7 +310,7 @@
       "dalamudApiLevel": 15,
       "author": "Johnneylee Jack Rollins",
       "punchline": "Light a lantern for your friends: a friend list, 1:1 chat and channels of your own, peer to peer.",
-      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent \u2014 not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
+      "description": "Friends light a lantern to say they are here. Add friends with a one-time invite, see whose lantern is lit, chat 1:1 and in channels you make, and hear from the mod's author in a channel only they can post to. Peer to peer over iroh: no Lantern server, and nothing from the game is ever sent — not your character's name, world or chat; your friends see the name you type. Off until you turn it on in settings, where it says exactly who can see what (including that relays see your IP address, and how to turn them off). Blocking, rate limits and no auto-accept.",
       "tags": [
         "social",
         "chat",
@@ -329,7 +329,7 @@
       "id": "xivlantern",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivlantern/",
-      "status": "released \u00b7 newer communication work remains experimental",
+      "status": "released · newer communication work remains experimental",
       "navigation": true,
       "gallery": true,
       "iconPath": "/mods/ffxiv/site/art/xivlantern-icon-2.webp",
@@ -381,7 +381,7 @@
       "id": "xivpiano",
       "kind": "plugin",
       "page": "/mods/ffxiv/xivpiano/",
-      "status": "stable release available \u00b7 native melodica protocol \u00b7 saved recordings \u00b7 private scrobbling",
+      "status": "stable release available · native melodica protocol · saved recordings · private scrobbling",
       "navigation": true,
       "gallery": true,
       "testingVersion": "0.1.1.2",
@@ -426,7 +426,7 @@
         "umbra",
         "interface"
       ],
-      "status": "experimental \u00b7 module loading and read-only IPC checked; UI acceptance pending",
+      "status": "experimental · module loading and read-only IPC checked; UI acceptance pending",
       "navigation": true,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud.png",
@@ -438,12 +438,12 @@
       "votePage": null,
       "sections": [
         {
-          "title": "Three modules, one illustrated interface",
-          "body": "<p>XivHud controls native HUD visibility. <a href=\"/mods/ffxiv/xivhud/journal/\">Journal</a> is your illustrated quest book. <a href=\"/mods/ffxiv/xivhud/character/\">Character</a> is your adventurer\u2019s record. Journal and Character are independently loadable; the shared controller host is optional for mouse and keyboard use.</p>"
+          "title": "One illustrated Umbra family",
+          "body": "<p>HUD, Journal, Character, Vitals, Combat and Correspondence form one illustrated family. <a href=\"/mods/ffxiv/umbra/\">See every module and Umbra toolbar adapter together.</a></p>"
         },
         {
           "title": "Keep the original within reach",
-          "body": "<p>Click the HUD entry in Umbra\u2019s server-info bar or use <code>/xivhud on</code>. Restore chat, nameplates and action bars with <code>/xivhud off</code>. Your saved HUD layout is preserved, and unloading releases the visibility change.</p>"
+          "body": "<p>Click the HUD entry in Umbra’s server-info bar or use <code>/xivhud on</code>. Restore chat, nameplates and action bars with <code>/xivhud off</code>. Your saved HUD layout is preserved, and unloading releases the visibility change.</p>"
         },
         {
           "title": "Windows that fit the moment",
@@ -451,7 +451,7 @@
         },
         {
           "title": "Your assistant can see the interface",
-          "body": "<p>The new XivMcp integration reads every module\u2019s readiness, current window mode and selection. Explicit UI changes wait for your approval. It can open a chapter, select a Character page or restore a screen window without simulating controller input.</p>"
+          "body": "<p>The new XivMcp integration reads every module’s readiness, current window mode and selection. Explicit UI changes wait for your approval. It can open a chapter, select a Character page or restore a screen window without simulating controller input.</p>"
         },
         {
           "title": "What has been checked",
@@ -476,11 +476,11 @@
       "released": false,
       "assemblyVersion": "0.1.0.1",
       "listed": true,
-      "umbraWidget": null,
+      "umbraWidget": "Umbra.XivHud.Journal",
       "kind": "plugin",
       "gallery": true,
       "internalName": "XivHud.Journal",
-      "name": "XivHud \u00b7 Journal",
+      "name": "XivHud · Journal",
       "id": "xivhud-journal",
       "page": "/mods/ffxiv/xivhud/journal/",
       "punchline": "Your next chapter, on warm vellum.",
@@ -490,7 +490,7 @@
         "quests",
         "interface"
       ],
-      "status": "experimental \u00b7 selected Journal checks and read-only IPC observed",
+      "status": "experimental · selected Journal checks and read-only IPC observed",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-journal.png",
@@ -503,7 +503,7 @@
       "sections": [
         {
           "title": "Your next chapter",
-          "body": "<p>Search accepted quests by title, chapter or current objective. Keep local bookmarks and choose a parchment or night palette. The book uses your installed game\u2019s quest icons and fonts.</p>"
+          "body": "<p>Search accepted quests by title, chapter or current objective. Keep local bookmarks and choose a parchment or night palette. The book uses your installed game’s quest icons and fonts.</p>"
         },
         {
           "title": "Open, map, return",
@@ -536,21 +536,21 @@
       "released": false,
       "assemblyVersion": "0.1.0.1",
       "listed": false,
-      "umbraWidget": null,
+      "umbraWidget": "Umbra.XivHud.Character",
       "kind": "plugin",
       "gallery": true,
       "internalName": "XivHud.Character",
-      "name": "XivHud \u00b7 Character",
+      "name": "XivHud · Character",
       "id": "xivhud-character",
       "page": "/mods/ffxiv/xivhud/character/",
-      "punchline": "An adventurer\u2019s record.",
+      "punchline": "An adventurer’s record.",
       "description": "An illustrated adventurer record with equipment, attributes, classes and jobs, and gear sets. The original game window remains available.",
       "tags": [
         "character",
         "gear",
         "interface"
       ],
-      "status": "development \u00b7 loaded and read-only IPC checked; visual acceptance pending",
+      "status": "development · loaded and read-only IPC checked; visual acceptance pending",
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
@@ -562,12 +562,12 @@
       "votePage": null,
       "sections": [
         {
-          "title": "An adventurer\u2019s record",
-          "body": "<p>Four pages show your equipped gear, attributes, classes and jobs, and saved gear sets. Equipment includes materia, condition, glamour and dyes. The record uses the installed game\u2019s artwork and fonts.</p>"
+          "title": "An adventurer’s record",
+          "body": "<p>Four pages show your equipped gear, attributes, classes and jobs, and saved gear sets. Equipment includes materia, condition, glamour and dyes. The record uses the installed game’s artwork and fonts.</p>"
         },
         {
           "title": "Open the familiar way",
-          "body": "<p>Use the game\u2019s Character action, the optional Umbra toolbar or <code>/xivcharacter open</code>. <code>/xivcharacter native</code> opens the original and <code>/xivcharacter screen</code> recovers the ordinary window. Native frames and Ghostty hosting are optional.</p>"
+          "body": "<p>Use the game’s Character action, the optional Umbra toolbar or <code>/xivcharacter open</code>. <code>/xivcharacter native</code> opens the original and <code>/xivcharacter screen</code> recovers the ordinary window. Native frames and Ghostty hosting are optional.</p>"
         },
         {
           "title": "Development source and package",
@@ -602,7 +602,7 @@
         "rug",
         "visual"
       ],
-      "status": "prototype \u00b7 selected scenes observed; terrain and performance checks continue",
+      "status": "prototype · selected scenes observed; terrain and performance checks continue",
       "navigation": true,
       "repo": "Spaceghost/xivrug-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivrug.png",
@@ -615,7 +615,7 @@
       "sections": [
         {
           "title": "A woven map underfoot",
-          "body": "<p>A connected cloth rug carries the current game map beneath your character. Choose a circular mat or rounded rectangle, adjust map coverage and cloth appearance, and show Wayfinder\u2019s route when it is installed.</p>"
+          "body": "<p>A connected cloth rug carries the current game map beneath your character. Choose a circular mat or rounded rectangle, adjust map coverage and cloth appearance, and show Wayfinder’s route when it is installed.</p>"
         },
         {
           "title": "Music in the weave",
@@ -663,7 +663,7 @@
         "host",
         "setup"
       ],
-      "status": "release candidate \u00b7 Incus/Sunshine/NVIDIA path tested; other routes experimental",
+      "status": "release candidate · Incus/Sunshine/NVIDIA path tested; other routes experimental",
       "navigation": true,
       "gallery": true,
       "build": "go test ./... && go build ./cmd/xivstream",
@@ -682,7 +682,7 @@
         },
         {
           "title": "A host tool",
-          "body": "<p>This runs outside the game and is downloaded from its GitHub releases. It is not installed through Dalamud\u2019s plugin repository. The same source project contains Sunshine, Wolf and Selkies setup options.</p>"
+          "body": "<p>This runs outside the game and is downloaded from its GitHub releases. It is not installed through Dalamud’s plugin repository. The same source project contains Sunshine, Wolf and Selkies setup options.</p>"
         },
         {
           "title": "What has been tested",
@@ -716,7 +716,7 @@
         "windowing",
         "ipc"
       ],
-      "status": "developer library \u00b7 bundled with consuming modules",
+      "status": "developer library · bundled with consuming modules",
       "navigation": false,
       "gallery": false,
       "build": "tools/build.sh",
@@ -988,6 +988,183 @@
           "channel": "browser preview",
           "tag": "v0.0.2-preview",
           "url": "https://github.com/Spaceghost/xivcamp-dalamud/releases/tag/v0.0.2-preview"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": false,
+      "umbraWidget": null,
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Vitals",
+      "name": "XivHud · Vitals",
+      "id": "xivhud-vitals",
+      "page": "/mods/ffxiv/umbra/vitals/",
+      "punchline": "Your bearings, at a glance.",
+      "description": "Passive player, target, focus and party panels, with casts and status effects.",
+      "tags": [
+        "umbra",
+        "xivhud",
+        "vitals"
+      ],
+      "status": "development · live loading checked; new visual acceptance pending",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
+      "needs": "Dalamud API 15. The game module provides data and input; the optional Umbra plugin adds its toolbar button.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "One illustrated family",
+          "body": "<p>Passive player, target, focus and party panels, with casts and status effects. The family uses stitched leather, brass, compass ornament and game fonts. <a href=\"/mods/ffxiv/umbra/\">Explore the Umbra UI family.</a></p>"
+        },
+        {
+          "title": "Open from Umbra",
+          "body": "<p>Use <code>/xivvitals open</code> to show the passive panels, or <code>/xivvitals preview</code> for sample data.</p>"
+        },
+        {
+          "title": "Development installation",
+          "body": "<p>The modules use the <a href=\"https://github.com/Spaceghost/xivhud-dalamud/releases/download/development/pluginmaster-development.json\">explicit development Dalamud repository</a>. Umbra toolbar DLLs are separate assets in the <a href=\"https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development\">same development release</a>. Add the adapter DLL in Umbra Settings → Plugins, restart Umbra, then choose the widget in the toolbar editor.</p>"
+        },
+        {
+          "title": "Keep the original within reach",
+          "body": "<p>Native chat, hotbars and job gauges remain available. Preview data is labelled and cannot send chat or trigger actions. Chat history stays in memory for the current session.</p>"
+        }
+      ],
+      "reviewedAt": "2026-10-29",
+      "verification": "The modules loaded live. The illustrated redesign and Umbra toolbar adapters build against the installed references. Combat actions, actual chat delivery and visual acceptance remain separate live checks.",
+      "releaseChannels": [
+        {
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.1",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": false,
+      "umbraWidget": "Umbra.XivHud.Combat",
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Combat",
+      "name": "XivHud · Combat",
+      "id": "xivhud-combat",
+      "page": "/mods/ffxiv/umbra/combat/",
+      "punchline": "Your actions, bound for adventure.",
+      "description": "Saved hotbars, action cooldowns, charges, casts and job resources in the illustrated HUD family.",
+      "tags": [
+        "umbra",
+        "xivhud",
+        "combat"
+      ],
+      "status": "development · live loading checked; new visual acceptance pending",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
+      "needs": "Dalamud API 15. The game module provides data and input; the optional Umbra plugin adds its toolbar button.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "One illustrated family",
+          "body": "<p>Saved hotbars, action cooldowns, charges, casts and job resources in the illustrated HUD family. The family uses stitched leather, brass, compass ornament and game fonts. <a href=\"/mods/ffxiv/umbra/\">Explore the Umbra UI family.</a></p>"
+        },
+        {
+          "title": "Open from Umbra",
+          "body": "<p>Use the optional <code>Umbra.XivHud.Combat</code> toolbar plugin, or <code>/xivcombat open</code>. Right-click the toolbar button for appearance settings. Ctrl+Shift+right-click retains Umbra widget settings.</p>"
+        },
+        {
+          "title": "Development installation",
+          "body": "<p>The modules use the <a href=\"https://github.com/Spaceghost/xivhud-dalamud/releases/download/development/pluginmaster-development.json\">explicit development Dalamud repository</a>. Umbra toolbar DLLs are separate assets in the <a href=\"https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development\">same development release</a>. Add the adapter DLL in Umbra Settings → Plugins, restart Umbra, then choose the widget in the toolbar editor.</p>"
+        },
+        {
+          "title": "Keep the original within reach",
+          "body": "<p>Native chat, hotbars and job gauges remain available. Preview data is labelled and cannot send chat or trigger actions. Chat history stays in memory for the current session.</p>"
+        }
+      ],
+      "reviewedAt": "2026-10-29",
+      "verification": "The modules loaded live. The illustrated redesign and Umbra toolbar adapters build against the installed references. Combat actions, actual chat delivery and visual acceptance remain separate live checks.",
+      "releaseChannels": [
+        {
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.1",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": false,
+      "umbraWidget": "Umbra.XivHud.Chat",
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Chat",
+      "name": "XivHud · Chat",
+      "id": "xivhud-chat",
+      "page": "/mods/ffxiv/umbra/chat/",
+      "punchline": "Conversations and small tidings.",
+      "description": "Session conversations, channel chapters, explicit message composition and a notification center on warm vellum.",
+      "tags": [
+        "umbra",
+        "xivhud",
+        "chat"
+      ],
+      "status": "development · live loading checked; new visual acceptance pending",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
+      "needs": "Dalamud API 15. The game module provides data and input; the optional Umbra plugin adds its toolbar button.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "sections": [
+        {
+          "title": "One illustrated family",
+          "body": "<p>Session conversations, channel chapters, explicit message composition and a notification center on warm vellum. The family uses stitched leather, brass, compass ornament and game fonts. <a href=\"/mods/ffxiv/umbra/\">Explore the Umbra UI family.</a></p>"
+        },
+        {
+          "title": "Open from Umbra",
+          "body": "<p>Use the optional <code>Umbra.XivHud.Chat</code> toolbar plugin, or <code>/xivchat open</code>. Right-click the toolbar button for appearance settings. Ctrl+Shift+right-click retains Umbra widget settings.</p>"
+        },
+        {
+          "title": "Development installation",
+          "body": "<p>The modules use the <a href=\"https://github.com/Spaceghost/xivhud-dalamud/releases/download/development/pluginmaster-development.json\">explicit development Dalamud repository</a>. Umbra toolbar DLLs are separate assets in the <a href=\"https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development\">same development release</a>. Add the adapter DLL in Umbra Settings → Plugins, restart Umbra, then choose the widget in the toolbar editor.</p>"
+        },
+        {
+          "title": "Keep the original within reach",
+          "body": "<p>Native chat, hotbars and job gauges remain available. Preview data is labelled and cannot send chat or trigger actions. Chat history stays in memory for the current session.</p>"
+        }
+      ],
+      "reviewedAt": "2026-10-29",
+      "verification": "The modules loaded live. The illustrated redesign and Umbra toolbar adapters build against the installed references. Combat actions, actual chat delivery and visual acceptance remain separate live checks.",
+      "releaseChannels": [
+        {
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.1",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ]
     }
