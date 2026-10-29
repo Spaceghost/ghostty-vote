@@ -407,7 +407,7 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.1",
+      "assemblyVersion": "0.1.0.3",
       "listed": true,
       "umbraWidget": null,
       "kind": "plugin",
@@ -417,31 +417,57 @@
       "id": "xivhud",
       "page": "/mods/ffxiv/xivhud/",
       "punchline": "An illustrated interface, with the original always within reach.",
-      "description": "A reversible native HUD mode and shared controller support for an illustrated interface. Restore the native HUD with /xivhud off.",
+      "description": "A shared illustrated Dalamud interface, optional Umbra toolbar family and independent floating-window host. Restore native HUD visibility with /xivhud off.",
       "tags": [
         "hud",
         "umbra",
         "interface"
       ],
-      "status": "experimental · module loading and read-only IPC checked; UI acceptance pending",
+      "status": "experimental · live module, floating-window and recovery checks recorded",
       "navigation": true,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud.png",
-      "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
+      "needs": "Dalamud API 15. Umbra and Ghostty are optional; ordinary plugin windows can float through XivHud.Windows.",
       "build": "tools/build.sh",
       "pending": "Testing build available: enable plugin testing builds in Dalamud. See the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
       "votePage": null,
-      "testingVersion": "0.1.0.1",
-      "reviewedAt": "2026-10-13",
+      "testingVersion": "0.1.0.3",
+      "reviewedAt": "2026-10-29",
       "verification": "HUD restoration was observed in earlier builds. HUD, Journal and Character modules loaded and exposed read-only IPC snapshots in the recorded checks. UI mutations, visual transitions and physical controller navigation still require acceptance.",
       "releaseChannels": [
         {
           "channel": "testing",
           "tag": "testing",
-          "version": "0.1.0.1",
+          "version": "0.1.0.3",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/testing"
+        }
+      ],
+      "media": [
+        {
+          "src": "/mods/ffxiv/umbra/media/journal-independent-view.png",
+          "alt": "Journal in a standalone view placement; no terminal session.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Journal in a standalone view placement; no terminal session.",
+          "capture": "live"
+        },
+        {
+          "src": "/mods/ffxiv/umbra/media/inventory-companion.png",
+          "alt": "Inventory follows beside the character as a projected world overlay.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Inventory follows beside the character as a projected world overlay.",
+          "capture": "live"
+        },
+        {
+          "src": "/mods/ffxiv/umbra/media/crafting-worklist.png",
+          "alt": "A Bronze Hoplon worklist with direct material totals; no crafting action was performed.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. A Bronze Hoplon worklist with direct material totals; no crafting action was performed.",
+          "capture": "live"
         }
       ]
     },
@@ -449,7 +475,7 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.1",
+      "assemblyVersion": "0.1.0.4",
       "listed": true,
       "umbraWidget": "Umbra.XivHud.Journal",
       "kind": "plugin",
@@ -469,21 +495,39 @@
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-journal.png",
-      "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
+      "needs": "Dalamud API 15. XivHud.Windows enables independent floating windows; Umbra and Ghostty are optional.",
       "build": "tools/build.sh",
       "pending": "Testing build available: enable plugin testing builds in Dalamud. See the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-journal-icon.svg",
       "bannerPath": "/mods/ffxiv/site/art/xivhud-journal-banner.svg",
       "votePage": null,
-      "testingVersion": "0.1.0.1",
+      "testingVersion": "0.1.0.4",
       "reviewedAt": "2026-10-13",
       "verification": "Earlier builds showed an accepted quest, native map handoff, day/night appearance and window cleanup. Module loading and read-only IPC snapshots were checked. Physical controllers and all window-host transitions remain acceptance work.",
       "releaseChannels": [
         {
           "channel": "testing",
           "tag": "testing",
-          "version": "0.1.0.1",
+          "version": "0.1.0.4",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/testing"
+        }
+      ],
+      "media": [
+        {
+          "src": "/mods/ffxiv/umbra/media/journal-independent-view.png",
+          "alt": "Journal in a standalone view placement; no terminal session.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Journal in a standalone view placement; no terminal session.",
+          "capture": "live"
+        },
+        {
+          "src": "/mods/ffxiv/umbra/media/journal-hosted-popup.png",
+          "alt": "Journal appearance popup inside the hosted texture; Ghostty host unchecked.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Journal appearance popup inside the hosted texture; Ghostty host unchecked.",
+          "capture": "live"
         }
       ]
     },
@@ -491,7 +535,7 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.1",
+      "assemblyVersion": "0.1.0.3",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Character",
       "kind": "plugin",
@@ -511,7 +555,7 @@
       "navigation": false,
       "repo": "Spaceghost/xivhud-dalamud",
       "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
-      "needs": "Dalamud API 15. Ghostty world windows and the Umbra toolbar are optional.",
+      "needs": "Dalamud API 15. XivHud.Windows enables independent floating windows; Umbra and Ghostty are optional.",
       "build": "tools/build.sh",
       "pending": "Development source and reproducible packages; see the project page for verification scope.",
       "iconPath": "/mods/ffxiv/site/art/xivhud-character-icon.svg",
@@ -519,7 +563,14 @@
       "votePage": null,
       "reviewedAt": "2026-10-13",
       "verification": "The module loaded and its read-only IPC snapshot was checked. Equipment accuracy, native adoption/fallback, UI mutations and physical controller navigation still require acceptance. Character remains outside the automatic installer.",
-      "releaseChannels": []
+      "releaseChannels": [
+        {
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.3",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
+        }
+      ]
     },
     {
       "author": "Johnneylee Jack Rollins",
@@ -608,7 +659,7 @@
       "repo": "Spaceghost/xivhud-dalamud",
       "page": "/mods/ffxiv/xivhud/developers/",
       "punchline": "Shared hosting and IPC for the HUD family.",
-      "description": "Bundled libraries for ordinary screen windows, native frames, optional Ghostty hosting, and versioned HUD IPC.",
+      "description": "Shared exact-identity adoption protocol, independent floating and Ghostty adapters, native frames and versioned IPC.",
       "author": "Johnneylee Jack Rollins",
       "tags": [
         "library",
@@ -802,9 +853,9 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.1",
+      "assemblyVersion": "0.1.0.2",
       "listed": false,
-      "umbraWidget": null,
+      "umbraWidget": "Umbra.XivHud.Vitals",
       "kind": "plugin",
       "gallery": true,
       "internalName": "XivHud.Vitals",
@@ -834,7 +885,7 @@
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.1",
+          "version": "0.1.0.2",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ]
@@ -843,7 +894,7 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.3",
+      "assemblyVersion": "0.1.0.4",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Combat",
       "kind": "plugin",
@@ -875,7 +926,7 @@
         {
           "channel": "development",
           "tag": "development",
-          "version": "0.1.0.3",
+          "version": "0.1.0.4",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
         }
       ]
@@ -884,7 +935,7 @@
       "author": "Johnneylee Jack Rollins",
       "dalamudApiLevel": 15,
       "released": false,
-      "assemblyVersion": "0.1.0.3",
+      "assemblyVersion": "0.1.0.4",
       "listed": false,
       "umbraWidget": "Umbra.XivHud.Chat",
       "kind": "plugin",
@@ -916,8 +967,180 @@
         {
           "channel": "development",
           "tag": "development",
+          "version": "0.1.0.4",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": false,
+      "umbraWidget": "Umbra.XivHud.Inventory",
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Inventory",
+      "name": "XivHud · Inventory",
+      "id": "xivhud-inventory",
+      "page": "/mods/ffxiv/umbra/inventory/",
+      "punchline": "Your satchel, within reach.",
+      "description": "Search carried bags, filter HQ stacks and inspect item details with local game icons.",
+      "tags": [
+        "umbra",
+        "xivhud",
+        "chat"
+      ],
+      "status": "development · independent Dalamud module and optional Umbra toolbar plugin",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
+      "needs": "Dalamud API 15. The game module provides data and input; the optional Umbra plugin adds its toolbar button.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "reviewedAt": "2026-10-29",
+      "verification": "Offline builds and tests cover the host, content and toolbar adapters. See the recorded screenshots and repository acceptance notes for the live checks and remaining limits.",
+      "releaseChannels": [
+        {
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.1",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
+        }
+      ],
+      "developmentOnly": true,
+      "media": [
+        {
+          "src": "/mods/ffxiv/umbra/media/inventory-hosted-input.png",
+          "alt": "Live bag contents: clicking a hosted stack selects its icon and quantity.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Live bag contents: clicking a hosted stack selects its icon and quantity.",
+          "capture": "live"
+        },
+        {
+          "src": "/mods/ffxiv/umbra/media/inventory-companion.png",
+          "alt": "Inventory follows beside the character as a projected world overlay.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Inventory follows beside the character as a projected world overlay.",
+          "capture": "live"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.1",
+      "listed": false,
+      "umbraWidget": "Umbra.XivHud.Crafting",
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Crafting",
+      "name": "XivHud · Crafting",
+      "id": "xivhud-crafting",
+      "page": "/mods/ffxiv/umbra/crafting/",
+      "punchline": "A workshop and a worklist.",
+      "description": "Browse recipes and plan a session worklist with combined direct-material requirements.",
+      "tags": [
+        "umbra",
+        "xivhud",
+        "chat"
+      ],
+      "status": "development · independent Dalamud module and optional Umbra toolbar plugin",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
+      "needs": "Dalamud API 15. The game module provides data and input; the optional Umbra plugin adds its toolbar button.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "reviewedAt": "2026-10-29",
+      "verification": "Offline builds and tests cover the host, content and toolbar adapters. See the recorded screenshots and repository acceptance notes for the live checks and remaining limits.",
+      "releaseChannels": [
+        {
+          "channel": "development",
+          "tag": "development",
+          "version": "0.1.0.1",
+          "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
+        }
+      ],
+      "developmentOnly": true,
+      "media": [
+        {
+          "src": "/mods/ffxiv/umbra/media/crafting-worklist.png",
+          "alt": "A Bronze Hoplon worklist with direct material totals; no crafting action was performed.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. A Bronze Hoplon worklist with direct material totals; no crafting action was performed.",
+          "capture": "live"
+        }
+      ]
+    },
+    {
+      "author": "Johnneylee Jack Rollins",
+      "dalamudApiLevel": 15,
+      "released": false,
+      "assemblyVersion": "0.1.0.3",
+      "listed": false,
+      "umbraWidget": "Umbra.XivHud.Windows",
+      "kind": "plugin",
+      "gallery": true,
+      "internalName": "XivHud.Windows",
+      "name": "XivHud · Windows",
+      "id": "xivhud-windows",
+      "page": "/mods/ffxiv/umbra/windows/",
+      "punchline": "A window is not a terminal.",
+      "description": "Float open plugin windows beside your character, in view, in the world or on the ground. No Ghostty or virtual terminal is required.",
+      "tags": [
+        "umbra",
+        "xivhud",
+        "windows"
+      ],
+      "status": "development · independent Dalamud module and optional Umbra toolbar plugin",
+      "navigation": false,
+      "repo": "Spaceghost/xivhud-dalamud",
+      "icon": "https://spacegho.st/mods/ffxiv/plugins/icons/xivhud-character.png",
+      "needs": "Dalamud API 15. The game module provides data and input; the optional Umbra plugin adds its toolbar button.",
+      "build": "tools/build.sh",
+      "pending": "Development source and reproducible packages; see the project page for verification scope.",
+      "iconPath": "/mods/ffxiv/site/art/xivhud-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivhud-banner.svg",
+      "votePage": null,
+      "reviewedAt": "2026-10-29",
+      "verification": "Offline builds and tests cover the host, content and toolbar adapters. See the recorded screenshots and repository acceptance notes for the live checks and remaining limits.",
+      "releaseChannels": [
+        {
+          "channel": "development",
+          "tag": "development",
           "version": "0.1.0.3",
           "url": "https://github.com/Spaceghost/xivhud-dalamud/releases/tag/development"
+        }
+      ],
+      "developmentOnly": true,
+      "media": [
+        {
+          "src": "/mods/ffxiv/umbra/media/inventory-companion.png",
+          "alt": "Inventory follows beside the character as a projected world overlay.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Inventory follows beside the character as a projected world overlay.",
+          "capture": "live"
+        },
+        {
+          "src": "/mods/ffxiv/umbra/media/journal-hosted-popup.png",
+          "alt": "Journal appearance popup inside the hosted texture; Ghostty host unchecked.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Live game capture, 2026-10-29. Journal appearance popup inside the hosted texture; Ghostty host unchecked.",
+          "capture": "live"
         }
       ]
     }

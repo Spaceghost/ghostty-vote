@@ -277,7 +277,7 @@ test(
 	'gallery mod tag: only a published mod id, stored and listed',
 	async function() {
 		const t = gateSetup();
-		assert.deepEqual(MOD_IDS,['ghostty','almanac','xivmcp','xivdesktop','xivarcade','xivwayfinder','xivlantern','xivpiano','xivhud','xivhud-journal','xivhud-character','xivrug','xivstream','xivprism','xivdispatch','xivcamp','xivhud-vitals','xivhud-combat','xivhud-chat']);
+		assert.deepEqual(MOD_IDS,['ghostty','almanac','xivmcp','xivdesktop','xivarcade','xivwayfinder','xivlantern','xivpiano','xivhud','xivhud-journal','xivhud-character','xivrug','xivstream','xivprism','xivdispatch','xivcamp','xivhud-vitals','xivhud-combat','xivhud-chat','xivhud-inventory','xivhud-crafting','xivhud-windows']);
 		const cookie = (await t.signedIn());
 		let res = (await t.raw((WEB_UPLOAD + '?mod=evil'),{body: png(),cookie: cookie,headers: {'content-type': 'image/png'}}));
 		assert.equal(res.status,400);

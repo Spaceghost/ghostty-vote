@@ -14,7 +14,7 @@ def cursor$1()
 	const THEME_KEY = 'ghostty-vote:theme'
 	const MAX_BYTES = ((8 * 1024) * 1024)
 	const DOT = ' · '
-	const MODS = {"ghostty":"Ghostty","almanac":"Almanac","xivmcp":"XivMcp","xivdesktop":"XivDesktop","xivarcade":"XivArcade","xivwayfinder":"XivWayfinder","xivlantern":"XivLantern","xivpiano":"XivPiano","xivhud":"XivHud","xivhud-journal":"XivHud · Journal","xivhud-character":"XivHud · Character","xivrug":"XivRug","xivstream":"XivStream","xivprism":"XivPrism","xivdispatch":"XivDispatch","xivcamp":"XivCamp","xivhud-vitals":"XivHud · Vitals","xivhud-combat":"XivHud · Combat","xivhud-chat":"XivHud · Chat"}
+	const MODS = {"ghostty":"Ghostty","almanac":"Almanac","xivmcp":"XivMcp","xivdesktop":"XivDesktop","xivarcade":"XivArcade","xivwayfinder":"XivWayfinder","xivlantern":"XivLantern","xivpiano":"XivPiano","xivhud":"XivHud","xivhud-journal":"XivHud · Journal","xivhud-character":"XivHud · Character","xivrug":"XivRug","xivstream":"XivStream","xivprism":"XivPrism","xivdispatch":"XivDispatch","xivcamp":"XivCamp","xivhud-vitals":"XivHud · Vitals","xivhud-combat":"XivHud · Combat","xivhud-chat":"XivHud · Chat","xivhud-inventory":"XivHud · Inventory","xivhud-crafting":"XivHud · Crafting","xivhud-windows":"XivHud · Windows"}
 	const want = new URLSearchParams(location.search).get('mod')
 	const MOD = ((want && Object.hasOwn(MODS, want)) ? want : '')
 	const modOf = (do(s)
