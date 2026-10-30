@@ -28,7 +28,7 @@
       "name": "Ghostty",
       "title": "Ghostty FFXIV Vote",
       "description": "Vote on what the Ghostty for FFXIV terminal plugin should do next.",
-      "eyebrow": "ghostty for ffxiv \u00b7 community vote",
+      "eyebrow": "ghostty for ffxiv · community vote",
       "h1_before": "What should the terminal ",
       "h1_glyph": "do",
       "h1_after": " in Eorzea next?",
@@ -57,7 +57,7 @@
       "name": "XivMcp",
       "title": "XivMcp Vote",
       "description": "Vote on what XivMcp, the MCP server inside Final Fantasy XIV, should let AI clients do next.",
-      "eyebrow": "xivmcp \u00b7 community vote",
+      "eyebrow": "xivmcp · community vote",
       "h1_before": "What should your AI be able to ",
       "h1_glyph": "ask",
       "h1_after": " Eorzea next?",
@@ -77,7 +77,7 @@
       "name": "XivDesktop",
       "title": "XivDesktop Vote",
       "description": "Vote on what XivDesktop, your Linux desktop inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivdesktop \u00b7 community vote",
+      "eyebrow": "xivdesktop · community vote",
       "h1_before": "What should your desktop ",
       "h1_glyph": "do",
       "h1_after": " in Eorzea next?",
@@ -97,7 +97,7 @@
       "name": "XivArcade",
       "title": "XivArcade Vote",
       "description": "Vote on what XivArcade, your own classic games inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivarcade \u00b7 community vote",
+      "eyebrow": "xivarcade · community vote",
       "h1_before": "What should the arcade ",
       "h1_glyph": "play",
       "h1_after": " next?",
@@ -117,7 +117,7 @@
       "name": "XivWayfinder",
       "title": "XivWayfinder Vote",
       "description": "Vote on what XivWayfinder, the soft bead and pointing glove for Final Fantasy XIV, should do next.",
-      "eyebrow": "xivwayfinder \u00b7 community vote",
+      "eyebrow": "xivwayfinder · community vote",
       "h1_before": "Where should the glove ",
       "h1_glyph": "point",
       "h1_after": " next?",
@@ -137,7 +137,7 @@
       "name": "XivLantern",
       "title": "XivLantern Vote",
       "description": "Vote on what XivLantern, friends, chat and channels peer to peer inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivlantern \u00b7 community vote",
+      "eyebrow": "xivlantern · community vote",
       "h1_before": "What should a lantern ",
       "h1_glyph": "light up",
       "h1_after": " next?",
@@ -157,7 +157,7 @@
       "name": "XivPiano",
       "title": "XivPiano Vote",
       "description": "Vote on what XivPiano, the Pandora radio player inside Final Fantasy XIV, should do next.",
-      "eyebrow": "xivpiano \u00b7 community vote",
+      "eyebrow": "xivpiano · community vote",
       "h1_before": "What should the radio ",
       "h1_glyph": "play",
       "h1_after": " next?",
@@ -177,7 +177,7 @@
       "name": "Almanac",
       "title": "Almanac Vote",
       "description": "Vote on what Almanac, the local AI companion for Final Fantasy XIV, should do next.",
-      "eyebrow": "almanac \u00b7 community vote",
+      "eyebrow": "almanac · community vote",
       "h1_before": "What should the Almanac ",
       "h1_glyph": "learn",
       "h1_after": " next?",
@@ -201,7 +201,7 @@
       "name": "XivPrism",
       "title": "XivPrism Feature Vote",
       "description": "Choose the first useful features for XivPrism.",
-      "eyebrow": "xivprism \u00b7 community feature vote",
+      "eyebrow": "xivprism · community feature vote",
       "h1_before": "What should XivPrism ",
       "h1_glyph": "bring",
       "h1_after": " to your next session?",
@@ -230,7 +230,7 @@
       "name": "XivDispatch",
       "title": "XivDispatch Feature Vote",
       "description": "Choose the first useful features for XivDispatch.",
-      "eyebrow": "xivdispatch \u00b7 community feature vote",
+      "eyebrow": "xivdispatch · community feature vote",
       "h1_before": "What should XivDispatch ",
       "h1_glyph": "bring",
       "h1_after": " to your next session?",
@@ -259,7 +259,7 @@
       "name": "XivCamp",
       "title": "XivCamp Feature Vote",
       "description": "Choose the first useful features for XivCamp.",
-      "eyebrow": "xivcamp \u00b7 community feature vote",
+      "eyebrow": "xivcamp · community feature vote",
       "h1_before": "What should XivCamp ",
       "h1_glyph": "bring",
       "h1_after": " to your next session?",
@@ -289,88 +289,108 @@
       "icon": "/os/ackerman-os/assets/field-watch.svg",
       "links": [
         [
-          "Android gallery",
+          "Screenshots",
           "/os/ackerman-os/#gallery"
+        ],
+        [
+          "Project source",
+          "https://github.com/Spaceghost/ackerman-os"
         ]
       ],
       "suggest_detail": "Describe the moment you want and the device you would use.",
       "name": "Ackerman OS",
-      "title": "Ackerman OS \u00b7 Feature Vote",
+      "title": "Ackerman OS · Feature Vote",
       "description": "Shape the shared family platform across the watch, deck and Android tablet.",
-      "eyebrow": "ackerman os \u00b7 community choices",
+      "eyebrow": "ackerman os · community choices",
       "h1_before": "What should our shared world ",
       "h1_glyph": "grow",
       "h1_after": " into next?",
-      "lede_html": "The shared Nelua and Lua core connects a watch, deck and Android companion to one family conversation. Vote on the platform pieces that would matter most. This is an active preview; ideas here are proposals, not shipped features.",
+      "lede_html": "Ackerman OS ties the T-Watch S3 Plus, T-Deck Plus and Android companion to the same family conversation. Shared Nelua policy and Lua apps keep their behavior portable. Choose which trust, continuity and play features deserve work next. These are proposals, not shipped features.",
       "banner": "/os/ackerman-os/assets/operator.png",
-      "suggest_title": "A family timeline that works even when a device is asleep",
-      "image_note": "Device artwork"
+      "suggest_title": "A moment my family should be able to share across devices",
+      "image_note": "Ackerman OS original device artwork",
+      "hero_title": "One story. Three companions. A lot of room to grow."
     },
     "ackerman-android": {
       "about": "/os/ackerman-os/",
       "icon": "/os/ackerman-os/assets/field-watch.svg",
       "links": [
         [
-          "Android gallery",
+          "Screenshots",
           "/os/ackerman-os/#gallery"
+        ],
+        [
+          "Source and parity",
+          "https://github.com/Spaceghost/ackerman-os/blob/master/android/companion/PARITY.md"
         ]
       ],
       "suggest_detail": "Describe the moment you want and the device you would use.",
       "name": "Android",
-      "title": "Ackerman Android \u00b7 Feature Vote",
+      "title": "Ackerman Android · Feature Vote",
       "description": "Choose what the Android companion should do next, from older tablet support to offline play.",
-      "eyebrow": "android companion \u00b7 community choices",
+      "eyebrow": "android companion · community choices",
       "h1_before": "What should the tablet ",
       "h1_glyph": "carry",
       "h1_after": " next?",
-      "lede_html": "The Android companion uses shared Nelua and Lua behavior with a small Kotlin host. It already has Chat, Scout Trail, Scout Prompts, Field Notes and Levi Channel. Vote on the next useful tablet moments.",
+      "lede_html": "The Android companion is the touch screen for Chat, Levi Channel, Scout Trail, Scout Prompts and encrypted Field Notes. Signed preview 24 starts on Android 6 x86 and x86_64 emulators; its shared core is Nelua and Lua with a small Kotlin host. Vote for the tablet experiences that matter on both old and new devices.",
       "banner": "/os/ackerman-os/assets/android-chat.png",
-      "suggest_title": "A quiet offline game for the tablet",
-      "image_note": "Real Android 11 emulator screenshot \u00b7 preview 21"
+      "suggest_title": "A tablet moment that would help my child",
+      "image_note": "Real Android 11 emulator screenshot · signed preview 24",
+      "hero_title": "A bigger picture for the family conversation."
     },
     "ackerman-deck": {
       "about": "/os/ackerman-os/",
       "icon": "/os/ackerman-os/assets/field-watch.svg",
       "links": [
         [
-          "Android gallery",
+          "Screenshots",
           "/os/ackerman-os/#gallery"
+        ],
+        [
+          "Project source",
+          "https://github.com/Spaceghost/ackerman-os"
         ]
       ],
       "suggest_detail": "Describe the moment you want and the device you would use.",
       "name": "T-Deck",
-      "title": "Ackerman T-Deck \u00b7 Feature Vote",
+      "title": "Ackerman T-Deck · Feature Vote",
       "description": "Choose the next T-Deck Plus features for typing, audio, nearby play and safe recovery.",
-      "eyebrow": "t-deck plus \u00b7 community choices",
+      "eyebrow": "t-deck plus · community choices",
       "h1_before": "What should the Deck ",
       "h1_glyph": "bring",
       "h1_after": " along?",
-      "lede_html": "The T-Deck Plus is the keyboard companion in this family system. Vote on features that work with its screen, physical keys and ESP32-S3 power budget.",
+      "lede_html": "The T-Deck Plus is Ackerman OS on physical keys and an ESP32-S3 screen. Its best ideas should make composing, recovery, offline play and deliberate radio use feel reliable on the actual board. Vote for what you would carry into the field.",
       "banner": "/os/ackerman-os/assets/operator-deck.png",
-      "suggest_title": "A keyboard shortcut that makes replying easier",
-      "image_note": "T-Deck display artwork"
+      "suggest_title": "A Deck shortcut or field moment I would use",
+      "image_note": "T-Deck display artwork; not a device screenshot",
+      "hero_title": "A field computer with a real keyboard."
     },
     "ackerman-watch": {
       "about": "/os/ackerman-os/",
       "icon": "/os/ackerman-os/assets/field-watch.svg",
       "links": [
         [
-          "Android gallery",
+          "Screenshots",
           "/os/ackerman-os/#gallery"
+        ],
+        [
+          "Project source",
+          "https://github.com/Spaceghost/ackerman-os"
         ]
       ],
       "suggest_detail": "Describe the moment you want and the device you would use.",
       "name": "T-Watch",
-      "title": "Ackerman T-Watch \u00b7 Feature Vote",
+      "title": "Ackerman T-Watch · Feature Vote",
       "description": "Choose the next T-Watch S3 Plus features for captions, calls and battery-friendly companion moments.",
-      "eyebrow": "t-watch s3 plus \u00b7 community choices",
+      "eyebrow": "t-watch s3 plus · community choices",
       "h1_before": "What should the Watch ",
       "h1_glyph": "notice",
       "h1_after": " next?",
-      "lede_html": "The T-Watch S3 Plus brings local speech capture and a small conversation screen to the wrist. Vote on what should feel reliable and useful there.",
+      "lede_html": "The T-Watch S3 Plus carries Ackerman OS on a 240×240 wrist screen. Short speech drafts, clear reply states and sensible sleep behavior matter more here than a crowded menu. Vote for moments that deserve a place on the wrist.",
       "banner": "/os/ackerman-os/assets/watch-home.png",
-      "suggest_title": "A better way to see a reply on my wrist",
-      "image_note": "Watch firmware UI contract render"
+      "suggest_title": "A wrist moment that should be easier",
+      "image_note": "Watch firmware UI contract render; not a photograph",
+      "hero_title": "The right answer, at a glance."
     }
   }
 }

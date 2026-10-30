@@ -52,8 +52,8 @@
     const BASE = "/mods/ffxiv/term/vote/";
     const B = window.GhosttyBallot;
     const root = globalThis.document.documentElement;
-    const MOD = new RegExp("^[a-z]{1,24}$", "").test(root.dataset.mod || "") ? root.dataset.mod : "ghostty";
-    const PAGE = new RegExp("^\\/mods\\/ffxiv\\/[a-z/]{1,40}\\/$", "").test(root.dataset.page || "") ? root.dataset.page : BASE;
+    const MOD = new RegExp("^[a-z][a-z0-9-]{0,31}$", "").test(root.dataset.mod || "") ? root.dataset.mod : "ghostty";
+    const PAGE = new RegExp("^\\/(?:mods\\/ffxiv|os\\/ackerman-os)\\/[a-z0-9/-]{1,80}\\/$", "").test(root.dataset.page || "") ? root.dataset.page : BASE;
     const Q = "?mod=" + MOD;
     const NS = MOD === "ghostty" ? "ghostty-vote:" : "ghostty-vote:" + MOD + ":";
     const KEY = { theme: "ghostty-vote:theme", seen: NS + "seen-version", since: NS + "session-since", votes: NS + "votes", suggestions: NS + "suggestions" };
@@ -1144,8 +1144,8 @@
         return;
       }
       ;
-      const c = me.character;
-      const via = me.provider === "github" ? "GitHub" : "FFXIV";
+      const c = MOD.startsWith("ackerman") ? null : me.character;
+      const via = me.provider === "github" ? "GitHub" : MOD.startsWith("ackerman") ? "XIVAuth" : "FFXIV";
       query$("#who").textContent = c ? "Signed in with " + via + " as " + c.name + (c.world ? " @ " + c.world : "") : "Signed in with " + via;
       const img = query$("#who-portrait");
       img.hidden = !(c && c.portrait_url);

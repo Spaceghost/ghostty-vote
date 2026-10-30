@@ -25,13 +25,14 @@
 <link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script><link rel="stylesheet" href="/os/ackerman-os/vote/ackerman.css">
 </head>
 <body>
-<div class="wrap"><div class="ackerman-hero"><img src="/os/ackerman-os/assets/android-chat.png" alt=""><div><small>ACKERMAN OS / COMMUNITY FIELD GUIDE</small><strong>Choose the next useful moment.</strong><span>Real Android 11 emulator screenshot · preview 21</span></div></div>
+<div class="wrap"><div class="ackerman-hero"><img src="/os/ackerman-os/assets/android-chat.png" alt=""><div><small>ACKERMAN OS / Android BALLOT</small><strong>A bigger picture for the family conversation.</strong><span>Real Android 11 emulator screenshot · signed preview 24</span></div></div>
   <header>
     <div class="topline">
       <span class="eyebrow">android companion · community choices</span>
       <span class="row">
         <a class="chip" href="/os/ackerman-os/">About Android</a>
-        <a class="chip" href="/os/ackerman-os/#gallery">Android gallery</a>
+        <a class="chip" href="/os/ackerman-os/#gallery">Screenshots</a>
+        <a class="chip" href="https://github.com/Spaceghost/ackerman-os/blob/master/android/companion/PARITY.md">Source and parity</a>
         <button class="chip" id="theme" type="button" aria-label="Colour theme">theme: auto</button>
       </span>
     </div>
@@ -45,16 +46,16 @@
       </span>
     </nav>
     <h1>What should the tablet <span class="glyph">carry</span> next?</h1>
-    <p class="lede">The Android companion uses shared Nelua and Lua behavior with a small Kotlin host. It already has Chat, Scout Trail, Scout Prompts, Field Notes and Levi Channel. Vote on the next useful tablet moments.</p>
+    <p class="lede">The Android companion is the touch screen for Chat, Levi Channel, Scout Trail, Scout Prompts and encrypted Field Notes. Signed preview 24 starts on Android 6 x86 and x86_64 emulators; its shared core is Nelua and Lua with a small Kotlin host. Vote for the tablet experiences that matter on both old and new devices.</p>
     <p class="lede">Sign in, then mark each idea <strong>Want</strong>, <strong>Maybe</strong> or <strong>Skip</strong>, leave a note, or suggest something the list missed. The tallies are public and help decide what gets built next. None of this is a promise that an idea will ship.</p>
     <section class="account" aria-label="Sign-in">
       <div id="signed-out" hidden>
         <p class="account-text" id="signed-out-text">Sign in to vote: one ballot per account. Anyone can read the tallies.</p>
         <div class="row">
           <a class="btn" id="signin-github" href="/mods/ffxiv/term/vote/api/auth/github/start">Sign in with GitHub</a>
-          <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start">Sign in with FFXIV</a>
+          <a class="btn" id="signin-xivauth" href="/mods/ffxiv/term/vote/api/auth/xivauth/start">Sign in with XIVAuth</a>
         </div>
-        <p class="small disclosure">Signing in with FFXIV needs an XIVAuth account and shares no character. After signing in you can link one, which needs a character verified on XIVAuth. One sign-in covers every Ackerman vote.</p>
+        <p class="small disclosure">XIVAuth sign-in needs no FFXIV character. One account can vote on all four Ackerman ballots; each ballot stays separate.</p>
       </div>
       <div id="signed-in" hidden>
         <div class="who">
@@ -77,7 +78,7 @@
       <p id="new-text"></p>
       <button class="btn ghost" type="button" id="new-show">Show new ideas</button>
     </div>
-  <div data-project-finder><a class="chip" data-finder-fallback href="/mods/ffxiv/">Find a project</a></div></header>
+  <div class="field-guide-link"><a class="chip" href="/os/ackerman-os/">Explore the Ackerman field guide ↗</a></div></header>
 
   <div class="bar" role="toolbar" aria-label="Filter ideas">
     <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
@@ -106,7 +107,7 @@
     </div>
     <form id="suggest" novalidate>
       <label for="s-title" class="eyebrow">Idea</label>
-      <input type="text" id="s-title" maxlength="80" placeholder="A quiet offline game for the tablet" required autocomplete="off">
+      <input type="text" id="s-title" maxlength="80" placeholder="A tablet moment that would help my child" required autocomplete="off">
       <label for="s-detail" class="eyebrow">What it feels like</label>
       <textarea id="s-detail" maxlength="600" rows="3" placeholder="Describe the moment you want and the device you would use."></textarea>
       <div class="note-row"><span></span><span id="s-count">0 / 600</span></div>
@@ -119,9 +120,9 @@
   </section>
 
   <footer>
-    <p class="small"><strong>Privacy.</strong> Voting needs a GitHub or FFXIV (XIVAuth) sign-in, so each account has one ballot. Your votes, notes and suggestions are linked to your GitHub or XIVAuth account id and are visible to the site owner. They are stored under a SHA-256 hash of the provider name and that id, and the hash does not hide who you are: GitHub account ids are public, so anyone who has the id can work out the hash, and the owner can look the account up. The server does not store your GitHub username, your email address, IP addresses or the sign-in token, which is used once and thrown away. The sign-in itself is a signed cookie that only these vote pages can use; it lasts 30 days and renews while you keep visiting, but ends 90 days after you signed in, or when you sign out.</p>
-    <p class="small">If you link a character, the site keeps the character you chose on XIVAuth: its name, world, Lodestone ID and portrait link, and when it was first and last seen. Only the site owner sees it, next to your ballot. <strong>Forget my character</strong> deletes it, and your votes stay. Notes and suggestions are visible only to you and the maintainer. A copy of your ballot is kept in this browser's local storage so the page can show it straight away. The tallies can be up to a minute old. Typography uses system fonts; linked character portraits load from the Lodestone.</p>
-    <p class="small">These Ackerman ballots share sign-in with the FFXIV mod votes. Each project keeps its own choices. Made by Johnneylee Jack Rollins, <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
+    <p class="small"><strong>Privacy.</strong> GitHub or XIVAuth sign-in gives each account one ballot per Ackerman project. Votes, notes and suggestions are associated with a hash of the provider and account ID; that hash is not anonymous to the site owner. The server does not store your email, IP address or sign-in token. A signed session cookie lasts up to 30 days and ends at sign-out or 90 days after sign-in.</p>
+    <p class="small">No FFXIV character is needed for Ackerman voting. A character linked elsewhere through the shared XIVAuth sign-in may still be visible to the owner. Notes and suggestions are visible only to you and the maintainer. Your browser keeps a copy of the ballot so choices appear immediately; public tallies can lag by a minute.</p>
+    <p class="small">The plugins sign in with the same account: <a href="/mods/ffxiv/term/vote/apps/">connected apps</a>. Made by Johnneylee Jack Rollins, <a href="https://github.com/Spaceghost" rel="noopener">github.com/Spaceghost</a>.</p>
     <p class="small">This page is counted, without cookies and without anything that identifies you: <a href="/mods/ffxiv/term/vote/privacy/">what this site counts</a>.</p>
   </footer>
 </div>

@@ -94,10 +94,15 @@ export function buildVotePage(cfg,mod){
 	if (family) {
 		html = html.split('\n').filter(function(line) { return !line.includes('fonts.googleapis.com') && !line.includes('fonts.gstatic.com'); }).join('\n');
 		html = html.replace('</head>','<link rel="stylesheet" href="/os/ackerman-os/vote/ackerman.css">\n</head>');
-		html = html.replace('<div class="wrap">','<div class="wrap"><div class="ackerman-hero"><img src="' + String(esc(p.banner)) + '" alt=""><div><small>ACKERMAN OS / COMMUNITY FIELD GUIDE</small><strong>Choose the next useful moment.</strong><span>' + String(esc(p.image_note || 'Device artwork')) + '</span></div></div>');
+		html = html.replace('<div class="wrap">','<div class="wrap"><div class="ackerman-hero"><img src="' + String(esc(p.banner)) + '" alt=""><div><small>ACKERMAN OS / ' + String(esc(p.name)) + ' BALLOT</small><strong>' + String(esc(p.hero_title || 'Choose the next useful moment.')) + '</strong><span>' + String(esc(p.image_note || 'Device artwork')) + '</span></div></div>');
 		html = html.replace("Every mod's vote",'Ackerman project votes');
 		html = html.replace("every mod's vote",'every Ackerman vote');
-		html = html.replace('The plugins sign in with the same account: <a href="/mods/ffxiv/term/vote/apps/">connected apps</a>.','These Ackerman ballots share sign-in with the FFXIV mod votes. Each project keeps its own choices.');
+		html = html.replace('Sign in with FFXIV','Sign in with XIVAuth');
+		html = html.replace('Signing in with FFXIV needs an XIVAuth account and shares no character. After signing in you can link one, which needs a character verified on XIVAuth. One sign-in covers every Ackerman vote.','XIVAuth sign-in needs no FFXIV character. One account can vote on all four Ackerman ballots; each ballot stays separate.');
+		html = html.replace(new RegExp('<div data-project-finder>[\\s\\S]*?<\\/div>'),'<div class="field-guide-link"><a class="chip" href="/os/ackerman-os/">Explore the Ackerman field guide ↗</a></div>');
+		html = html.replace(new RegExp('<p class="small"><strong>Privacy\\.</strong>[\\s\\S]*?</p>'),'<p class="small"><strong>Privacy.</strong> GitHub or XIVAuth sign-in gives each account one ballot per Ackerman project. Votes, notes and suggestions are associated with a hash of the provider and account ID; that hash is not anonymous to the site owner. The server does not store your email, IP address or sign-in token. A signed session cookie lasts up to 30 days and ends at sign-out or 90 days after sign-in.</p>');
+		html = html.replace(new RegExp('<p class="small">If you link a character[\\s\\S]*?</p>'),'<p class="small">No FFXIV character is needed for Ackerman voting. A character linked elsewhere through the shared XIVAuth sign-in may still be visible to the owner. Notes and suggestions are visible only to you and the maintainer. Your browser keeps a copy of the ballot so choices appear immediately; public tallies can lag by a minute.</p>');
+		html = html.replace('These Ackerman ballots share sign-in with the FFXIV mod votes. Each project keeps its own choices.','These four Ackerman ballots share sign-in, with independent choices for the OS, tablet, Deck and Watch.');
 		html = html.replace('>In-world</button>','>On device</button>');
 		html = html.replace('/mods/ffxiv/plugins/icons/' + mod + '.png','/os/ackerman-os/assets/field-watch.svg');
 	};

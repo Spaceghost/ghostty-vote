@@ -1,6 +1,6 @@
 {
   "mod": "ackerman-watch",
-  "version": 1,
+  "version": 2,
   "top_picks": [
     "watch-caption-accuracy",
     "watch-battery-budget"
@@ -51,6 +51,34 @@
           "effort": "medium",
           "in_world": true,
           "added_version": 1
+        },
+        {
+          "id": "watch-turn-receipt",
+          "title": "A wrist-sized turn receipt",
+          "pitch": "Show whether a spoken or typed turn was heard, sent and answered.",
+          "experience": "A child can glance at a simple status instead of wondering whether to ask Levi again.",
+          "how": "Render the durable turn state with the existing watch UI contract and preserve the retry ID through sleep.",
+          "risks": "A timeout after acceptance must reconcile before a second send.",
+          "audience": "Watch users in and out of Wi-Fi",
+          "wow": 10,
+          "feasibility": "medium",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
+        },
+        {
+          "id": "watch-speech-review",
+          "title": "Review before sending speech",
+          "pitch": "Make misheard words easy to fix before they enter the family thread.",
+          "experience": "The watch shows a short transcript with Confirm, Retry and Cancel as distinct touch actions.",
+          "how": "Use the existing local speech draft path and bounded 240×240 text paging.",
+          "risks": "Child voice and noisy-room accuracy need on-wrist tests.",
+          "audience": "Children talking to Levi from the watch",
+          "wow": 10,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 2
         }
       ]
     },
@@ -85,6 +113,34 @@
           "effort": "large",
           "in_world": true,
           "added_version": 1
+        },
+        {
+          "id": "watch-quiet-hours",
+          "title": "Quiet hours that respect sleep",
+          "pitch": "Keep the wrist calm at night without losing the conversation.",
+          "experience": "The watch stays dim and silent during family-set hours; the next glance shows waiting replies.",
+          "how": "Store a small schedule locally, gate notifications and keep durable history on the service.",
+          "risks": "Clock drift and emergency controls need a clear override.",
+          "audience": "Families setting bedtime routines",
+          "wow": 8,
+          "feasibility": "medium",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
+        },
+        {
+          "id": "watch-trail-glance",
+          "title": "Scout Trail in one glance",
+          "pitch": "Let a tiny game turn fit the round trip to the wrist.",
+          "experience": "Two large choices appear, then the story waits until the child asks for another turn.",
+          "how": "Keep Scout Trail logic in shared Lua and render only the current choice on the watch canvas.",
+          "risks": "Touch size and battery draw need a worn-device acceptance test.",
+          "audience": "Kids playing between activities",
+          "wow": 8,
+          "feasibility": "high",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
         }
       ]
     }

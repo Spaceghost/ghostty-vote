@@ -1,6 +1,6 @@
 {
   "mod": "ackerman-deck",
-  "version": 1,
+  "version": 2,
   "top_picks": [
     "deck-keyboard-chat",
     "deck-usb-audio"
@@ -51,6 +51,34 @@
           "effort": "medium",
           "in_world": false,
           "added_version": 1
+        },
+        {
+          "id": "deck-reply-ledger",
+          "title": "Reply ledger for weak links",
+          "pitch": "Make accepted, waiting and answered turns unmistakable on the Deck.",
+          "experience": "A message typed on physical keys survives lost Wi-Fi and never duplicates after reconnect.",
+          "how": "Pair the shared turn ID with a local outbox receipt and a compact status row on the 320×240 display.",
+          "risks": "Flash wear, partial writes and reconnect order need physical soak tests.",
+          "audience": "T-Deck users away from steady Wi-Fi",
+          "wow": 10,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 2
+        },
+        {
+          "id": "deck-command-palette",
+          "title": "Physical-key quick actions",
+          "pitch": "Make the keyboard useful even when the child is wearing gloves.",
+          "experience": "One key opens Chat, one opens Scout Trail, and a visible shortcut sheet explains the rest.",
+          "how": "Map hardware scan codes to shared Lua actions with long-press and repeat bounds.",
+          "risks": "Hardware revisions and accidental sends need real keyboard testing.",
+          "audience": "Kids who prefer the Deck keys",
+          "wow": 8,
+          "feasibility": "high",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
         }
       ]
     },
@@ -85,6 +113,34 @@
           "effort": "medium",
           "in_world": true,
           "added_version": 1
+        },
+        {
+          "id": "deck-scout-map",
+          "title": "A Scout Trail field map",
+          "pitch": "Give the Deck a small map that reacts to its shared Lua story.",
+          "experience": "Choosing the creek path draws a readable route and an earned badge on the Deck screen.",
+          "how": "Reuse Scout Trail state; add a Deck-specific canvas layout and keyboard focus.",
+          "risks": "Screen memory and legibility in sunlight need hardware checks.",
+          "audience": "Families playing Scout Trail outside",
+          "wow": 9,
+          "feasibility": "medium",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
+        },
+        {
+          "id": "deck-peer-invite",
+          "title": "A short, explicit nearby game invite",
+          "pitch": "Use the Deck radio only during a chosen local game.",
+          "experience": "The child accepts a watch or tablet invite, plays one turn and sees the link go quiet.",
+          "how": "Extend authenticated peer enrollment with separate app-session slots and bounded foreground messages.",
+          "risks": "Current firmware has a single peer; battery cost and physical consent must be proven.",
+          "audience": "Families with more than one Ackerman device",
+          "wow": 8,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 2
         }
       ]
     }

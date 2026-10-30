@@ -1,6 +1,6 @@
 {
   "mod": "ackerman-android",
-  "version": 1,
+  "version": 2,
   "top_picks": [
     "android-touch-ui",
     "android-light-voice"
@@ -51,6 +51,34 @@
           "effort": "medium",
           "in_world": false,
           "added_version": 1
+        },
+        {
+          "id": "android-reply-card",
+          "title": "A readable Levi reply card",
+          "pitch": "Make the latest answer easy to read, hear or continue from a tablet.",
+          "experience": "One reply fills a calm card with a clear Send, Play and Retry state even at large accessibility text.",
+          "how": "Render state chosen by shared Lua with Android-native text sizing and touch targets.",
+          "risks": "Small Android 6 phones and split-screen layouts need real checks.",
+          "audience": "Children using a tablet as the main screen",
+          "wow": 10,
+          "feasibility": "high",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
+        },
+        {
+          "id": "android-family-session",
+          "title": "Kid-ready family session",
+          "pitch": "Open directly to a child-safe companion without exposing the device token.",
+          "experience": "A parent provisions once; the child sees Chat and games, while connection details stay behind a deliberate parent action.",
+          "how": "Keep the device credential in Android Keystore and add an explicit local parent gate for settings.",
+          "risks": "A local gate is not a substitute for server revocation; shared tablet accounts need testing.",
+          "audience": "Families sharing an older tablet",
+          "wow": 9,
+          "feasibility": "medium",
+          "effort": "medium",
+          "in_world": false,
+          "added_version": 2
         }
       ]
     },
@@ -85,6 +113,34 @@
           "effort": "medium",
           "in_world": true,
           "added_version": 1
+        },
+        {
+          "id": "android-wifi-only-sync",
+          "title": "Wi-Fi-only, power-aware sync",
+          "pitch": "Reach Levi and durable Cloudflare history without background radio churn.",
+          "experience": "The tablet refreshes when opened, shows what is saved, and sleeps quietly when put down.",
+          "how": "Keep HTTP retry IDs durable, constrain polling to visible work and measure battery on old hardware.",
+          "risks": "A missed push must be visible; old TLS stores and poor Wi-Fi need testing.",
+          "audience": "Owners of aging Android tablets",
+          "wow": 9,
+          "feasibility": "high",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
+        },
+        {
+          "id": "android-local-trail-journal",
+          "title": "An offline Trail journal",
+          "pitch": "Turn Scout Trail choices into a little field notebook that works without Wi-Fi.",
+          "experience": "After a route, the child can revisit the path and add a private note for the next outing.",
+          "how": "Keep the game logic in shared Lua and store a bounded local checkpoint through the Nelua host.",
+          "risks": "Private notes must not be uploaded with game checkpoints.",
+          "audience": "Kids using the tablet on trips",
+          "wow": 8,
+          "feasibility": "medium",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 2
         }
       ]
     }

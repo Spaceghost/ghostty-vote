@@ -46,6 +46,12 @@ try {
 			assert.equal(await page.locator('main').count(),1,mod.id);
 			assert.equal(await page.evaluate(function() { return globalThis.document.documentElement.scrollWidth > globalThis.innerWidth + 1; }),false,mod.id + ' overflows at ' + width);
 		};
+		for (let [path,title] of [['/os/ackerman-os/vote/','One reply, one voice, three screens'],['/os/ackerman-os/vote/android/','A readable Levi reply card'],['/os/ackerman-os/vote/tdeck/','Reply ledger for weak links'],['/os/ackerman-os/vote/twatch/','A wrist-sized turn receipt']]){
+			await page.goto(base + path);
+			await page.getByRole('heading',{name: title}).waitFor();
+			assert.equal(await page.locator('article.idea').count(),9,path + ' idea count');
+			assert.equal(await page.evaluate(function() { return globalThis.document.documentElement.scrollWidth > globalThis.innerWidth + 1; }),false,path + ' overflows at ' + width);
+		};
 	};
 	await page.goto(base + '/mods/ffxiv/roadmap/?project=typo&status=typo');
 	await page.waitForFunction(function(expected) { return globalThis.document.querySelector('.queue-result')?.textContent == expected; },fullCount);

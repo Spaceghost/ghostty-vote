@@ -6,3 +6,34 @@
 .ackerman-hero img{width:100%;height:320px;object-fit:cover;object-position:center 35%;display:block}.ackerman-hero>div{padding:30px;display:flex;flex-direction:column;justify-content:center;gap:16px;color:#f2f0df}.ackerman-hero small,.ackerman-hero span{font:600 11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#cad8ca}.ackerman-hero strong{font:400 clamp(28px,4vw,45px)/1.05 Georgia,serif;max-width:14ch;text-wrap:balance}.ackerman-hero span{color:#d9ba78}
 header{padding-top:12px}article.idea{border-radius:4px}.account,.banner,.prompt{border-radius:4px}.eyebrow{color:var(--aether)}
 @media(max-width:740px){.ackerman-hero{grid-template-columns:1fr}.ackerman-hero img{height:220px}.ackerman-hero>div{padding:22px}.ackerman-hero strong{max-width:none}}
+/* The four ballots read as chapters of the field guide, not mod vote skins. */
+html[data-mod^="ackerman"]{scroll-behavior:smooth}
+html[data-mod^="ackerman"] body{background:radial-gradient(1000px 550px at 50% -180px,rgba(177,200,169,.13),transparent 72%),var(--ink)}
+html[data-mod^="ackerman"] .wrap{max-width:1240px}
+html[data-mod^="ackerman"] .ackerman-hero{position:relative;grid-template-columns:1.1fr .9fr;min-height:310px;border-color:#6b825f;box-shadow:0 24px 70px #06100d99;margin:22px 0 26px}
+html[data-mod^="ackerman"] .ackerman-hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 40%,#0c1b17aa 68%)}
+html[data-mod^="ackerman"] .ackerman-hero img{height:310px;object-position:center 40%}
+html[data-mod^="ackerman"] .ackerman-hero>div{position:relative;padding:clamp(24px,4vw,54px);background:#10231ddd}
+html[data-mod^="ackerman"] .ackerman-hero strong{font:400 clamp(32px,4.4vw,58px)/1.03 Georgia,serif;max-width:16ch;letter-spacing:-.025em}
+html[data-mod^="ackerman"] .ackerman-hero small{color:#d5b87c}
+html[data-mod^="ackerman"] h1{font:400 clamp(35px,5.4vw,69px)/1.03 Georgia,serif;letter-spacing:-.035em;max-width:18ch}
+html[data-mod^="ackerman"] .lede{max-width:77ch;font-size:18px;line-height:1.58}
+html[data-mod^="ackerman"] .mods{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
+html[data-mod^="ackerman"] .mods .row{gap:8px}
+html[data-mod^="ackerman"] .mods a[aria-current="page"]{background:var(--gold);color:var(--on-accent);border-color:var(--gold)}
+html[data-mod^="ackerman"] .field-guide-link{margin:12px 0 0}
+html[data-mod^="ackerman"] .field-guide-link a{border-color:var(--gold);color:var(--gold)}
+html[data-mod^="ackerman"] .bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--ink) 94%,transparent);border:1px solid var(--line);padding:10px;backdrop-filter:blur(12px)}
+html[data-mod^="ackerman"] .cat-head{margin-bottom:20px;padding-bottom:16px}
+html[data-mod^="ackerman"] .cat-head h2{font:400 clamp(27px,3vw,39px)/1.1 Georgia,serif;letter-spacing:-.025em}
+html[data-mod^="ackerman"] article.idea{border-radius:4px;padding:20px;background:linear-gradient(155deg,var(--slate-2),var(--slate) 72%);box-shadow:0 12px 30px #06100d40;transition:transform .15s,border-color .15s}
+html[data-mod^="ackerman"] article.idea:hover{transform:translateY(-2px);border-color:var(--gold-dim)}
+html[data-mod^="ackerman"] .idea h3{font:400 clamp(22px,2vw,28px)/1.13 Georgia,serif;letter-spacing:-.018em}
+html[data-mod^="ackerman"] .idea .pitch{font-size:16px;line-height:1.5}
+html[data-mod^="ackerman"] .vote button,html[data-mod^="ackerman"] .btn,html[data-mod^="ackerman"] .chip{min-height:44px}
+html[data-mod^="ackerman"] .account,html[data-mod^="ackerman"] .yours form{border-radius:4px;border-color:var(--line);background:var(--slate)}
+html[data-mod^="ackerman"] #link-character,html[data-mod^="ackerman"] #forget-character,html[data-mod^="ackerman"] #link-disclosure{display:none!important}
+html[data-mod="ackerman-android"] .ackerman-hero img{object-position:center 22%}
+html[data-mod="ackerman-watch"] .ackerman-hero img{object-fit:contain;padding:20px;background:#162920}
+@media(max-width:740px){html[data-mod^="ackerman"] .ackerman-hero{grid-template-columns:1fr;min-height:0}html[data-mod^="ackerman"] .ackerman-hero:before{background:linear-gradient(0deg,#0c1b17aa,transparent 55%)}html[data-mod^="ackerman"] .ackerman-hero img{height:210px}html[data-mod^="ackerman"] .ackerman-hero>div{padding:24px}html[data-mod^="ackerman"] .ackerman-hero strong{max-width:none}html[data-mod^="ackerman"] .bar{top:0}html[data-mod^="ackerman"] .lede{font-size:16px}}
+@media(prefers-reduced-motion:reduce){html[data-mod^="ackerman"] article.idea{transition:none}html[data-mod^="ackerman"] article.idea:hover{transform:none}}
