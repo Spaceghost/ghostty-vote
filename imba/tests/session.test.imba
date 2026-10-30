@@ -195,9 +195,9 @@ test(
 		const ok = {[page]: page, [(BASE + '/admin/')]: (BASE + '/admin/'), [(page + '?since=3')]: (page + '?since=3'), [(page + '?since=3&x=https://evil.example')]: (page + '?since=3'), [(page + '?since=abc')]: page, [(page + '#frag')]: page, [(BASE + '/apps/?code=BCDF-GHJK&x=1')]: (BASE + '/apps/?code=BCDF-GHJK'), [(BASE + '/apps/?code=<script>')]: (BASE + '/apps/'), '/mods/ffxiv/term/gallery/': '/mods/ffxiv/term/gallery/', '/mods/ffxiv/xivmcp/?x=1': '/mods/ffxiv/xivmcp/'}
 		for [raw, want] of Object.entries(ok)
 			assert.equal(safeReturnPath(raw), want, raw)
-		for mini of ['/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/xivpiano/', '/mods/ffxiv/almanac/about/']
+		for mini of ['/mods/ffxiv/term/', '/mods/ffxiv/xivmcp/', '/mods/ffxiv/xivdesktop/', '/mods/ffxiv/xivarcade/', '/mods/ffxiv/xivwayfinder/', '/mods/ffxiv/xivlantern/', '/mods/ffxiv/xivpiano/', '/mods/ffxiv/almanac/about/', '/os/ackerman-os/vote/', '/os/ackerman-os/vote/android/', '/os/ackerman-os/vote/tdeck/', '/os/ackerman-os/vote/twatch/']
 			assert.equal(safeReturnPath(mini), mini)
-		for near of ['/mods/ffxiv/', '/mods/ffxiv/term', '/mods/ffxiv/term/gallery/x', '/mods/ffxiv/almanac/', '/mods/ffxiv/xivmcp/x', '/mods/ffxiv/plugins/']
+		for near of ['/mods/ffxiv/', '/mods/ffxiv/term', '/mods/ffxiv/term/gallery/x', '/mods/ffxiv/almanac/', '/mods/ffxiv/xivmcp/x', '/mods/ffxiv/plugins/', '/os/ackerman-os/vote/other/', '/os/ackerman-os/vote/android/extra/']
 			assert.equal(safeReturnPath(near), page, near)
 		for raw of ['https://evil.example/', '//evil.example/', '///evil.example/', '/\\evil.example/', '\\\\evil.example', 'javascript:alert(1)', 'data:text/html,x', (' ' + page), (page + '\n'), ('https://spacegho.st' + page), BASE, (BASE + '/api/auth/me'), (BASE + '/index.html'), (BASE + '/admin'), (BASE + '%2Fadmin/'), '/', '/mods/ffxiv/term/voter/', (BASE + '/../../evil/'), (BASE + '/../../almanac/'), '/mods/ffxiv/unknown-mod/', '/mods/ffxiv/almanac/api/results', (BASE + '/admin/../api/mine'), '', null, undefined, 42, ((page + '?') + 'x'.repeat(300))]
 			assert.equal(safeReturnPath(raw), page, String(raw))
