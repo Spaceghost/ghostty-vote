@@ -108,6 +108,7 @@ test(
 			if mod.startsWith('ackerman')
 				assert.ok(html.includes('href="/mods/ffxiv/term/vote/api/auth/xivauth/start"'), 'XIVAuth is offered')
 				assert.ok(html.includes('/os/ackerman-os/vote/ackerman.css'), 'Ackerman styling is loaded')
+				assert.ok(! html.includes('fonts.googleapis.com'), 'Ackerman ballots use local fonts')
 			const version = JSON.parse(read((('public' + page) + 'version.json')))
 			assert.equal(version.url, ('https://spacegho.st' + page))
 		const clash = structuredClone(cats[1])
