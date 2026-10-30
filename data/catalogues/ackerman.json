@@ -1,0 +1,92 @@
+{
+  "mod": "ackerman",
+  "version": 1,
+  "top_picks": [
+    "ackerman-offline-outbox",
+    "ackerman-family-controls"
+  ],
+  "categories": [
+    {
+      "name": "Ackerman OS · Trust and continuity",
+      "tagline": "One family conversation, with clear ownership and recovery.",
+      "ideas": [
+        {
+          "id": "ackerman-offline-outbox",
+          "title": "Encrypted offline outbox",
+          "pitch": "Write now; send once a trusted connection returns.",
+          "experience": "A watch or Deck holds a reply through a tunnel or dead zone and sends it once, with the same turn ID.",
+          "how": "Encrypt per-device pending turns, preserve idempotency and reconcile accepted receipts on reconnect.",
+          "risks": "Replay protection, storage wear and a lost-key recovery path need hardware tests.",
+          "audience": "Families moving between Wi-Fi and radio",
+          "wow": 9,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 1
+        },
+        {
+          "id": "ackerman-family-controls",
+          "title": "Family permissions that are visible",
+          "pitch": "Give a parent clear control over device enrollment and access.",
+          "experience": "The parent can see which devices may join the family thread and revoke one without re-enrolling everything.",
+          "how": "Add scoped device grants, revocation receipts and a read-only family dashboard.",
+          "risks": "Do not expose a parent credential to the child device or public site.",
+          "audience": "Parents managing watches, decks and tablets",
+          "wow": 8,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 1
+        },
+        {
+          "id": "ackerman-honest-status",
+          "title": "What works, shown honestly",
+          "pitch": "Show sync, voice and radio state on every screen.",
+          "experience": "A message says waiting, sent, answered or needs attention; there is no mystery spinner.",
+          "how": "Share a small state machine in Nelua and render it for each canvas.",
+          "risks": "A network timeout can leave an accepted turn; status must reconcile rather than duplicate it.",
+          "audience": "Everyone using the shared thread",
+          "wow": 8,
+          "feasibility": "high",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 1
+        }
+      ]
+    },
+    {
+      "name": "Ackerman OS · Portable play",
+      "tagline": "Small experiences that travel between screens.",
+      "ideas": [
+        {
+          "id": "ackerman-app-kit",
+          "title": "Portable Lua app kit",
+          "pitch": "Make one safe app run on watch, Deck and Android.",
+          "experience": "A small game can use buttons, notes and a bounded canvas without three rewrites.",
+          "how": "Publish versioned app capabilities, a simulator and packaging checks around the shared Lua runtime.",
+          "risks": "Memory, display shape and permissions differ across devices.",
+          "audience": "Makers building family apps and games",
+          "wow": 9,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 1
+        },
+        {
+          "id": "ackerman-cross-device-resume",
+          "title": "Continue a game on another device",
+          "pitch": "Carry an optional game checkpoint between companions.",
+          "experience": "Start a trail on the watch and finish its next choice on the tablet.",
+          "how": "Sync explicit versioned app checkpoints through the family service with per-app consent.",
+          "risks": "Offline conflicts and private note data need strict separation.",
+          "audience": "Families who switch between devices",
+          "wow": 7,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 1
+        }
+      ]
+    }
+  ]
+}

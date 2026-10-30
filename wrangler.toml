@@ -31,6 +31,8 @@ routes = [
   { pattern = "spacegho.st/mods/ffxiv/xivwayfinder*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/xivlantern*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/xivpiano*", zone_name = "spacegho.st" },
+  # More specific than the Ackerman OS Site route; only the four vote pages live here.
+  { pattern = "spacegho.st/os/ackerman-os/vote*", zone_name = "spacegho.st" },
   # BEGIN GENERATED PROJECT ROUTES
   { pattern = "spacegho.st/mods/ffxiv/xivhud*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/xivrug*", zone_name = "spacegho.st" },

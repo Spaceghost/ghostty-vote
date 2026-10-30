@@ -82,6 +82,13 @@ try {
 		assert.ok(html.includes('/mods/ffxiv/site/theme.js'),'Missing shared theme controller: ' + path);
 		assert.ok(!html.includes('fonts.googleapis.com'),'Unexpected legacy font request: ' + path);
 	};
+	for (let [mod,page] of iterable$(Object.entries({ackerman: '/os/ackerman-os/vote/','ackerman-android': '/os/ackerman-os/vote/android/','ackerman-deck': '/os/ackerman-os/vote/tdeck/','ackerman-watch': '/os/ackerman-os/vote/twatch/'}))){
+		const html = get(page);
+		assert.ok(html.includes('data-mod="' + mod + '"'),'Wrong Ackerman ballot: ' + page);
+		assert.ok(html.includes('/os/ackerman-os/vote/ackerman.css'),'Missing Ackerman design: ' + page);
+		const ideasPath = page + 'ideas.json';
+		verifyBallot(JSON.parse(get(ideasPath)),JSON.parse(readFileSync(new URL('public' + ideasPath,root),'utf8')),JSON.parse(get('/mods/ffxiv/term/vote/api/tallies?mod=' + mod)));
+	};
 	console.log('Deployed registry, installer, ballots and every page in the FFXIV family verified.');
 } finally {
 	rmSync(temp,{recursive: true,force: true});

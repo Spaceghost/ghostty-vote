@@ -3,6 +3,14 @@
 # img-src allows the Lodestone's image hosts for character portraits (img2.finalfantasyxiv.com
 # in XIVAuth's fixtures); the Worker only stores portrait URLs on *.finalfantasyxiv.com.
 # 'self' is for the admin page's gallery queue (api/admin/gallery/image).
+/os/ackerman-os/vote/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
 /mods/ffxiv/term/vote/*
   Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: https://*.finalfantasyxiv.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff

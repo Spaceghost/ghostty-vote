@@ -39,6 +39,8 @@ const outputs = buildOutputs([catalogue, ...others], buildSeedSqlAll)
 
 const launchMods = new Set(['xivprism', 'xivdispatch', 'xivcamp'])
 outputs['seed/project-launch.sql'] = others.filter(do(cat) launchMods.has(cat.mod)).map(do(cat) buildSeedSql(cat).split('\n').filter(do(line) !line.startsWith('UPDATE ideas SET retired')).join('\n')).join('\n')
+const ackermanMods = new Set(['ackerman', 'ackerman-android', 'ackerman-deck', 'ackerman-watch'])
+outputs['seed/ackerman-launch.sql'] = others.filter(do(cat) ackermanMods.has(cat.mod)).map(do(cat) buildSeedSql(cat).split('\n').filter(do(line) ! line.startsWith('UPDATE ideas SET retired')).join('\n')).join('\n')
 
 
 Object.assign(outputs, buildVotePages(JSON.parse(readFileSync((root + 'data/vote-pages.json'), 'utf8'))))
@@ -51,7 +53,7 @@ const mods = JSON.parse(readFileSync((root + 'data/mods.json'), 'utf8'))
 
 const queueSnapshot = JSON.parse(readFileSync(root + 'data/feature-queue.json', 'utf8'))
 const voteScope = JSON.parse(readFileSync(root + 'data/accepted-votes.json', 'utf8'))
-const queueCatalogues = Object.fromEntries([catalogue, ...others].map(do(cat) [cat.mod || 'ghostty', cat]))
+const queueCatalogues = Object.fromEntries([catalogue, ...others].filter(do(cat) ! String(cat.mod || '').startsWith('ackerman')).map(do(cat) [cat.mod || 'ghostty', cat]))
 const queue = buildFeatureQueue(queueCatalogues, voteScope, queueSnapshot)
 outputs['public/mods/ffxiv/roadmap/queue.json'] = JSON.stringify(queue, null, 2) + '\n'
 outputs['public/mods/ffxiv/roadmap/index.html'] = featureQueuePage(queue, mods)

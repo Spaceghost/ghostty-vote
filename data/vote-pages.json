@@ -17,7 +17,11 @@
     "almanac",
     "xivprism",
     "xivdispatch",
-    "xivcamp"
+    "xivcamp",
+    "ackerman",
+    "ackerman-android",
+    "ackerman-deck",
+    "ackerman-watch"
   ],
   "pages": {
     "ghostty": {
@@ -279,6 +283,94 @@
       "icon": "/mods/ffxiv/site/art/xivcamp-icon.svg",
       "suggest_title": "The feature I would use every session",
       "suggest_detail": "Describe the device, situation and behavior you want."
+    },
+    "ackerman": {
+      "about": "/os/ackerman-os/",
+      "icon": "/os/ackerman-os/assets/field-watch.svg",
+      "links": [
+        [
+          "Android gallery",
+          "/os/ackerman-os/#gallery"
+        ]
+      ],
+      "suggest_detail": "Describe the moment you want and the device you would use.",
+      "name": "Ackerman OS",
+      "title": "Ackerman OS \u00b7 Feature Vote",
+      "description": "Shape the shared family platform across the watch, deck and Android tablet.",
+      "eyebrow": "ackerman os \u00b7 community choices",
+      "h1_before": "What should our shared world ",
+      "h1_glyph": "grow",
+      "h1_after": " into next?",
+      "lede_html": "The shared Nelua and Lua core connects a watch, deck and Android companion to one family conversation. Vote on the platform pieces that would matter most. This is an active preview; ideas here are proposals, not shipped features.",
+      "banner": "/os/ackerman-os/assets/operator.png",
+      "suggest_title": "A family timeline that works even when a device is asleep",
+      "image_note": "Device artwork"
+    },
+    "ackerman-android": {
+      "about": "/os/ackerman-os/",
+      "icon": "/os/ackerman-os/assets/field-watch.svg",
+      "links": [
+        [
+          "Android gallery",
+          "/os/ackerman-os/#gallery"
+        ]
+      ],
+      "suggest_detail": "Describe the moment you want and the device you would use.",
+      "name": "Android",
+      "title": "Ackerman Android \u00b7 Feature Vote",
+      "description": "Choose what the Android companion should do next, from older tablet support to offline play.",
+      "eyebrow": "android companion \u00b7 community choices",
+      "h1_before": "What should the tablet ",
+      "h1_glyph": "carry",
+      "h1_after": " next?",
+      "lede_html": "The Android companion uses shared Nelua and Lua behavior with a small Kotlin host. It already has Chat, Scout Trail, Scout Prompts, Field Notes and Levi Channel. Vote on the next useful tablet moments.",
+      "banner": "/os/ackerman-os/assets/android-chat.png",
+      "suggest_title": "A quiet offline game for the tablet",
+      "image_note": "Real Android 11 emulator screenshot \u00b7 preview 21"
+    },
+    "ackerman-deck": {
+      "about": "/os/ackerman-os/",
+      "icon": "/os/ackerman-os/assets/field-watch.svg",
+      "links": [
+        [
+          "Android gallery",
+          "/os/ackerman-os/#gallery"
+        ]
+      ],
+      "suggest_detail": "Describe the moment you want and the device you would use.",
+      "name": "T-Deck",
+      "title": "Ackerman T-Deck \u00b7 Feature Vote",
+      "description": "Choose the next T-Deck Plus features for typing, audio, nearby play and safe recovery.",
+      "eyebrow": "t-deck plus \u00b7 community choices",
+      "h1_before": "What should the Deck ",
+      "h1_glyph": "bring",
+      "h1_after": " along?",
+      "lede_html": "The T-Deck Plus is the keyboard companion in this family system. Vote on features that work with its screen, physical keys and ESP32-S3 power budget.",
+      "banner": "/os/ackerman-os/assets/operator-deck.png",
+      "suggest_title": "A keyboard shortcut that makes replying easier",
+      "image_note": "T-Deck display artwork"
+    },
+    "ackerman-watch": {
+      "about": "/os/ackerman-os/",
+      "icon": "/os/ackerman-os/assets/field-watch.svg",
+      "links": [
+        [
+          "Android gallery",
+          "/os/ackerman-os/#gallery"
+        ]
+      ],
+      "suggest_detail": "Describe the moment you want and the device you would use.",
+      "name": "T-Watch",
+      "title": "Ackerman T-Watch \u00b7 Feature Vote",
+      "description": "Choose the next T-Watch S3 Plus features for captions, calls and battery-friendly companion moments.",
+      "eyebrow": "t-watch s3 plus \u00b7 community choices",
+      "h1_before": "What should the Watch ",
+      "h1_glyph": "notice",
+      "h1_after": " next?",
+      "lede_html": "The T-Watch S3 Plus brings local speech capture and a small conversation screen to the wrist. Vote on what should feel reliable and useful there.",
+      "banner": "/os/ackerman-os/assets/watch-home.png",
+      "suggest_title": "A better way to see a reply on my wrist",
+      "image_note": "Watch firmware UI contract render"
     }
   }
 }

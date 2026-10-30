@@ -1,0 +1,92 @@
+{
+  "mod": "ackerman-watch",
+  "version": 1,
+  "top_picks": [
+    "watch-caption-accuracy",
+    "watch-battery-budget"
+  ],
+  "categories": [
+    {
+      "name": "T-Watch S3 Plus · Voice and glance",
+      "tagline": "Keep the wrist interaction short and reliable.",
+      "ideas": [
+        {
+          "id": "watch-caption-accuracy",
+          "title": "Real-world caption acceptance",
+          "pitch": "Test local English speech with the intended voice and noisy rooms.",
+          "experience": "Captions appear promptly and a mistaken word can be corrected before Send.",
+          "how": "Measure latency and accuracy on real PDM captures; select the model depth from evidence.",
+          "risks": "Synthetic speech does not predict a child voice or outdoor noise.",
+          "audience": "Watch users speaking to Levi",
+          "wow": 10,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 1
+        },
+        {
+          "id": "watch-glance-replies",
+          "title": "Readable reply cards",
+          "pitch": "Make a long answer easy to scan on 240×240.",
+          "experience": "The watch shows a few lines at a time with clear next and replay actions.",
+          "how": "Tune paging, touch targets and the shared response renderer.",
+          "risks": "Small text and scrolling must pass readability testing.",
+          "audience": "Watch users checking a reply quickly",
+          "wow": 8,
+          "feasibility": "high",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 1
+        },
+        {
+          "id": "watch-call-controls",
+          "title": "Predictable call controls",
+          "pitch": "Make Talk and Call hard to confuse.",
+          "experience": "A hold starts listening; a clear tap or power action ends the session.",
+          "how": "Validate BOOT, touch and POWER mappings with visible state and time limits.",
+          "risks": "Accidental capture and interruption during sleep need physical tests.",
+          "audience": "Families using hands-free moments",
+          "wow": 8,
+          "feasibility": "medium",
+          "effort": "medium",
+          "in_world": true,
+          "added_version": 1
+        }
+      ]
+    },
+    {
+      "name": "T-Watch S3 Plus · Power and nearby play",
+      "tagline": "Work in the background only when it pays off.",
+      "ideas": [
+        {
+          "id": "watch-battery-budget",
+          "title": "Measured battery budget",
+          "pitch": "Show what listening, Wi-Fi and radio actually cost.",
+          "experience": "The watch stays useful through the day and explains when a feature uses extra power.",
+          "how": "Profile duty cycles on hardware, cap foreground work and sleep cleanly.",
+          "risks": "Emulator and bench power numbers do not replace worn-battery tests.",
+          "audience": "Everyone wearing the watch",
+          "wow": 9,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 1
+        },
+        {
+          "id": "watch-peer-game",
+          "title": "Opt-in nearby game turn",
+          "pitch": "Play one short turn with a Deck or tablet without Wi-Fi.",
+          "experience": "A game invite is explicit, authenticated and times out after play.",
+          "how": "Extend the existing peer contract with separate enrollment and app message receipts.",
+          "risks": "The current bond is one-peer; new slots and disconnect recovery need firmware tests.",
+          "audience": "Families with multiple Ackerman devices",
+          "wow": 7,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": true,
+          "added_version": 1
+        }
+      ]
+    }
+  ]
+}
