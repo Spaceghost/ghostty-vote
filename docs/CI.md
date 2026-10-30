@@ -232,6 +232,16 @@ evidence; a hosted CI or deploy result does not establish either.
 
 The public deployment check runs in a separate job with no Cloudflare credentials. `DEPLOY_VERIFY_RUNS_ON` may select a trusted repository-scoped ephemeral runner when the custom domain rejects GitHub-hosted network requests. The default remains `ubuntu-latest`; a persistent 403 fails verification. Uploading the Worker stays on the deployment runner and does not disable Cloudflare security checks.
 
+As of 2026-10-29, `ghostty-vote-fedora` is registered to this repository with
+`ghostty-vote` and `fedora-std` labels. Its user service is
+`ghostty-vote-runner-fedora.service` on Alienware, and its checkout and runner
+files live on the workdata drive at `~/Projects/ghostty-vote-runner-fedora`.
+`DEPLOY_VERIFY_RUNS_ON` selects that runner because Cloudflare returns 403 to
+GitHub-hosted verification traffic. The deployment job still uses the
+`cloudflare` environment; the verification job has no deployment secrets.
+`CI_SELF_HOSTED` remains unset, so regular CI stays on the hosted runner and
+the Fedora runner handles the public check without doubling compilation.
+
 ## Prism, Dispatch and Camp vote publication
 
 The requested project launch adds an explicit, generated `seed/project-launch.sql` step before deployment. It contains only category/idea upserts for `xivprism`, `xivdispatch`, and `xivcamp`; no migrations, full-catalogue retirement, vote updates or vote deletion. Tests reapply it twice and verify that existing votes and tallies survive unchanged. The full catalogue seed remains a separate maintainer operation.
