@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="An open grimoire and aether pulse">
+<defs><radialGradient id="ink"><stop stop-color="#193742"/><stop offset="1" stop-color="#0b1120"/></radialGradient></defs>
+<rect x="2" y="2" width="188" height="188" rx="38" fill="url(#ink)" stroke="#d8b26a" stroke-width="3"/>
+<circle cx="96" cy="94" r="65" fill="none" stroke="#6fd6d0" stroke-width="2" opacity=".4"/>
+<circle cx="96" cy="94" r="51" fill="none" stroke="#6fd6d0" stroke-width="9" opacity=".12"/>
+<path d="M96 65Q68 47 39 58v74q28-10 57 8 29-18 57-8V58q-29-11-57 7Z" fill="#152a38" stroke="#f0d9a4" stroke-width="3" stroke-linejoin="round"/>
+<path d="M96 67v70M50 76q17-4 32 4M50 90q17-4 32 4M50 104q17-4 32 4M110 104q15-8 32-4" fill="none" stroke="#d8b26a" stroke-width="2" opacity=".8"/>
+<path d="m126 70 13 17-13 17-13-17Z" fill="none" stroke="#8ce8e0" stroke-width="2"/>
+<path d="m96 29 5 8-5 8-5-8Z" fill="#f0d9a4"/>
+</svg>

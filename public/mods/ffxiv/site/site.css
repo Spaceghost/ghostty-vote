@@ -306,3 +306,40 @@ select, input[type="search"], textarea { font: inherit; color: var(--text); back
   .family-context .family-tabs { gap: 4px; }
   .family-tabs a { padding-inline: 9px; }
 }
+
+/* XivSpell: the same ink, aether and gold, with room for the illustration
+   and genuine game captures. Detail views crop only in CSS; full shots remain linked. */
+body[data-mod="xivspell"] .hero { display:flex; flex-direction:column; align-items:stretch; padding:0; overflow:hidden; }
+body[data-mod="xivspell"] .hero > div { padding:clamp(22px,4vw,40px); }
+body[data-mod="xivspell"] .hero-figure { order:-1; }
+body[data-mod="xivspell"] .hero-art { display:block; border:0; border-radius:0; max-height:540px; object-fit:cover; }
+body[data-mod="xivspell"] .hero-figure figcaption { padding:10px 24px; color:var(--muted); border-bottom:1px solid var(--line); }
+.spell-story { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:28px; align-items:start; }
+.spell-story > * { min-width:0; }
+.spell-shot { margin:0; }
+.spell-shot figcaption { color:var(--muted); font-size:.85rem; margin-top:10px; }
+.spell-focus { display:block; overflow:hidden; aspect-ratio:1.25; border:1px solid var(--line); border-radius:12px; background:var(--well); }
+.spell-focus img { display:block; width:100%; height:100%; object-fit:cover; object-position:50% 100%; transform:scale(2.25); transform-origin:50% 100%; }
+.spell-steps { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px 40px; padding-left:24px; }
+.spell-steps li { padding-left:6px; }
+.spell-steps li::marker { color:var(--gold); font:1.5rem var(--display); }
+.spell-controls { overflow-x:auto; margin-bottom:20px; }
+.spell-controls table { width:100%; border-collapse:collapse; }
+.spell-controls caption { text-align:left; color:var(--muted); padding-bottom:12px; }
+.spell-controls th,.spell-controls td { text-align:left; vertical-align:top; padding:14px 12px; border-bottom:1px solid var(--line); }
+.spell-controls thead { color:var(--gold); }
+.spell-code { margin:0; max-width:100%; overflow-x:auto; padding:24px; background:var(--well); border:1px solid var(--line); border-radius:12px; }
+body[data-mod="xivspell"] .preview-gallery { margin-top:20px; }
+@media(max-width:700px) {
+  .spell-story,.spell-steps { grid-template-columns:minmax(0,1fr); }
+  body[data-mod="xivspell"] .hero-art { max-height:none; }
+  .spell-controls th,.spell-controls td { padding:12px 6px; }
+}
+
+body[data-mod="xivspell"] #install pre { max-width:100%; overflow-x:auto; padding:20px; border:1px solid var(--line); border-radius:12px; background:var(--well); line-height:1.65; }
+.spell-controls kbd { white-space:nowrap; padding:2px 6px; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; background:var(--well); font: .9em var(--mono); }
+
+.spell-hub-feature { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:28px; align-items:center; padding:22px; margin:28px 0; }
+.spell-hub-feature img { display:block; width:100%; height:auto; border-radius:10px; }
+.spell-hub-feature h2 { margin:8px 0 14px; }
+@media(max-width:700px) { .spell-hub-feature { grid-template-columns:minmax(0,1fr); gap:20px; } }

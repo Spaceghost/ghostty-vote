@@ -384,12 +384,12 @@
       "status": "stable release available · native melodica protocol · private scrobbling",
       "navigation": true,
       "gallery": true,
-      "testingVersion": "0.1.1.2",
+      "testingVersion": "0.1.3.1",
       "iconPath": "/mods/ffxiv/site/art/xivpiano-icon-2.webp",
       "bannerPath": "/mods/ffxiv/site/art/xivpiano-banner-2.webp",
       "votePage": "/mods/ffxiv/xivpiano/vote/",
-      "reviewedAt": "2026-10-25",
-      "verification": "Native melodica protocol, private listening history and optional ListenBrainz/Last.fm forwarding are implemented. Live Pandora authentication, audible playback, in-game transitions still require player acceptance.",
+      "reviewedAt": "2026-11-07",
+      "verification": "Pandora playback and the native now-playing bar have been observed live. Testing build 0.1.3.1 supplies the future-song timeline used by XivSpell. Broader cutscene, thumbs and game-transition behavior still require player acceptance.",
       "releaseChannels": [
         {
           "channel": "stable",
@@ -399,12 +399,87 @@
         },
         {
           "channel": "testing",
-          "tag": "v0.1.1-test.2",
-          "version": "0.1.1.2",
-          "url": "https://github.com/Spaceghost/xivpiano-dalamud/releases/tag/v0.1.1-test.2"
+          "tag": "v0.1.3-test.1",
+          "version": "0.1.3.1",
+          "url": "https://github.com/Spaceghost/xivpiano-dalamud/releases/tag/v0.1.3-test.1"
         }
       ],
       "testingTag": "v0.1.1-test.2"
+    },
+    {
+      "internalName": "XivSpell",
+      "name": "XivSpell",
+      "listed": false,
+      "released": false,
+      "repo": "Spaceghost/xivspell-dalamud",
+      "assemblyVersion": "0.1.0.5",
+      "dalamudApiLevel": 15,
+      "author": "Johnneylee Jack Rollins",
+      "punchline": "Weave words. Keep the world in view.",
+      "description": "A native Lua spellbook for FFXIV. Type any spell into Grimoire, weave to a quiet reverse pulse, and choose when your queued runes cast. Edit spellcards in Neovim; optional XivPiano timing follows the music.",
+      "tags": [
+        "spellbook",
+        "lua",
+        "keyboard",
+        "rhythm",
+        "neovim"
+      ],
+      "needs": "Dalamud API 15, .NET 10 to build, and the local Neovim/Lua companion. Linux/Wine is the recorded live setup. XivPiano is optional.",
+      "build": "DALAMUD_HOME=/path/to/Dalamud dotnet build plugin/XivSpell.csproj -c Release -p:RestoreLockedMode=true",
+      "sourceCommands": "git clone https://github.com/Spaceghost/xivspell-dalamud\ncd xivspell-dalamud\nDALAMUD_HOME=/path/to/Dalamud dotnet build plugin/XivSpell.csproj -c Release -p:RestoreLockedMode=true\ntools/play",
+      "sourceSetup": "The local Lua companion is part of the setup. Configure its host/runtime connection using the project guide before weaving; the author’s host and container paths are examples to adapt.",
+      "id": "xivspell",
+      "kind": "plugin",
+      "page": "/mods/ffxiv/xivspell/",
+      "status": "development · native free-spelling pulse running in game",
+      "navigation": true,
+      "gallery": true,
+      "iconPath": "/mods/ffxiv/site/art/xivspell-icon.svg",
+      "bannerPath": "/mods/ffxiv/site/art/xivspell-banner.webp",
+      "artWidth": 1737,
+      "artHeight": 905,
+      "artCaption": "XivSpell illustration. The interface images below are actual game captures.",
+      "publicationStage": "source",
+      "votePage": null,
+      "reviewedAt": "2026-11-07",
+      "verification": "Version 0.1.0.5 was built, loaded and shown in game. Automated checks cover free spell branching, whole-word resets, queue editing, pause/resume and agreement between the safe band and timing grades. Controller rhythm input is deferred. No one-click package is published yet.",
+      "releaseChannels": [],
+      "sections": [
+        {
+          "title": "A spellbook that stays in the world",
+          "body": "<div class=\"spell-story\"><div><p>Words become runes in the Grimoire you already use. Type a spell name, see it join your queue, then decide when to cast. Your character’s view stays open.</p><p>Spellstrings adds a quiet timing sigil beside the word entry. An aether pulse contracts into a broad shaded band: the band is the full accepted timing window, and its gold center marks perfect timing.</p><p>There is no song-selected spell, falling letter sequence or lane to follow. You choose the spell by spelling it.</p></div><figure class=\"spell-shot\"><a class=\"spell-focus\" href=\"/mods/ffxiv/xivspell/media/grimoire-in-game.webp\" aria-label=\"Open the full in-game Grimoire screenshot\"><img src=\"/mods/ffxiv/xivspell/media/grimoire-in-game.webp\" alt=\"Close view of the actual Grimoire rune queue, embedded timing pulse and keyboard spelling controls\" width=\"1920\" height=\"1080\" loading=\"lazy\" decoding=\"async\"></a><figcaption>Actual in-game capture · XivSpell 0.1.0.5. Select the image to see the complete scene.</figcaption></figure></div>"
+        },
+        {
+          "title": "Your next spell is your choice",
+          "body": "<ol class=\"spell-steps\"><li><h3>Begin on any pulse</h3><p>Start typing any spell in your Lua deck. Each character belongs to a pulse, including spaces inside a multiword name. Until you begin a word, leaving a pulse unplayed is fine.</p></li><li><h3>Keep the whole word together</h3><p>Matching spell names narrow as you type. A wrong letter, an off-beat character, or a missed pulse during the word restarts it from its first character. Your already-queued runes remain.</p></li><li><h3>Finish it, then keep weaving</h3><p>A complete, unambiguous name queues one rune. Keep typing your next spell. If a shorter exact name also begins a longer one, press <kbd>Enter</kbd> to queue the shorter name, or continue typing.</p></li><li><h3>Choose when to act</h3><p><kbd>&gt;</kbd> continues casting and returns the keyboard to movement. <kbd>.</kbd> repeats the weave. Completing a musical word never casts it automatically.</p></li></ol>"
+        },
+        {
+          "title": "A few keys, always within reach",
+          "body": "<div class=\"spell-controls\"><table><caption>Keyboard controls shown in the native spell HUD</caption><thead><tr><th scope=\"col\">Key</th><th scope=\"col\">What it does</th></tr></thead><tbody><tr><th scope=\"row\"><kbd>i</kbd></th><td>Enter or resume weaving.</td></tr><tr><th scope=\"row\"><kbd>Escape</kbd></th><td>Pause spelling and take movement control.</td></tr><tr><th scope=\"row\"><kbd>Backspace</kbd></th><td>Restart the unfinished word. With an empty word, undo the last queued spell.</td></tr><tr><th scope=\"row\">Hold <kbd>Backspace</kbd></th><td>Clear the queued weave.</td></tr><tr><th scope=\"row\"><kbd>Enter</kbd></th><td>Queue an exact shorter name when a longer match is also available.</td></tr><tr><th scope=\"row\"><kbd>&gt;</kbd> / <kbd>.</kbd></th><td>Cast and move / repeat the weave.</td></tr></tbody></table></div><p>The native <strong>Undo Spell</strong>, <strong>Reset Word</strong> and <strong>Pause</strong> buttons keep the same actions visible. Rhythm input is keyboard-first; controller rhythm spelling is deferred.</p>"
+        },
+        {
+          "title": "Let the music set the moment",
+          "body": "<p>With <a href=\"/mods/ffxiv/xivpiano/\">XivPiano</a> and a compatible build, the optional future-song timeline supplies upcoming energy onsets. Piano can provide up to 30 seconds of future timings; XivSpell uses the next timestamp for the pulse you see.</p><p>These are measured onsets, not pitch transcription or a guarantee of musical downbeats. If the song map is missing, the interface labels its tempo guide instead.</p><p>For a guide alongside game music, use <strong>Tap</strong> or <code>/xivspell rhythm tempo 120</code>. <code>/xivspell rhythm offset 100</code> adjusts timing calibration in milliseconds. Quiet optional plucks accompany accepted keys without changing the music’s playback or volume.</p><p>The game capture on this page uses the 120 BPM tempo guide. The pulse works without a Pandora account or XivPiano.</p>"
+        },
+        {
+          "title": "Open the spell behind the rune",
+          "body": "<div class=\"spell-story\"><div><p>The spellbook is local Lua source. The starter deck includes Arcanist spells, and a card connects a name, an icon preview, a target and a program.</p><p>Hover a queued rune to inspect its source, then click it to open the card in Neovim. The editor has typed Lua completion and explicit saves. Local spellcards can express sequences and hooks; their execution remains separate from musical spelling.</p><p><a href=\"https://github.com/Spaceghost/xivspell-dalamud/blob/master/cards/ruin.lua\">Read the real Ruin card</a> or explore the <a href=\"https://github.com/Spaceghost/xivspell-dalamud/blob/master/doc/xivspell.txt\">spellbook guide</a>.</p></div><pre class=\"spell-code\"><code>---@type SpellCard\nreturn {\n  name = \"Ruin\",\n  action = actions.ruin,\n  target = \"current\",\n  phrase = \"ruin\",\n  ---@param ctx SpellContext\n  run = function(ctx)\n    ctx:cast(actions.ruin)\n  end,\n}</code></pre></div>"
+        },
+        {
+          "title": "Start with your own grimoire",
+          "body": "<p>Open <code>/xivspell rhythm on</code> to weave with the pulse, or <code>/xivspell rhythm off</code> for normal spell weaving. The rune queue and explicit cast/control transition are shared between the modes.</p><p>This is a development build for people comfortable setting up Dalamud dev plugins and a local Lua/Neovim companion. The current screenshots were captured on Linux under Wine. Read the source and setup guide before adapting the host-specific runtime paths.</p><p><a class=\"btn primary\" href=\"#install\">Build and setup</a> <a class=\"btn\" href=\"#screenshots\">See the full game capture</a> <a class=\"btn\" href=\"/mods/ffxiv/term/gallery/?mod=xivspell\">Community gallery</a></p>"
+        }
+      ],
+      "media": [
+        {
+          "src": "/mods/ffxiv/xivspell/media/grimoire-in-game.webp",
+          "alt": "XivSpell 0.1.0.5 in Final Fantasy XIV: the native Grimoire rune queue and a small shaded pulse beside the spell entry, leaving the world view clear.",
+          "width": 1920,
+          "height": 1080,
+          "caption": "Actual game capture, 2026-11-07 · XivSpell 0.1.0.5. A 120 BPM guide, queued runes, the full timing band and explicit deletion/casting controls. No interface elements were composited into this image.",
+          "capture": "live"
+        }
+      ]
     },
     {
       "author": "Johnneylee Jack Rollins",

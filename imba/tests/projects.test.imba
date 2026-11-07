@@ -154,3 +154,34 @@ test('live Prism and Camp use development installation without claiming native d
 		assert.ok(page.includes('explicit development repository'))
 		assert.ok(!page.includes('No installable Dalamud plugin'))
 )
+
+test('XivSpell is discoverable without advertising an unpublished installer package', do
+	const spell = registry.mods.find(do(m) m.id == 'xivspell')
+	assert.ok(spell.navigation && spell.gallery)
+	assert.equal(spell.publicationStage,'source')
+	assert.equal(spell.listed,false)
+	assert.equal(spell.released,false)
+	assert.ok(!listedMods(registry).some(do(m) m.internalName == 'XivSpell'))
+	assert.ok(projectNavigation(registry).includes('/mods/ffxiv/xivspell/'))
+	assert.ok(MOD_IDS.includes('xivspell'))
+	const page = projectOutputs(registry,{})['public/mods/ffxiv/xivspell/index.html']
+	assert.ok(page.includes('source-built development plugin'))
+	assert.ok(page.includes('It has no one-click entry'))
+	assert.ok(page.includes('Backspace') && page.includes('Controller rhythm input is deferred'))
+	assert.ok(!page.includes('enable plugin testing builds'))
+)
+
+test('XivSpell publishes real capture assets separately from its illustration', do
+	const spell = registry.mods.find(do(m) m.id == 'xivspell')
+	assert.ok(spell.artCaption.includes('illustration'))
+	assert.ok(spell.media.length > 0)
+	for item of spell.media
+		assert.equal(item.capture,'live')
+		assert.notEqual(item.src,spell.bannerPath)
+		const bytes = readFileSync(new URL('../public' + item.src,import.meta.url))
+		assert.equal(bytes.subarray(0,4).toString(),'RIFF')
+		assert.equal(bytes.subarray(8,12).toString(),'WEBP')
+	const first = projectOutputs(registry,{})
+	const path = 'public/mods/ffxiv/xivspell/index.html'
+	assert.equal(projectOutputs(registry,{[path]:first[path]})[path],first[path],'A newly generated project is complete on its first build')
+)
