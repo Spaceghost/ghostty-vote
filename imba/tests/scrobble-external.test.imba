@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { readFileSync, readdirSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { handle } from '../src/app.js'
-import { EXTERNAL_COOKIE, issueTicket, provisionToken, renameExternal, revokeExternal } from '../src/scrobble-external.js'
+import { EXTERNAL_COOKIE, eraseExternal, issueTicket, provisionToken, renameExternal, revokeExternal } from '../src/scrobble-external.js'
 import { ScrobbleError } from '../src/scrobble-data.js'
 import { createD1 } from './d1-shim.js'
 
@@ -237,4 +237,28 @@ test('dashboard profile: external session and site session both use the browser 
 	const st = await (await call(e, '/mods/ffxiv/term/vote/api/scrobble/state', {headers: {cookie: cookie, 'sec-fetch-site': 'same-origin'}})).json()
 	assert.equal(st.user_name, 'Owl')
 	assert.equal(st.profile.leaderboard, false)
+)
+
+test('erase: the account and everything in it go; idempotent; other accounts untouched', do
+	const e = env()
+	const a = await provisionToken(e, {...who, label: 'web'})
+	const o = await provisionToken(e, {provider: 'spacegho.st', subject: OTHER, label: 'web'})
+	assert.equal((await submit(e, a.token, 'Mine')).status, 200)
+	assert.equal((await submit(e, o.token, 'Theirs')).status, 200)
+	await issueTicket(e, who)
+	const r = await eraseExternal(e, {subjects: [SUBJECT]})
+	assert.equal(r.accounts, 1)
+	assert.equal(r.counts.scrobble_listens, 1)
+	assert.equal(r.counts.scrobble_accounts, 1)
+	assert.equal(r.counts.scrobble_tickets, 1)
+	assert.equal((await validate(e, a.token)).status, 401)
+	assert.equal((await validate(e, o.token)).status, 200)
+	assert.equal(e.DB.raw.prepare('SELECT COUNT(*) AS n FROM scrobble_listens').get().n, 1)
+	assert.equal(e.DB.raw.prepare('SELECT COUNT(*) AS n FROM scrobble_external').get().n, 1)
+	const again = await eraseExternal(e, {subjects: [SUBJECT], github: ['nope', '42']})
+	assert.equal(again.accounts, 2)
+	let total = 0
+	for v in Object.values(again.counts)
+		total += v
+	assert.equal(total, 0)
 )

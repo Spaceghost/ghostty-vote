@@ -138,3 +138,33 @@ export def readExternalSession(request, env, now = nowSeconds())
 export def clearExternalCookie()
 	return cookie(EXTERNAL_COOKIE, '', EXTERNAL_COOKIE_PATH, 0)
 
+
+# Erases accounts and everything in them: listens, now playing, client tokens, forwarding
+# destinations (with their encrypted credentials), outbox, rate rows, tickets, hosted
+# recordings (objects and rows). Input {subjects: [spacegho.st subjects], github: [GitHub
+# numeric ids]}. Idempotent: an unknown or already erased account counts zero rows.
+# Leaderboards read listens directly, so they no longer count the account at once.
+const ERASE_TABLES = ['scrobble_listens', 'scrobble_nowplaying', 'scrobble_tokens', 'scrobble_providers', 'scrobble_outbox', 'scrobble_rate', 'scrobble_tickets', 'recording_grants', 'recordings', 'scrobble_external', 'scrobble_accounts']
+
+export def eraseExternal(env, input)
+	const keys = []
+	const subjects = Array.isArray(input && input.subjects) ? input.subjects.slice(0, 16) : []
+	const github = Array.isArray(input && input.github) ? input.github.slice(0, 4) : []
+	for s in subjects
+		if typeof s === 'string' && SUBJECT_RE.test(s)
+			keys.push(await externalKey('spacegho.st', s))
+	for id in github
+		if typeof id === 'string' && new RegExp('^[1-9][0-9]{0,15}$').test(id)
+			keys.push(await sha256hex('github:' + id))
+	const counts = {}
+	for t in ERASE_TABLES
+		counts[t] = 0
+	for key in keys
+		const objects = await env.DB.prepare('SELECT object_key FROM recordings WHERE account=?').bind(key).all()
+		if objects.results.length && env.RECORDINGS
+			for r in objects.results
+				await env.RECORDINGS.delete(r.object_key)
+		const stmts = ERASE_TABLES.map(do(t) env.DB.prepare('DELETE FROM ' + t + ' WHERE account=? RETURNING 1 AS x').bind(key))
+		const results = await env.DB.batch(stmts)
+		ERASE_TABLES.forEach(do(t, i) counts[t] += (results[i].results || []).length)
+	return {accounts: keys.length, counts: counts}

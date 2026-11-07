@@ -5,7 +5,7 @@
 import {WorkerEntrypoint} from 'cloudflare:workers'
 import worker from './worker.js'
 import {ScrobbleError} from './scrobble-data.js'
-import {issueTicket, provisionToken, renameExternal, revokeExternal} from './scrobble-external.js'
+import {eraseExternal, issueTicket, provisionToken, renameExternal, revokeExternal} from './scrobble-external.js'
 
 export default worker
 
@@ -35,3 +35,7 @@ export class ScrobbleAccounts < WorkerEntrypoint
 	# {provider, subject, display_name?} -> {url, expires_at}: one-time dashboard sign-in link
 	def ticket(input)
 		return await guarded(do() issueTicket(self.env, input))
+
+	# {subjects?: [spacegho.st subjects], github?: [GitHub ids]} -> {accounts, counts}: erase everything
+	def erase(input)
+		return await guarded(do() eraseExternal(self.env, input))

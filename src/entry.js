@@ -9,7 +9,7 @@ import {register$} from 'imba/runtime';
 import {WorkerEntrypoint} from 'cloudflare:workers';
 import worker from './worker.js';
 import {ScrobbleError} from './scrobble-data.js';
-import {issueTicket,provisionToken,renameExternal,revokeExternal} from './scrobble-external.js';
+import {eraseExternal,issueTicket,provisionToken,renameExternal,revokeExternal} from './scrobble-external.js';
 
 export default worker;
 
@@ -50,6 +50,12 @@ export class ScrobbleAccounts extends WorkerEntrypoint {
 	async ticket(input){
 		var self = this;
 		return await guarded(function() { return issueTicket(self.env,input); });
+	}
+
+	// {subjects?: [spacegho.st subjects], github?: [GitHub ids]} -> {accounts, counts}: erase everything
+	async erase(input){
+		var self = this;
+		return await guarded(function() { return eraseExternal(self.env,input); });
 	}
 	static { register$(this,c$0,'ScrobbleAccounts',0) }
 };
