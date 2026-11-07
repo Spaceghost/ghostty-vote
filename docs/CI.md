@@ -236,11 +236,18 @@ As of 2026-10-29, `ghostty-vote-fedora` is registered to this repository with
 `ghostty-vote` and `fedora-std` labels. Its user service is
 `ghostty-vote-runner-fedora.service` on Alienware, and its checkout and runner
 files live on the workdata drive at `~/Projects/ghostty-vote-runner-fedora`.
-`DEPLOY_VERIFY_RUNS_ON` selects that runner because Cloudflare returns 403 to
-GitHub-hosted verification traffic. The deployment job still uses the
-`cloudflare` environment; the verification job has no deployment secrets.
-`CI_SELF_HOSTED` remains unset, so regular CI stays on the hosted runner and
-the Fedora runner handles the public check without doubling compilation.
+As of 2026-11-07, `DEPLOY_VERIFY_RUNS_ON` is
+`["self-hosted","Linux","X64","ghostty-vote"]`. The project label permits either
+registered verification runner; it no longer requires the host-specific
+`fedora-std` label. During the XivSpell publication, the Fedora runner was
+offline and `bak-ghostty-vote` was available, so the public check ran on Bak.
+An older completed upload's queued verification had to be cancelled to free
+the deployment concurrency slot. The new upload and full public verification
+remain required and are run normally.
+
+Cloudflare returns 403 to GitHub-hosted verification traffic. The deployment
+job still uses the `cloudflare` environment; verification has no deployment
+secrets. `CI_SELF_HOSTED` remains unset, so regular CI stays hosted.
 
 ## Prism, Dispatch and Camp vote publication
 

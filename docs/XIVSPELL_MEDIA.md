@@ -35,3 +35,16 @@ Content and installation state come from the XivSpell source at
 `Spaceghost/xivspell-dalamud`, commit `0c245f74cef65b91310e2987010241e43bdc138e`.
 Source-only publication is intentional: the project has no claimed one-click
 installer release, and the website registry leaves its installer flags disabled.
+
+## Publication checks
+
+Website commit: `e090e63f8e8db92cdf4bb45c9915e8ff36c9d6cd`.
+201 unit tests passed, with all 24 project pages checked at desktop and mobile
+widths. The complete public deployment health check passed from the local
+verification host. Both uploaded WebP files were fetched from the public
+domain and compared byte-for-byte with the reviewed assets.
+
+The production workflow is
+https://github.com/Spaceghost/ghostty-vote/actions/runs/42397838260.
+Its verification uses the existing repository-scoped `bak-ghostty-vote` runner;
+see `docs/CI.md` for the project-label pool and the earlier queued-run recovery.
