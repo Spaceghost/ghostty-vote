@@ -46,7 +46,8 @@ test('provision: account + token for an external identity; the token scrobbles u
 	assert.deepEqual(rows.map(do(r) ({...r})), [{account: key, provider: 'spacegho.st'}])
 	assert.equal(e.DB.raw.prepare('SELECT COUNT(*) AS n FROM scrobble_listens WHERE account=?').get(key).n, 1)
 	# The identity table has only the opaque subject, never anything else about the person.
-	assert.deepEqual({...e.DB.raw.prepare('SELECT provider, subject, display_name FROM scrobble_external').get()}, {provider: 'spacegho.st', subject: SUBJECT, display_name: 'lynn'})
+	assert.deepEqual({...e.DB.raw.prepare('SELECT provider, subject FROM scrobble_external').get()}, {provider: 'spacegho.st', subject: SUBJECT})
+	assert.deepEqual({...e.DB.raw.prepare('SELECT display_name, leaderboard FROM scrobble_accounts').get()}, {display_name: 'lynn', leaderboard: 1})
 	# Provisioning again keeps the name unless renaming.
 	const b = await provisionToken(e, {...who, display_name: 'other', label: 'melodica extension'})
 	assert.equal(b.user_name, 'lynn')
@@ -100,7 +101,7 @@ test('ticket: one-time dashboard sign-in for that account only; logout clears it
 	assert.equal(u.origin + u.pathname, ORIGIN + '/mods/ffxiv/term/vote/api/scrobble/ticket')
 	const r = await call(e, u.pathname + u.search, {headers: {'sec-fetch-site': 'cross-site'}})
 	assert.equal(r.status, 303)
-	assert.equal(r.headers.get('location'), '/mods/ffxiv/scrobble/')
+	assert.equal(r.headers.get('location'), '/scrobble/')
 	const set = r.headers.get('set-cookie')
 	assert.match(set, new RegExp('^' + EXTERNAL_COOKIE + '=v1\\.'))
 	assert.match(set, /Path=\/mods\/ffxiv\/term\/vote\/api;/)
@@ -125,4 +126,114 @@ test('ticket: one-time dashboard sign-in for that account only; logout clears it
 	e.DB.raw.exec('UPDATE scrobble_tickets SET expires_at = 0')
 	assert.equal((await call(e, new URL(late.url).pathname + new URL(late.url).search)).status, 400)
 	assert.equal((await call(e, '/mods/ffxiv/term/vote/api/scrobble/ticket?t=nope')).status, 400)
+)
+
+def profileOf(e, token, body)
+	const init = body === undefined ? {headers: {authorization: 'Token ' + token}} : {method: 'POST', headers: {authorization: 'Token ' + token, 'content-type': 'application/json'}, body: JSON.stringify(body)}
+	return await call(e, '/scrobble/1/user/settings', init)
+
+def siteAccount(e, login)
+	const key = createHash('sha256').update('github:' + login).digest('hex')
+	e.DB.raw.prepare("INSERT INTO scrobble_accounts(account,provider,epoch,created_at) VALUES(?, 'github', 'ep', 1)").run(key)
+	const token = 'sgs_' + 'A'.repeat(42) + String(login).slice(-1)
+	e.DB.raw.prepare("INSERT INTO scrobble_tokens(id,account,token_hash,label,prefix,created_at) VALUES(?, ?, ?, 'XivPiano', 'sgs_', 1)").run('t-' + login, key, createHash('sha256').update(token).digest('hex'))
+	return {key: key, token: token}
+
+test('handles, display names and the leaderboard switch: provisioned on, site accounts off', do
+	const e = env()
+	const a = await provisionToken(e, {...who, label: 'web'})
+	const key = createHash('sha256').update('spacegho.st:' + SUBJECT).digest('hex')
+	assert.equal(a.user_name, 'listener-' + key.slice(0, 6))
+	let p = await (await profileOf(e, a.token)).json()
+	assert.deepEqual(p, {display_name: '', handle: 'listener-' + key.slice(0, 6), name: 'listener-' + key.slice(0, 6), leaderboard: true})
+	for bad of ['me@mail.example', 'https://x.example', 'a'.repeat(41), 42]
+		assert.equal((await profileOf(e, a.token, {display_name: bad})).status, 400, String(bad))
+	p = await (await profileOf(e, a.token, {display_name: 'Night Owl', leaderboard: false})).json()
+	assert.deepEqual([p.name, p.leaderboard], ['Night Owl', false])
+	assert.equal((await (await validate(e, a.token)).json()).user_name, 'Night Owl')
+	p = await (await profileOf(e, a.token, {display_name: ''})).json()
+	assert.equal(p.name, 'listener-' + key.slice(0, 6))
+	# A site (XivPiano) account: off by default; its token cannot change the settings.
+	const site = siteAccount(e, 'x1')
+	assert.equal((await (await profileOf(e, site.token)).json()).leaderboard, false)
+	assert.equal((await profileOf(e, site.token, {leaderboard: true})).status, 403)
+)
+
+test('recent listens: token-only, newest first, at most limit, art kept only as https', do
+	const e = env()
+	const a = await provisionToken(e, who)
+	const t0 = Math.floor(Date.now() / 1000) - 1000
+	for i in [0 ... 20]
+		const body = {listen_type: 'single', payload: [{listened_at: t0 + i, track_metadata: {artist_name: 'Artist', track_name: 'Song ' + i, release_name: 'Album', additional_info: {duration_ms: 200000, art_url: 'https://content-images.p-cdn.com/x' + i + '.jpg'}}}]}
+		const r = await call(e, '/scrobble/1/submit-listens', {method: 'POST', headers: {authorization: 'Token ' + a.token, 'content-type': 'application/json'}, body: JSON.stringify(body)})
+		assert.equal(r.status, 200)
+	const bad = {listen_type: 'single', payload: [{listened_at: t0, track_metadata: {artist_name: 'A', track_name: 'B', additional_info: {art_url: 'http://insecure.example/x.jpg'}}}]}
+	assert.equal((await call(e, '/scrobble/1/submit-listens', {method: 'POST', headers: {authorization: 'Token ' + a.token, 'content-type': 'application/json'}, body: JSON.stringify(bad)})).status, 400)
+	const r = await (await call(e, '/scrobble/1/user/recent?limit=15', {headers: {authorization: 'Token ' + a.token}})).json()
+	assert.equal(r.listens.length, 15)
+	assert.deepEqual(r.listens[0], {listened_at: t0 + 19, artist: 'Artist', title: 'Song 19', album: 'Album', duration_ms: 200000, art: 'https://content-images.p-cdn.com/x19.jpg'})
+	assert.equal((await call(e, '/scrobble/1/user/recent')).status, 401)
+	assert.equal((await call(e, '/mods/ffxiv/scrobble/1/user/recent?limit=500', {headers: {authorization: 'Token ' + a.token}})).status, 400)
+)
+
+test('leaderboards: only opted-in accounts count; listeners by name or handle only; windows', do
+	const e = env()
+	const a = await provisionToken(e, who)
+	const b = await provisionToken(e, {provider: 'spacegho.st', subject: OTHER})
+	await profileOf(e, b.token, {display_name: 'Bee'})
+	const site = siteAccount(e, 'x2')
+	const now = Math.floor(Date.now() / 1000)
+	const send = do(token, track, artist, at)
+		const body = {listen_type: 'single', payload: [{listened_at: at, track_metadata: {artist_name: artist, track_name: track}}]}
+		return await call(e, '/scrobble/1/submit-listens', {method: 'POST', headers: {authorization: 'Token ' + token, 'content-type': 'application/json'}, body: JSON.stringify(body)})
+	await send(a.token, 'Hit', 'Band', now - 10)
+	await send(a.token, 'Hit', 'Band', now - 20)
+	await send(b.token, 'hit', 'band', now - 30)
+	await send(b.token, 'Old', 'Band', now - 40 * 86400)
+	assert.equal((await send(site.token, 'Secret', 'Private', now - 5)).status, 200)
+	const week = await (await call(e, '/scrobble/1/leaderboard?window=7d')).json()
+	assert.deepEqual(week.songs.map(do(s) [s.title.toLowerCase(), s.listens]), [['hit', 3]])
+	assert.deepEqual(week.artists.map(do(s) s.listens), [3])
+	const key = createHash('sha256').update('spacegho.st:' + SUBJECT).digest('hex')
+	assert.deepEqual(week.listeners, [{name: 'listener-' + key.slice(0, 6), listens: 2}, {name: 'Bee', listens: 1}])
+	assert.ok(!JSON.stringify(week).includes('Secret'), 'an account that did not opt in is not counted')
+	assert.ok(!JSON.stringify(week).includes(SUBJECT))
+	const all = await (await call(e, '/mods/ffxiv/scrobble/1/leaderboard?window=all')).json()
+	assert.equal(all.listeners.find(do(l) l.name === 'Bee').listens, 2)
+	assert.equal((await call(e, '/scrobble/1/leaderboard?window=year')).status, 400)
+	const page = await call(e, '/scrobble/leaderboard?window=7d')
+	assert.equal(page.status, 200)
+	const html = await page.text()
+	assert.ok(html.includes('Top listeners') && html.includes('Bee') && !html.includes('Secret'))
+	assert.equal((await call(e, '/mods/ffxiv/scrobble/leaderboard')).status, 200)
+)
+
+test('spacegho.st/scrobble: redirect, API alias, static dashboard through ASSETS', do
+	const e = env()
+	const seen = []
+	e.ASSETS = {fetch: do(req)
+		seen.push(new URL(req.url).pathname)
+		return new Response('dashboard')
+	}
+	const r = await call(e, '/scrobble')
+	assert.equal(r.status, 301)
+	assert.equal(r.headers.get('location'), '/scrobble/')
+	assert.equal(await (await call(e, '/scrobble/')).text(), 'dashboard')
+	await call(e, '/scrobble/listen/')
+	assert.deepEqual(seen, ['/mods/ffxiv/scrobble/', '/mods/ffxiv/scrobble/listen/'])
+	assert.equal((await call(e, '/scrobble/1/validate-token')).status, 401)
+	assert.equal((await call(e, '/scrobble/1/nope')).status, 404)
+)
+
+test('dashboard profile: external session and site session both use the browser action', do
+	const e = env()
+	await provisionToken(e, who)
+	const t = new URL((await issueTicket(e, who)).url)
+	const cookie = (await call(e, t.pathname + t.search)).headers.get('set-cookie').split(';')[0]
+	const h = {cookie: cookie, origin: ORIGIN, 'sec-fetch-site': 'same-origin', 'content-type': 'application/json'}
+	const r = await call(e, '/mods/ffxiv/term/vote/api/scrobble/profile', {method: 'POST', headers: h, body: JSON.stringify({display_name: 'Owl', leaderboard: false})})
+	assert.equal(r.status, 200)
+	const st = await (await call(e, '/mods/ffxiv/term/vote/api/scrobble/state', {headers: {cookie: cookie, 'sec-fetch-site': 'same-origin'}})).json()
+	assert.equal(st.user_name, 'Owl')
+	assert.equal(st.profile.leaderboard, false)
 )

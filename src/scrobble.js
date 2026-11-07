@@ -11,23 +11,34 @@ import {isBanned} from './account.js';
 import {SCROBBLE_BASE,SCROBBLE_BROWSER,SCROBBLE_BODY_BYTES,SCROBBLE_RETENTION_MS,ScrobbleError,cursor,problem,submission,text} from './scrobble-data.js';
 import {DeliveryError,beginLastfm,decryptCredentials,encryptCredentials,encryptionReady,finishLastfm,validateListenBrainz} from './scrobble-providers.js';
 import {drainScrobbles} from './scrobble-queue.js';
-import {TICKET_PATH,externalName,isExternalProvider,readExternalSession,redeemTicket} from './scrobble-external.js';
+import {TICKET_PATH,isExternalProvider,readExternalSession,redeemTicket} from './scrobble-external.js';
+import {handleOf,leaderboardJson,readProfile,recentListens,updateProfile} from './scrobble-profile.js';
 
-const BROWSER_METHODS = Object.freeze({state: 'GET',export: 'GET',tokens: 'POST','tokens/revoke': 'POST','providers/listenbrainz': 'POST','providers/lastfm/start': 'POST','providers/lastfm/finish': 'POST','providers/disconnect': 'POST','history/delete': 'POST',retry: 'POST'});
+const CLIENT_METHODS = Object.freeze({'validate-token': ['GET'],'submit-listens': ['POST'],leaderboard: ['GET'],'user/recent': ['GET'],'user/settings': ['GET','POST']});
+const BROWSER_METHODS = Object.freeze({state: 'GET',profile: 'POST',export: 'GET',tokens: 'POST','tokens/revoke': 'POST','providers/listenbrainz': 'POST','providers/lastfm/start': 'POST','providers/lastfm/finish': 'POST','providers/disconnect': 'POST','history/delete': 'POST',retry: 'POST'});
 const NO_CACHE = {...PRIVATE,'referrer-policy': 'no-referrer','x-content-type-options': 'nosniff'};
 
 function response(value,status = 200,headers = {}){
 	return json(value,{status: status,headers: {...NO_CACHE,...headers}});
 };
 
+// The chosen display name; else the generated handle for provisioned accounts, and the
+// provider-prefixed key for site accounts (as before).
 async function userName(env,account){
+	const row = await env.DB.prepare('SELECT display_name FROM scrobble_accounts WHERE account=?').bind(account.account).first();
+	if (row && row.display_name) {
+		return row.display_name;
+	};
 	if (isExternalProvider(account.provider)) {
-		const name = await externalName(env,account.account);
-		if (name) {
-			return name;
-		};
+		return handleOf(account.account);
 	};
 	return account.provider + '-' + account.account.slice(0,12);
+};
+
+async function rateLimited(env,key){
+	const now = Date.now();
+	const row = await env.DB.prepare('INSERT INTO scrobble_rate(account,bucket,count) VALUES(?,?,1) ON CONFLICT(account,bucket) DO UPDATE SET count=count+1 WHERE count<120 RETURNING count').bind(key,Math.floor(now / 60000)).first();
+	return !row;
 };
 
 function providerName(value){
@@ -160,7 +171,7 @@ async function state(env,session,url){
 	});
 
 	const now = playing.results[0];
-	return response({signed_in: true,user_name: await userName(env,{provider: session.p,account: key}),tokens: tokens.results,providers: providerState,history: history,next_cursor: page.next_cursor,now_playing: now ? {track_metadata: JSON.parse(now.metadata),updated_at: now.updated_at,expires_at: now.expires_at} : null,counts: counts.results[0],forwarding_available: encryptionReady(env),retention_days: 365});
+	return response({signed_in: true,user_name: await userName(env,{provider: session.p,account: key}),profile: await readProfile(env,key),tokens: tokens.results,providers: providerState,history: history,next_cursor: page.next_cursor,now_playing: now ? {track_metadata: JSON.parse(now.metadata),updated_at: now.updated_at,expires_at: now.expires_at} : null,counts: counts.results[0],forwarding_available: encryptionReady(env),retention_days: 365});
 };
 
 async function saveProvider(env,account,name,credentials,status,user = ''){
@@ -205,6 +216,9 @@ async function browserWrite(name,request,env,ctx,fetcher,session){
 			problem(409,'token_limit','Revoke an existing token before creating another. Eight active tokens are allowed.');
 		};
 		return response({token: {id: id,label: label,prefix: prefix,created_at: now,last_used_at: 0,revoked_at: 0},client_token: token},201);
+	};
+	if (name === 'profile') {
+		return response(await updateProfile(env,key,input));
 	};
 	if (name === 'tokens/revoke') {
 		if (typeof input.id !== 'string' || input.id.length > 64) {
@@ -288,16 +302,36 @@ export async function handleScrobble(request,env,ctx,url,fetcher){
 	try {
 		if (url.pathname.startsWith(clientPrefix)) {
 			const name = url.pathname.slice(clientPrefix.length).replace(new RegExp('/$'),'');
-			const method = (name === 'validate-token') ? 'GET' : ((name === 'submit-listens') ? 'POST' : null);
-			if (!method) {
+			const methods = Object.hasOwn(CLIENT_METHODS,name) ? CLIENT_METHODS[name] : null;
+			if (!methods) {
 				return response({error: 'not_found'},404);
 			};
-			if (request.method !== method) {
-				return response({error: 'method_not_allowed'},405,{allow: method});
+			if (!methods.includes(request.method)) {
+				return response({error: 'method_not_allowed'},405,{allow: methods.join(', ')});
+			};
+			// Public, aggregate, no token (scrobble-profile.js).
+			if (name === 'leaderboard') {
+				return await leaderboardJson(env,url);
 			};
 			const account = await clientAccount(request,env);
 			if (name === 'validate-token') {
 				return response({code: 200,message: 'Token valid.',valid: true,user_name: await userName(env,account)});
+			};
+			if (name === 'user/recent') {
+				return response({listens: await recentListens(env,account.account,url)});
+			};
+			if (name === 'user/settings') {
+				if (request.method === 'GET') {
+					return response(await readProfile(env,account.account));
+				};
+				// Site accounts change these on the dashboard; a client token alone may not.
+				if (!isExternalProvider(account.provider)) {
+					problem(403,'use_dashboard','Change the display name and leaderboard setting on the dashboard.');
+				};
+				if (await rateLimited(env,account.account)) {
+					return response({error: 'rate_limited',message: 'Try again in one minute.'},429,{'retry-after': '60'});
+				};
+				return response(await updateProfile(env,account.account,await bodyValue(request)));
 			};
 			return await ingest(request,env,ctx,fetcher,account);
 		};

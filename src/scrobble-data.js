@@ -49,6 +49,21 @@ export function text(value,max = 512,required = false){
 	return result || undefined;
 };
 
+export function artUrl(value){
+	let url = null;
+	if (typeof value === 'string' && value.length <= 512 && !(new RegExp('[\\s<>"]').test(value))) {
+		try {
+			url = new URL(value);
+		} catch ($1) {
+			url = null;
+		};
+	};
+	if (!url || url.protocol !== 'https:' || url.username || url.password || url.href.length > 512) {
+		problem(400,'invalid_metadata','art_url must be an https URL of at most 512 characters.');
+	};
+	return url.href;
+};
+
 export function metadata(input){
 	if (!object(input)) {
 		problem(400,'invalid_metadata','track_metadata must be an object.');
@@ -81,6 +96,10 @@ export function metadata(input){
 				problem(400,'invalid_metadata','duration_ms must be an integer between zero and one day.');
 			};
 			extra.duration_ms = info.duration_ms;
+		};
+		// Cover art for the owner's own recent-listens view: an https URL, nothing else.
+		if (info.art_url !== undefined) {
+			extra.art_url = artUrl(info.art_url);
 		};
 		if (info.tracknumber !== undefined) {
 			const n = String(info.tracknumber);

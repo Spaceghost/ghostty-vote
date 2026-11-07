@@ -26,6 +26,8 @@ import {getAdminAlmanac,getAggregate,postAdminAlmanacReview,postAdminAlmanacSuit
 import {getPluginMaster} from './plugins.js';
 
 import {handleScrobble} from './scrobble.js';
+
+import {scrobbleAlias} from './scrobble-profile.js';
 import {handleRecordings} from './recordings.js';
 
 import {getAdminGallery,getAdminImage,getMyShotVotes,getPublicImage,getShots,postAdminReview,postAdminThumb,postMemberUpload,postShotVote,postUpload} from './gallery.js';
@@ -173,6 +175,11 @@ export async function handle(request,env,ctx,cache = function() {
 	return fetch(...args);
 }){
 	const url = new URL(request.url);
+	// spacegho.st/scrobble (canonical) and the leaderboard page; /scrobble/1/* re-enters handle.
+	const alias = await scrobbleAlias(request,env,ctx,url,handle);
+	if (alias) {
+		return alias;
+	};
 	const recording = await handleRecordings(request,env,ctx,url);
 	if (recording) {
 		return recording;

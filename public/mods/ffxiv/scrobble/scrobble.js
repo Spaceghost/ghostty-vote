@@ -367,6 +367,13 @@
     q("pending-count").textContent = Number(counts.pending || 0).toLocaleString();
     q("failed-count").textContent = Number(counts.failed || 0).toLocaleString();
     renderTokens(Array.isArray(state2.tokens) ? state2.tokens : []);
+    const profile = state2.profile || {};
+    q("profile-name").placeholder = String(profile.handle || "");
+    if (globalThis.document.activeElement !== q("profile-name")) {
+      q("profile-name").value = String(profile.display_name || "");
+    }
+    ;
+    q("profile-board").checked = !!profile.leaderboard;
     for (let name of ["listenbrainz", "lastfm"]) {
       renderProvider(name, state2.providers && state2.providers[name] || {});
     }
@@ -397,6 +404,14 @@
     }
     ;
   }
+  q("profile-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    return withBusy(async function() {
+      await api("profile", { display_name: q("profile-name").value.trim(), leaderboard: q("profile-board").checked });
+      await refresh();
+      return say("Leaderboard settings saved.");
+    });
+  });
   q("token-form").addEventListener("submit", function(event) {
     event.preventDefault();
     return withBusy(async function() {

@@ -11,6 +11,9 @@ preview_urls = false
 # Exactly these path prefixes on spacegho.st; every other route on the zone is untouched.
 routes = [
   { pattern = "spacegho.st/mods/ffxiv/scrobble*", zone_name = "spacegho.st" },
+  # Spaceghost Scrobbles' canonical base (src/scrobble-profile.js); /mods/ffxiv/scrobble stays an alias.
+  { pattern = "spacegho.st/scrobble", zone_name = "spacegho.st" },
+  { pattern = "spacegho.st/scrobble/*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/term/vote*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/term/gallery*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/almanac*", zone_name = "spacegho.st" },

@@ -33,6 +33,17 @@ export def text(value, max = 512, required = false)
 		problem(400, 'invalid_metadata', 'Send music names without URLs or credentials.')
 	return result || undefined
 
+export def artUrl(value)
+	let url = null
+	if typeof value === 'string' && value.length <= 512 && !new RegExp('[\\s<>"]').test(value)
+		try
+			url = new URL(value)
+		catch
+			url = null
+	if !url || url.protocol !== 'https:' || url.username || url.password || url.href.length > 512
+		problem(400, 'invalid_metadata', 'art_url must be an https URL of at most 512 characters.')
+	return url.href
+
 export def metadata(input)
 	if !object(input)
 		problem(400, 'invalid_metadata', 'track_metadata must be an object.')
@@ -57,6 +68,9 @@ export def metadata(input)
 			if !Number.isSafeInteger(info.duration_ms) || info.duration_ms < 0 || info.duration_ms > 86400000
 				problem(400, 'invalid_metadata', 'duration_ms must be an integer between zero and one day.')
 			extra.duration_ms = info.duration_ms
+		# Cover art for the owner's own recent-listens view: an https URL, nothing else.
+		if info.art_url !== undefined
+			extra.art_url = artUrl(info.art_url)
 		if info.tracknumber !== undefined
 			const n = String(info.tracknumber)
 			if !new RegExp('^[0-9]{1,5}$').test(n)

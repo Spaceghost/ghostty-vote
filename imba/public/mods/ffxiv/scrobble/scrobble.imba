@@ -242,6 +242,11 @@ def refresh(cursor = historyCursor)
 	q('pending-count').textContent = Number(counts.pending || 0).toLocaleString()
 	q('failed-count').textContent = Number(counts.failed || 0).toLocaleString()
 	renderTokens(Array.isArray(state.tokens) ? state.tokens : [])
+	const profile = state.profile || {}
+	q('profile-name').placeholder = String(profile.handle || '')
+	if document.activeElement !== q('profile-name')
+		q('profile-name').value = String(profile.display_name || '')
+	q('profile-board').checked = !!profile.leaderboard
 	for name of ['listenbrainz', 'lastfm']
 		renderProvider(name, state.providers && state.providers[name] || {})
 	const now = state.now_playing
@@ -264,6 +269,14 @@ def refresh(cursor = historyCursor)
 	if !busy
 		say('')
 
+q('profile-form').addEventListener('submit', do(event)
+	event.preventDefault()
+	withBusy(do
+		await api('profile', {display_name: q('profile-name').value.trim(), leaderboard: q('profile-board').checked})
+		await refresh()
+		say('Leaderboard settings saved.')
+	)
+)
 q('token-form').addEventListener('submit', do(event)
 	event.preventDefault()
 	withBusy(do

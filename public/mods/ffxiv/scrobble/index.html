@@ -64,6 +64,12 @@
           <div id="new-token" class="token-reveal" hidden><label for="client-token">Copy now — this token is shown once</label><input id="client-token" type="password" readonly autocomplete="off" spellcheck="false"><div class="scrobble-actions"><button class="chip" id="copy-token" type="button">Copy token</button><button class="chip" id="hide-token" type="button">Hide and clear</button></div></div>
           <ul id="tokens" class="connection-list"></ul><p id="tokens-empty" class="small">No players connected yet.</p>
         </section>
+        <section class="scrobble-panel" aria-labelledby="board-heading">
+          <p class="eyebrow">Leaderboards</p><h2 id="board-heading">Public leaderboards</h2>
+          <p class="small">The <a href="/scrobble/leaderboard">leaderboards</a> count completed listens only from accounts that choose to appear there, and show only totals and a display name, never your history. Off unless you turn it on.</p>
+          <form id="profile-form"><label for="profile-name">Display name</label><div class="input-row"><input id="profile-name" maxlength="40" autocomplete="off"><button class="btn" type="submit">Save</button></div>
+          <label for="profile-board"><input type="checkbox" id="profile-board"> Show me on the leaderboards</label></form>
+        </section>
         <section class="scrobble-panel" aria-labelledby="forward-heading">
           <p class="eyebrow">2 · Optional destinations</p><h2 id="forward-heading">Forward your listens</h2><p class="small">Your history stays here if a destination is temporarily unavailable. Do not also enable the same destination directly in XivPiano.</p>
           <div class="provider"><div class="panel-heading"><h3>ListenBrainz</h3><span class="provider-status" id="listenbrainz-status">Not connected</span></div><p id="listenbrainz-detail" class="small"></p>
