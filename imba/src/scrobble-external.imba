@@ -69,7 +69,8 @@ export def provisionToken(env, input)
 	await env.DB.prepare('INSERT INTO scrobble_tokens(id,account,token_hash,label,prefix,created_at) VALUES(?,?,?,?,?,?)').bind(id, key, await sha256hex(token), label(input.label), token.slice(0, 12), now).run()
 	return {token: token, token_id: id, user_name: publicName(account)}
 
-# Revokes the listed tokens, or every active token of the account when none are listed.
+# Revokes the listed tokens, or every active token of the account (and its leaderboard
+# setting) when none are listed.
 export def revokeExternal(env, input)
 	const who = identity(input)
 	const key = await externalKey(who.provider, who.subject)
@@ -80,6 +81,9 @@ export def revokeExternal(env, input)
 		result = await env.DB.prepare('UPDATE scrobble_tokens SET revoked_at=?1 WHERE account=?2 AND revoked_at=0 AND id IN (SELECT value FROM json_each(?3)) RETURNING id').bind(now, key, JSON.stringify(ids)).all()
 	else
 		result = await env.DB.prepare('UPDATE scrobble_tokens SET revoked_at=?1 WHERE account=?2 AND revoked_at=0 RETURNING id').bind(now, key).all()
+		# Revoking everything is the service's opt-out: the account also leaves the
+		# leaderboards (its earlier listens stop counting) until the person opts in again.
+		await env.DB.prepare('UPDATE scrobble_accounts SET leaderboard=0 WHERE account=?').bind(key).run()
 	return {revoked: result.results.length}
 
 export def renameExternal(env, input)

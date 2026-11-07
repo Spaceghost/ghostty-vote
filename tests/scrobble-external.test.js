@@ -73,6 +73,7 @@ test('revoke: listed tokens, then all; a revoked token is a 401 at validate-toke
 	assert.equal((await validate(e,c.token)).status,401);
 	assert.equal((await validate(e,b.token)).status,200);
 	assert.deepEqual(await revokeExternal(e,who),{revoked: 1});
+	assert.equal(e.DB.raw.prepare('SELECT leaderboard FROM scrobble_accounts').get().leaderboard,0,'opting out leaves the leaderboards');
 	assert.equal((await validate(e,b.token)).status,401);
 	assert.equal((await submit(e,b.token,'Late')).status,401);
 	// Opting back in issues a fresh, working token for the same account.

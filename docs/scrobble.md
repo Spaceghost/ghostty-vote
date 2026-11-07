@@ -75,7 +75,8 @@ identifier chosen by that service, and receives client tokens for an ordinary
 Scrobbles account (account key: SHA-256 of `provider:subject`). The only other thing
 stored about the identity is a display name the service passes along or the person
 chooses. The calls are `provision` (issue a client token, optionally revoking earlier
-ones; at most eight stay active), `revoke` (listed tokens, or all of them), `rename`,
+ones; at most eight stay active), `revoke` (listed tokens, or all of them; revoking all
+also turns the leaderboard setting off), `rename`,
 and `ticket`. Such accounts show a generated handle until the person picks a display
 name (`POST /1/user/settings` with their token, or the dashboard).
 
