@@ -92,7 +92,7 @@ Objects, and sessions are signed cookies.
 | `public/mods/ffxiv/term/vote/ideas.json` | Generated: `{version, categories[], ideas[]}` (no tallies) |
 | `public/mods/ffxiv/term/vote/version.json` | Generated: `{version, ideas, added: {version: count}, url}` |
 | `public/_headers` | CSP and other security headers for the static files |
-| `src/worker.js` | Worker entry |
+| `src/worker.js` | Worker entry (HTTP and cron); `src/entry.js`, the deployed `main`, adds the `ScrobbleAccounts` service-binding entrypoint |
 | `public/mods/ffxiv/term/vote/admin/index.html`, `admin.js` | The owner's voter list: a static shell, data only from `api/admin/voters` |
 | `src/app.js` | Routing, the ballot endpoints, D1 queries, tally cache, rate limits |
 | `src/auth.js` | Sign-in (GitHub, XIVAuth), the claim, `me`, logout, forget, the admin voter list |

@@ -12,6 +12,8 @@ import {inited$, register$, iterable$} from 'imba/runtime';
 // otherwise; logout none; forget one; the admin list one batch.
 import {API_PREFIX,BASE,COOKIE_NAME,LIMITS,PRIVATE,clearVoterCookie,cleanText,isSameOrigin,json,randomToken,voterKey,voterToken} from './lib.js';
 
+import {clearExternalCookie} from './scrobble-external.js';
+
 import {SESSION_RENEW_S,accountKey,clearSessionCookie,clearStateCookie,isAccountId,isAdmin,nowSeconds,pkcePair,readSession,readState,safeReturnPath,sessionCookie,sessionLimit,sessionSecrets,stateCookie,stateMatches} from './session.js';
 
 const USER_AGENT = 'ghostty-vote (+https://spacegho.st/mods/ffxiv/term/vote/)';
@@ -369,6 +371,7 @@ export async function postLogout(request,env,url){
 	};
 	const res = json({ok: true},{headers: PRIVATE});
 	res.headers.append('set-cookie',clearSessionCookie());
+	res.headers.append('set-cookie',clearExternalCookie());
 	return await res;
 	return await undefined;
 };

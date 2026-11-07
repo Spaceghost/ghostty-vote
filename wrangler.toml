@@ -1,5 +1,6 @@
 name = "ghostty-vote"
-main = "src/worker.js"
+# src/entry.js = src/worker.js plus the ScrobbleAccounts service-binding entrypoint.
+main = "src/entry.js"
 compatibility_date = "2026-09-01"
 
 # Only reachable through the zone route below: no *.workers.dev or preview URLs,

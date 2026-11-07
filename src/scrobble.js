@@ -11,6 +11,7 @@ import {isBanned} from './account.js';
 import {SCROBBLE_BASE,SCROBBLE_BROWSER,SCROBBLE_BODY_BYTES,SCROBBLE_RETENTION_MS,ScrobbleError,cursor,problem,submission,text} from './scrobble-data.js';
 import {DeliveryError,beginLastfm,decryptCredentials,encryptCredentials,encryptionReady,finishLastfm,validateListenBrainz} from './scrobble-providers.js';
 import {drainScrobbles} from './scrobble-queue.js';
+import {TICKET_PATH,externalName,isExternalProvider,readExternalSession,redeemTicket} from './scrobble-external.js';
 
 const BROWSER_METHODS = Object.freeze({state: 'GET',export: 'GET',tokens: 'POST','tokens/revoke': 'POST','providers/listenbrainz': 'POST','providers/lastfm/start': 'POST','providers/lastfm/finish': 'POST','providers/disconnect': 'POST','history/delete': 'POST',retry: 'POST'});
 const NO_CACHE = {...PRIVATE,'referrer-policy': 'no-referrer','x-content-type-options': 'nosniff'};
@@ -19,7 +20,13 @@ function response(value,status = 200,headers = {}){
 	return json(value,{status: status,headers: {...NO_CACHE,...headers}});
 };
 
-function userName(account){
+async function userName(env,account){
+	if (isExternalProvider(account.provider)) {
+		const name = await externalName(env,account.account);
+		if (name) {
+			return name;
+		};
+	};
 	return account.provider + '-' + account.account.slice(0,12);
 };
 
@@ -153,7 +160,7 @@ async function state(env,session,url){
 	});
 
 	const now = playing.results[0];
-	return response({signed_in: true,user_name: userName({provider: session.p,account: key}),tokens: tokens.results,providers: providerState,history: history,next_cursor: page.next_cursor,now_playing: now ? {track_metadata: JSON.parse(now.metadata),updated_at: now.updated_at,expires_at: now.expires_at} : null,counts: counts.results[0],forwarding_available: encryptionReady(env),retention_days: 365});
+	return response({signed_in: true,user_name: await userName(env,{provider: session.p,account: key}),tokens: tokens.results,providers: providerState,history: history,next_cursor: page.next_cursor,now_playing: now ? {track_metadata: JSON.parse(now.metadata),updated_at: now.updated_at,expires_at: now.expires_at} : null,counts: counts.results[0],forwarding_available: encryptionReady(env),retention_days: 365});
 };
 
 async function saveProvider(env,account,name,credentials,status,user = ''){
@@ -290,9 +297,14 @@ export async function handleScrobble(request,env,ctx,url,fetcher){
 			};
 			const account = await clientAccount(request,env);
 			if (name === 'validate-token') {
-				return response({code: 200,message: 'Token valid.',valid: true,user_name: userName(account)});
+				return response({code: 200,message: 'Token valid.',valid: true,user_name: await userName(env,account)});
 			};
 			return await ingest(request,env,ctx,fetcher,account);
+		};
+		// A one-time link from a provisioning service (scrobble-external.js): a top-level
+		// navigation from another page, so it is exempt from the same-origin gate below.
+		if (url.pathname === TICKET_PATH) {
+			return await redeemTicket(request,env,url);
 		};
 		const name = url.pathname.slice(SCROBBLE_BROWSER.length);
 		const method = BROWSER_METHODS[name];
@@ -306,7 +318,8 @@ export async function handleScrobble(request,env,ctx,url,fetcher){
 			problem(403,'forbidden','Same-origin browser requests are required.');
 		};
 		// Browser controls never accept a client token as an account session.
-		const session = await readSession(request,env);
+		// An external session (from a ticket) is explicit, so it wins over a site session.
+		const session = (await readExternalSession(request,env)) || (await readSession(request,env));
 		if (name === 'state') {
 			return await state(env,session,url);
 		};

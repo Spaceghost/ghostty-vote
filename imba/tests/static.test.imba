@@ -361,7 +361,7 @@ test(
 		assert.match(toml, new RegExp('\\{ pattern = "spacegho\\.st\\/mods\\/ffxiv\\/almanac\\*", zone_name = "spacegho\\.st" \\}', ''))
 		assert.ok((! new RegExp('mods\\/ffxiv\\/ai\\b', '').test(toml)), 'no /mods/ffxiv/ai route')
 		assert.match(assets, new RegExp('^html_handling = "auto-trailing-slash"', 'm'))
-		assert.match(toml, new RegExp('^main = "src\\/worker\\.js"$', 'm'))
+		assert.match(toml, new RegExp('^main = "src\\/entry\\.js"$', 'm'))
 		assert.match(toml, new RegExp('^command = "npm run build"$', 'm'))
 		assert.match(toml, new RegExp('^database_id = "ccbfb295-deb8-49ec-82c2-04a0b82ed4f3"$', 'm'))
 		assert.ok((! toml.includes('[[rules]]')), 'no bundled text modules')

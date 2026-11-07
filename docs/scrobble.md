@@ -37,6 +37,26 @@ signed site cookie is scoped to `/mods/ffxiv/term/vote`. Browser writes require 
 explicit same-origin `Origin`; client tokens never authorize account controls.
 Neither API enables cross-origin credentialed access.
 
+## Accounts provisioned by other spacegho.st services
+
+Accounts can also be provisioned by other spacegho.st services. Such a service
+reaches this Worker only through a Cloudflare service binding to the
+`ScrobbleAccounts` entrypoint (`src/entry.js`); no public route provisions anything.
+It names an external identity `{provider, subject}`, where `subject` is an opaque
+identifier chosen by that service, and receives client tokens for an ordinary
+Scrobbles account (account key: SHA-256 of `provider:subject`). The only other thing
+stored about the identity is a display name the service passes along or the person
+chooses. The calls are `provision` (issue a client token, optionally revoking earlier
+ones; at most eight stay active), `revoke` (listed tokens, or all of them), `rename`,
+and `ticket`.
+
+`ticket` returns a one-time link, valid for two minutes, that signs the person in to
+this dashboard for that account. It sets a separate session cookie scoped to the
+dashboard's API that lasts twelve hours and covers only the scrobble controls: it does
+not sign anybody in to voting, the gallery or recordings, and the dashboard's sign-out
+clears it. Privacy, retention, export, history deletion and forwarding are unchanged
+for these accounts. Recordings need a GitHub or FFXIV sign-in.
+
 ## Optional forwarding
 
 Connect ListenBrainz with its user token. For Last.fm, enter your own application
@@ -66,6 +86,11 @@ Reuse the existing `DB` binding. Apply **only** `migrations/0011_scrobble.sql` a
 whose earlier schema is already present. Some existing sites
 have an empty migration ledger despite having that schema: do not blindly reapply
 the full migrations directory. The new SQL is additive and should be applied once.
+
+For provisioned accounts, apply `migrations/0014_scrobble_external.sql` the same way
+(`wrangler d1 execute ghostty-vote --remote --file migrations/0014_scrobble_external.sql`);
+it is additive and idempotent. The Worker's `main` is `src/entry.js`, which re-exports
+`src/worker.js` and adds the entrypoint.
 
 Provision `SCROBBLE_ENCRYPTION_KEY` once as a Worker secret: standard base64 encoding
 of 32 cryptographically random bytes (43 characters, optionally `=` padded).

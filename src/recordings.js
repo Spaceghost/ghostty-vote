@@ -8,6 +8,7 @@ import {readSession} from './session.js';
 import {isBanned} from './account.js';
 import {clientAccount,accountRecord,validAccountSQL} from './scrobble-auth.js';
 import {SCROBBLE_BASE,SCROBBLE_BROWSER,ScrobbleError,metadata,problem} from './scrobble-data.js';
+import {isExternalProvider,readExternalSession} from './scrobble-external.js';
 
 const CLIENT = SCROBBLE_BASE + '/1/recordings';
 const BROWSER = SCROBBLE_BROWSER + 'recordings';
@@ -249,11 +250,18 @@ export async function handleRecordings(request,env,ctx,url){
 		let account;
 		if (client) {
 			account = await clientAccount(request,env);
+			// Accounts provisioned by other services scrobble only; recordings need a site account.
+			if (isExternalProvider(account.provider)) {
+				problem(403,'recordings_unavailable','Recordings need a GitHub or FFXIV sign-in.');
+			};
 		} else {
 			if (!isSameOrigin(request,url) || (request.method !== 'GET' && request.headers.get('origin') !== url.origin)) {
 				problem(403,'forbidden','Same-origin browser requests are required.');
 			};
 			const session = await readSession(request,env);
+			if (!session && await readExternalSession(request,env)) {
+				problem(403,'recordings_unavailable','Recordings need a GitHub or FFXIV sign-in.');
+			};
 			if (!session) {
 				problem(401,'sign_in_required','Sign in to manage your recordings.');
 			};
