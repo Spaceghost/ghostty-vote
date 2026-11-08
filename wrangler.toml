@@ -1,6 +1,5 @@
 name = "ghostty-vote"
-# src/entry.js = src/worker.js plus the ScrobbleAccounts service-binding entrypoint.
-main = "src/entry.js"
+main = "src/worker.js"
 compatibility_date = "2026-09-01"
 
 # Only reachable through the zone route below: no *.workers.dev or preview URLs,
@@ -79,11 +78,6 @@ migrations_dir = "migrations"
 binding = "GALLERY_KV"
 id = "ad74181ad97d4d3692e235c94beab40d"   # ghostty-gallery
 
-# Private objects only. Friends receive revocable, expiring playback grants.
-[[r2_buckets]]
-binding = "RECORDINGS"
-bucket_name = "xivpiano-recordings"
-
 # Non-secret sign-in settings. The secrets are set with `wrangler secret put` and never
 # live in this file: GITHUB_CLIENT_SECRET, XIVAUTH_CLIENT_SECRET, SESSION_SECRET (and,
 # only while rotating it, SESSION_SECRET_PREVIOUS).
@@ -97,7 +91,7 @@ ADMIN_ACCOUNTS = "github:251370"                   # 'provider:user_id', comma-s
 [observability]
 enabled = true
 
-# Persistent outbox retries and private-history retention. Secret encryption key is
-# provisioned once with SCROBBLE_ENCRYPTION_KEY (base64 of 32 random bytes).
+# No scheduled work: the only cron was for Scrobbles, which moved to their own service.
+# An explicit empty list clears the old trigger on deploy.
 [triggers]
-crons = ["*/5 * * * *"]
+crons = []

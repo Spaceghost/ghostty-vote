@@ -21,10 +21,7 @@ import { getAdminAlmanac, getAggregate, postAdminAlmanacReview, postAdminAlmanac
 
 import { getPluginMaster } from './plugins.js'
 
-import { handleScrobble } from './scrobble.js'
 
-import { scrobbleAlias } from './scrobble-profile.js'
-import { handleRecordings } from './recordings.js'
 
 import { getAdminGallery, getAdminImage, getMyShotVotes, getPublicImage, getShots, postAdminReview, postAdminThumb, postMemberUpload, postShotVote, postUpload } from './gallery.js'
 
@@ -170,16 +167,6 @@ export def handle(request, env, ctx, cache = (do()
 	return fetch(...args)
 ))
 	const url = new URL(request.url)
-	# spacegho.st/scrobble (canonical) and the leaderboard page; /scrobble/1/* re-enters handle.
-	const alias = await scrobbleAlias(request, env, ctx, url, handle)
-	if alias
-		return alias
-	const recording = await handleRecordings(request, env, ctx, url)
-	if recording
-		return recording
-	const scrobble = await handleScrobble(request, env, ctx, url, fetcher)
-	if scrobble
-		return scrobble
 	const r = route(url.pathname)
 	if (r.kind !== 'api')
 		return new Response('Not found\n', {status: 404, headers: {'content-type': 'text/plain; charset=utf-8'}})

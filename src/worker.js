@@ -1,7 +1,7 @@
 // Generated from imba/src/worker.imba; edit the Imba source.
 
 /*body*/
-// Cloudflare Worker entry. Only the paths in assets.run_worker_first (wrangler.toml) run
+// Cloudflare Worker entry (wrangler.toml `main`). Only the paths in assets.run_worker_first (wrangler.toml) run
 // this code; everything else is a static asset.
 //
 // analyticsFetch (src/analytics.js) wraps the app rather than living inside it: it
@@ -12,10 +12,7 @@ import {handle} from './app.js';
 
 import {analyticsFetch} from './analytics.js';
 
-import {scheduledScrobbles} from './scrobble-queue.js';
-
 export default {
-	scheduled: scheduledScrobbles,
 	fetch: function(request,env,ctx) {
 		return analyticsFetch(request,env,ctx,handle);
 		return;

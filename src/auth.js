@@ -12,7 +12,6 @@ import {inited$, register$, iterable$} from 'imba/runtime';
 // otherwise; logout none; forget one; the admin list one batch.
 import {API_PREFIX,BASE,COOKIE_NAME,LIMITS,PRIVATE,clearVoterCookie,cleanText,isSameOrigin,json,randomToken,voterKey,voterToken} from './lib.js';
 
-import {clearExternalCookie} from './scrobble-external.js';
 
 import {SESSION_RENEW_S,accountKey,clearSessionCookie,clearStateCookie,isAccountId,isAdmin,nowSeconds,pkcePair,readSession,readState,safeReturnPath,sessionCookie,sessionLimit,sessionSecrets,stateCookie,stateMatches} from './session.js';
 
@@ -363,15 +362,8 @@ export async function postLogout(request,env,url){
 	if ((!isSameOrigin(request,url))) {
 		return await refused();
 	};
-	if (env.RECORDINGS) {
-		const session = await readSession(request,env);
-		if (session) {
-			await env.DB.prepare('DELETE FROM recording_grants WHERE account=? AND share_hash IS NULL').bind(session.k).run();
-		};
-	};
 	const res = json({ok: true},{headers: PRIVATE});
 	res.headers.append('set-cookie',clearSessionCookie());
-	res.headers.append('set-cookie',clearExternalCookie());
 	return await res;
 	return await undefined;
 };
