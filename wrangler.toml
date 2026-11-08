@@ -9,11 +9,8 @@ workers_dev = false
 preview_urls = false
 
 # Exactly these path prefixes on spacegho.st; every other route on the zone is untouched.
+# Scrobbles moved to their own Worker (spaceghost-scrobble), which now holds its routes.
 routes = [
-  { pattern = "spacegho.st/mods/ffxiv/scrobble*", zone_name = "spacegho.st" },
-  # Spaceghost Scrobbles' canonical base (src/scrobble-profile.js); /mods/ffxiv/scrobble stays an alias.
-  { pattern = "spacegho.st/scrobble", zone_name = "spacegho.st" },
-  { pattern = "spacegho.st/scrobble/*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/term/vote*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/term/gallery*", zone_name = "spacegho.st" },
   { pattern = "spacegho.st/mods/ffxiv/almanac*", zone_name = "spacegho.st" },
@@ -67,7 +64,7 @@ directory = "public"
 binding = "ASSETS"
 html_handling = "auto-trailing-slash"   # public/.../vote/index.html is served at /vote/; /vote redirects there
 not_found_handling = "none"
-run_worker_first = ["/mods/ffxiv/scrobble/1/*", "/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json", "/mods/ffxiv/plugins.json"]
+run_worker_first = ["/mods/ffxiv/term/vote/api/*", "/mods/ffxiv/term/gallery/api/*", "/mods/ffxiv/term/gallery/img/*", "/mods/ffxiv/term/gallery/thumb/*", "/mods/ffxiv/almanac/api/*", "/mods/ffxiv/almanac/leaderboard.json", "/mods/ffxiv/almanac/recommendations.json", "/mods/ffxiv/plugins.json"]
 
 [[d1_databases]]
 binding = "DB"
