@@ -62,7 +62,7 @@ export def buildVotePage(cfg, mod)
 	const p = cfg.pages[mod]
 	const page = VOTE_MODS[mod]
 	const family = mod.startsWith('ackerman')
-	const others = cfg.order.filter(do(m) (m.startsWith('ackerman') === family)).map(
+	const others = cfg.order.filter(do(m) ((m == 'nelua') === (mod == 'nelua')) && (m.startsWith('ackerman') === family)).map(
 		(do(m)
 			const cur = ((m === mod) ? ' aria-current="page"' : '')
 			return ('<a class="chip"' + String(cur) + ' href="' + String(VOTE_MODS[m]) + '">' + String(esc(cfg.pages[m].name)) + '</a>')
@@ -90,6 +90,18 @@ export def buildVotePage(cfg, mod)
 		(html = html.replace('These Ackerman ballots share sign-in with the FFXIV mod votes. Each project keeps its own choices.', 'These four Ackerman ballots share sign-in, with independent choices for the OS, tablet, Deck and Watch.'))
 		(html = html.replace('>In-world</button>', '>On device</button>'))
 		(html = html.replace('/mods/ffxiv/plugins/icons/' + mod + '.png', '/os/ackerman-os/assets/field-watch.svg'))
+	if mod == 'nelua'
+		html = html.split('\n').filter(do(line) !line.includes('fonts.googleapis.com') && !line.includes('fonts.gstatic.com')).join('\n')
+		html = html.replace('<link rel="stylesheet" href="/mods/ffxiv/site/enhancements.imba.css"><link rel="stylesheet" href="/mods/ffxiv/site/enhancements.css"><script src="/mods/ffxiv/site/enhancements.js" defer></script>', '')
+		html = html.replace('</head>', '<link rel="stylesheet" href="/nelua/vote/nelua.css">\n</head>')
+		html = html.replace('/mods/ffxiv/plugins/icons/nelua.png', '/nelua/assets/icon.svg')
+		html = html.replace("Every mod's vote", 'Nelua feature votes')
+		html = html.replace('Sign in with FFXIV', 'Sign in with XIVAuth')
+		html = html.replace("Signing in with FFXIV needs an XIVAuth account and shares no character. After signing in you can link one, which needs a character verified on XIVAuth. One sign-in covers every mod's vote.", 'Use GitHub or an existing XIVAuth account. No game account or character is needed. Your Nelua choices are separate from other ballots.')
+		html = html.replace(new RegExp('<div data-project-finder>[\\s\\S]*?</div>'), '<p class="small">Feasibility and effort are provisional design estimates. Expand an idea for its first consumer and open questions.</p>')
+		html = html.replace('>In-world</button>', '>Systems</button>')
+		html = html.replace('<option value="wow">wow</option>', '')
+		html = html.replace('The plugins sign in with the same account:', 'The shared voting service also supports')
 	return html
 	return
 

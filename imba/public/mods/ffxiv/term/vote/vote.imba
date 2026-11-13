@@ -13,7 +13,7 @@ def cursor$1()
 	const B = window.GhosttyBallot
 	const root = document.documentElement
 	const MOD = (new RegExp('^[a-z][a-z0-9-]{0,31}$', '').test((root.dataset.mod || '')) ? root.dataset.mod : 'ghostty')
-	const PAGE = (new RegExp('^\\/(?:mods\\/ffxiv|os\\/ackerman-os)\\/[a-z0-9/-]{1,80}\\/$', '').test((root.dataset.page || '')) ? root.dataset.page : BASE)
+	const PAGE = (new RegExp('^\\/(?:mods\\/ffxiv|os\\/ackerman-os|nelua)\\/[a-z0-9/-]{1,80}\\/$', '').test((root.dataset.page || '')) ? root.dataset.page : BASE)
 	const Q = ('?mod=' + MOD)
 	const NS = ((MOD === 'ghostty') ? 'ghostty-vote:' : (('ghostty-vote:' + MOD) + ':'))
 	const KEY = {theme: 'ghostty-vote:theme', seen: (NS + 'seen-version'), since: (NS + 'session-since'), votes: (NS + 'votes'), suggestions: (NS + 'suggestions')}
@@ -793,8 +793,8 @@ def cursor$1()
 		(query$('#signed-out-text').textContent = (state.legacyBallot ? 'Sign in to keep voting. The votes you made in this browser before sign-in move to your account.' : 'Sign in to vote: one ballot per account. Anyone can read the tallies.'))
 		if (! me)
 			return
-		const c = (MOD.startsWith('ackerman') ? null : me.character)
-		const via = ((me.provider === 'github') ? 'GitHub' : (MOD.startsWith('ackerman') ? 'XIVAuth' : 'FFXIV'))
+		const c = ((MOD.startsWith('ackerman') || MOD == 'nelua') ? null : me.character)
+		const via = ((me.provider === 'github') ? 'GitHub' : ((MOD.startsWith('ackerman') || MOD == 'nelua') ? 'XIVAuth' : 'FFXIV'))
 		(query$('#who').textContent = (c ? (((('Signed in with ' + via) + ' as ') + c.name) + (c.world ? (' @ ' + c.world) : '')) : ('Signed in with ' + via)))
 		const img = query$('#who-portrait')
 		(img.hidden = (! (c && c.portrait_url)))

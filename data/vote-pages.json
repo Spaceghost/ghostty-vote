@@ -21,7 +21,8 @@
     "ackerman",
     "ackerman-android",
     "ackerman-deck",
-    "ackerman-watch"
+    "ackerman-watch",
+    "nelua"
   ],
   "pages": {
     "ghostty": {
@@ -391,6 +392,35 @@
       "suggest_title": "A wrist moment that should be easier",
       "image_note": "Watch firmware UI contract render; not a photograph",
       "hero_title": "The right answer, at a glance."
+    },
+    "nelua": {
+      "name": "Nelua",
+      "title": "Nelua · Language feature vote",
+      "description": "Choose language features to explore in the Nelua compiler, Nelibc and systems projects.",
+      "eyebrow": "spacegho.st / nelua · language workshop",
+      "h1_before": "What should Nelua make ",
+      "h1_glyph": "possible",
+      "h1_after": " next?",
+      "lede_html": "These are <strong>language and library proposals</strong> for the Nelua fork: stronger systems contracts, better data modelling, hardware access and a few stranger experiments. Each idea explains a first consumer and an unresolved design question. None is claimed as implemented. Vote on every idea independently; the shortlist is a starting preference, not a delivery commitment.",
+      "about": "/nelua/",
+      "links": [
+        [
+          "Compiler",
+          "/nelua/compiler/"
+        ],
+        [
+          "Nelibc",
+          "/nelua/nelibc/"
+        ],
+        [
+          "Compiler source",
+          "https://github.com/Spaceghost/nelua-lang"
+        ]
+      ],
+      "banner": "/nelua/assets/icon.svg",
+      "icon": "/nelua/assets/icon.svg",
+      "suggest_title": "The systems feature I keep wishing Nelua had",
+      "suggest_detail": "Describe a concrete program, the awkward code today, and what you want to express."
     }
   }
 }

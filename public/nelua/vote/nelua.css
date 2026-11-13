@@ -1,0 +1,8 @@
+/* Nelua workshop: system fonts, ink and gold, shared accessible ballot controls. */
+:root { --font-body: system-ui, sans-serif; --font-display: system-ui, sans-serif; }
+body, button, input, textarea, select { font-family: system-ui, sans-serif; }
+h1, h2, h3, .glyph { font-family: system-ui, sans-serif; }
+h1 { letter-spacing: -.045em; }
+.wrap { max-width: 1180px; }
+.wow, [data-filter="world"], #link-character, #forget-character, #link-disclosure { display: none !important; }
+.idea { overflow-wrap: anywhere; }

@@ -782,3 +782,12 @@ UPDATE ideas SET
   maybe = (SELECT COUNT(*) FROM votes WHERE idea_id = ideas.id AND vote = 'maybe'),
   skip  = (SELECT COUNT(*) FROM votes WHERE idea_id = ideas.id AND vote = 'skip');
 ```
+
+## Nelua language ballot
+
+`/nelua/vote/` uses the shared sign-in and ballot API, with its own `nelua`
+project scope. The 15 proposals live in `data/catalogues/nelua.json`; their
+feasibility and effort are provisional design estimates. The page uses local
+system fonts and a separate navigation group. The Nelua overview and compiler
+pages remain in Spaceghost/nelua-site. `seed/nelua-launch.sql` is an additive,
+idempotent seed: it does not retire other ideas or touch ballots.
