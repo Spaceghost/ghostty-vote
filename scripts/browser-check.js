@@ -53,6 +53,13 @@ try {
 			assert.equal(await page.evaluate(function() { return globalThis.document.documentElement.scrollWidth > globalThis.innerWidth + 1; }),false,path + ' overflows at ' + width);
 		};
 	};
+	for (let width of [1440,390]){
+		await page.setViewportSize({width: width,height: 900});
+		await page.goto(base + '/nelua/vote/');
+		await page.getByRole('heading',{name: 'Named variant cases'}).waitFor();
+		assert.equal(await page.locator('article.idea').count(),15);
+		assert.equal(await page.evaluate(function() { return globalThis.document.documentElement.scrollWidth > globalThis.innerWidth + 1; }),false,'Nelua ballot overflow at ' + width);
+	};
 	await page.goto(base + '/mods/ffxiv/roadmap/?project=typo&status=typo');
 	await page.waitForFunction(function(expected) { return globalThis.document.querySelector('.queue-result')?.textContent == expected; },fullCount);
 	assert.equal(new URL(page.url()).search,'');

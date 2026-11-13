@@ -46,6 +46,8 @@ outputs['seed/project-launch.sql'] = others.filter(function(cat) { return launch
 const ackermanMods = new Set(['ackerman','ackerman-android','ackerman-deck','ackerman-watch']);
 outputs['seed/ackerman-launch.sql'] = others.filter(function(cat) { return ackermanMods.has(cat.mod); }).map(function(cat) { return buildSeedSql(cat).split('\n').filter(function(line) { return !(line.startsWith('UPDATE ideas SET retired')); }).join('\n'); }).join('\n');
 
+outputs['seed/nelua-launch.sql'] = others.filter(function(cat) { return cat.mod == 'nelua'; }).map(function(cat) { return buildSeedSql(cat).split('\n').filter(function(line) { return !(line.startsWith('UPDATE ideas SET retired')); }).join('\n'); }).join('\n');
+
 
 Object.assign(outputs,buildVotePages(JSON.parse(readFileSync((root + 'data/vote-pages.json'),'utf8'))));
 
@@ -57,7 +59,7 @@ const mods = JSON.parse(readFileSync((root + 'data/mods.json'),'utf8'));
 
 const queueSnapshot = JSON.parse(readFileSync(root + 'data/feature-queue.json','utf8'));
 const voteScope = JSON.parse(readFileSync(root + 'data/accepted-votes.json','utf8'));
-const queueCatalogues = Object.fromEntries([catalogue,...others].filter(function(cat) { return !(String(cat.mod || '').startsWith('ackerman')); }).map(function(cat) { return [cat.mod || 'ghostty',cat]; }));
+const queueCatalogues = Object.fromEntries([catalogue,...others].filter(function(cat) { return !(String(cat.mod || '').startsWith('ackerman')) && cat.mod != 'nelua'; }).map(function(cat) { return [cat.mod || 'ghostty',cat]; }));
 const queue = buildFeatureQueue(queueCatalogues,voteScope,queueSnapshot);
 outputs['public/mods/ffxiv/roadmap/queue.json'] = JSON.stringify(queue,null,2) + '\n';
 outputs['public/mods/ffxiv/roadmap/index.html'] = featureQueuePage(queue,mods);
