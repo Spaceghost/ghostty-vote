@@ -26,13 +26,13 @@ on:
 permissions:
   contents: read
 
-# one deploy at a time, and never cancel one halfway through an upload
-concurrency:
-  group: deploy-cloudflare
-  cancel-in-progress: false
-
 jobs:
   deploy:
+    # Serialize uploads, not the read-only verifier: a queued self-hosted
+    # verification runner must not hold the deployment lock indefinitely.
+    concurrency:
+      group: publish-cloudflare
+      cancel-in-progress: false
     # never from a fork's copy of this workflow
     if: ${{ github.repository_owner == 'Spaceghost' && !github.event.repository.fork }}
     runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
