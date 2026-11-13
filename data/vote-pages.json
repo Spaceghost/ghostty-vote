@@ -401,7 +401,7 @@
       "h1_before": "What should Nelua make ",
       "h1_glyph": "possible",
       "h1_after": " next?",
-      "lede_html": "These are <strong>language and library proposals</strong> for the Nelua fork: stronger systems contracts, better data modelling, hardware access and a few stranger experiments. Each idea explains a first consumer and an unresolved design question. None is claimed as implemented. Vote on every idea independently; the shortlist is a starting preference, not a delivery commitment.",
+      "lede_html": "These are <strong>language and library proposals</strong> for the Nelua fork: stronger systems contracts, better data modelling, hardware access and a few stranger experiments. Each idea explains a first consumer and an unresolved design question. None is claimed as implemented. Vote on every idea independently; the shortlist is a starting preference, not a delivery commitment. The second round explores <strong>content-addressed code, effect handlers, replay, durable computation and other systems experiments</strong>. <a href=\"https://www.unison-lang.org/docs/tour/_big-technical-idea/\">Unison inspires the code-identity proposals</a>; <a href=\"https://www.unison-lang.org/docs/language-reference/abilities-and-ability-handlers/\">its abilities are a reference for effect handlers</a>. These are possible adaptations for Nelua, not features the fork already provides.",
       "about": "/nelua/",
       "links": [
         [

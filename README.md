@@ -786,8 +786,14 @@ UPDATE ideas SET
 ## Nelua language ballot
 
 `/nelua/vote/` uses the shared sign-in and ballot API, with its own `nelua`
-project scope. The 15 proposals live in `data/catalogues/nelua.json`; their
+project scope. The 30 proposals live in `data/catalogues/nelua.json`; their
 feasibility and effort are provisional design estimates. The page uses local
 system fonts and a separate navigation group. The Nelua overview and compiler
 pages remain in Spaceghost/nelua-site. `seed/nelua-launch.sql` is an additive,
 idempotent seed: it does not retire other ideas or touch ballots.
+
+Catalogue version 2 adds 15 proposals for code identity, effects, durable and
+incremental computation, and systems experiments. Original idea IDs and votes
+are preserved; new entries carry `added_version: 2` for the ballot's New filter.
+Unison references are linked on the ballot, with native ABI, state and toolchain
+limitations stated in each relevant proposal. These are design directions.

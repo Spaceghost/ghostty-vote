@@ -1,0 +1,25 @@
+name: Prepare Nelua ballot
+on:
+  push:
+    branches: [nelua-vote-round2]
+    paths-ignore: ['**.md']
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - run: tools/ci/run.sh deps build check test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - name: Commit generated outputs on the topic branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public seed scripts src tests imba wrangler.toml
+          if ! git diff --cached --quiet; then
+            git commit -m 'Generate expanded Nelua ballot on remote runner'
+            git push origin HEAD:nelua-vote-round2
+          fi

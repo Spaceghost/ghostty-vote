@@ -1,6 +1,6 @@
 {
   "mod": "nelua",
-  "version": 1,
+  "version": 2,
   "top_picks": [
     "nelua-named-variants",
     "nelua-distinct",
@@ -239,6 +239,234 @@
           "effort": "medium",
           "in_world": false,
           "added_version": 1
+        }
+      ]
+    },
+    {
+      "name": "Nelua · Code with an identity",
+      "tagline": "Unison-inspired identity and evolution, adapted as optional tooling around native Nelua.",
+      "ideas": [
+        {
+          "id": "nelua-content-addressing",
+          "title": "Content-addressed definitions",
+          "pitch": "Give code a stable identity beyond its file and spelling.",
+          "experience": "Rename or move a helper without changing its identity; inspect exactly which implementation and dependencies a program uses.",
+          "how": "Prototype an optional index of canonical, resolved typed definitions and dependency hashes. Keep text files as the editing format and C as an output. Derive artifact-cache keys separately from code identity, target, toolchain and build inputs. Inspiration: Unison content-addressed definitions.",
+          "risks": "Hash equality is not behavioral equivalence. Recursive groups, nominal type identity, macros and mutable globals need explicit rules. Foreign implementation versions and exported ABI names must be accounted for; a source hash does not pin a host libc.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-dependency-patches",
+          "title": "Dependency-aware upgrade plans",
+          "pitch": "Treat an upgrade as an explicit change to a code graph.",
+          "experience": "Preview every caller affected by replacing one parser definition, retain the old version, and inspect failed type checks before applying the upgrade.",
+          "how": "Use stable definition identities to map old dependencies to replacements; recheck affected users and let the developer accept a reviewable patch. Start with a Nelibc helper upgrade.",
+          "risks": "Matching types does not prove matching behavior. Preserve tests and ABI checks; coexistence of native versions needs symbol isolation, and patches must not silently change global state.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-structural-refactors",
+          "title": "Structural code queries and refactoring",
+          "pitch": "Search and transform resolved code rather than matching spelling.",
+          "experience": "Find every call to a particular imported operation even when it has aliases, then preview a typed replacement across the project.",
+          "how": "Expose a read-only typed-code query API first, then transactional rewrite plans with source locations, hygiene and type checking. A content-addressed index can supply stable references.",
+          "risks": "Generated syntax, macro provenance and formatting complicate rewriting. Identity alone does not prove a rewrite correct; always expose the resulting source diff.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-compute-capsules",
+          "title": "Portable computation capsules",
+          "pitch": "Package an explicitly portable function and its inputs for another machine.",
+          "experience": "Send a pure packet-analysis task to a build server; it resolves the exact code dependencies and returns a typed result.",
+          "how": "Define a restricted portable subset with canonical value encoding, a dependency manifest and an explicit remote executor. Compile or locate a native artifact for the destination target rather than sending raw process memory.",
+          "risks": "Ordinary pointers, file handles and C imports cannot travel implicitly. Code identity grants no authority or sandbox: admission, execution limits, authentication and target compatibility are separate requirements.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        }
+      ]
+    },
+    {
+      "name": "Nelua · Effects, time and changing programs",
+      "tagline": "Make alternate execution models explicit and opt-in.",
+      "ideas": [
+        {
+          "id": "nelua-effect-handlers",
+          "title": "Algebraic effects and handlers",
+          "pitch": "Write a clock or storage request once; choose its implementation around the call.",
+          "experience": "Run the same state machine against a real clock, a simulated clock or a deterministic test log.",
+          "how": "Explore typed effect requests and lexical handlers as a separate proposal from capability restrictions. Begin with non-resuming or single-resumption handlers that lower to explicit context records and calls. Inspiration: Unison abilities.",
+          "risks": "Resuming a continuation interacts with stack references, ownership and cleanup. Multiple resumption needs a separate design; imports and callbacks cannot claim undeclared effects are absent.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-record-replay",
+          "title": "Deterministic record and replay",
+          "pitch": "Turn a hard-to-reproduce systems failure into a replayable input trace.",
+          "experience": "Capture clock, randomness and platform-operation results, then rerun a protocol state machine from the same starting state.",
+          "how": "Record at declared effect or platform boundaries; version trace schemas and code identities. Start with a single-threaded Nelibc host consumer before addressing scheduling.",
+          "risks": "Raw C, MMIO and unrecorded I/O break determinism. Replay must suppress external writes; concurrent scheduling and sensitive trace data require explicit policies.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-durable-functions",
+          "title": "Durable functions that survive restarts",
+          "pitch": "Persist progress at deliberate suspension boundaries.",
+          "experience": "A firmware update coordinator resumes after a power loss without repeating an already acknowledged step.",
+          "how": "Lower an opt-in function into a versioned state machine with serializable locals, explicit durable storage and logged effect receipts. Build on visible generator storage rather than serializing a native stack.",
+          "risks": "Exactly-once external effects require cooperation or reconciliation, not just a saved continuation. Upgrades need migrations; pointers and live locks cannot be persisted as ordinary locals.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-live-patching",
+          "title": "Live patching with state migration",
+          "pitch": "Replace a running component at a declared safe point.",
+          "experience": "Change a long-running host tool or simulator while preserving state through an explicit migration function.",
+          "how": "Start in hosted user-space with versioned dispatch tables, quiescence points, layout checks and opt-in state migrations. Keep static freestanding builds on their existing path.",
+          "risks": "Active frames, borrowed references, TLS and old callbacks can retain the prior implementation. Define rollback and reclamation; matching hashes or ABI layouts alone do not make a patch safe.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-incremental-computation",
+          "title": "Incremental computations",
+          "pitch": "Recompute only the pure derived values affected by an input change.",
+          "experience": "Adjust one device configuration field and refresh the dependent tables and diagnostics while retaining unrelated work.",
+          "how": "Prototype a library of explicit input cells and pure dependency-tracked computations with invalidation and bounded caches. Explore compiler assistance only after a concrete consumer.",
+          "risks": "Hidden mutation and effects invalidate cached results. Cycles, cache lifetimes and deterministic dependency discovery need rules; this does not make arbitrary Nelua code reactive.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        }
+      ]
+    },
+    {
+      "name": "Nelua · Stranger systems building blocks",
+      "tagline": "Ambitious proposals with small, inspectable first experiments.",
+      "ideas": [
+        {
+          "id": "nelua-specialization",
+          "title": "Partial evaluation and specialization",
+          "pitch": "Fix part of a program input and generate a smaller specialized function.",
+          "experience": "Specialize a packet decoder for a known schema while leaving packet bytes as runtime input.",
+          "how": "Explore an opt-in specialization operation over typed code, with explicit static arguments and code-size budgets; emit ordinary Nelua IR and C. This goes beyond folding a call whose result is entirely known.",
+          "risks": "Prevent specialization explosions and preserve overflow, aliasing and evaluation-order semantics. Foreign calls and effects limit what may be evaluated early.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-refinements",
+          "title": "Bounded refinement constraints",
+          "pitch": "Carry simple facts such as ranges and alignment with a value.",
+          "experience": "A validated packet length can be passed to a bounded decoder without losing the fact that it fits the buffer.",
+          "how": "Start with integer ranges, alignment and constant relationships at function boundaries. Discharge a small decidable subset statically and require explicit validation for the rest.",
+          "risks": "A length fact does not establish pointer validity or lifetime. Mutation can invalidate relationships; define runtime-check behavior and avoid pretending a general theorem prover is available.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "low",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-session-endpoints",
+          "title": "Session-typed communication endpoints",
+          "pitch": "Check both sides of a message exchange against their protocol.",
+          "experience": "A worker must receive configuration before sending a result, and consuming an endpoint advances its permitted operations.",
+          "how": "Represent protocol states and dual endpoints using owned types first; generate typed send and receive operations over an explicit transport. Prototype an in-process worker exchange.",
+          "risks": "Message loss, cancellation, branching and protocol upgrades need explicit outcomes. Static sequencing alone does not guarantee deadlock freedom or reliable delivery.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-address-spaces",
+          "title": "Typed address spaces",
+          "pitch": "Keep CPU, device, DMA and remote addresses distinct.",
+          "experience": "A device-visible DMA address cannot accidentally be dereferenced as a CPU pointer; mapping it requires the platform capability.",
+          "how": "Prototype distinct address-space parameters and explicit map/unmap APIs around existing pointers. Later assess backend support for targets with separate memory spaces.",
+          "risks": "An address-space tag does not perform cache synchronization, grant access or establish lifetime. IOMMU mappings, ownership and target-specific representations remain explicit contracts.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-region-snapshots",
+          "title": "Transactional region snapshots",
+          "pitch": "Checkpoint an owned data region and reopen a consistent version.",
+          "experience": "A simulator or embedded state store commits a new graph of records and recovers the previous valid snapshot after an interrupted write.",
+          "how": "Combine region-relative references, versioned schemas and copy-on-write or journaled updates. Begin with a user-space file-backed library and fault-injection tests.",
+          "risks": "Crash consistency depends on actual storage ordering and flush guarantees. External effects cannot be rolled back with memory; concurrent writers and migrations need defined protocols.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
+        },
+        {
+          "id": "nelua-logic-rules",
+          "title": "Declarative logic rules",
+          "pitch": "Describe derived facts and let a bounded rule engine find the consequences.",
+          "experience": "Derive which platform operations or device dependencies are reachable, and show the chain of facts behind an answer.",
+          "how": "Prototype a syntax-extension library for typed facts and monotone rules compiled into explicit worklists and indexed tables; use it on a small platform configuration.",
+          "risks": "Require finite domains or resource bounds. Negation, deletion and incremental updates need defined semantics; rule evaluation may allocate unless storage is explicitly supplied.",
+          "audience": "Nelua compiler, Nelibc, firmware and systems-tool developers",
+          "wow": 0,
+          "feasibility": "medium",
+          "effort": "large",
+          "in_world": false,
+          "added_version": 2
         }
       ]
     }
